@@ -1,0 +1,10 @@
+LIBRARY
+
+EXPORTS
+	ModuleDB_GetLastError
+
+	ModuleDatabase_SQlite_Init
+	ModuleDatabase_SQlite_Destory
+
+	ModuleDatabase_MySql_Init
+	ModuleDatabase_MySql_Destory
