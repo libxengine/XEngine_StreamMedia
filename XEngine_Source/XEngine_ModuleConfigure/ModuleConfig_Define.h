@@ -41,6 +41,13 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
+		TCHAR tszSQLAddr[64];                 //数据库地址
+		TCHAR tszSQLUser[64];                 //数据库用户名
+		TCHAR tszSQLPass[64];                 //数据库密码
+		int nSQLPort;                         //端口
+	}st_XSql;
+	struct
+	{
 		int nMaxSize;                         //最大日志大小
 		int nMaxCount;                        //最大日志个数
 		int nLogLeave;                        //日志等级
@@ -50,6 +57,39 @@ typedef struct tag_XEngine_ServiceConfig
 		list<string> *pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_SERVICECONFIG;
+//JT1078服务配置文件
+typedef struct 
+{
+	TCHAR tszIPAddr[64];                      //本机IP地址
+	BOOL bDeamon;                             //是否使用守护进程
+	BOOL bAudio;                              //是否使用音频
+	int nStreamPort;                          //直播流端口
+	int nRecordPort;                          //录像流端口
+	struct
+	{
+		int nMaxClient;                       //最大客户端个数
+		int nMaxQueue;                        //队列最大个数
+		int nIOThread;                        //网络线程池个数
+		int nStreamThread;                    //直播流线程个数
+		int nRecordThread;                    //录像流线程个数
+	}st_XMax;
+	struct
+	{
+		int nTimeCheck;                       //检测次数
+		int nStreamTimeout;                   //直播超时时间
+		int nRecordTimeout;                   //录像超时时间
+	}st_XTime;
+	struct
+	{
+		TCHAR tszIPAddr[128];                 //服务器地址
+		int nPort;                            //服务器端口
+		int nMaxConnect;                      //最大连接个数
+	}st_XClient;
+	struct
+	{
+		list<string>* pStl_ListVer;           //版本列表
+	}st_XVer;
+}XENGINE_JT1078CONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -76,3 +116,22 @@ extern "C" DWORD ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
+/********************************************************************
+函数名称：ModuleConfigure_Json_JT1078
+函数功能：读取1078配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出服务配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
