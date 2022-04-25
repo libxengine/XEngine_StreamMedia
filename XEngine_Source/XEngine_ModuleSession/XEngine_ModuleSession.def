@@ -1,0 +1,12 @@
+LIBRARY
+
+EXPORTS
+	ModuleSession_GetLastError
+
+	ModuleSession_JT1078Client_Create
+	ModuleSession_JT1078Client_Get
+	ModuleSession_JT1078Client_Exist
+	ModuleSession_JT1078Client_Insert
+	ModuleSession_JT1078Client_DeleteAddr
+	ModuleSession_JT1078Client_DeleteNumber
+	ModuleSession_JT1078Client_Destory
