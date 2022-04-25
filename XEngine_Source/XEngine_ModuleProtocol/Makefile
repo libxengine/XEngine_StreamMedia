@@ -6,7 +6,7 @@ LOADBIN = -L ../XEngine_ThirdPart/jsoncpp
 LIB = -ljsoncpp
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleProtocol_Packet.o pch.o
+LIBINCLUDE = ModuleProtocol_JT1078.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -26,8 +26,8 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleProtocol.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-ModuleProtocol_Packet.o:./ModuleProtocol_Packet/ModuleProtocol_Packet.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleProtocol_Packet/ModuleProtocol_Packet.cpp 
+ModuleProtocol_JT1078.o:./ModuleProtocol_JT1078/ModuleProtocol_JT1078.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleProtocol_JT1078/ModuleProtocol_JT1078.cpp 
 						              
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp

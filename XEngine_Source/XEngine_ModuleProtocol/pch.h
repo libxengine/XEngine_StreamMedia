@@ -18,6 +18,8 @@
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include "../XEngine_UserProtocol.h"
+#include "ModuleProtocol_Define.h"
+#include "ModuleProtocol_Error.h"
 /********************************************************************
 //    Created:     2022/03/01  09:28:42
 //    File Name:   D:\XEngine_ServiceApp\XEngine_Source\XEngine_ModuleProtocol\pch.h

@@ -15,9 +15,102 @@
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
-/*                         导出的协议打包函数                           */
+/*                         导出的JT1078协议函数                         */
 /************************************************************************/
-
-/************************************************************************/
-/*                         导出的协议解析函数                           */
-/************************************************************************/
+/********************************************************************
+函数名称：ModuleProtocol_JT1078_StreamCreate
+函数功能：流媒体创建
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pSt_ProtocolDevice
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入设备信息
+ 参数.四：pSt_AVAttr
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入音视频信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM * pSt_AVAttr = NULL);
+/********************************************************************
+函数名称：ModuleProtocol_JT1078_StreamPush
+函数功能：推流协议
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pSt_RTPHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入RTP头
+ 参数.四：pSt_RTPTail
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入RTP尾
+ 参数.五：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入推流数据
+ 参数.六：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：推流数据大小
+ 参数.七：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：直播还是录像
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen, BOOL bLive);
+/********************************************************************
+函数名称：ModuleProtocol_JT1078_StreamDestroy
+函数功能：销毁流协议
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pSt_ProtocolDev
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要销毁的流信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_JT1078_StreamDestroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);

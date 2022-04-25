@@ -13,17 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleProtocol_Packet">
+    <Filter Include="头文件\ModuleProtocol_JT1078">
       <UniqueIdentifier>{563fda1d-114e-4795-9060-ea9ac18b64e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleProtocol_Packet">
+    <Filter Include="源文件\ModuleProtocol_JT1078">
       <UniqueIdentifier>{3d2dc46b-019d-43ad-bfd8-b3144ca2f46a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\ModuleProtocol_Parse">
-      <UniqueIdentifier>{77e32093-8169-467f-bf84-b70bafd79e29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\ModuleProtocol_Parse">
-      <UniqueIdentifier>{4a5918cb-0c6f-473c-8713-1567e60d2833}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,17 +27,14 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleProtocol_Packet\ModuleProtocol_Packet.h">
-      <Filter>头文件\ModuleProtocol_Packet</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleProtocol_Define.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ModuleProtocol_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleProtocol_Parse\ModuleProtocol_Parse.h">
-      <Filter>头文件\ModuleProtocol_Parse</Filter>
+    <ClInclude Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.h">
+      <Filter>头文件\ModuleProtocol_JT1078</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,11 +44,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleProtocol_Packet\ModuleProtocol_Packet.cpp">
-      <Filter>源文件\ModuleProtocol_Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleProtocol_Parse\ModuleProtocol_Parse.cpp">
-      <Filter>源文件\ModuleProtocol_Parse</Filter>
+    <ClCompile Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.cpp">
+      <Filter>源文件\ModuleProtocol_JT1078</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
