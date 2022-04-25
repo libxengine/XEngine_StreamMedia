@@ -41,9 +41,10 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
-		TCHAR tszSQLAddr[64];                 //数据库地址
-		TCHAR tszSQLUser[64];                 //数据库用户名
-		TCHAR tszSQLPass[64];                 //数据库密码
+		TCHAR tszSQLAddr[128];                //数据库地址
+		TCHAR tszSQLUser[128];                //数据库用户名
+		TCHAR tszSQLPass[128];                //数据库密码
+		TCHAR tszSQLName[128];                //数据库表名
 		int nSQLPort;                         //端口
 	}st_XSql;
 	struct
