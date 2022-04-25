@@ -17,6 +17,7 @@
 #endif
 #endif //PCH_H
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <XEngine_Include/XEngine_CommHdr.h>

@@ -15,33 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD ModuleDB_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
-/*                         导出的SQLITE操作函数                         */
-/************************************************************************/
-/********************************************************************
-函数名称：ModuleDatabase_SQlite_Init
-函数功能：初始化SQLITE文件系统
- 参数.一：lpszSQLFile
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要操作的SQL文件
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL ModuleDatabase_SQlite_Init(LPCTSTR lpszSQLFile);
-/********************************************************************
-函数名称：ModuleDatabase_SQlite_Destory
-函数功能：销毁
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL ModuleDatabase_SQlite_Destory();
-/************************************************************************/
-/*                         导出的MYSQL操作函数                          */
+/*                         导出的JT1078操作函数                         */
 /************************************************************************/
 /********************************************************************
 函数名称：ModuleDatabase_MySql_Init
@@ -56,7 +30,7 @@ extern "C" BOOL ModuleDatabase_SQlite_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDatabase_MySql_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
+extern "C" BOOL ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
 /********************************************************************
 函数名称：ModuleDatabase_MySql_Destory
 函数功能：销毁MYSQL数据库资源链接
@@ -65,4 +39,88 @@ extern "C" BOOL ModuleDatabase_MySql_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDatabase_MySql_Destory();
+extern "C" BOOL ModuleDB_JT1078_Destory();
+/********************************************************************
+函数名称：ModuleDB_JT1078_DeviceInsert
+函数功能：设备插入
+ 参数.一：
+  In/Out：
+  类型：
+  可空：
+  意思：
+ 参数.二：
+  In/Out：
+  类型：
+  可空：
+  意思：
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer);
+/********************************************************************
+函数名称：ModuleDB_JT1078_DeviceDelete
+函数功能：设备删除
+ 参数.一：lpszDeviceAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr);
+/********************************************************************
+函数名称：ModuleDB_JT1078_DeviceClear
+函数功能：清空设备表
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_DeviceClear();
+/********************************************************************
+函数名称：ModuleDB_JT1078_InfoInsert
+函数功能：音视频参数插入
+ 参数.一：pSt_ProtocolStream
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要插入的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+/********************************************************************
+函数名称：ModuleDB_JT1078_InfoQuery
+函数功能：音视频信息参数查询
+ 参数.一：pSt_ProtocolStream
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出查询到的内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
+/********************************************************************
+函数名称：ModuleDB_JT1078_InfoUPDate
+函数功能：更新音视频参数信息
+ 参数.一：pSt_ProtocolStream
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要更新的内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleDB_JT1078_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);

@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
-#include "ModuleDatabase_SQlite/ModuleDatabase_SQlite.h"
-#include "ModuleDatabase_MySql/ModuleDatabase_MySql.h"
+#include "ModuleDB_JT1078/ModuleDB_JT1078.h"
 /********************************************************************
 //    Created:     2022/03/01  09:17:08
 //    File Name:   D:\XEngine_ServiceApp\XEngine_Source\XEngine_ModuleDatabase\pch.cpp
@@ -15,8 +14,7 @@
 DWORD DBModule_IsErrorOccur = FALSE;
 BOOL DBModule_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
-CModuleDatabase_SQlite m_DBSQlite;
-CModuleDatabase_MySql m_DBMysql;
+CModuleDB_JT1078 m_JT1078;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -29,24 +27,37 @@ extern "C" DWORD ModuleDB_GetLastError(int* pInt_SysError)
 	return DBModule_dwErrorCode;
 }
 /************************************************************************/
-/*                         导出的SQLITE操作函数                         */
+/*                         导出的JT1078操作函数                         */
 /************************************************************************/
-extern "C" BOOL ModuleDatabase_SQlite_Init(LPCTSTR lpszSQLFile)
+extern "C" BOOL ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO * pSt_MySQLConnector)
 {
-	return m_DBSQlite.ModuleDatabase_SQlite_Init(lpszSQLFile);
+	return m_JT1078.ModuleDB_JT1078_Init(pSt_MySQLConnector);
 }
-extern "C" BOOL ModuleDatabase_SQlite_Destory()
+extern "C" BOOL ModuleDB_JT1078_Destory()
 {
-	return m_DBSQlite.ModuleDatabase_SQlite_Destory();
+	return m_JT1078.ModuleDB_JT1078_Destory();
 }
-/************************************************************************/
-/*                         导出的MYSQL操作函数                          */
-/************************************************************************/
-extern "C" BOOL ModuleDatabase_MySql_Init(DATABASE_MYSQL_CONNECTINFO * pSt_MySQLConnector)
+extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer)
 {
-	return m_DBMysql.ModuleDatabase_MySql_Init(pSt_MySQLConnector);
+	return m_JT1078.ModuleDB_JT1078_DeviceInsert(lpszDeviceNumber, nChannel, lpszDeviceAddr, bLive, lpszDeviceVer);
 }
-extern "C" BOOL ModuleDatabase_MySql_Destory()
+extern "C" BOOL ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr)
 {
-	return m_DBMysql.ModuleDatabase_MySql_Destory();
+	return m_JT1078.ModuleDB_JT1078_DeviceDelete(lpszDeviceAddr);
+}
+extern "C" BOOL ModuleDB_JT1078_DeviceClear()
+{
+	return m_JT1078.ModuleDB_JT1078_DeviceClear();
+}
+extern "C" BOOL ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
+{
+	return m_JT1078.ModuleDB_JT1078_InfoInsert(pSt_ProtocolStream);
+}
+extern "C" BOOL ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
+{
+	return m_JT1078.ModuleDB_JT1078_InfoQuery(pSt_ProtocolStream);
+}
+extern "C" BOOL ModuleDB_JT1078_InfoUPDate(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
+{
+	return m_JT1078.ModuleDB_JT1078_InfoUPDate(pSt_ProtocolStream);
 }

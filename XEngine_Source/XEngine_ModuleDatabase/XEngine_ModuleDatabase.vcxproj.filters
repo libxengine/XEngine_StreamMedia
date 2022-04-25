@@ -9,21 +9,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleDatabase_SQlite">
-      <UniqueIdentifier>{0ce6e4dd-ed20-414e-bcff-e74f78fecf8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\ModuleDatabase_MySql">
-      <UniqueIdentifier>{00036999-ed1c-4ff6-b3c4-66df4e943888}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="源文件\ModuleDatabase_SQlite">
-      <UniqueIdentifier>{702ae36a-81da-4335-95c3-764d56c00925}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleDB_JT1078">
+      <UniqueIdentifier>{6c597ee9-c5c7-4bc8-bb8a-07aba67a2c9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleDatabase_MySql">
-      <UniqueIdentifier>{1dfa6b8a-ac00-46f4-b968-b91bc12bd887}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleDB_JT1078">
+      <UniqueIdentifier>{94802519-1824-40ff-b966-6248ee838b5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,17 +27,14 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleDatabase_SQlite\ModuleDatabase_SQlite.h">
-      <Filter>头文件\ModuleDatabase_SQlite</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleDB_Define.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ModuleDB_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleDatabase_MySql\ModuleDatabase_MySql.h">
-      <Filter>头文件\ModuleDatabase_MySql</Filter>
+    <ClInclude Include="ModuleDB_JT1078\ModuleDB_JT1078.h">
+      <Filter>头文件\ModuleDB_JT1078</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,11 +44,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleDatabase_SQlite\ModuleDatabase_SQlite.cpp">
-      <Filter>源文件\ModuleDatabase_SQlite</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleDatabase_MySql\ModuleDatabase_MySql.cpp">
-      <Filter>源文件\ModuleDatabase_MySql</Filter>
+    <ClCompile Include="ModuleDB_JT1078\ModuleDB_JT1078.cpp">
+      <Filter>源文件\ModuleDB_JT1078</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
