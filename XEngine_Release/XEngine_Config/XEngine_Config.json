@@ -1,0 +1,39 @@
+{
+    "tszIPAddr":"192.168.1.12",
+    "bDeamon":0,
+    "nHttpPort":5000,
+    "nCenterPort":5001,
+    "nHttp2Thread":5002,
+    "nWSThread":5003,
+    "XMax":{
+        "nMaxClient":10000,
+        "nMaxQueue":10000,
+        "nIOThread":2,
+        "nHttpThread":2,
+        "nCenterThread":2,
+        "nHttp2Thread":2,
+        "nWSThread":2
+    },
+    "XTime":{
+        "nTimeCheck":3,
+        "nHttpTimeOut":5,
+        "nCenterTimeOut":5,
+        "nHttp2TimeOut":5,
+        "nWSTimeOut":5
+    },
+    "XSQL":{
+        "tszSQLAddr":"192.168.1.12",
+        "nSQLPort":3306,
+        "tszSQLUser":"ruiyue",
+        "tszSQLPass":"123123Ruiyue"
+    },
+    "XLog":{
+        "MaxSize":1024000,
+        "MaxCount":10,
+        "LogLeave":32
+    },
+    "XVer":[
+        "XEngine_ServiceApp Build20220422"
+    ]
+
+}

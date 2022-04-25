@@ -1,0 +1,28 @@
+{
+    "tszIPAddr":"127.0.0.1",
+    "tszRecordDir":"/home/ubuntu/nginx/html",
+    "bDeamon":false,
+    "bAudio":false,
+    "nStreamPort":10780,
+    "nRecordPort":10781,
+    "XMax":{
+        "MaxClient":10000,
+        "MaxQueue":10000,
+        "IOThread":1,
+        "StreamThread":1,
+        "RecordThread":1
+    },
+    "XTime":{
+        "nTimeCheck":3,
+        "nStreamTimeout":0,
+        "nRecordTimeout":0
+    },
+    "XClient":{
+        "tszIPAddr":"127.0.0.1",
+        "nPort":1,
+        "nMaxConnect":1
+    },
+    "XVer":[
+        "1.22.0.1001 Build1127"
+    ]
+}
