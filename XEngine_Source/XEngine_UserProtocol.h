@@ -29,4 +29,62 @@ typedef enum
 #pragma pack(push)
 #pragma pack(1)
 //添加自己的消息数据结构
+typedef struct
+{
+	XENGINE_PROTOCOL_AVINFO st_AVInfo;
+	TCHAR tszDeviceNumber[64];
+}XENGINE_PROTOCOLSTREAM;
+//////////////////////////////////////////////////////////////////////////设备协议RTP
+typedef struct
+{
+	BYTE byFlags[4];
+
+	BYTE byCC : 4;
+	BYTE byX : 1;
+	BYTE byP : 1;
+	BYTE byV : 2;
+
+	BYTE byPT : 7;
+	BYTE byM : 1;
+
+	WORD wSerial;
+	BYTE bySIMNumber[6];
+	BYTE byChannel;
+
+	BYTE byPacket : 4;
+	BYTE byType : 4;
+	BYTE byTime[8];
+	WORD wLen;
+}XENGINE_RTPPACKETHDR2016;
+typedef struct
+{
+	BYTE byV : 2;
+	BYTE byP : 1;
+	BYTE byX : 1;
+	BYTE byCC : 4;
+
+	BYTE byM : 1;
+	BYTE byPT : 7;
+
+	WORD wSerial;
+	BYTE bySIMNumber[6];
+	BYTE byChannel;
+
+	BYTE byType : 4;
+	BYTE byPacket : 4;
+	BYTE byTime[8];
+	WORD wLen;
+}XENGINE_RTPPACKETHDR2014;
+
+typedef struct
+{
+	WORD wLastIFrame;
+	WORD wLastPBFrame;
+}XENGINE_RTPPACKETTAIL;
+
+typedef struct
+{
+	ULONGLONG ullTime;
+	WORD wDLen;
+}XENGINE_RTPAUDIO;
 #pragma pack(pop)

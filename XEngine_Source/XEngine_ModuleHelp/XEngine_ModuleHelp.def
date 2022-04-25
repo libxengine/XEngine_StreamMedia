@@ -1,0 +1,7 @@
+LIBRARY
+
+EXPORTS
+	ModuleHelp_GetLastError
+
+	ModuleHelp_JT1078_BCDToString
+	ModuleHelp_JT1078_StringToBCD

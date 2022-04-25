@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleDatabase", "X
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_JT1078App", "XEngine_ServiceApp\XEngine_JT1078App\XEngine_JT1078App.vcxproj", "{657E83B3-6687-4E28-9D3D-0C23AEE2737A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleHelp", "XEngine_ModuleHelp\XEngine_ModuleHelp.vcxproj", "{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -80,6 +82,14 @@ Global
 		{657E83B3-6687-4E28-9D3D-0C23AEE2737A}.Release|x64.Build.0 = Release|x64
 		{657E83B3-6687-4E28-9D3D-0C23AEE2737A}.Release|x86.ActiveCfg = Release|Win32
 		{657E83B3-6687-4E28-9D3D-0C23AEE2737A}.Release|x86.Build.0 = Release|Win32
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Debug|x64.ActiveCfg = Debug|x64
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Debug|x64.Build.0 = Debug|x64
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Debug|x86.ActiveCfg = Debug|Win32
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Debug|x86.Build.0 = Debug|Win32
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Release|x64.ActiveCfg = Release|x64
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Release|x64.Build.0 = Release|x64
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Release|x86.ActiveCfg = Release|Win32
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
