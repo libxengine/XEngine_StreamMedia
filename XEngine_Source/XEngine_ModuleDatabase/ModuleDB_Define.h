@@ -43,22 +43,42 @@ extern "C" BOOL ModuleDB_JT1078_Destory();
 /********************************************************************
 函数名称：ModuleDB_JT1078_DeviceInsert
 函数功能：设备插入
- 参数.一：
-  In/Out：
-  类型：
-  可空：
-  意思：
- 参数.二：
-  In/Out：
-  类型：
-  可空：
-  意思：
+ 参数.一：lpszDeviceAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备IP地址
+ 参数.二：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.三：nChannel
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入通道号
+ 参数.四：xhClient
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入绑定的客户端
+ 参数.五：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：直播还是录像
+ 参数.六：lpszDeviceVer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：设备版本
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer);
+extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer);
 /********************************************************************
 函数名称：ModuleDB_JT1078_DeviceDelete
 函数功能：设备删除

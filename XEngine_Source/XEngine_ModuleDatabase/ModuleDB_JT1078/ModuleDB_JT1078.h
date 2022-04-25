@@ -20,7 +20,7 @@ public:
 	BOOL ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
 	BOOL ModuleDB_JT1078_Destory();
 public:
-	BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer);
+	BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer);
 	BOOL ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr);
 	BOOL ModuleDB_JT1078_DeviceClear();
 public:

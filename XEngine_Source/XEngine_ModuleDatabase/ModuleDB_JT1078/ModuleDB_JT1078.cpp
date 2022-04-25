@@ -66,26 +66,46 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_Destory()
 /********************************************************************
 函数名称：ModuleDB_JT1078_DeviceInsert
 函数功能：设备插入
- 参数.一：
-  In/Out：
-  类型：
-  可空：
-  意思：
- 参数.二：
-  In/Out：
-  类型：
-  可空：
-  意思：
+ 参数.一：lpszDeviceAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备IP地址
+ 参数.二：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.三：nChannel
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入通道号
+ 参数.四：xhClient
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入绑定的客户端
+ 参数.五：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：直播还是录像
+ 参数.六：lpszDeviceVer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：设备版本
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer)
+BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer)
 {
 	DBModule_IsErrorOccur = FALSE;
 
-	if ((NULL == lpszDeviceNumber) || (NULL == lpszDeviceAddr) || (NULL == lpszDeviceVer))
+	if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber) || (NULL == lpszDeviceVer))
 	{
 		DBModule_IsErrorOccur = TRUE;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
@@ -94,7 +114,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, in
 	TCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	_stprintf_s(tszSQLQuery, _T("INSERT INTO `DeviceList` (tszDeviceNumber,nChannel,DeviceAddr,bLive,Version,CreateTime) VALUES('%s',%d,'%s',%d,'%s',now())"), lpszDeviceNumber, nChannel, lpszDeviceAddr, bLive, lpszDeviceVer);
+	_stprintf_s(tszSQLQuery, _T("INSERT INTO `DeviceList` (tszDeviceAddr,tszDeviceNumber,nChannel,xhClient,bLive,tszVersion,CreateTime) VALUES('%s','%s',%d,%lld,%d,'%s',now())"), lpszDeviceAddr, lpszDeviceNumber, nChannel, xhClient, bLive, lpszDeviceVer);
 
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{
@@ -130,7 +150,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr)
 	TCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	_stprintf_s(tszSQLQuery, _T("DELETE FROM `DeviceList` WHERE DeviceAddr = '%s'"), lpszDeviceAddr);
+	_stprintf_s(tszSQLQuery, _T("DELETE FROM `DeviceList` WHERE tszDeviceAddr = '%s'"), lpszDeviceAddr);
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{
 		DBModule_IsErrorOccur = TRUE;

@@ -37,9 +37,9 @@ extern "C" BOOL ModuleDB_JT1078_Destory()
 {
 	return m_JT1078.ModuleDB_JT1078_Destory();
 }
-extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceNumber, int nChannel, LPCTSTR lpszDeviceAddr, BOOL bLive, LPCTSTR lpszDeviceVer)
+extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer)
 {
-	return m_JT1078.ModuleDB_JT1078_DeviceInsert(lpszDeviceNumber, nChannel, lpszDeviceAddr, bLive, lpszDeviceVer);
+	return m_JT1078.ModuleDB_JT1078_DeviceInsert(lpszDeviceAddr, lpszDeviceNumber, nChannel, xhClient, bLive, lpszDeviceVer);
 }
 extern "C" BOOL ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr)
 {
