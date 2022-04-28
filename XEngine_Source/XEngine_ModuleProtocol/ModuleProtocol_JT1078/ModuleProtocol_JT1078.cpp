@@ -39,17 +39,12 @@ CModuleProtocol_JT1078::~CModuleProtocol_JT1078()
   类型：数据结构指针
   可空：N
   意思：输入设备信息
- 参数.四：pSt_AVAttr
-  In/Out：In
-  类型：数据结构指针
-  可空：Y
-  意思：输入音视频信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_AVAttr /* = NULL */)
+BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -70,19 +65,9 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBu
 	st_ProcotolHdr.wReserve = 0;
 	st_ProcotolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
 
-	if (NULL != pSt_AVAttr)
-	{
-		st_ProcotolHdr.unPacketSize += sizeof(XENGINE_PROTOCOLSTREAM);
-	}
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDEVICE);
 	memcpy(ptszMsgBuffer, &st_ProcotolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolDevice, sizeof(XENGINE_PROTOCOLDEVICE));
-
-	if (NULL != pSt_AVAttr)
-	{
-		memcpy(ptszMsgBuffer + (*pInt_MsgLen), pSt_AVAttr, sizeof(XENGINE_PROTOCOLSTREAM));
-		*pInt_MsgLen += sizeof(XENGINE_PROTOCOLSTREAM);
-	}
 	return TRUE;
 }
 /********************************************************************

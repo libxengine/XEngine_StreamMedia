@@ -35,17 +35,12 @@ extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
   类型：数据结构指针
   可空：N
   意思：输入设备信息
- 参数.四：pSt_AVAttr
-  In/Out：In
-  类型：数据结构指针
-  可空：Y
-  意思：输入音视频信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM * pSt_AVAttr = NULL);
+extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
 /********************************************************************
 函数名称：ModuleProtocol_JT1078_StreamPush
 函数功能：推流协议

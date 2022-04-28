@@ -99,10 +99,7 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	if (!ModuleSession_JT1078Client_Exist(&xhClient, lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 	{
 		XENGINE_PROTOCOLDEVICE st_ProtoDevice;
-		XENGINE_PROTOCOLSTREAM st_ProtoAttr;
-
 		memset(&st_ProtoDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
-		memset(&st_ProtoAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
 		st_ProtoDevice.bLive = TRUE;
 		st_ProtoDevice.nChannel = pSt_RTPHdr->byChannel;
@@ -116,20 +113,8 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			return FALSE;
 		}
 		ModuleDB_JT1078_DeviceInsert(lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, TRUE, "2016");
-		//查询音视频数据,没有将无法使用特性
-		memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-		_tcscpy(st_ProtoAttr.tszDeviceNumber, tszDeviceNumber);
-		if (ModuleDB_JT1078_InfoQuery(&st_ProtoAttr))
-		{
-			ModuleProtocol_JT1078_StreamCreate(tszSDBuffer, &nSDLen, &st_ProtoDevice, &st_ProtoAttr);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel);
-		}
-		else
-		{
-			ModuleProtocol_JT1078_StreamCreate(tszSDBuffer, &nSDLen, &st_ProtoDevice);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,音视频数据不存在数据库,请插入！"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel);
-		}
 		//创建流
+		ModuleProtocol_JT1078_StreamCreate(tszSDBuffer, &nSDLen, &st_ProtoDevice);
 		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,推流端客户端：%lld,设备版本：2016"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient);
 	}
