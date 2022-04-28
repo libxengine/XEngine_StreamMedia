@@ -10,6 +10,23 @@
 //    Purpose:     用户自定义协议头
 //    History:
 *********************************************************************/
+/*********************************************************************
+						操作类型定义
+*********************************************************************/
+typedef enum
+{
+	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_I = 0x00,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_P = 0x01,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_B = 0x02,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A = 0x03,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_T = 0x04
+}ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_TYPE;
+typedef enum
+{
+	ENUM_XENGINE_STREAMMEDIA_JT1078_DEVICE_TYPE_UNKNOW = 0,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_DEVICE_TYPE_2014 = 1,
+	ENUM_XENGINE_STREAMMEDIA_JT1078_DEVICE_TYPE_2016 = 2
+}ENUM_XENGINE_STREAMMEDIA_JT1078_DEVICE_TYPE;
 //////////////////////////////////////////////////////////////////////////
 //                          主协议定义;unOperatorType
 //////////////////////////////////////////////////////////////////////////
