@@ -81,14 +81,13 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
 		return FALSE;
 	}
+	_tcscpy(pSt_ServerConfig->tszSMSUrl, st_JsonRoot["tszSMSUrl"].asCString());
 	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
 	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
-	pSt_ServerConfig->nHttp2Port = st_JsonRoot["nHttp2Port"].asInt();
-	pSt_ServerConfig->nWSPort = st_JsonRoot["nWSPort"].asInt();
 	//最大配置
-	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
+	if (st_JsonRoot["XMax"].empty() || (5 != st_JsonRoot["XMax"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XMAX;
@@ -100,10 +99,8 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XMax.nIOThread = st_JsonXMax["nIOThread"].asInt();
 	pSt_ServerConfig->st_XMax.nCenterThread = st_JsonXMax["nCenterThread"].asInt();
 	pSt_ServerConfig->st_XMax.nHTTPThread = st_JsonXMax["nHttpThread"].asInt();
-	pSt_ServerConfig->st_XMax.nHTTP2Thread = st_JsonXMax["nHttp2Thread"].asInt();
-	pSt_ServerConfig->st_XMax.nWSThread = st_JsonXMax["nWSThread"].asInt();
 	//时间配置
-	if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
+	if (st_JsonRoot["XTime"].empty() || (3 != st_JsonRoot["XTime"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XTIME;
@@ -113,8 +110,6 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nTCPTimeOut"].asInt();
 	pSt_ServerConfig->st_XTime.nHTTPTimeOut = st_JsonXTime["nHttpTimeOut"].asInt();
-	pSt_ServerConfig->st_XTime.nHTTP2TimeOut = st_JsonXTime["nHttp2TimeOut"].asInt();
-	pSt_ServerConfig->st_XTime.nWSTimeOut = st_JsonXTime["nWSTimeOut"].asInt();
 	//数据库配置
 	if (st_JsonRoot["XSQL"].empty() || (4 != st_JsonRoot["XSQL"].size()))
 	{
@@ -219,7 +214,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, 
 	}
 	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
-	pSt_ServerConfig->bAudio = st_JsonRoot["nAudio"].asBool();
+	pSt_ServerConfig->nAudio = st_JsonRoot["nAudio"].asBool();
 	pSt_ServerConfig->nStreamPort = st_JsonRoot["nStreamPort"].asInt();
 	pSt_ServerConfig->nRecordPort = st_JsonRoot["nRecordPort"].asInt();
 
