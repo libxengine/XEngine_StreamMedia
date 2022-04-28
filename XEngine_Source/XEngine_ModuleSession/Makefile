@@ -1,11 +1,12 @@
-CC = g++ -Wall -fPIC
+CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
-LOADBIN = -L ../../XEngine_Lib/NetEngine_BaseLib -L ../../XEngine_Lib/NetEngine_Algorithm
-LIB = -lNetEngine_BaseLib -lNetEngine_Algorithm
+INCLUDE = -I ./
+LOADBIN = 
+LIB = 
 LIBEX = -static-libgcc -lrt -ldl -lpthread
-LOADSO = -Wl,-rpath=../XEngine_BaseLib,--disable-new-dtags
-LIBINCLUDE = Session_Stream.o Session_Record.o Session_Server.o Session_Talk.o Session_Gover.o Session_GoverEx.o Session_XPush.o Session_DllMain.o
+LOADSO = -Wl,-rpath=./,--disable-new-dtags
+LIBINCLUDE = ModuleSession_JT1078Client.o ModuleSession_JT1078Server.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -23,30 +24,20 @@ endif
 
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libNetHelp_Session.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleSession.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-Session_Stream.o:./Session_Stream/Session_Stream.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Stream/Session_Stream.cpp 
-Session_Record.o:./Session_Record/Session_Record.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Record/Session_Record.cpp
-Session_Server.o:./Session_Server/Session_Server.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Server/Session_Server.cpp
-Session_Talk.o:./Session_Talk/Session_Talk.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Talk/Session_Talk.cpp
-Session_Gover.o:./Session_Gover/Session_Gover.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Gover/Session_Gover.cpp
-Session_GoverEx.o:./Session_Gover/Session_GoverEx.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_Gover/Session_GoverEx.cpp
-Session_XPush.o:./Session_XPush/Session_XPush.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_XPush/Session_XPush.cpp
-				              
-Session_DllMain.o:./Session_DllMain.cpp                 		       	    
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Session_DllMain.cpp
+ModuleSession_JT1078Client.o:./ModuleSession_JT1078/ModuleSession_JT1078Client.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_JT1078/ModuleSession_JT1078Client.cpp 
+ModuleSession_JT1078Server.o:./ModuleSession_JT1078/ModuleSession_JT1078Server.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_JT1078/ModuleSession_JT1078Server.cpp 
+
+pch.o:./pch.cpp                 		       	    
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libNetHelp_Session.so
-	cp ./libNetHelp_Session.so ../../../XEngine_Release/XEngine_NetHelp/libNetHelp_Session.so
+InstallSo:./libXEngine_ModuleSession.so
+	cp ./libXEngine_ModuleSession.so ../../XEngine_Release/libXEngine_ModuleSession.so
 
 
 CleanAll:CleanObj CleanMk

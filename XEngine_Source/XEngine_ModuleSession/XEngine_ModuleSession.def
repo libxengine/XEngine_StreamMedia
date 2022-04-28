@@ -10,3 +10,8 @@ EXPORTS
 	ModuleSession_JT1078Client_DeleteAddr
 	ModuleSession_JT1078Client_DeleteNumber
 	ModuleSession_JT1078Client_Destory
+
+	ModuleSession_JT1078Server_Create
+	ModuleSession_JT1078Server_Destroy
+	ModuleSession_JT1078Server_Insert
+	ModuleSession_JT1078Server_Get

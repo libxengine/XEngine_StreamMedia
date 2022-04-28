@@ -18,7 +18,7 @@ extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
 *                          JT1078导出会话模块                                    *
 *********************************************************************************/
 /********************************************************************
-函数名称：ModuleSession_JT1078Stream_InsertDevice
+函数名称：ModuleSession_JT1078Client_Create
 函数功能：创建一个客户端会话
  参数.一：xhClient
   In/Out：In
@@ -180,3 +180,129 @@ extern "C" BOOL ModuleSession_JT1078Client_DeleteNumber(LPCTSTR lpszDeviceNumber
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleSession_JT1078Client_Destory();
+/********************************************************************
+函数名称：ModuleSession_JT1078Server_Create
+函数功能：创建一个服务器会话管理器
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_JT1078Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+/********************************************************************
+函数名称：ModuleSession_JT1078Server_Destroy
+函数功能：销毁一个管理器
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+/********************************************************************
+函数名称：ModuleSession_JT1078Server_Insert
+函数功能：数据包插入
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+ 参数.四：pSt_RTPHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入直播还是录像
+ 参数.五：pSt_RTPTail
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入直播还是录像
+ 参数.六：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要插入的数据
+ 参数.七：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen);
+/********************************************************************
+函数名称：ModuleSession_JT1078Server_Get
+函数功能：获取数据
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+ 参数.四：ptszMsgBuffer
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出获取到的数据
+ 参数.五：pInt_MsgLen
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出数据大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);

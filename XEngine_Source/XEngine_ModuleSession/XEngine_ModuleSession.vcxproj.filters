@@ -36,6 +36,9 @@
     <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Client.h">
       <Filter>头文件\ModuleSession_JT1078</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Server.h">
+      <Filter>头文件\ModuleSession_JT1078</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -45,6 +48,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Client.cpp">
+      <Filter>源文件\ModuleSession_JT1078</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Server.cpp">
       <Filter>源文件\ModuleSession_JT1078</Filter>
     </ClCompile>
   </ItemGroup>

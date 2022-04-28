@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ModuleSession_JT1078/ModuleSession_JT1078Client.h"
+#include "ModuleSession_JT1078/ModuleSession_JT1078Server.h"
 /********************************************************************
 //    Created:     2022/04/25  10:21:36
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\pch.cpp
@@ -15,6 +16,7 @@ BOOL Session_IsErrorOccur = FALSE;
 DWORD Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleSession_JT1078Client m_JTClient;
+CModuleSession_JT1078Server m_JTServer;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -56,4 +58,20 @@ extern "C" BOOL ModuleSession_JT1078Client_DeleteNumber(LPCTSTR lpszDeviceNumber
 extern "C" BOOL ModuleSession_JT1078Client_Destory()
 {
 	return m_JTClient.ModuleSession_JT1078Client_Destory();
+}
+extern "C" BOOL ModuleSession_JT1078Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+{
+	return m_JTServer.ModuleSession_JT1078Server_Create(lpszDeviceNumber, nChannel, bLive);
+}
+extern "C" BOOL ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+{
+	return m_JTServer.ModuleSession_JT1078Server_Destroy(lpszDeviceNumber, nChannel, bLive);
+}
+extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XENGINE_RTPPACKETHDR2016 * pSt_RTPHdr, XENGINE_RTPPACKETTAIL * pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen)
+{
+	return m_JTServer.ModuleSession_JT1078Server_Insert(lpszDeviceNumber, nChannel, bLive, pSt_RTPHdr, pSt_RTPTail, lpszMsgBuffer, nMsgLen);
+}
+extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+{
+	return m_JTServer.ModuleSession_JT1078Server_Get(lpszDeviceNumber, nChannel, bLive, ptszMsgBuffer, pInt_MsgLen);
 }
