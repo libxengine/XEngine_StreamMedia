@@ -61,7 +61,6 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpsz
 		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_MALLOC;
 		return FALSE;
 	}
-	memset(pSt_RTPPacket, '\0', sizeof(SESSION_RTPPACKET));
 	pSt_RTPPacket->pStl_ListBuffer = new list<SESSION_MSGBUFFER>;
 	if (NULL == pSt_RTPPacket->pStl_ListBuffer)
 	{

@@ -247,8 +247,8 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
 		return FALSE;
 	}
-	DWORD64 dwLine = 0;
-	DWORD64 dwField = 0;
+	__int64u dwLine = 0;
+	__int64u dwField = 0;
 	XNETHANDLE xhResult;
 
 	TCHAR tszSQLQuery[4096];

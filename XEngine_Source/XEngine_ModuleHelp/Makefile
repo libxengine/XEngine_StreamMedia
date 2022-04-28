@@ -2,7 +2,7 @@ CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
-LOADBIN = -L ../XEngine_ThirdPart/opencc/ubuntu
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_Core
 LIB = -lXEngine_OPenSsl
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags

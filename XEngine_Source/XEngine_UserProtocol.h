@@ -116,10 +116,4 @@ typedef struct
 	WORD wLastIFrame;
 	WORD wLastPBFrame;
 }XENGINE_RTPPACKETTAIL;
-
-typedef struct
-{
-	ULONGLONG ullTime;
-	WORD wDLen;
-}XENGINE_RTPAUDIO;
 #pragma pack(pop)

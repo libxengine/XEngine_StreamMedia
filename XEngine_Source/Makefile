@@ -9,14 +9,15 @@ THIRDPART_MODULE_JSONCPP = ./XEngine_ThirdPart/jsoncpp
 MODULE_CONFIGURE_PATH = ./XEngine_ModuleConfigure
 MODULE_DATABASE_PATH = ./XEngine_ModuleDatabase
 MODULE_PROTOCOL_PATH = ./XEngine_ModuleProtocol
+MODULE_HELP_PATH = ./XEngine_ModuleHelp
+MODULE_SESSION_PATH = ./XEngine_ModuleSession
+
+APP_JT1078_PATH = ./XEngine_ServiceApp/XEngine_JT1078App
 APP_CENTER_PATH = ./XEngine_ServiceApp/XEngine_CenterApp
-APP_HTTP_PATH = ./XEngine_ServiceApp/XEngine_HttpApp
-APP_HTTP2_PATH = ./XEngine_ServiceApp/XEngine_HTTP2App
-APP_WEBSOCKET_PATH = ./XEngine_ServiceApp/XEngine_WebSocketApp
 
 XENGINE_MODULES = libjsoncpp.so                                   \
-                  libXEngine_ModuleConfigure.so libXEngine_ModuleDatabase.so libXEngine_ModuleProtocol.so                 \
-				  XEngine_CenterApp.exe XEngine_HttpApp.exe XEngine_Http2App.exe XEngine_WebSocketApp.exe
+                  libXEngine_ModuleConfigure.so libXEngine_ModuleDatabase.so libXEngine_ModuleProtocol.so libXEngine_ModuleHelp.so XEngine_ModuleSession.so        \
+				  XEngine_JT1078App.exe XEngine_CenterApp.exe
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)
@@ -30,15 +31,15 @@ libXEngine_ModuleDatabase.so:
 	make -C $(MODULE_DATABASE_PATH) $(FLAGS)
 libXEngine_ModuleProtocol.so:
 	make -C $(MODULE_PROTOCOL_PATH) $(FLAGS)
+libXEngine_ModuleHelp.so:
+	make -C $(MODULE_HELP_PATH) $(FLAGS)
+XEngine_ModuleSession.so:
+	make -C $(MODULE_SESSION_PATH) $(FLAGS)
 
+XEngine_JT1078App.exe:
+	make -C $(APP_JT1078_PATH) $(FLAGS)
 XEngine_CenterApp.exe:
 	make -C $(APP_CENTER_PATH) $(FLAGS)
-XEngine_HttpApp.exe:
-	make -C $(APP_HTTP_PATH) $(FLAGS)
-XEngine_Http2App.exe:
-	make -C $(APP_HTTP2_PATH) $(FLAGS)
-XEngine_WebSocketApp.exe:
-	make -C $(APP_WEBSOCKET_PATH) $(FLAGS)
 
 SetFlags_Install:
 	export FLAGS=InstallAll

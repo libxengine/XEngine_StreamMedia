@@ -86,8 +86,6 @@ static int ServiceApp_Deamon(int wait)
 int main(int argc, char** argv)
 {
 	bIsRun = TRUE;
-	int nCountStream = 0;
-	int nCountRecord = 0;
 	THREADPOOL_PARAMENT** ppSt_ListStream;
 	THREADPOOL_PARAMENT** ppSt_ListRecord;
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -107,7 +105,7 @@ int main(int argc, char** argv)
 	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_FILE | HELPCOMPONENTS_XLOG_OUTTYPE_STD, &st_XLogConfig);
 	if (NULL == xhLog)
 	{
-		printf("启动服务器失败，启动日志失败，错误：%X", XLog_GetLastError());
+		printf("启动服务器失败，启动日志失败，错误：%lX", XLog_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	HelpComponents_XLog_SetLogPriority(xhLog, st_ServiceCfg.st_XLog.nLogLeave);

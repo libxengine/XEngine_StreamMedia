@@ -14,6 +14,8 @@
 #else
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>

@@ -17,12 +17,12 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
-		printf("解析配置文件失败,ModuleConfigure_Json_File:%X\n", ModuleConfigure_GetLastError());
+		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
 	if (!ModuleConfigure_Json_JT1078(lpszJT1078Cfg, &st_JT1078Config))
 	{
-		printf("解析配置文件失败,ModuleConfigure_Json_JT1078:%X\n", ModuleConfigure_GetLastError());
+		printf("解析配置文件失败,ModuleConfigure_Json_JT1078:%lX\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
 
