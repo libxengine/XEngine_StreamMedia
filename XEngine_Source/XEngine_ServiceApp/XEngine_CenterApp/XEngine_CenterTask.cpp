@@ -55,32 +55,91 @@ XHTHREAD CALLBACK XEngine_CenterTask_Thread(LPVOID lParam)
 }
 BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
-	//这里开始编写你的代码
-	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_MSG == pSt_ProtocolHdr->unOperatorType)
+	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT == pSt_ProtocolHdr->unOperatorType)
 	{
-		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_MSG_TEXTREQ == pSt_ProtocolHdr->unOperatorCode)
+		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_HB_ACK == pSt_ProtocolHdr->unOperatorCode)
 		{
-			//我们收到一个包可以对他进行回复
-			TCHAR tszMsgBuffer[2048];
-			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-			//我们推荐你新建一个模块项目来处理协议组包和解包相关代码
-			pSt_ProtocolHdr->byIsReply = FALSE;
-			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_MSG_TEXTREP;
-
-			memcpy(tszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-			memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), lpszMsgBuffer, nMsgLen);
-			//发送业务包,对方发送的内容我们返回相同的内容给对方,所以不需要改负载大小
-			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, sizeof(XENGINE_PROTOCOLHDR) + nMsgLen);
-			//回复完毕打印客户端发送的数据
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,发送普通包,大小:%d,内容:%s"), lpszClientAddr, nMsgLen, lpszMsgBuffer);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受流媒体返回的心跳"), lpszClientAddr);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,接受返回了无法处理的心跳协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
 		}
 	}
-	else if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_AUTH == pSt_ProtocolHdr->unOperatorType)
+	else if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_SMS == pSt_ProtocolHdr->unOperatorType)
 	{
-		//比如你想进行用户验证,可以编写你的代码
-		if (0 == pSt_ProtocolHdr->unOperatorCode)
+		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQCREATE == pSt_ProtocolHdr->unOperatorCode)
 		{
+			XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = new XENGINE_PROTOCOLDEVICE;
+			XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr = new XENGINE_PROTOCOLSTREAM;
 
+			memset(pSt_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+			memset(pSt_ProtocolAVAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
+
+			memcpy(pSt_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
+			//创建会话
+			if (!ModuleSession_JT1078Server_Create(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, ModuleSession_GetLastError());
+				return FALSE;
+			}
+			//查询音视频数据,没有将无法使用特性
+			if (ModuleDB_JT1078_InfoQuery(pSt_ProtocolAVAttr))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
+			}
+			else
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,音视频数据不存在数据库,请插入！"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
+			}
+			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, pSt_ProtocolDevice, pSt_ProtocolAVAttr);
+			m_ThreadAV.detach();
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d,设备版本：%s"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 0 == pSt_ProtocolHdr->wReserve ? "2016" : "2014");
+		}
+		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
+		{
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+
+			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
+			ModuleSession_JT1078Server_Destroy(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,接受请求了销毁流消息,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+		}
+		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
+		{
+			int nPos = 0;
+			TCHAR tszDeviceNumber[64];
+			XENGINE_RTPPACKETHDR2016 st_RTPHdr;
+			XENGINE_RTPPACKETTAIL st_RTPTail;
+
+			memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
+			memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR2016));
+			memset(&st_RTPTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
+
+			memcpy(&st_RTPHdr, lpszMsgBuffer, sizeof(XENGINE_RTPPACKETHDR2016));
+
+			nPos = sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL);
+			ModuleHelp_JT1078_BCDToString(st_RTPHdr.bySIMNumber, tszDeviceNumber);
+			if (ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A == st_RTPHdr.byType)
+			{
+				if (st_RTPHdr.byChannel != st_JT1078Config.nAudio)
+				{
+					return TRUE;
+				}
+			}
+			else
+			{
+				if (!ModuleSession_JT1078Server_Insert(tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, &st_RTPHdr, &st_RTPTail, lpszMsgBuffer + nPos, nMsgLen - nPos))
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, ModuleSession_GetLastError());
+					return FALSE;
+				}
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,包类型：%d,负载标记：%d,序列号：%d,Maker：%d,大小：%d"), lpszClientAddr, tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, st_RTPHdr.byType, st_RTPHdr.byPT, st_RTPHdr.wSerial, st_RTPHdr.byM, nMsgLen);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,接受返回了无法处理的推流协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
 		}
 	}
 	else

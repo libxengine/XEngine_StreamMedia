@@ -10,5 +10,5 @@
 //    Purpose:     配置文件操作代码
 //    History:
 *********************************************************************/
-BOOL XEngine_Configure_Parament(int argc, char** argv, XENGINE_SERVICECONFIG* pSt_Configure);
+BOOL XEngine_Configure_Parament(int argc, char** argv);
 void XEngine_Configure_Help();

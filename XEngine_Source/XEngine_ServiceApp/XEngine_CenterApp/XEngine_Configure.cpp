@@ -10,13 +10,19 @@
 //    Purpose:     配置文件读写代码
 //    History:
 *********************************************************************/
-BOOL XEngine_Configure_Parament(int argc, char** argv, XENGINE_SERVICECONFIG* pSt_Configure)
+BOOL XEngine_Configure_Parament(int argc, char** argv)
 {
-	LPCTSTR lpszConfigFile = _T("./XEngine_Config/XEngine_Config.json");
+	LPCTSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
+	LPCTSTR lpszJT1078Cfg = _T("./XEngine_Config/XEngine_JT1078Config.json");
 
-	if (!ModuleConfigure_Json_File(lpszConfigFile, pSt_Configure))
+	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
-		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
+		printf("解析配置文件失败,ModuleConfigure_Json_File:%X\n", ModuleConfigure_GetLastError());
+		return FALSE;
+	}
+	if (!ModuleConfigure_Json_JT1078(lpszJT1078Cfg, &st_JT1078Config))
+	{
+		printf("解析配置文件失败,ModuleConfigure_Json_JT1078:%X\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
 
@@ -29,7 +35,7 @@ BOOL XEngine_Configure_Parament(int argc, char** argv, XENGINE_SERVICECONFIG* pS
 		}
 		else if (0 == _tcscmp("-d", argv[i]))
 		{
-			pSt_Configure->bDeamon = _ttoi(argv[i + 1]);
+			st_ServiceConfig.bDeamon = _ttoi(argv[i + 1]);
 		}
 	}
 

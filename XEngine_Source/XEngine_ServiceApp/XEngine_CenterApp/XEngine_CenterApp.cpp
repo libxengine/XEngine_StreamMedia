@@ -19,6 +19,7 @@ XNETHANDLE xhCenterPool = 0;
 XHANDLE xhCenterPacket = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
+XENGINE_JT1078CONFIG st_JT1078Config;
 
 void ServiceApp_Stop(int signo)
 {
@@ -77,18 +78,19 @@ int main(int argc, char** argv)
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	bIsRun = TRUE;
-	LPCTSTR lpszLogFile = _T("./XEngine_Log/XEngine_CenterApp.Log");
+	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_CenterApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
+	memset(&st_JT1078Config, '\0', sizeof(XENGINE_JT1078CONFIG));
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
 	_tcscpy(st_XLogConfig.tszFileName, lpszLogFile);
 	//初始化参数
-	if (!XEngine_Configure_Parament(argc, argv, &st_ServiceConfig))
+	if (!XEngine_Configure_Parament(argc, argv))
 	{
 		return -1;
 	}

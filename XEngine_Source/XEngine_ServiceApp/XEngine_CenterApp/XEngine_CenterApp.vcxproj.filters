@@ -27,6 +27,9 @@
     <ClCompile Include="XEngine_CenterTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="XEngine_CenterPush.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XEngine_Configure.h">
@@ -39,6 +42,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="XEngine_CenterTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_CenterPush.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
