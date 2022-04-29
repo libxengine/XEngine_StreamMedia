@@ -1,0 +1,16 @@
+copy /y "%XEngine_Lib32%\XEngine_BaseLib\XEngine_BaseLib.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_Core\XEngine_OPenSsl.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_Client\XClient_Socket.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_AVCoder\XEngine_AVHelp.dll" "./"
+
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\avcodec-58.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\avdevice-58.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\avfilter-7.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\avformat-58.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\avutil-56.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\postproc-55.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\swresample-3.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\AVCodec\swscale-5.dll" "./"
+
+copy /y "%XEngine_Lib32%\XEngine_LibEx\libcrypto-3.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_LibEx\libssl-3.dll" "./"
