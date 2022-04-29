@@ -13,6 +13,18 @@ copy /y "%XEngine_Lib64%\XEngine_HelpComponents\HelpComponents_XLog.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_HelpComponents\HelpComponents_DataBase.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_HelpComponents\plugin\caching_sha2_password.dll" "./"
 
+copy /y "%XEngine_Lib64%\XEngine_StreamMedia\StreamMedia_XClient.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_AVCoder\XEngine_AVHelp.dll" "./"
+
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\avcodec-58.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\avdevice-58.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\avfilter-7.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\avformat-58.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\avutil-56.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\postproc-55.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\swresample-3.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_LibEx\AVCodec\swscale-5.dll" "./"
+
 copy /y "%XEngine_Lib64%\XEngine_HelpComponents\bson-1.0.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_HelpComponents\mongoc-1.0.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_HelpComponents\libmariadb.dll" "./"
