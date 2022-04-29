@@ -85,6 +85,10 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
+#ifdef _MSC_BUILD
+	WSADATA st_WSAData;
+	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+#endif
 	bIsRun = TRUE;
 	THREADPOOL_PARAMENT** ppSt_ListStream;
 	THREADPOOL_PARAMENT** ppSt_ListRecord;
@@ -242,10 +246,10 @@ int main(int argc, char** argv)
 	for (int i = 0; i < st_JT1078Cfg.st_XClient.nMaxConnect; i++)
 	{
 		XNETHANDLE xhClient;
-		XClient_TCPSelect_StartEx(&xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, &xhClient, TRUE);
+		XClient_TCPSelect_StartEx(&xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 		XClient_TCPSelect_HBStartEx(xhClient);
 		ModuleSession_JT1078Client_Create(xhClient);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort);
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，JT1078流媒体服务运行中，XEngine版本:%s,发行次数:%d,当前运行版本：%s。。。"), XENGINE_VERSION_STR, st_JT1078Cfg.st_XVer.pStl_ListVer->size(), st_JT1078Cfg.st_XVer.pStl_ListVer->front().c_str());
@@ -278,6 +282,8 @@ XENGINE_EXITAPP:
 
 		HelpComponents_XLog_Destroy(xhLog);
 	}
-
+#ifdef _MSC_BUILD
+	WSACleanup();
+#endif
 	return 0;
 }

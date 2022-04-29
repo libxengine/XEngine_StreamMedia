@@ -80,6 +80,7 @@ extern XENGINE_JT1078CONFIG st_JT1078Cfg;
 #include "JT1078App_Net.h"
 
 #ifdef _MSC_BUILD
+#pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool")

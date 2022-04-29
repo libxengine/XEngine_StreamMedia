@@ -88,7 +88,7 @@ typedef struct
 
 	BYTE byPacket : 4;
 	BYTE byType : 4;
-	BYTE byTime[8];
+	ULONGLONG ullTimestamp;
 	WORD wLen;
 }XENGINE_RTPPACKETHDR2016;
 typedef struct
@@ -107,7 +107,7 @@ typedef struct
 
 	BYTE byType : 4;
 	BYTE byPacket : 4;
-	BYTE byTime[8];
+	ULONGLONG ullTimestamp;
 	WORD wLen;
 }XENGINE_RTPPACKETHDR2014;
 
