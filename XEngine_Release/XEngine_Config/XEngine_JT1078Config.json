@@ -1,6 +1,5 @@
 {
     "tszIPAddr":"127.0.0.1",
-    "tszRecordDir":"/home/ubuntu/nginx/html",
     "bDeamon":false,
     "nAudio":0,
     "nStreamPort":10780,
@@ -19,7 +18,7 @@
     },
     "XClient":{
         "tszIPAddr":"127.0.0.1",
-        "nPort":1,
+        "nPort":5600,
         "nMaxConnect":1
     },
     "XVer":[

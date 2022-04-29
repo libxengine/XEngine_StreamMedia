@@ -1,35 +1,35 @@
 [中文](README.md) ||  [English](README.en.md)  
-# XEngine_ServiceFramework
+# XEngine_StreamMedia
+This repository has a development and master branch. If you want to use it, please use the master branch
 
 ## Introduction
-c c++网络后台服务器开发框架 
-c c++ network backend server development framework  
-It is a development framework code based on XEngine. This set of code uses the most basic code to demonstrate how to write a back-end server  
-You can write your own backend server directly on the basis of this code  
-The code has detailed comments, so you can easily understand how it works  
+c c++ 流媒体服务器  
+c c++ streammedia server  
+This is not a single-storage streaming media push stream server, but a protocol stream parsing service, need to be used with the streaming service, his main role is to parse the national standard protocol and other protocols of the streaming media protocol, and then packaged to push the stream to the specified streaming media server  
+can support JT1078, GB28181 and other protocol streams. Parsing these protocol streams, and then pushing them to a streaming server through RTMP protocol. Users can pull streams through the streaming server.  
+It is a streaming protocol parsing collection, which can access any protocol devices to our server, and then packaged into RTMP protocol by our server to push the stream to the specified server.  
+This is a cross-platform simple high-performance network licensing server, provides a complete demo code  
 
 ## Software feature
-support feature list:  
-1. use standard private protocol to handle network communication
-2. Support http protocol
-3. support http2 protocol
-4. support websocket protocol
-5. Support task pool
-6. Support thread pool processing tasks
-7. Support Log Management
+A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
+1. Support voice intercom
+2. Support multiple audio format transcoding
+3. Support video recording
+4. Support JT1078 protocol parsing and streaming
+5. Support the parsing and streaming of the national standard GB28181 protocol
+6. Support international ONVIF protocol
+7. Support SIP streaming protocol
 
 ## install
-
-#### Requirements
-support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.25 or above  
-
-## complie
 
 #### XEngine environment
 you have to install xengine before complie,You can refer to its Readme document  
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine  
+
+#### Version requirements
+Support WINDOWS 7SP1 and LINUX (UBUNT20.04, CENTOS8) above system  
+XEngine version requires V7.34 or above  
 
 #### Windows
 use vs open and complie  
@@ -38,17 +38,28 @@ use vs open and complie
 Linux use Makefile complie  
 UBUNTU20.04 x64 or CENTOS8 x64  
 
-##### Screenshot of the program
+##### Compile Command
 execute command in XEngine_Source path   
 make complie  
 make FLAGS=InstallAll Install File  
 make FLAGS=CleanAll Clear Complie  
 
-## How to develop
-XEngine_CenterApp service is mainly used for TCP protocol, you can write your TCP(Business) operation related processing code here  
-XEngine_HttpApp service is mainly used for HTTP protocol, you can write your HTTP operation related processing code here  
-XEngine_Http2App service is mainly used for HTTP2 protocol, you can write your HTTP2 operation related processing code here  
-XEngine_WebSocketApp service is mainly used for Websocket protocol, you can write your Websocket operation related processing code here  
+## Use
+
+1.  Switch to the MASTER branch
+2.  download code
+3.  complie
+4.  install
+5.  run
+6.  use APPClient push stream
+7.  use vlc play
+
+## Dir Struct
+- XEngine_Docment Docment Dir Struct
+- XEngine_Release Install Dir Struct
+- XEngine_Source Source Dir
+- XEngine_APPClient Client Example Code
+- XEngine_SQLFile Sql File
 
 ## Participate in contribution
 
