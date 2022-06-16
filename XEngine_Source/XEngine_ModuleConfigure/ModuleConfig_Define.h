@@ -86,6 +86,17 @@ typedef struct
 		list<string>* pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_JT1078CONFIG;
+//插件
+typedef struct
+{
+	BOOL bEnable;
+	TCHAR tszPluginMethod[MAX_PATH];
+	TCHAR tszPluginFile[MAX_PATH];
+}XENGINE_PLUGININFO;
+typedef struct
+{
+	list<XENGINE_PLUGININFO>* pStl_ListPlugin;
+}XENGINE_PLUGINCONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -131,3 +142,22 @@ extern "C" BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVIC
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
+/********************************************************************
+函数名称：ModuleConfigure_Json_PluginFile
+函数功能：读取JSON配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_PluginConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出插件配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFile, XENGINE_PLUGINCONFIG* pSt_PluginConfig);

@@ -267,3 +267,84 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, 
 	}
 	return TRUE;
 }
+/********************************************************************
+函数名称：ModuleConfigure_Json_PluginFile
+函数功能：读取JSON配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_PluginConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出插件配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFile, XENGINE_PLUGINCONFIG* pSt_PluginConfig)
+{
+	Config_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszConfigFile) || (NULL == pSt_PluginConfig))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_JsonBuilder;
+	//读取配置文件所有内容到缓冲区
+	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
+	if (NULL == pSt_File)
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_OPENFILE;
+		return FALSE;
+	}
+	size_t nCount = 0;
+	TCHAR tszMsgBuffer[4096];
+	while (1)
+	{
+		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
+		if (nRet <= 0)
+		{
+			break;
+		}
+		nCount += nRet;
+	}
+	fclose(pSt_File);
+	//开始解析配置文件
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
+		return FALSE;
+	}
+	//申请内存
+	pSt_PluginConfig->pStl_ListPlugin = new list<XENGINE_PLUGININFO>;
+	if (NULL == pSt_PluginConfig->pStl_ListPlugin)
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_MALLOC;
+		return FALSE;
+	}
+	//解析列表
+	Json::Value st_JsonArray = st_JsonRoot["PluginArray"];
+	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
+	{
+		XENGINE_PLUGININFO st_PluginInfo;
+		memset(&st_PluginInfo, '\0', sizeof(XENGINE_PLUGININFO));
+
+		st_PluginInfo.bEnable = st_JsonArray[i]["PluginEnable"].asBool();
+		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
+		_tcscpy(st_PluginInfo.tszPluginMethod, st_JsonArray[i]["PluginMethod"].asCString());
+		pSt_PluginConfig->pStl_ListPlugin->push_back(st_PluginInfo);
+	}
+	return TRUE;
+}
