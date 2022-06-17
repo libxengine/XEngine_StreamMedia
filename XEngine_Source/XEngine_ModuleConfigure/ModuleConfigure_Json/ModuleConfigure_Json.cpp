@@ -344,6 +344,9 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFi
 		st_PluginInfo.bEnable = st_JsonArray[i]["PluginEnable"].asBool();
 		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginMethod, st_JsonArray[i]["PluginMethod"].asCString());
+		_tcscpy(st_PluginInfo.tszPluginAddr, st_JsonArray[i]["PluginAddr"].asCString());
+		_tcscpy(st_PluginInfo.tszPluginUser, st_JsonArray[i]["PluginUser"].asCString());
+		_tcscpy(st_PluginInfo.tszPluginPass, st_JsonArray[i]["PluginPass"].asCString());
 		pSt_PluginConfig->pStl_ListPlugin->push_back(st_PluginInfo);
 	}
 	return TRUE;
