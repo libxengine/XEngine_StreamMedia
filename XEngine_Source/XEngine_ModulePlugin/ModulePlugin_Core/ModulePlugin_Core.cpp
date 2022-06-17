@@ -97,23 +97,6 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR 
 		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPUNINIT;
 		return FALSE;
 	}
-	//信息
-#ifdef _MSC_BUILD
-	st_FrameWork.fpCall_PluginCore_GetInfo = (FPCall_PluginCore_GetInfo)GetProcAddress(st_FrameWork.mhFile, "PluginCore_GetInfo");
-#else
-	* (void**)(&st_FrameWork.fpCall_PluginCore_GetInfo) = dlsym(st_FrameWork.mhFile, _T("PluginCore_GetInfo"));
-#endif
-	if (NULL == st_FrameWork.fpCall_PluginCore_GetInfo)
-	{
-#ifdef _MSC_BUILD
-		FreeLibrary(st_FrameWork.mhFile);
-#else
-		dlclose(st_FrameWork.mhFile);
-#endif
-		ModulePlugin_IsErrorOccur = TRUE;
-		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPGETINFO;
-		return FALSE;
-	}
 	//播放
 #ifdef _MSC_BUILD
 	st_FrameWork.fpCall_PluginCore_Play = (FPCall_PluginCore_Play)GetProcAddress(st_FrameWork.mhFile, "PluginCore_Play");
