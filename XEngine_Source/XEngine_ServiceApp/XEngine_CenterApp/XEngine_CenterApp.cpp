@@ -77,12 +77,17 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
+	SetDllDirectory(_T("./XEngine_Plugin"));
 	bIsRun = TRUE;
+	LPCTSTR lpszPlugin = _T("./XEngine_Config/XEngine_PluginConfig.json");
 	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_CenterApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
+	XENGINE_PLUGINCONFIG st_PluginConfig;
+	
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
+	memset(&st_PluginConfig, '\0', sizeof(XENGINE_PLUGINCONFIG));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 	memset(&st_JT1078Config, '\0', sizeof(XENGINE_JT1078CONFIG));
 
@@ -171,12 +176,39 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,业务消息服务没有被启用"));
 	}
+	//加载插件
+	if (!ModuleConfigure_Json_PluginFile(lpszPlugin, &st_PluginConfig))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件系统失败,错误：%lX"), ModuleConfigure_GetLastError());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	for (auto stl_ListIterator = st_PluginConfig.pStl_ListPlugin->begin(); stl_ListIterator != st_PluginConfig.pStl_ListPlugin->end(); stl_ListIterator++)
+	{
+		if (stl_ListIterator->bEnable)
+		{
+			XNETHANDLE xhToken = 0;
+			if (ModulePlugin_Core_Insert(&xhToken, stl_ListIterator->tszPluginFile))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s 路径:%s 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile);
+			}
+			else
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+			}
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,插件模块:%s 被设置为禁用"), stl_ListIterator->tszPluginFile);
+		}
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共加载:%d 个插件"), st_PluginConfig.pStl_ListPlugin->size());
 	
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), XENGINE_VERSION_STR, st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 	while (bIsRun)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+
 XENGINE_SERVICEAPP_EXIT:
 	if (bIsRun)
 	{

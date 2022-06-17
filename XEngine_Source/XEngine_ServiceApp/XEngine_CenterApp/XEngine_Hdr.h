@@ -35,6 +35,9 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -47,6 +50,8 @@ using namespace std;
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Define.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
+#include "../../XEngine_ModulePlugin/ModulePlugin_Define.h"
+#include "../../XEngine_ModulePlugin/ModulePlugin_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
@@ -82,12 +87,14 @@ extern XENGINE_JT1078CONFIG st_JT1078Config;
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp.lib")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModulePlugin.lib")
 #else
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleDatabase.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp.lib")
+#pragma comment(lib,"../../x64/Release/XEngine_ModulePlugin.lib")
 #endif
 #else
 #ifdef _DEBUG
@@ -96,12 +103,14 @@ extern XENGINE_JT1078CONFIG st_JT1078Config;
 #pragma comment(lib,"../../Debug/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleHelp.lib")
+#pragma comment(lib,"../../Debug/XEngine_ModulePlugin.lib")
 #else
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleDatabase.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleHelp.lib")
+#pragma comment(lib,"../../Release/XEngine_ModulePlugin.lib")
 #endif
 #endif
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
@@ -110,5 +119,6 @@ extern XENGINE_JT1078CONFIG st_JT1078Config;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32.lib")
 #endif
