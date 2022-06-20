@@ -189,7 +189,14 @@ int main(int argc, char** argv)
 			XNETHANDLE xhToken = 0;
 			if (ModulePlugin_Core_Insert(&xhToken, stl_ListIterator->tszPluginFile))
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s 路径:%s 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile);
+				if (ModulePlugin_Core_Init(xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass))
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s 路径:%s 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile);
+				}
+				else
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+				}
 			}
 			else
 			{

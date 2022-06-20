@@ -90,6 +90,7 @@ typedef struct
 typedef struct
 {
 	BOOL bEnable;
+	int nPort;
 	TCHAR tszPluginMethod[MAX_PATH];
 	TCHAR tszPluginFile[MAX_PATH];
 	TCHAR tszPluginAddr[128];
