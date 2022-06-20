@@ -10,12 +10,18 @@
 //    Purpose:     大华SDK实现
 //    History:
 *********************************************************************/
+typedef struct
+{
+	LLONG xhPlay;
+	int nChannle;
+}PLUGIN_PLAYINFO;
+
 typedef struct  
 {
 	LLONG hSDKModule;
 	NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevLoginInfo;
 	NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevOutInfo;
-	list<LLONG> *pStl_ListChannel;
+	list<PLUGIN_PLAYINFO> *pStl_ListChannel;
 }PLUGIN_SDKDAHUA;
 
 class CPlugin_Dahua
@@ -24,20 +30,19 @@ public:
 	CPlugin_Dahua();
 	~CPlugin_Dahua();
 public:
-	BOOL PluginCore_SetCall(CALLBACK_STREAMMEDIA_PLUGIN_AVDATA fpCall_AVData, LPVOID lParam = NULL);
 	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass);
 	BOOL PluginCore_UnInit(XNETHANDLE xhToken);
 	BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel);
 	BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel);
+	BOOL PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQData);
 protected:
 	static void CALLBACK PluginCore_CB_Disconnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser);
 private:
-	LPVOID m_lParam;
-	CALLBACK_STREAMMEDIA_PLUGIN_AVDATA lpCall_AVData;
-private:
 	shared_mutex st_Locker;
+	shared_mutex st_MQLocker;
 private:
+	list<PLUGIN_MQDATA> stl_ListDatas;
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA> stl_MapManager;
 };

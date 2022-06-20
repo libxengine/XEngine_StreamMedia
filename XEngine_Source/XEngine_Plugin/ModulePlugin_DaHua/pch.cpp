@@ -25,10 +25,6 @@ extern "C" DWORD PluginCore_GetLastError()
 /*********************************************************************************
 *                                导出函数定义                                    *
 *********************************************************************************/
-extern "C" BOOL PluginCore_SetCall(CALLBACK_STREAMMEDIA_PLUGIN_AVDATA fpCall_AVData, LPVOID lParam)
-{
-	return m_PluginDH.PluginCore_SetCall(fpCall_AVData, lParam);
-}
 extern "C" BOOL PluginCore_Init(XNETHANDLE * pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
 {
 	return m_PluginDH.PluginCore_Init(pxhToken, lpszAddr, nPort, lpszUser, lpszPass);
@@ -44,4 +40,8 @@ extern "C" BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 extern "C" BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginDH.PluginCore_Stop(xhToken, nChannel);
+}
+extern "C" BOOL PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA * pSt_MQData)
+{
+	return m_PluginDH.PluginCore_GetData(xhToken, pSt_MQData);
 }

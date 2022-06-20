@@ -37,10 +37,6 @@ extern "C" BOOL ModulePlugin_Core_Delete(XNETHANDLE xhToken)
 {
 	return m_PluginCore.ModulePlugin_Core_Delete(xhToken);
 }
-extern "C" BOOL ModulePlugin_Core_SetCall(XNETHANDLE xhToken, CALLBACK_STREAMMEDIA_PLUGIN_AVDATA fpCall_AVData, LPVOID lParam)
-{
-	return m_PluginCore.ModulePlugin_Core_SetCall(xhToken, fpCall_AVData, lParam);
-}
 extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
 {
 	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass);
@@ -56,4 +52,8 @@ extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel)
 extern "C" BOOL ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginCore.ModulePlugin_Core_Stop(xhToken, nChannel);
+}
+extern "C" BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA * pSt_MQData)
+{
+	return m_PluginCore.ModulePlugin_Core_GetData(xhToken, pSt_MQData);
 }

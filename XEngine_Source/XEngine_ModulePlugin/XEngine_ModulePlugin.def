@@ -5,8 +5,9 @@ EXPORTS
 
 	ModulePlugin_Core_Insert
 	ModulePlugin_Core_Delete
-	ModulePlugin_Core_SetCall
+	
 	ModulePlugin_Core_Init
 	ModulePlugin_Core_UnInit
 	ModulePlugin_Core_Play
 	ModulePlugin_Core_Stop
+	ModulePlugin_Core_GetData
