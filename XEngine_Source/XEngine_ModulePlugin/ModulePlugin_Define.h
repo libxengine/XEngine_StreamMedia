@@ -62,6 +62,15 @@ extern "C" BOOL ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR lpszPlugi
 *********************************************************************/
 extern "C" BOOL ModulePlugin_Core_Delete(XNETHANDLE xhToken);
 /********************************************************************
+函数名称：ModulePlugin_Core_Destory
+函数功能：销毁
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModulePlugin_Core_Destory();
+/********************************************************************
 函数名称：ModulePlugin_Core_Init
 函数功能：初始化一个设备
  参数.一：xhToken

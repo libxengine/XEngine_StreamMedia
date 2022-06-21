@@ -41,6 +41,7 @@ public:
 public:
 	BOOL ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR lpszPluginFile);
 	BOOL ModulePlugin_Core_Delete(XNETHANDLE xhToken);
+	BOOL ModulePlugin_Core_Destory();
 
 	BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass);
 	BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken);

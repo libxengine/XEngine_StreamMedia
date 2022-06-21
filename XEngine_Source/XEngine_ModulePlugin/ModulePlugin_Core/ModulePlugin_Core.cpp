@@ -196,12 +196,41 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Delete(XNETHANDLE xhToken)
 	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::iterator stl_MapIterator = stl_MapFrameWork.find(xhToken);
 	if (stl_MapIterator != stl_MapFrameWork.end())
 	{
+		stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
 #ifdef _MSC_BUILD
 		FreeLibrary(stl_MapIterator->second.mhFile);
 #else
 		dlclose(stl_MapIterator->second.mhFile);
 #endif
 	}
+	st_Locker.unlock();
+	return TRUE;
+}
+/********************************************************************
+函数名称：ModulePlugin_Core_Destory
+函数功能：销毁
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
+{
+	ModulePlugin_IsErrorOccur = FALSE;
+
+	//清理STL元素空间
+	st_Locker.lock();
+	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::iterator stl_MapIterator = stl_MapFrameWork.begin();
+	for (; stl_MapIterator != stl_MapFrameWork.end(); stl_MapIterator++)
+	{
+		stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
+#ifdef _MSC_BUILD
+		FreeLibrary(stl_MapIterator->second.mhFile);
+#else
+		dlclose(stl_MapIterator->second.mhFile);
+#endif
+	}
+	stl_MapFrameWork.clear();
 	st_Locker.unlock();
 	return TRUE;
 }

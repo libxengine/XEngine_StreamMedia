@@ -37,6 +37,10 @@ extern "C" BOOL ModulePlugin_Core_Delete(XNETHANDLE xhToken)
 {
 	return m_PluginCore.ModulePlugin_Core_Delete(xhToken);
 }
+extern "C" BOOL ModulePlugin_Core_Destory()
+{
+	return m_PluginCore.ModulePlugin_Core_Destory();
+}
 extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
 {
 	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass);
