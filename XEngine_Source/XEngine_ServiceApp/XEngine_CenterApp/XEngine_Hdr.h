@@ -33,6 +33,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
@@ -56,6 +58,8 @@ using namespace std;
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
 #include "XEngine_CenterTask.h"
+#include "XEngine_PluginTask.h"
+#include "XEngine_HttpTask.h"
 #include "XEngine_CenterPush.h"
 /********************************************************************
 //    Created:     2022/01/20  14:24:00
@@ -75,9 +79,18 @@ extern XNETHANDLE xhCenterSocket;
 extern XNETHANDLE xhCenterHeart;
 extern XNETHANDLE xhCenterPool;
 extern XHANDLE xhCenterPacket;
+//HTTP服务器
+extern XNETHANDLE xhHttpSocket;
+extern XNETHANDLE xhHttpHeart;
+extern XNETHANDLE xhHttpPool;
+extern XHANDLE xhHttpPacket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_JT1078CONFIG st_JT1078Config;
+
+#define XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP_CENTER 1
+#define XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP_HTTP 2
+
 //连接库
 #ifdef _WINDOWS
 #ifdef _WIN64
@@ -118,6 +131,7 @@ extern XENGINE_JT1078CONFIG st_JT1078Config;
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32.lib")

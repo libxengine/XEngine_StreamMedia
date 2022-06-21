@@ -147,7 +147,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 		//我们可以给客户端发送一条错误信息
 		pSt_ProtocolHdr->wReserve = 0xFF;        //表示不支持的协议
 		pSt_ProtocolHdr->unPacketSize = 0;       //设置没有后续数据包
-		XEngine_Network_Send(lpszClientAddr, (LPCTSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+		XEngine_Network_Send(lpszClientAddr, (LPCTSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP_CENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
 	}
 	return TRUE;

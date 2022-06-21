@@ -15,6 +15,11 @@ BOOL __stdcall Network_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSock
 void __stdcall Network_Callback_CenterRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam); //接受到数据
 void __stdcall Network_Callback_CenterLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);                                  //用户离开
 void __stdcall Network_Callback_CenterHeart(LPCSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);                      //心跳超时
+//HTTP相关
+BOOL __stdcall Network_Callback_HttpLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);                                  //用户连接
+void __stdcall Network_Callback_HttpRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam); //接受到数据
+void __stdcall Network_Callback_HttpLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);                                  //用户离开
+void __stdcall Network_Callback_HttpHeart(LPCSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);                      //心跳超时
 //关闭与发送
-void XEngine_Network_Close(LPCTSTR lpszClientAddr, BOOL bHeart);
-BOOL XEngine_Network_Send(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
+void XEngine_Network_Close(LPCTSTR lpszClientAddr, BOOL bHeart, int nClientType);
+BOOL XEngine_Network_Send(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, int nClientType);

@@ -156,15 +156,19 @@
     <ClCompile Include="XEngine_CenterApp.cpp" />
     <ClCompile Include="XEngine_CenterPush.cpp" />
     <ClCompile Include="XEngine_Configure.cpp" />
+    <ClCompile Include="XEngine_HttpTask.cpp" />
     <ClCompile Include="XEngine_Network.cpp" />
     <ClCompile Include="XEngine_CenterTask.cpp" />
+    <ClCompile Include="XEngine_PluginTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XEngine_CenterPush.h" />
     <ClInclude Include="XEngine_Configure.h" />
     <ClInclude Include="XEngine_Hdr.h" />
+    <ClInclude Include="XEngine_HttpTask.h" />
     <ClInclude Include="XEngine_Network.h" />
     <ClInclude Include="XEngine_CenterTask.h" />
+    <ClInclude Include="XEngine_PluginTask.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

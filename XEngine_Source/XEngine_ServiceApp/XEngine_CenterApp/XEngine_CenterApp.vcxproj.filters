@@ -30,6 +30,12 @@
     <ClCompile Include="XEngine_CenterPush.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="XEngine_PluginTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XEngine_HttpTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XEngine_Configure.h">
@@ -45,6 +51,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="XEngine_CenterPush.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_PluginTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_HttpTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
