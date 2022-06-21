@@ -78,6 +78,8 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 	strncpy(st_SDKDahua.st_DevLoginInfo.szUserName, lpszUser, sizeof(st_SDKDahua.st_DevLoginInfo.szUserName) - 1);
 	st_SDKDahua.st_DevLoginInfo.nPort = nPort;
 	st_SDKDahua.st_DevLoginInfo.emSpecCap = EM_LOGIN_SPEC_CAP_TCP;
+
+	st_SDKDahua.st_DevOutInfo.dwSize = sizeof(NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY);
 	// 登录设备
 	st_SDKDahua.hSDKModule = CLIENT_LoginWithHighLevelSecurity(&st_SDKDahua.st_DevLoginInfo, &st_SDKDahua.st_DevOutInfo);
 	if (0 == st_SDKDahua.hSDKModule)
@@ -88,7 +90,16 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = CLIENT_GetLastError();
 		return FALSE;
 	}
+	st_SDKDahua.pStl_ListChannel = new list<PLUGIN_PLAYINFO>;
+	if (NULL == st_SDKDahua.pStl_ListChannel)
+	{
+		SDKPlugin_IsErrorOccur = TRUE;
+		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_MALLOC;
+		return FALSE;
+	}
 
+	*pxhToken = st_SDKDahua.hSDKModule;
+	pSt_File = _tfopen(_T("./1.h264"), "wb");
 	st_Locker.lock();
 	stl_MapManager.insert(make_pair(st_SDKDahua.hSDKModule, st_SDKDahua));
 	st_Locker.unlock();
@@ -112,7 +123,7 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	SDKPlugin_IsErrorOccur = FALSE;
 
 	st_Locker.lock();
-	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = stl_MapManager.find(xhToken);
+	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
@@ -120,6 +131,8 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 		st_Locker.unlock();
 		return FALSE;
 	}
+	delete stl_MapIterator->second.pStl_ListChannel;
+	stl_MapIterator->second.pStl_ListChannel = NULL;
 	// 退出设备
 	if (0 != stl_MapIterator->second.hSDKModule)
 	{
@@ -255,8 +268,11 @@ BOOL CPlugin_Dahua::PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQ
 	SDKPlugin_IsErrorOccur = FALSE;
 
 	st_MQLocker.lock();
-	*pSt_MQData = stl_ListDatas.front();
-	stl_ListDatas.pop_front();
+	if (!stl_ListDatas.empty())
+	{
+		*pSt_MQData = stl_ListDatas.front();
+		stl_ListDatas.pop_front();
+	}
 	st_MQLocker.unlock();
 	return TRUE;
 }
@@ -275,6 +291,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 {
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)dwUser;
 
+	fwrite(pBuffer, 1, dwBufSize, pClass_This->pSt_File);
 	if (1 == dwDataType)
 	{
 		PLUGIN_MQDATA st_MQData;
