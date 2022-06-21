@@ -13,6 +13,7 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
+	bH264Init = FALSE;
 	CLIENT_Init(PluginCore_CB_Disconnect, (DWORD)this);
 	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (DWORD)this);
 	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
@@ -99,7 +100,6 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 	}
 
 	*pxhToken = st_SDKDahua.hSDKModule;
-	pSt_File = _tfopen(_T("./1.h264"), "wb");
 	st_Locker.lock();
 	stl_MapManager.insert(make_pair(st_SDKDahua.hSDKModule, st_SDKDahua));
 	st_Locker.unlock();
@@ -268,11 +268,13 @@ BOOL CPlugin_Dahua::PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQ
 	SDKPlugin_IsErrorOccur = FALSE;
 
 	st_MQLocker.lock();
-	if (!stl_ListDatas.empty())
+	if (stl_ListDatas.empty())
 	{
-		*pSt_MQData = stl_ListDatas.front();
-		stl_ListDatas.pop_front();
+		st_MQLocker.unlock();
+		return FALSE;
 	}
+	*pSt_MQData = stl_ListDatas.front();
+	stl_ListDatas.pop_front();
 	st_MQLocker.unlock();
 	return TRUE;
 }
@@ -291,8 +293,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 {
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)dwUser;
 
-	fwrite(pBuffer, 1, dwBufSize, pClass_This->pSt_File);
-	if (1 == dwDataType)
+	if (0 == dwDataType)
 	{
 		PLUGIN_MQDATA st_MQData;
 		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
@@ -319,7 +320,6 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 			return;
 		}
 
-		st_MQData.nMsgLen = dwBufSize;
 		st_MQData.nDType = 1;
 		st_MQData.ptszMsgBuffer = (TCHAR*)malloc(dwBufSize);
 		if (NULL == st_MQData.ptszMsgBuffer)
@@ -327,49 +327,25 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 			return;
 		}
 		memset(st_MQData.ptszMsgBuffer, '\0', dwBufSize);
-		memcpy(st_MQData.ptszMsgBuffer, pBuffer, dwBufSize);
-
-		pClass_This->st_MQLocker.lock();
-		pClass_This->stl_ListDatas.push_back(st_MQData);
-		pClass_This->st_MQLocker.unlock();
-	}
-	else if (3 == dwDataType)
-	{
-		PLUGIN_MQDATA st_MQData;
-		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
-
-		pClass_This->st_Locker.lock();
-		unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = pClass_This->stl_MapManager.begin();
-		for (; stl_MapIterator != pClass_This->stl_MapManager.end(); stl_MapIterator++)
+		
+		if (pClass_This->bH264Init)
 		{
-			list<PLUGIN_PLAYINFO>::const_iterator stl_ListIterator = stl_MapIterator->second.pStl_ListChannel->begin();
-			for (; stl_ListIterator != stl_MapIterator->second.pStl_ListChannel->end(); stl_ListIterator++)
+			st_MQData.nMsgLen = dwBufSize;
+			memcpy(st_MQData.ptszMsgBuffer, pBuffer, dwBufSize);
+		}
+		else
+		{
+			for (unsigned int i = 0; i < dwBufSize; i++)
 			{
-				if (lRealHandle == stl_ListIterator->xhPlay)
+				if ((0 == pBuffer[i]) && (0 == pBuffer[i + 1]) && (0 == pBuffer[i + 2]) && (1 == pBuffer[i + 3]) && (103 == pBuffer[i + 4]))
 				{
-					st_MQData.xhToken = stl_MapIterator->second.hSDKModule;
-					st_MQData.nChannel = stl_ListIterator->nChannle;
+					st_MQData.nMsgLen = dwBufSize - i;
+					memcpy(st_MQData.ptszMsgBuffer, pBuffer + i, dwBufSize - i);
+					pClass_This->bH264Init = TRUE;
 					break;
 				}
 			}
 		}
-		pClass_This->st_Locker.unlock();
-
-		if (0 == st_MQData.nChannel)
-		{
-			return;
-		}
-
-		st_MQData.nMsgLen = dwBufSize;
-		st_MQData.nDType = 2;
-		st_MQData.ptszMsgBuffer = (TCHAR*)malloc(dwBufSize);
-		if (NULL == st_MQData.ptszMsgBuffer)
-		{
-			return;
-		}
-		memset(st_MQData.ptszMsgBuffer, '\0', dwBufSize);
-		memcpy(st_MQData.ptszMsgBuffer, pBuffer, dwBufSize);
-
 		pClass_This->st_MQLocker.lock();
 		pClass_This->stl_ListDatas.push_back(st_MQData);
 		pClass_This->st_MQLocker.unlock();

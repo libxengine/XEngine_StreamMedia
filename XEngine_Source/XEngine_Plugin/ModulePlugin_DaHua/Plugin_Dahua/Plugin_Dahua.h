@@ -40,7 +40,7 @@ protected:
 	static void CALLBACK PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser);
 private:
-	FILE* pSt_File;
+	BOOL bH264Init;
 	shared_mutex st_Locker;
 	shared_mutex st_MQLocker;
 private:
