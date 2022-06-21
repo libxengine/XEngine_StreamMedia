@@ -14,15 +14,10 @@
 CPlugin_Dahua::CPlugin_Dahua()
 {
 	bH264Init = FALSE;
-	CLIENT_Init(PluginCore_CB_Disconnect, (DWORD)this);
-	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (DWORD)this);
-	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
-	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
-	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
+	
 }
 CPlugin_Dahua::~CPlugin_Dahua()
 {
-	CLIENT_Cleanup();
 }
 //////////////////////////////////////////////////////////////////////////
 //                       公有函数
@@ -70,6 +65,12 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
 		return FALSE;
 	}
+	CLIENT_Init(PluginCore_CB_Disconnect, (DWORD)this);
+	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (DWORD)this);
+	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
+	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
+	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
+
 	PLUGIN_SDKDAHUA st_SDKDahua;
 	memset(&st_SDKDahua, '\0', sizeof(PLUGIN_SDKDAHUA));
 
@@ -131,15 +132,18 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 		st_Locker.unlock();
 		return FALSE;
 	}
-	delete stl_MapIterator->second.pStl_ListChannel;
-	stl_MapIterator->second.pStl_ListChannel = NULL;
 	// 退出设备
 	if (0 != stl_MapIterator->second.hSDKModule)
 	{
 		CLIENT_Logout(stl_MapIterator->second.hSDKModule);
 	}
+	delete stl_MapIterator->second.pStl_ListChannel;
+	stl_MapIterator->second.pStl_ListChannel = NULL;
+	
 	stl_MapManager.erase(stl_MapIterator);
 	st_Locker.unlock();
+
+	CLIENT_Cleanup();
 	return TRUE;
 }
 /********************************************************************
@@ -224,13 +228,13 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	SDKPlugin_IsErrorOccur = FALSE;
 
-	st_Locker.lock_shared();
+	st_Locker.lock();
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_NOTFOUND;
-		st_Locker.unlock_shared();
+		st_Locker.unlock();
 		return FALSE;
 	}
 	//查找通道
@@ -242,7 +246,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 			break;
 		}
 	}
-	st_Locker.unlock_shared();
+	st_Locker.unlock();
 	return TRUE;
 }
 /********************************************************************
