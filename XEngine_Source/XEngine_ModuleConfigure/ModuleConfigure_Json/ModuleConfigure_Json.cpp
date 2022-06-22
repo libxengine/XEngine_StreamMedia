@@ -343,6 +343,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFi
 
 		st_PluginInfo.bEnable = st_JsonArray[i]["PluginEnable"].asBool();
 		st_PluginInfo.nPort = st_JsonArray[i]["PluginPort"].asInt();
+		st_PluginInfo.xhToken = st_JsonArray[i]["PluginToken"].asInt64();
 		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginMethod, st_JsonArray[i]["PluginMethod"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginAddr, st_JsonArray[i]["PluginAddr"].asCString());
