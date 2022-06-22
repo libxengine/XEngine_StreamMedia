@@ -85,9 +85,8 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
 	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
-	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
 	//最大配置
-	if (st_JsonRoot["XMax"].empty() || (5 != st_JsonRoot["XMax"].size()))
+	if (st_JsonRoot["XMax"].empty() || (4 != st_JsonRoot["XMax"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XMAX;
@@ -98,9 +97,8 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XMax.nMaxQueue = st_JsonXMax["nMaxQueue"].asInt();
 	pSt_ServerConfig->st_XMax.nIOThread = st_JsonXMax["nIOThread"].asInt();
 	pSt_ServerConfig->st_XMax.nCenterThread = st_JsonXMax["nCenterThread"].asInt();
-	pSt_ServerConfig->st_XMax.nHTTPThread = st_JsonXMax["nHttpThread"].asInt();
 	//时间配置
-	if (st_JsonRoot["XTime"].empty() || (3 != st_JsonRoot["XTime"].size()))
+	if (st_JsonRoot["XTime"].empty() || (2 != st_JsonRoot["XTime"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XTIME;
@@ -109,7 +107,6 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	Json::Value st_JsonXTime = st_JsonRoot["XTime"];
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nTCPTimeOut"].asInt();
-	pSt_ServerConfig->st_XTime.nHTTPTimeOut = st_JsonXTime["nHttpTimeOut"].asInt();
 	//数据库配置
 	if (st_JsonRoot["XSQL"].empty() || (4 != st_JsonRoot["XSQL"].size()))
 	{
@@ -275,21 +272,21 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, 
   类型：常量字符指针
   可空：N
   意思：输入要读取的配置文件
- 参数.二：pSt_PluginConfig
+ 参数.二：pSt_ServerConfig
   In/Out：Out
   类型：数据结构指针
   可空：N
-  意思：输出插件配置信息
+  意思：输出SDK服务配置信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFile, XENGINE_PLUGINCONFIG* pSt_PluginConfig)
+BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG* pSt_ServerConfig)
 {
 	Config_IsErrorOccur = FALSE;
 
-	if ((NULL == lpszConfigFile) || (NULL == pSt_PluginConfig))
+	if ((NULL == lpszConfigFile) || (NULL == pSt_ServerConfig))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARAMENT;
@@ -326,15 +323,50 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFi
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
 		return FALSE;
 	}
-	//申请内存
-	pSt_PluginConfig->pStl_ListPlugin = new list<XENGINE_PLUGININFO>;
-	if (NULL == pSt_PluginConfig->pStl_ListPlugin)
+	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
+	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
+	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
+
+	if (st_JsonRoot["XMax"].empty() || (4 != st_JsonRoot["XMax"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XMAX;
+		return FALSE;
+	}
+	Json::Value st_JsonXMax = st_JsonRoot["XMax"];
+	pSt_ServerConfig->st_XMax.nMaxClient = st_JsonXMax["MaxClient"].asInt();
+	pSt_ServerConfig->st_XMax.nMaxQueue = st_JsonXMax["MaxQueue"].asInt();
+	pSt_ServerConfig->st_XMax.nIOThread = st_JsonXMax["IOThread"].asInt();
+	pSt_ServerConfig->st_XMax.nHTTPThread = st_JsonXMax["HttpThread"].asInt();
+
+	if (st_JsonRoot["XTime"].empty() || (2 != st_JsonRoot["XTime"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XTIME;
+		return FALSE;
+	}
+	Json::Value st_JsonXTime = st_JsonRoot["XTime"];
+	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
+	pSt_ServerConfig->st_XTime.nHTTPTimeOut = st_JsonXTime["nHttpTimeout"].asInt();
+	//客户端解析
+	if (st_JsonRoot["XClient"].empty() || (3 != st_JsonRoot["XClient"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XCLIENT;
+		return FALSE;
+	}
+	Json::Value st_JsonXClient = st_JsonRoot["XClient"];
+	pSt_ServerConfig->st_XClient.nMaxConnect = st_JsonXClient["nMaxConnect"].asInt();
+	pSt_ServerConfig->st_XClient.nPort = st_JsonXClient["nPort"].asInt();
+	_tcscpy(pSt_ServerConfig->st_XClient.tszIPAddr, st_JsonXClient["tszIPAddr"].asCString());
+	//解析插件
+	pSt_ServerConfig->st_XPlugin.pStl_ListPlugin = new list<XENGINE_PLUGININFO>;
+	if (NULL == pSt_ServerConfig->st_XPlugin.pStl_ListPlugin)
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_MALLOC;
 		return FALSE;
 	}
-	//解析列表
 	Json::Value st_JsonArray = st_JsonRoot["PluginArray"];
 	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
 	{
@@ -349,7 +381,20 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFi
 		_tcscpy(st_PluginInfo.tszPluginAddr, st_JsonArray[i]["PluginAddr"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginUser, st_JsonArray[i]["PluginUser"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginPass, st_JsonArray[i]["PluginPass"].asCString());
-		pSt_PluginConfig->pStl_ListPlugin->push_back(st_PluginInfo);
+		pSt_ServerConfig->st_XPlugin.pStl_ListPlugin->push_back(st_PluginInfo);
+	}
+	//解析版本
+	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
+	pSt_ServerConfig->st_XVer.pStl_ListVer = new list<string>;
+	if (NULL == pSt_ServerConfig->st_XVer.pStl_ListVer)
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_MALLOC;
+		return FALSE;
+	}
+	for (unsigned int i = 0; i < st_JsonXVer.size(); i++)
+	{
+		pSt_ServerConfig->st_XVer.pStl_ListVer->push_back(st_JsonXVer[i].asCString());
 	}
 	return TRUE;
 }

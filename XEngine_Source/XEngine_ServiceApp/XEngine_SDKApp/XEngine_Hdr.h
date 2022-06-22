@@ -27,12 +27,12 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/NetCore_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
+#include <XEngine_Include/XEngine_Client/XClient_Define.h>
+#include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -68,7 +68,7 @@ extern XNETHANDLE xhHttpPool;
 extern XHANDLE xhHttpPacket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
-extern XENGINE_PLUGINCONFIG st_PluginConfig;
+extern XENGINE_SDKCONFIG st_SDKConfig;
 
 //连接库
 #ifdef _MSC_BUILD
@@ -100,9 +100,8 @@ extern XENGINE_PLUGINCONFIG st_PluginConfig;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
+#pragma comment(lib,"XEngine_Client/XClient_Socket")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
-#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient")
-#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

@@ -80,11 +80,9 @@ int main(int argc, char** argv)
 	bIsRun = TRUE;
 	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_CenterApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
-	XENGINE_PLUGINCONFIG st_PluginConfig;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
-	memset(&st_PluginConfig, '\0', sizeof(XENGINE_PLUGINCONFIG));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 	memset(&st_JT1078Config, '\0', sizeof(XENGINE_JT1078CONFIG));
 

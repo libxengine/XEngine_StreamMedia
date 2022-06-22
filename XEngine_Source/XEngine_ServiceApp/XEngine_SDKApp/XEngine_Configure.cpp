@@ -20,9 +20,9 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
-	if (!ModuleConfigure_Json_PluginFile(lpszPlugin, &st_PluginConfig))
+	if (!ModuleConfigure_Json_Sdk(lpszPlugin, &st_SDKConfig))
 	{
-		printf("解析配置文件失败,ModuleConfigure_Json_PluginFile：%lX", ModuleConfigure_GetLastError());
+		printf("解析配置文件失败,ModuleConfigure_Json_Sdk：%lX", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
 

@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Plugin", "XEngine_P
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModulePlugin_DaHua", "XEngine_Plugin\ModulePlugin_DaHua\ModulePlugin_DaHua.vcxproj", "{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_SDKApp", "XEngine_ServiceApp\XEngine_SDKApp\XEngine_SDKApp.vcxproj", "{428280EA-36BF-4869-B244-2A9B53B6B403}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -122,6 +124,14 @@ Global
 		{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}.Release|x64.Build.0 = Release|x64
 		{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}.Release|x86.ActiveCfg = Release|Win32
 		{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}.Release|x86.Build.0 = Release|Win32
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Debug|x64.ActiveCfg = Debug|x64
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Debug|x64.Build.0 = Debug|x64
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Debug|x86.ActiveCfg = Debug|Win32
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Debug|x86.Build.0 = Debug|Win32
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x64.ActiveCfg = Release|x64
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x64.Build.0 = Release|x64
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x86.ActiveCfg = Release|Win32
+		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +141,7 @@ Global
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {1F64BA84-8754-4FD3-87F8-9102F124EBC1}
 		{657E83B3-6687-4E28-9D3D-0C23AEE2737A} = {79A9A569-7DA8-4D9D-AD34-D11115199EA1}
 		{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E} = {7ADB0F28-C5C7-4363-B156-843B28BD6FAB}
+		{428280EA-36BF-4869-B244-2A9B53B6B403} = {79A9A569-7DA8-4D9D-AD34-D11115199EA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9B202F91-A601-429E-BB0F-880DDEE096FE}

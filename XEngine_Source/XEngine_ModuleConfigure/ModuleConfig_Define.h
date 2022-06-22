@@ -19,20 +19,17 @@ typedef struct tag_XEngine_ServiceConfig
 	TCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
 	BOOL bDeamon;                             //是否以守护进程启动,LINUX有效
 	int nCenterPort;                          //业务端口
-	int nHttpPort;                            //HTTP服务端口
 	struct
 	{
 		int nMaxClient;                       //最大客户端个数
 		int nMaxQueue;                        //最大队列个数
 		int nIOThread;                        //网络IO线程数
 		int nCenterThread;                    //业务任务处理线程数
-		int nHTTPThread;                      //HTTP任务处理线程数
 	}st_XMax;
 	struct
 	{
 		int nTimeCheck;                       //检测次数
 		int nCenterTimeOut;                   //业务超时时间
-		int nHTTPTimeOut;                     //HTTP超时时间
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
@@ -86,7 +83,7 @@ typedef struct
 		list<string>* pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_JT1078CONFIG;
-//插件
+//SDK服务配置文件
 typedef struct
 {
 	BOOL bEnable;
@@ -100,8 +97,36 @@ typedef struct
 }XENGINE_PLUGININFO;
 typedef struct
 {
-	list<XENGINE_PLUGININFO>* pStl_ListPlugin;
-}XENGINE_PLUGINCONFIG;
+	TCHAR tszIPAddr[64];                      //本机IP地址
+	BOOL bDeamon;                             //是否使用守护进程
+	int nHttpPort;                            //HTTP服务端口
+	struct
+	{
+		int nMaxClient;                       //最大客户端个数
+		int nMaxQueue;                        //队列最大个数
+		int nIOThread;                        //网络线程池个数
+		int nHTTPThread;                      //HTTP任务处理线程数
+	}st_XMax;
+	struct
+	{
+		int nTimeCheck;                       //检测次数
+		int nHTTPTimeOut;                     //HTTP超时时间
+	}st_XTime;
+	struct
+	{
+		TCHAR tszIPAddr[128];                 //服务器地址
+		int nPort;                            //服务器端口
+		int nMaxConnect;                      //最大连接个数
+	}st_XClient;
+	struct  
+	{
+		list<XENGINE_PLUGININFO>* pStl_ListPlugin;
+	}st_XPlugin;
+	struct
+	{
+		list<string>* pStl_ListVer;           //版本列表
+	}st_XVer;
+}XENGINE_SDKCONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -155,14 +180,14 @@ extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT10
   类型：常量字符指针
   可空：N
   意思：输入要读取的配置文件
- 参数.二：pSt_PluginConfig
+ 参数.二：pSt_ServerConfig
   In/Out：Out
   类型：数据结构指针
   可空：N
-  意思：输出插件配置信息
+  意思：输出SDK服务配置信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleConfigure_Json_PluginFile(LPCTSTR lpszConfigFile, XENGINE_PLUGINCONFIG* pSt_PluginConfig);
+extern "C" BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG * pSt_ServerConfig);
