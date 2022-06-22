@@ -306,3 +306,111 @@ extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int 
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+/*********************************************************************************
+*                          设备SDK导出会话模块                                   *
+*********************************************************************************/
+/********************************************************************
+函数名称：ModuleSession_JT1078Stream_InsertDevice
+函数功能：创建一个客户端会话
+ 参数.一：xhToken
+  In/Out：In
+  类型：设备句柄
+  可空：N
+  意思：输入设备句柄
+ 参数.二：xhClient
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhToken, XNETHANDLE xhClient);
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_Insert
+函数功能：插入一条播放记录
+ 参数.一：xhToken
+  In/Out：In
+  类型：设备句柄
+  可空：N
+  意思：输入设备句柄
+ 参数.二：nChannel
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是直播还是录像
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Insert(XNETHANDLE xhToken, int nChannel, BOOL bLive);
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_Delete
+函数功能：删除一条播放记录
+ 参数.一：xhToken
+  In/Out：In
+  类型：设备句柄
+  可空：N
+  意思：输入设备句柄
+ 参数.二：nChannel
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是直播还是录像
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhToken, int nChannel, BOOL bLive);
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_Get
+函数功能：获得一个可以使用的客户端句柄
+ 参数.一：xhToken
+  In/Out：In
+  类型：设备句柄
+  可空：N
+  意思：输入设备句柄
+ 参数.二：nChannel
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是直播还是录像
+ 参数.四：pxhClient
+  In/Out：Out
+  类型：句柄指针
+  可空：N
+  意思：输出获得的句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Get(XNETHANDLE xhToken, int nChannel, BOOL bLive, XNETHANDLE* pxhClient);
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_Destory
+函数功能：销毁客户端会话管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Destory();

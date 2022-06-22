@@ -160,6 +160,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Client.h" />
     <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Server.h" />
+    <ClInclude Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ModuleSession_Define.h" />
     <ClInclude Include="ModuleSession_Error.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Client.cpp" />
     <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Server.cpp" />
+    <ClCompile Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

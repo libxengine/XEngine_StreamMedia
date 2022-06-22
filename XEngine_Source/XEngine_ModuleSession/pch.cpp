@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ModuleSession_JT1078/ModuleSession_JT1078Client.h"
 #include "ModuleSession_JT1078/ModuleSession_JT1078Server.h"
+#include "ModuleSession_SDKDevice/ModuleSession_SDKDevice.h"
 /********************************************************************
 //    Created:     2022/04/25  10:21:36
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\pch.cpp
@@ -17,6 +18,7 @@ DWORD Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleSession_JT1078Client m_JTClient;
 CModuleSession_JT1078Server m_JTServer;
+CModuleSession_SDKDevice m_SDKDevice;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -74,4 +76,27 @@ extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int 
 extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
 	return m_JTServer.ModuleSession_JT1078Server_Get(lpszDeviceNumber, nChannel, bLive, ptszMsgBuffer, pInt_MsgLen);
+}
+/*********************************************************************************
+*                          设备SDK导出会话模块                                   *
+*********************************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhToken, XNETHANDLE xhClient)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Create(xhToken, xhClient);
+}
+extern "C" BOOL ModuleSession_SDKDevice_Insert(XNETHANDLE xhToken, int nChannel, BOOL bLive)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Insert(xhToken, nChannel, bLive);
+}
+extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhToken, int nChannel, BOOL bLive)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhToken, nChannel, bLive);
+}
+extern "C" BOOL ModuleSession_SDKDevice_Get(XNETHANDLE xhToken, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Get(xhToken, nChannel, bLive, pxhClient);
+}
+extern "C" BOOL ModuleSession_SDKDevice_Destory()
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Destory();
 }

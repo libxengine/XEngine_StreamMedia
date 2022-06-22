@@ -15,3 +15,9 @@ EXPORTS
 	ModuleSession_JT1078Server_Destroy
 	ModuleSession_JT1078Server_Insert
 	ModuleSession_JT1078Server_Get
+
+	ModuleSession_SDKDevice_Create
+	ModuleSession_SDKDevice_Insert
+	ModuleSession_SDKDevice_Delete
+	ModuleSession_SDKDevice_Get
+	ModuleSession_SDKDevice_Destory

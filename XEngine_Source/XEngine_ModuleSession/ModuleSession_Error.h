@@ -22,3 +22,10 @@
 #define ERROR_MODULE_SESSION_JT1078_NOTCHANNEL 0xE0007                    //没有通道
 #define ERROR_MODULE_SESSION_JT1078_NOTLIVE 0xE0008                       //没有找到属性
 #define ERROR_MODULE_SESSION_JT1078_EMPTY 0xE0009                         //空的列表
+//////////////////////////////////////////////////////////////////////////
+//                        导出的SDK错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_MODULE_SESSION_SDK_PARAMENT 0xE1000                         //参数错误
+#define ERROR_MODULE_SESSION_SDK_NOTFOUND 0xE1001                         //没有找到句柄
+#define ERROR_MODULE_SESSION_SDK_MALLOC 0xE1002                           //申请内存失败
+#define ERROR_MODULE_SESSION_SDK_EXIST 0xE1003                            //设备存在
