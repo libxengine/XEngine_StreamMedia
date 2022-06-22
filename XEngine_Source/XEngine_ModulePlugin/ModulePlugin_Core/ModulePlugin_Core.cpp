@@ -167,7 +167,10 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR 
 	}
 	_tcscpy(st_FrameWork.tszModuleFile, lpszPluginFile);
 
-	BaseLib_OperatorHandle_Create(pxhToken);
+	if (0 == *pxhToken)
+	{
+		BaseLib_OperatorHandle_Create(pxhToken);
+	}
 	//添加模块属性到STL函数中
 	st_Locker.lock();
 	stl_MapFrameWork.insert(make_pair(*pxhToken, st_FrameWork));
