@@ -48,6 +48,7 @@ using namespace std;
 #include "XEngine_Network.h"
 #include "XEngine_PluginTask.h"
 #include "XEngine_HttpTask.h"
+#include "XEngine_Client.h"
 /********************************************************************
 //    Created:     2022/06/22  10:11:29
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_SDKApp\XEngine_Hdr.h

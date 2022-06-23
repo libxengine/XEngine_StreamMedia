@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="XEngine_Client.cpp" />
     <ClCompile Include="XEngine_Configure.cpp" />
     <ClCompile Include="XEngine_HttpTask.cpp" />
     <ClCompile Include="XEngine_Network.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="XEngine_SDKApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="XEngine_Client.h" />
     <ClInclude Include="XEngine_Configure.h" />
     <ClInclude Include="XEngine_Hdr.h" />
     <ClInclude Include="XEngine_HttpTask.h" />

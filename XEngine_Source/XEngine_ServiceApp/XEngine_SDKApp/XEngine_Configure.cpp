@@ -13,14 +13,14 @@
 BOOL XEngine_Configure_Parament(int argc, char** argv)
 {
 	LPCTSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
-	LPCTSTR lpszPlugin = _T("./XEngine_Config/XEngine_PluginConfig.json");
+	LPCTSTR lpszSDKCfg = _T("./XEngine_Config/XEngine_SDKConfig.json");
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
-	if (!ModuleConfigure_Json_Sdk(lpszPlugin, &st_SDKConfig))
+	if (!ModuleConfigure_Json_Sdk(lpszSDKCfg, &st_SDKConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_Sdk：%lX", ModuleConfigure_GetLastError());
 		return FALSE;

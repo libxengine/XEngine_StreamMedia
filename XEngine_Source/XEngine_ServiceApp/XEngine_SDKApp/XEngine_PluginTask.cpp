@@ -17,10 +17,14 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken)
 		PLUGIN_MQDATA st_MQData;
 		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
 
-// 		if (ModulePlugin_Core_GetData(xhToken, &st_MQData))
-// 		{
-// 			printf("%d\n", st_MQData.nMsgLen);
-// 		}
+		if (ModulePlugin_Core_GetData(xhToken, &st_MQData))
+		{
+			XNETHANDLE xhClient = 0;
+			if (ModuleSession_SDKDevice_Get(xhToken, st_MQData.nChannel, st_MQData.bLive, &xhClient))
+			{
+				XClient_TCPSelect_SendEx(xhClient, st_MQData.ptszMsgBuffer, &st_MQData.nMsgLen);
+			}
+		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	return 0;

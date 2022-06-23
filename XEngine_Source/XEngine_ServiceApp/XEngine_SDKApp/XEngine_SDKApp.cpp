@@ -33,6 +33,7 @@ void ServiceApp_Stop(int signo)
 		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
+		ModuleSession_SDKDevice_Destory();
 		ModulePlugin_Core_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
@@ -182,10 +183,15 @@ int main(int argc, char** argv)
 			{
 				if (ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass))
 				{
+					//标准协议服务
+					XNETHANDLE xhClient;
+					XClient_TCPSelect_StartEx(&xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
+					XClient_TCPSelect_HBStartEx(xhClient);
+					ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken, xhClient);
 					//线程
 					std::thread m_STDThread(XEngine_PluginTask_Thread, stl_ListIterator->xhToken);
 					m_STDThread.detach();
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 				}
 				else
 				{
@@ -203,7 +209,7 @@ int main(int argc, char** argv)
 		}
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共加载:%d 个插件"), st_SDKConfig.st_XPlugin.pStl_ListPlugin->size());
-
+	
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_SDKConfig.st_XVer.pStl_ListVer->front().c_str(), st_SDKConfig.st_XVer.pStl_ListVer->size());
 	while (bIsRun)
 	{
@@ -221,6 +227,7 @@ XENGINE_SERVICEAPP_EXIT:
 		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
+		ModuleSession_SDKDevice_Destory();
 		ModulePlugin_Core_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
