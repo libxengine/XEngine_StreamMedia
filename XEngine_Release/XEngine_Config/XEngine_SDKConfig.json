@@ -1,0 +1,34 @@
+{
+    "tszIPAddr":"192.168.1.8",
+    "bDeamon":false,
+    "nHttpPort":5601,
+    "XMax":{
+        "MaxClient":10000,
+        "MaxQueue":10000,
+        "IOThread":1,
+        "HttpThread":1
+    },
+    "XTime":{
+        "nTimeCheck":3,
+        "nHttpTimeout":0
+    },
+    "XClient":{
+        "tszIPAddr":"127.0.0.1",
+        "nPort":5600
+    },
+    "XPlugin":[
+        {
+            "PluginEnable":true,
+            "PluginToken":10001001,
+            "PluginMethod":"dahuasdk",
+            "PluginAddr":"192.168.8.152",
+            "PluginPort":37777,
+            "PluginUser":"admin",
+            "PluginPass":"sihan123",
+            "PluginFile":"./XEngine_Plugin/ModulePlugin_DaHua.dll"
+        }
+    ],
+    "XVer":[
+        "1.0.0.1001 Build20220631"
+    ]
+}
