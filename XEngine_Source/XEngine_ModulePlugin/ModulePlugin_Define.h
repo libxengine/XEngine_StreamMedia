@@ -16,6 +16,7 @@
 typedef struct  
 {
 	XNETHANDLE xhToken;
+	BOOL bLive;
 	int nChannel;
 	int nDType;
 	int nMsgLen;
