@@ -121,10 +121,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 	}
 	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
 	{
-		//播放
+		//播放:http://127.0.0.1:5601/api?function=play&params1=10001001&params2=1
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
 			TCHAR tszChannel[64];
+			XNETHANDLE xhClient = 0;
 
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
@@ -141,14 +142,35 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			}
 			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
 			ModulePlugin_Core_Play(_ttoi64(tszValue), _ttoi(tszChannel));
+			//通知推流服务
+			if (!ModuleSession_SDKDevice_Get(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
+			{
+				st_HDRParam.nHttpCode = 500;
+				ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
+				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备失败,获取客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+				return FALSE;
+			}
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+
+			st_ProtocolDevice.bLive = TRUE;
+			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
+			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
+			ModuleProtocol_JT1078_StreamCreate(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
 		}
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
 		{
-			//停止
+			//停止:http://127.0.0.1:5601/api?function=stop&params1=10001001&params2=1
 			TCHAR tszChannel[64];
+			XNETHANDLE xhClient = 0;
 
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
@@ -165,6 +187,25 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			}
 			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
 			ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
+			//通知推流服务
+			if (!ModuleSession_SDKDevice_Get(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
+			{
+				st_HDRParam.nHttpCode = 500;
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
+				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备失败,获取客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+				return FALSE;
+			}
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+
+			st_ProtocolDevice.bLive = TRUE;
+			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
+			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
+			ModuleProtocol_JT1078_StreamDestroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
