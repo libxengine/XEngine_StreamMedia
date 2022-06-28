@@ -1,6 +1,7 @@
 [中文](README.md) ||  [English](README.en.md)  
 # XEngine_StreamMedia
-This repository has a development and master branch. If you want to use it, please use the master branch
+This repository has a development and master branch. If you want to use it, please use the master branch  
+As long as the repository is not in suspended state, we will maintain and develop it all the time, please use it with confidence  
 
 ## Introduction
 c c++ 流媒体服务器  
@@ -19,6 +20,7 @@ A set of concise and high-performance cross-platform streaming media analysis an
 5. Support the parsing and streaming of the national standard GB28181 protocol
 6. Support international ONVIF protocol
 7. Support SIP streaming protocol
+8. support device manufacturer sdk(dahua,haikang,suobei...and more...)
 
 ## install
 
