@@ -124,8 +124,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		//播放
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
+			TCHAR tszChannel[64];
+
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
+			memset(tszChannel, '\0', sizeof(tszChannel));
 			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszValue);
 			if (0 != _tcsnicmp(lpszParamName, tszKey, _tcslen(lpszParamName)))
 			{
@@ -136,16 +139,20 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 				return FALSE;
 			}
-			ModulePlugin_Core_Play(_ttoi64(tszValue), 1);
+			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
+			ModulePlugin_Core_Play(_ttoi64(tszValue), _ttoi(tszChannel));
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s 通道:%d 成功"), lpszClientAddr, tszValue, 1);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
 		}
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
 		{
 			//停止
+			TCHAR tszChannel[64];
+
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
+			memset(tszChannel, '\0', sizeof(tszChannel));
 			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszValue);
 			if (0 != _tcsnicmp(lpszParamName, tszKey, _tcslen(lpszParamName)))
 			{
@@ -156,10 +163,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 				return FALSE;
 			}
-			ModulePlugin_Core_Stop(_ttoi64(tszValue), 1);
+			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
+			ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s 通道:%d 成功"), lpszClientAddr, tszValue, 1);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	}
