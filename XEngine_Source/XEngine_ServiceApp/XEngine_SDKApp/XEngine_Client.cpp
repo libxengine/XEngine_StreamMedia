@@ -20,4 +20,8 @@ void XEngine_Client_CBRecv(XNETHANDLE xhNet, ENUM_NETCLIENT_TCPEVENTS enTCPClien
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%lld,断开了服务器的连接！"), xhNet);
 	}
+	else if (ENUM_XENGINE_XCLIENT_SOCKET_TCP_EVENT_CONNECT == enTCPClientEvents)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%lld,重新连接到服务器！"), xhNet);
+	}
 }

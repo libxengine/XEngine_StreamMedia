@@ -366,7 +366,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_MALLOC;
 		return FALSE;
 	}
-	Json::Value st_JsonArray = st_JsonRoot["PluginArray"];
+	Json::Value st_JsonArray = st_JsonRoot["XPlugin"];
 	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
 	{
 		XENGINE_PLUGININFO st_PluginInfo;
