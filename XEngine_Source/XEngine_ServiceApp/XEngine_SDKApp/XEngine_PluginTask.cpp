@@ -19,11 +19,7 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken)
 
 		if (ModulePlugin_Core_GetData(xhToken, &st_MQData))
 		{
-			XNETHANDLE xhClient = 0;
-			if (ModuleSession_SDKDevice_Get(xhToken, st_MQData.nChannel, st_MQData.bLive, &xhClient))
-			{
-				XClient_TCPSelect_SendEx(xhClient, st_MQData.ptszMsgBuffer, &st_MQData.nMsgLen);
-			}
+			XEngine_PluginTask_Handle(xhToken, &st_MQData);
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
@@ -31,5 +27,23 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken)
 }
 BOOL XEngine_PluginTask_Handle(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQData)
 {
+	XNETHANDLE xhClient = 0;
+	if (ModuleSession_SDKDevice_Get(xhToken, pSt_MQData->nChannel, pSt_MQData->bLive, &xhClient))
+	{
+		int nMsgLen = 0;
+		TCHAR tszMsgBuffer[1024];
+		XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+
+		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+		memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+
+		st_ProtocolDevice.bLive = TRUE;
+		st_ProtocolDevice.nChannel = pSt_MQData->nChannel;
+		_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhToken);
+
+		ModuleProtocol_JT1078_StreamPush(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice, pSt_MQData->ptszMsgBuffer, pSt_MQData->nMsgLen, 0);
+		XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&pSt_MQData->ptszMsgBuffer);
+	}
 	return TRUE;
 }

@@ -108,34 +108,26 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
 			int nPos = 0;
-			TCHAR tszDeviceNumber[64];
-			XENGINE_RTPPACKETHDR2016 st_RTPHdr;
-			XENGINE_RTPPACKETTAIL st_RTPTail;
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
-			memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
-			memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR2016));
-			memset(&st_RTPTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
-
-			memcpy(&st_RTPHdr, lpszMsgBuffer, sizeof(XENGINE_RTPPACKETHDR2016));
-
-			nPos = sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL);
-			ModuleHelp_JT1078_BCDToString(st_RTPHdr.bySIMNumber, tszDeviceNumber);
-			if (ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A == st_RTPHdr.byType)
+			nPos = sizeof(XENGINE_PROTOCOLDEVICE);
+			if (ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A == pSt_ProtocolHdr->wReserve)
 			{
-				if (st_RTPHdr.byChannel != st_JT1078Config.nAudio)
+				if (st_ProtocolDevice.nChannel != st_JT1078Config.nAudio)
 				{
 					return TRUE;
 				}
 			}
 			else
 			{
-				if (!ModuleSession_JT1078Server_Insert(tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, &st_RTPHdr, &st_RTPTail, lpszMsgBuffer + nPos, nMsgLen - nPos))
+				if (!ModuleSession_JT1078Server_Insert(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, lpszMsgBuffer + nPos, nMsgLen - nPos))
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, ModuleSession_GetLastError());
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 					return FALSE;
 				}
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,包类型：%d,负载标记：%d,序列号：%d,Maker：%d,大小：%d"), lpszClientAddr, tszDeviceNumber, st_RTPHdr.byChannel, pSt_ProtocolHdr->wReserve, st_RTPHdr.byType, st_RTPHdr.byPT, st_RTPHdr.wSerial, st_RTPHdr.byM, nMsgLen);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen);
 		}
 		else
 		{
