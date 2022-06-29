@@ -33,9 +33,9 @@ extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR * ptszMsgBuffer, int* p
 {
 	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamCreate(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);
 }
-extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_RTPPACKETHDR2016 * pSt_RTPHdr, XENGINE_RTPPACKETTAIL * pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen, BOOL bLive)
+extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
-	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamPush(ptszMsgBuffer, pInt_MsgLen, pSt_RTPHdr, pSt_RTPTail, lpszMsgBuffer, nMsgLen, bLive);
+	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamPush(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice, lpszMsgBuffer, nMsgLen, nMsgType);
 }
 extern "C" BOOL ModuleProtocol_JT1078_StreamDestroy(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
 {

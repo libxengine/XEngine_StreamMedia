@@ -83,37 +83,32 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBu
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：pSt_RTPHdr
+ 参数.三：pSt_ProtocolDevice
   In/Out：In
   类型：数据结构指针
   可空：N
-  意思：输入RTP头
- 参数.四：pSt_RTPTail
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入RTP尾
- 参数.五：lpszMsgBuffer
+  意思：输入设备信息
+ 参数.四：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入推流数据
- 参数.六：nMsgLen
+ 参数.五：nMsgLen
   In/Out：In
   类型：整数型
   可空：N
   意思：推流数据大小
- 参数.七：bLive
+ 参数.六：nMsgType
   In/Out：In
-  类型：逻辑型
+  类型：整数型
   可空：N
-  意思：直播还是录像
+  意思：消息类型,0视频,1音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen, BOOL bLive)
+BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -129,24 +124,15 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuff
 	st_ProcotolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
 	st_ProcotolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_SMS;
 	st_ProcotolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH;
-	st_ProcotolHdr.unPacketSize = sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL) + nMsgLen;
+	st_ProcotolHdr.unPacketSize = sizeof(XENGINE_PROTOCOLDEVICE) + nMsgLen;
 	st_ProcotolHdr.xhToken = 0;
+	st_ProcotolHdr.wReserve = nMsgType;
 	st_ProcotolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
-
-	if (bLive)
-	{
-		st_ProcotolHdr.wReserve = 1;
-	}
-	else
-	{
-		st_ProcotolHdr.wReserve = 0;
-	}
 
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProcotolHdr.unPacketSize;
 	memcpy(ptszMsgBuffer, &st_ProcotolHdr, sizeof(XENGINE_PROTOCOLHDR));
-	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_RTPHdr, sizeof(XENGINE_RTPPACKETHDR2016));
-	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_RTPPACKETHDR2016), pSt_RTPTail, sizeof(XENGINE_RTPPACKETTAIL));
-	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL), lpszMsgBuffer, nMsgLen);
+	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolDevice, sizeof(XENGINE_PROTOCOLDEVICE));
+	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDEVICE), lpszMsgBuffer, nMsgLen);
 	return TRUE;
 }
 /********************************************************************
