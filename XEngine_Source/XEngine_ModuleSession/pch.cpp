@@ -69,9 +69,9 @@ extern "C" BOOL ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int
 {
 	return m_JTServer.ModuleSession_JT1078Server_Destroy(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XENGINE_RTPPACKETHDR2016 * pSt_RTPHdr, XENGINE_RTPPACKETTAIL * pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen)
+extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
-	return m_JTServer.ModuleSession_JT1078Server_Insert(lpszDeviceNumber, nChannel, bLive, pSt_RTPHdr, pSt_RTPTail, lpszMsgBuffer, nMsgLen);
+	return m_JTServer.ModuleSession_JT1078Server_Insert(lpszDeviceNumber, nChannel, bLive, lpszMsgBuffer, nMsgLen);
 }
 extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {

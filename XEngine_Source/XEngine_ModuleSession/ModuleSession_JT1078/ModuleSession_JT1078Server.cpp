@@ -217,22 +217,12 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：pSt_RTPHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入直播还是录像
- 参数.五：pSt_RTPTail
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入直播还是录像
- 参数.六：lpszMsgBuffer
+ 参数.四：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入要插入的数据
- 参数.七：nMsgLen
+ 参数.五：nMsgLen
   In/Out：In
   类型：整数型
   可空：N
@@ -242,7 +232,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail, LPCTSTR lpszMsgBuffer, int nMsgLen)
+BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
