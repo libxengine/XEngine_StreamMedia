@@ -10,6 +10,8 @@
 //    Purpose:     大华SDK实现
 //    History:
 *********************************************************************/
+#define XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE 1024
+
 typedef struct
 {
 	LLONG xhPlay;

@@ -325,33 +325,41 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 		}
 
 		st_MQData.nDType = 1;
-		st_MQData.ptszMsgBuffer = (TCHAR*)malloc(dwBufSize);
-		if (NULL == st_MQData.ptszMsgBuffer)
-		{
-			return;
-		}
-		memset(st_MQData.ptszMsgBuffer, '\0', dwBufSize);
-		
-		if (pClass_This->bH264Init)
-		{
-			st_MQData.nMsgLen = dwBufSize;
-			memcpy(st_MQData.ptszMsgBuffer, pBuffer, dwBufSize);
-		}
-		else
+		if (!pClass_This->bH264Init)
 		{
 			for (unsigned int i = 0; i < dwBufSize; i++)
 			{
 				if ((0 == pBuffer[i]) && (0 == pBuffer[i + 1]) && (0 == pBuffer[i + 2]) && (1 == pBuffer[i + 3]) && (103 == pBuffer[i + 4]))
 				{
-					st_MQData.nMsgLen = dwBufSize - i;
-					memcpy(st_MQData.ptszMsgBuffer, pBuffer + i, dwBufSize - i);
+					dwBufSize -= i;
+					pBuffer += i;
 					pClass_This->bH264Init = TRUE;
 					break;
 				}
 			}
 		}
-		pClass_This->st_MQLocker.lock();
-		pClass_This->stl_ListDatas.push_back(st_MQData);
-		pClass_This->st_MQLocker.unlock();
+		//分拆数据包
+		int nCpyCount = 0;
+		int nPosSize = 0;
+		int nAllSize = dwBufSize;
+		while (nAllSize > 0)
+		{
+			if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+			{
+				nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+			}
+			else
+			{
+				nCpyCount = nAllSize;
+			}
+			st_MQData.nMsgLen = nCpyCount;
+			memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
+
+			pClass_This->st_MQLocker.lock();
+			pClass_This->stl_ListDatas.push_back(st_MQData);
+			pClass_This->st_MQLocker.unlock();
+			nAllSize -= nCpyCount;
+			nPosSize += nCpyCount;
+		}
 	}
 }
