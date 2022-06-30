@@ -11,4 +11,3 @@
 //    History:
 *********************************************************************/
 XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken);
-BOOL XEngine_PluginTask_Handle(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQData);

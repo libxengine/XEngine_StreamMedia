@@ -94,7 +94,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			}
 			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, pSt_ProtocolDevice, pSt_ProtocolAVAttr);
 			m_ThreadAV.detach();
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d,设备版本：%s"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 0 == pSt_ProtocolHdr->wReserve ? "2016" : "2014");
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
@@ -110,7 +110,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			int nPos = 0;
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
-
+			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			nPos = sizeof(XENGINE_PROTOCOLDEVICE);
 			if (ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A == pSt_ProtocolHdr->wReserve)
 			{
@@ -125,6 +125,10 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 				{
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 					return FALSE;
+				}
+				if (NULL != pSt_FileVideo)
+				{
+					fwrite(lpszMsgBuffer + nPos, 1, nMsgLen - nPos, pSt_FileVideo);
 				}
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen);

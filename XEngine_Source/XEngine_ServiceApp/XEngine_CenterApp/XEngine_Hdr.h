@@ -76,6 +76,10 @@ extern XHANDLE xhCenterPacket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_JT1078CONFIG st_JT1078Config;
+//调试用
+extern FILE* pSt_FileVideo;
+extern FILE* pSt_FileAudio;
+
 
 //连接库
 #ifdef _WINDOWS

@@ -20,6 +20,10 @@ XHANDLE xhCenterPacket = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_JT1078CONFIG st_JT1078Config;
+//调试用
+FILE* pSt_FileVideo = NULL;
+FILE* pSt_FileAudio = NULL;
+
 
 void ServiceApp_Stop(int signo)
 {
@@ -34,6 +38,14 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
+		if (NULL != pSt_FileAudio)
+		{
+			fclose(pSt_FileAudio);
+		}
+		if (NULL != pSt_FileVideo)
+		{
+			fclose(pSt_FileVideo);
+		}
 	}
 #ifdef _MSC_BUILD
 	WSACleanup();
@@ -115,6 +127,8 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,初始化信号量成功"));
 
+	//调试相关
+	pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
 	//启动业务服务相关代码
 	if (st_ServiceConfig.nCenterPort > 0)
 	{
@@ -189,6 +203,14 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
+		if (NULL != pSt_FileAudio)
+		{
+			fclose(pSt_FileAudio);
+		}
+		if (NULL != pSt_FileVideo)
+		{
+			fclose(pSt_FileVideo);
+		}
 	}
 #ifdef _MSC_BUILD
 	WSACleanup();

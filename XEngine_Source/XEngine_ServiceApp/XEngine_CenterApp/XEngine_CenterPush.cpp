@@ -38,7 +38,7 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建启动流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("推流创建事件,设备ID：%s,设备通道：%d,流类型：%d,处理完毕,此流不带音频"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("推流创建事件,处理完毕,推流地址:%s,此流不带音频"), tszPushAddr);
 	return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////
