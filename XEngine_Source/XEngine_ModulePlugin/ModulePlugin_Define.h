@@ -15,12 +15,12 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct  
 {
+	TCHAR tszMsgBuffer[2048];     //通过free释放
 	XNETHANDLE xhToken;
 	BOOL bLive;
 	int nChannel;
 	int nDType;
 	int nMsgLen;
-	TCHAR* ptszMsgBuffer;     //通过free释放
 }PLUGIN_MQDATA;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数定义
