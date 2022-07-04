@@ -193,7 +193,18 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 
 	st_PlayInfo.nChannle = nChannel;
 	//开始播放
-	st_PlayInfo.xhPlay = CLIENT_RealPlayEx(stl_MapIterator->second.hSDKModule, nChannel, 0);
+	NET_IN_REALPLAY_BY_DATA_TYPE st_PlayIn = { sizeof(st_PlayIn) };
+	NET_OUT_REALPLAY_BY_DATA_TYPE st_PlayOut = { sizeof(st_PlayOut) };
+
+	st_PlayIn.cbRealData = PluginCore_CB_RealData;
+	st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
+	st_PlayIn.rType = DH_RType_Realplay;
+	st_PlayIn.nChannelID = nChannel;
+	//st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
+	st_PlayIn.hWnd = NULL;
+	st_PlayIn.dwUser = (DWORD)this;
+
+	st_PlayInfo.xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 5000);
 	if (0 == st_PlayInfo.xhPlay)
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
@@ -202,7 +213,6 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 		return FALSE;
 	}
 	stl_MapIterator->second.pStl_ListChannel->push_back(st_PlayInfo);
-	CLIENT_SetRealDataCallBackEx(st_PlayInfo.xhPlay, PluginCore_CB_RealData, (DWORD)this, REALDATA_FLAG_RAW_DATA);
 	st_Locker.unlock_shared();
 	return TRUE;
 }
@@ -297,7 +307,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 {
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)dwUser;
 
-	if (0 == dwDataType)
+	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
 		PLUGIN_MQDATA st_MQData;
 		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
@@ -313,53 +323,34 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 				{
 					st_MQData.xhToken = stl_MapIterator->second.hSDKModule;
 					st_MQData.nChannel = stl_ListIterator->nChannle;
+					st_MQData.nDType = 1;
+					//分拆数据包
+					int nCpyCount = 0;
+					int nPosSize = 0;
+					int nAllSize = dwBufSize;
+					while (nAllSize > 0)
+					{
+						if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+						{
+							nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+						}
+						else
+						{
+							nCpyCount = nAllSize;
+						}
+						st_MQData.nMsgLen = nCpyCount;
+						memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
+
+						pClass_This->st_MQLocker.lock();
+						pClass_This->stl_ListDatas.push_back(st_MQData);
+						pClass_This->st_MQLocker.unlock();
+						nAllSize -= nCpyCount;
+						nPosSize += nCpyCount;
+					}
 					break;
 				}
 			}
 		}
 		pClass_This->st_Locker.unlock();
-
-		if (0 == st_MQData.nChannel)
-		{
-			return;
-		}
-
-		st_MQData.nDType = 1;
-		if (!pClass_This->bH264Init)
-		{
-			for (unsigned int i = 0; i < dwBufSize; i++)
-			{
-				if ((0 == pBuffer[i]) && (0 == pBuffer[i + 1]) && (0 == pBuffer[i + 2]) && (1 == pBuffer[i + 3]) && (103 == pBuffer[i + 4]))
-				{
-					dwBufSize -= i;
-					pBuffer += i;
-					pClass_This->bH264Init = TRUE;
-					break;
-				}
-			}
-		}
-		//分拆数据包
-		int nCpyCount = 0;
-		int nPosSize = 0;
-		int nAllSize = dwBufSize;
-		while (nAllSize > 0)
-		{
-			if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
-			{
-				nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
-			}
-			else
-			{
-				nCpyCount = nAllSize;
-			}
-			st_MQData.nMsgLen = nCpyCount;
-			memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
-
-			pClass_This->st_MQLocker.lock();
-			pClass_This->stl_ListDatas.push_back(st_MQData);
-			pClass_This->st_MQLocker.unlock();
-			nAllSize -= nCpyCount;
-			nPosSize += nCpyCount;
-		}
 	}
 }
