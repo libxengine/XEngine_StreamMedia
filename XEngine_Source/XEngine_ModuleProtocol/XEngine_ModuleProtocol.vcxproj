@@ -166,12 +166,12 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModuleProtocol_Define.h" />
     <ClInclude Include="ModuleProtocol_Error.h" />
-    <ClInclude Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.h" />
+    <ClInclude Include="ModuleProtocol_Stream\ModuleProtocol_Stream.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.cpp" />
+    <ClCompile Include="ModuleProtocol_Stream\ModuleProtocol_Stream.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

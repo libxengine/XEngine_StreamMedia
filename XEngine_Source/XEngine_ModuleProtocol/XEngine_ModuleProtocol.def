@@ -3,6 +3,6 @@ LIBRARY
 EXPORTS
 	ModuleProtocol_GetLastError
 
-	ModuleProtocol_JT1078_StreamCreate
-	ModuleProtocol_JT1078_StreamPush
-	ModuleProtocol_JT1078_StreamDestroy
+	ModuleProtocol_Stream_Create
+	ModuleProtocol_Stream_Push
+	ModuleProtocol_Stream_Destroy

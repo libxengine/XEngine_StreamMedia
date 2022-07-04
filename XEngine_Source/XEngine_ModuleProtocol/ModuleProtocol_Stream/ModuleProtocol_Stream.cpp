@@ -1,20 +1,20 @@
 ﻿#include "pch.h"
-#include "ModuleProtocol_JT1078.h"
+#include "ModuleProtocol_Stream.h"
 /********************************************************************
-//    Created:     2022/04/25  14:14:57
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_JT1078\ModuleProtocol_JT1078.cpp
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_JT1078
-//    File Base:   ModuleProtocol_JT1078
+//    Created:     2022/07/04  14:06:04
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Stream\ModuleProtocol_Stream.cpp
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Stream
+//    File Base:   ModuleProtocol_Stream
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     JT1078协议
+//    Purpose:     流媒体协议
 //    History:
 *********************************************************************/
-CModuleProtocol_JT1078::CModuleProtocol_JT1078()
+CModuleProtocol_Stream::CModuleProtocol_Stream()
 {
 }
-CModuleProtocol_JT1078::~CModuleProtocol_JT1078()
+CModuleProtocol_Stream::~CModuleProtocol_Stream()
 {
 
 }
@@ -22,7 +22,7 @@ CModuleProtocol_JT1078::~CModuleProtocol_JT1078()
 //                             公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamCreate
+函数名称：ModuleProtocol_Stream_Create
 函数功能：流媒体创建
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -44,7 +44,7 @@ CModuleProtocol_JT1078::~CModuleProtocol_JT1078()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
+BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -71,7 +71,7 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBu
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamPush
+函数名称：ModuleProtocol_Stream_Push
 函数功能：推流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -108,7 +108,7 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBu
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
+BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -136,7 +136,7 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuff
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamDestroy
+函数名称：ModuleProtocol_Stream_Destroy
 函数功能：销毁流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -158,7 +158,7 @@ BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuff
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_JT1078::ModuleProtocol_JT1078_StreamDestroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
+BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 

@@ -91,7 +91,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 
 		if (ModuleSession_JT1078Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
-			ModuleProtocol_JT1078_StreamDestroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
+			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
 			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s，设备：%s，通道：%d，与服务器断开，原因：%s"), lpszClientAddr, st_ProtocolDev.tszDeviceNumber, st_ProtocolDev.nChannel, lpszLeaveMsg);
 		}
@@ -115,7 +115,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 
 		if (ModuleSession_JT1078Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
-			ModuleProtocol_JT1078_StreamDestroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
+			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
 			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("录像端：%s，设备：%s，通道：%d，与服务器断开，原因：%s"), lpszClientAddr, st_ProtocolDev.tszDeviceNumber, st_ProtocolDev.nChannel, lpszLeaveMsg);
 		}

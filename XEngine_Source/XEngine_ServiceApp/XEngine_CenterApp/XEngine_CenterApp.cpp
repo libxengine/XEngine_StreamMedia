@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,初始化信号量成功"));
 
 	//调试相关
-	pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	//pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
 	//启动业务服务相关代码
 	if (st_ServiceConfig.nCenterPort > 0)
 	{

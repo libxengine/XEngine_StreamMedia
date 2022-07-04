@@ -15,10 +15,10 @@
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
-/*                         导出的JT1078协议函数                         */
+/*                         导出的协议函数                               */
 /************************************************************************/
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamCreate
+函数名称：ModuleProtocol_Stream_Create
 函数功能：流媒体创建
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -40,9 +40,9 @@ extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
+extern "C" BOOL ModuleProtocol_Stream_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamPush
+函数名称：ModuleProtocol_Stream_Push
 函数功能：推流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -79,9 +79,9 @@ extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR* ptszMsgBuffer, int* pI
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType);
+extern "C" BOOL ModuleProtocol_Stream_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType);
 /********************************************************************
-函数名称：ModuleProtocol_JT1078_StreamDestroy
+函数名称：ModuleProtocol_Stream_Destroy
 函数功能：销毁流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -103,4 +103,4 @@ extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR* ptszMsgBuffer, int* pInt
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_JT1078_StreamDestroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
+extern "C" BOOL ModuleProtocol_Stream_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);

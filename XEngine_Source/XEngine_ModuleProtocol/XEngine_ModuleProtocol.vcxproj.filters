@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleProtocol_JT1078">
-      <UniqueIdentifier>{563fda1d-114e-4795-9060-ea9ac18b64e9}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleProtocol_Stream">
+      <UniqueIdentifier>{207f999a-d244-4ffc-b340-b8c960ae75ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleProtocol_JT1078">
-      <UniqueIdentifier>{3d2dc46b-019d-43ad-bfd8-b3144ca2f46a}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleProtocol_Stream">
+      <UniqueIdentifier>{15a26df5-14ce-4ad2-b499-0a5f2088b1f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,8 +33,8 @@
     <ClInclude Include="ModuleProtocol_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.h">
-      <Filter>头文件\ModuleProtocol_JT1078</Filter>
+    <ClInclude Include="ModuleProtocol_Stream\ModuleProtocol_Stream.h">
+      <Filter>头文件\ModuleProtocol_Stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +44,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleProtocol_JT1078\ModuleProtocol_JT1078.cpp">
-      <Filter>源文件\ModuleProtocol_JT1078</Filter>
+    <ClCompile Include="ModuleProtocol_Stream\ModuleProtocol_Stream.cpp">
+      <Filter>源文件\ModuleProtocol_Stream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

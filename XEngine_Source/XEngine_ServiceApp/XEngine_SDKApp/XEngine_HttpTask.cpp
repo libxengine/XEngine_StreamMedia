@@ -159,7 +159,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			st_ProtocolDevice.bLive = TRUE;
 			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
 			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
-			ModuleProtocol_JT1078_StreamCreate(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			ModuleProtocol_Stream_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
@@ -203,7 +203,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			st_ProtocolDevice.bLive = TRUE;
 			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
 			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
-			ModuleProtocol_JT1078_StreamDestroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			ModuleProtocol_Stream_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);

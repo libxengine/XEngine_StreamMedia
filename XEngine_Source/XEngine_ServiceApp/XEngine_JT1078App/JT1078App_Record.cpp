@@ -114,12 +114,12 @@ BOOL XEngine_Record_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		}
 		ModuleDB_JT1078_DeviceInsert(lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, FALSE, "2016");
 		//创建流
-		ModuleProtocol_JT1078_StreamCreate(tszSDBuffer, &nSDLen, &st_ProtoDevice);
+		ModuleProtocol_Stream_Create(tszSDBuffer, &nSDLen, &st_ProtoDevice);
 		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("录像端：%s,登录到服务,设备ID：%s,通道：%d,推流端客户端：%lld,设备版本：2016"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient);
 	}
 
-	ModuleProtocol_JT1078_StreamPush(tszSDBuffer, &nSDLen, &st_ProtoDevice, lpszMsgBuffer, nMsgLen, 0);
+	ModuleProtocol_Stream_Push(tszSDBuffer, &nSDLen, &st_ProtoDevice, lpszMsgBuffer, nMsgLen, 0);
 	XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("录像端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, nSDLen);
 	return TRUE;

@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "ModuleProtocol_JT1078/ModuleProtocol_JT1078.h"
+#include "ModuleProtocol_Stream/ModuleProtocol_Stream.h"
 /********************************************************************
 //    Created:     2022/03/01  09:27:08
 //    File Name:   D:\XEngine_ServiceApp\XEngine_Source\XEngine_ModuleProtocol\pch.cpp
@@ -14,7 +14,7 @@
 BOOL ModuleProtocol_IsErrorOccur = FALSE;
 DWORD ModuleProtocol_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
-CModuleProtocol_JT1078 m_ProtocolJT1078;
+CModuleProtocol_Stream m_ProtocolStream;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -29,15 +29,15 @@ extern "C" DWORD ModuleProtocol_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的JT1078协议函数                         */
 /************************************************************************/
-extern "C" BOOL ModuleProtocol_JT1078_StreamCreate(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
+extern "C" BOOL ModuleProtocol_Stream_Create(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
 {
-	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamCreate(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);
+	return m_ProtocolStream.ModuleProtocol_Stream_Create(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);
 }
-extern "C" BOOL ModuleProtocol_JT1078_StreamPush(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
+extern "C" BOOL ModuleProtocol_Stream_Push(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
-	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamPush(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice, lpszMsgBuffer, nMsgLen, nMsgType);
+	return m_ProtocolStream.ModuleProtocol_Stream_Push(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice, lpszMsgBuffer, nMsgLen, nMsgType);
 }
-extern "C" BOOL ModuleProtocol_JT1078_StreamDestroy(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
+extern "C" BOOL ModuleProtocol_Stream_Destroy(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
 {
-	return m_ProtocolJT1078.ModuleProtocol_JT1078_StreamDestroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDev);
+	return m_ProtocolStream.ModuleProtocol_Stream_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDev);
 }
