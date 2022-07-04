@@ -11,21 +11,15 @@
 //    History:
 *********************************************************************/
 //////////////////////////////////////////////////////////////////////////
-//                        导出的JT1078错误
+//                        导出的错误
 //////////////////////////////////////////////////////////////////////////
-#define ERROR_MODULE_SESSION_JT1078_PARAMENT 0xE0001                      //参数错误
-#define ERROR_MODULE_SESSION_JT1078_MALLOC 0xE0002                        //申请内存失败
-#define ERROR_MODULE_SESSION_JT1078_ADDR 0xE0003                          //地址匹配失败,需要重建
-#define ERROR_MODULE_SESSION_JT1078_NOTCLIENT 0xE0004                     //没有客户端
-#define ERROR_MODULE_SESSION_JT1078_EXIST 0xE0005                         //存在
-#define ERROR_MODULE_SESSION_JT1078_NOTDEVICE 0xE0006                     //没有设备
-#define ERROR_MODULE_SESSION_JT1078_NOTCHANNEL 0xE0007                    //没有通道
-#define ERROR_MODULE_SESSION_JT1078_NOTLIVE 0xE0008                       //没有找到属性
-#define ERROR_MODULE_SESSION_JT1078_EMPTY 0xE0009                         //空的列表
-//////////////////////////////////////////////////////////////////////////
-//                        导出的SDK错误
-//////////////////////////////////////////////////////////////////////////
-#define ERROR_MODULE_SESSION_SDK_PARAMENT 0xE1000                         //参数错误
-#define ERROR_MODULE_SESSION_SDK_NOTFOUND 0xE1001                         //没有找到句柄
-#define ERROR_MODULE_SESSION_SDK_MALLOC 0xE1002                           //申请内存失败
-#define ERROR_MODULE_SESSION_SDK_EXIST 0xE1003                            //设备存在
+#define ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT 0xE0001                 //参数错误
+#define ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC 0xE0002                   //申请内存失败
+#define ERROR_STREAMMEDIA_MODULE_SESSION_ADDR 0xE0003                     //地址匹配失败,需要重建
+#define ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT 0xE0004                //没有客户端
+#define ERROR_STREAMMEDIA_MODULE_SESSION_EXIST 0xE0005                    //存在
+#define ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE 0xE0006                //没有设备
+#define ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL 0xE0007               //没有通道
+#define ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE 0xE0008                  //没有找到属性
+#define ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY 0xE0009                    //空的列表
+#define ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND 0xE000A                 //没有找到

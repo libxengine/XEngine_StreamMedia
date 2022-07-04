@@ -13,17 +13,23 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleSession_JT1078">
-      <UniqueIdentifier>{513458c9-2a91-4e48-8d15-0dbf760681b9}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleSession_Server">
+      <UniqueIdentifier>{3dbccfac-4a32-4c18-b304-b5b04876663f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleSession_JT1078">
-      <UniqueIdentifier>{06b9abbb-e68c-4a1c-bab0-abc6c54e760e}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleSession_Server">
+      <UniqueIdentifier>{50e7df2d-8afa-43eb-b717-836c9ab20f48}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\ModuleSession_SDKDevice">
+    <Filter Include="头文件\ModuleSession_Client">
       <UniqueIdentifier>{983e96e1-cfed-4747-be7e-cd5059b23db1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleSession_SDKDevice">
+    <Filter Include="源文件\ModuleSession_Client">
       <UniqueIdentifier>{d73a91bc-1a59-4b19-a004-30349496a6ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\ModuleSession_SDKDevice">
+      <UniqueIdentifier>{c067f99e-f669-41a7-b788-61c1f2d89e78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleSession_SDKDevice">
+      <UniqueIdentifier>{78f472ee-72fe-40ef-bd86-4482ab4d2887}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,11 +45,11 @@
     <ClInclude Include="ModuleSession_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Client.h">
-      <Filter>头文件\ModuleSession_JT1078</Filter>
+    <ClInclude Include="ModuleSession_Server\ModuleSession_Server.h">
+      <Filter>头文件\ModuleSession_Server</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleSession_JT1078\ModuleSession_JT1078Server.h">
-      <Filter>头文件\ModuleSession_JT1078</Filter>
+    <ClInclude Include="ModuleSession_Client\ModuleSession_Client.h">
+      <Filter>头文件\ModuleSession_Client</Filter>
     </ClInclude>
     <ClInclude Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.h">
       <Filter>头文件\ModuleSession_SDKDevice</Filter>
@@ -56,11 +62,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Client.cpp">
-      <Filter>源文件\ModuleSession_JT1078</Filter>
+    <ClCompile Include="ModuleSession_Server\ModuleSession_Server.cpp">
+      <Filter>源文件\ModuleSession_Server</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleSession_JT1078\ModuleSession_JT1078Server.cpp">
-      <Filter>源文件\ModuleSession_JT1078</Filter>
+    <ClCompile Include="ModuleSession_Client\ModuleSession_Client.cpp">
+      <Filter>源文件\ModuleSession_Client</Filter>
     </ClCompile>
     <ClCompile Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.cpp">
       <Filter>源文件\ModuleSession_SDKDevice</Filter>

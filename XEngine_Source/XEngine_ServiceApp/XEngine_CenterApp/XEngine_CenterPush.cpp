@@ -53,7 +53,7 @@ int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 
 	while (1)
 	{
-		if (!ModuleSession_JT1078Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{
@@ -87,7 +87,7 @@ int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 
 	while (1)
 	{
-		if (!ModuleSession_JT1078Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{

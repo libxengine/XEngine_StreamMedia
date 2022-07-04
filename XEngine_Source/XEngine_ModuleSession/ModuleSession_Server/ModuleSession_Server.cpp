@@ -1,27 +1,27 @@
 ﻿#include "pch.h"
-#include "ModuleSession_JT1078Server.h"
+#include "ModuleSession_Server.h"
 /********************************************************************
-//    Created:     2022/04/28  14:21:14
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_JT1078\ModuleSession_JT1078Server.cpp
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_JT1078
-//    File Base:   ModuleSession_JT1078Server
+//    Created:     2022/07/04  14:16:09
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_Server\ModuleSession_Server.cpp
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_Server
+//    File Base:   ModuleSession_Server
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     JT1078服务器会话
+//    Purpose:     服务器会话
 //    History:
 *********************************************************************/
-CModuleSession_JT1078Server::CModuleSession_JT1078Server()
+CModuleSession_Server::CModuleSession_Server()
 {
 }
-CModuleSession_JT1078Server::~CModuleSession_JT1078Server()
+CModuleSession_Server::~CModuleSession_Server()
 {
 }
 //////////////////////////////////////////////////////////////////////////
 //                    公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Create
+函数名称：ModuleSession_Server_Create
 函数功能：创建一个服务器会话管理器
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -43,14 +43,14 @@ CModuleSession_JT1078Server::~CModuleSession_JT1078Server()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Server::ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if (NULL == lpszDeviceNumber)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
 	//申请内存
@@ -58,14 +58,14 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpsz
 	if (NULL == pSt_RTPPacket)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_MALLOC;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return FALSE;
 	}
 	pSt_RTPPacket->pStl_ListBuffer = new list<SESSION_MSGBUFFER>;
 	if (NULL == pSt_RTPPacket->pStl_ListBuffer)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_MALLOC;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return FALSE;
 	}
 	//是否存在
@@ -102,7 +102,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpsz
 			else
 			{
 				Session_IsErrorOccur = TRUE;
-				Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_EXIST;
+				Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EXIST;
 				st_Locker.unlock();
 				return FALSE;
 			}
@@ -112,7 +112,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpsz
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Destroy
+函数名称：ModuleSession_Server_Destroy
 函数功能：销毁一个管理器
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -134,14 +134,14 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Create(LPCTSTR lpsz
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if (NULL == lpszDeviceNumber)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
 	//设备编号是否存在
@@ -150,7 +150,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
 	if (stl_MapIteratorDevice == stl_MapServer.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTDEVICE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock();
 		return FALSE;
 	}
@@ -159,7 +159,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
 	if (stl_MapIteratorChannel == stl_MapIteratorDevice->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTCHANNEL;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock();
 		return FALSE;
 	}
@@ -168,7 +168,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
 	if (stl_MapIteratorLive == stl_MapIteratorChannel->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTLIVE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock();
 		return FALSE;
 	}
@@ -200,7 +200,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Insert
+函数名称：ModuleSession_Server_Insert
 函数功能：数据包插入
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -232,14 +232,14 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Destroy(LPCTSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
+BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if ((NULL == lpszDeviceNumber) || (NULL == lpszMsgBuffer))
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
 	st_Locker.lock_shared();
@@ -247,7 +247,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
 	if (stl_MapDeviceIterator == stl_MapServer.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTDEVICE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
@@ -255,7 +255,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
 	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTCHANNEL;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
@@ -263,7 +263,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
 	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTLIVE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
@@ -274,7 +274,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
 	if (NULL == st_MsgBuffer.ptszMsgBuffer)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_MALLOC;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
@@ -290,7 +290,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Get
+函数名称：ModuleSession_Server_Get
 函数功能：获取数据
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -322,14 +322,14 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Insert(LPCTSTR lpsz
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if ((NULL == lpszDeviceNumber) || (NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
 	st_Locker.lock_shared();
@@ -337,7 +337,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Get(LPCTSTR lpszDev
 	if (stl_MapDeviceIterator == stl_MapServer.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTDEVICE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		*pInt_MsgLen = -1;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -346,7 +346,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Get(LPCTSTR lpszDev
 	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTCHANNEL;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		*pInt_MsgLen = -1;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -355,7 +355,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Get(LPCTSTR lpszDev
 	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTLIVE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		*pInt_MsgLen = -1;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -364,7 +364,7 @@ BOOL CModuleSession_JT1078Server::ModuleSession_JT1078Server_Get(LPCTSTR lpszDev
 	if (stl_MapLiveIterator->second->pStl_ListBuffer->empty())
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_EMPTY;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY;
 		stl_MapLiveIterator->second->st_Locker.unlock();
 		st_Locker.unlock_shared();
 		return FALSE;

@@ -1,20 +1,20 @@
 ﻿#include "pch.h"
-#include "ModuleSession_JT1078Client.h"
+#include "ModuleSession_Client.h"
 /********************************************************************
-//    Created:     2022/04/25  10:43:22
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_JT1078\ModuleSession_JT1078Client.cpp
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_JT1078
-//    File Base:   ModuleSession_JT1078Client
+//    Created:     2022/07/04  14:37:37
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_Client\ModuleSession_Client.cpp
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_Client
+//    File Base:   ModuleSession_Client
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
 //    Purpose:     客户端会话管理
 //    History:
 *********************************************************************/
-CModuleSession_JT1078Client::CModuleSession_JT1078Client()
+CModuleSession_Client::CModuleSession_Client()
 {
 }
-CModuleSession_JT1078Client::~CModuleSession_JT1078Client()
+CModuleSession_Client::~CModuleSession_Client()
 {
 }
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ CModuleSession_JT1078Client::~CModuleSession_JT1078Client()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Create(XNETHANDLE xhClient)
+BOOL CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -41,7 +41,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Create(XNETHANDLE x
 	if (NULL == pSt_SessionList)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_MALLOC;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return FALSE;
 	}
     st_Locker.lock();
@@ -50,7 +50,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Create(XNETHANDLE x
     return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Get
+函数名称：ModuleSession_Client_Get
 函数功能：获得一个可以使用的客户端句柄
  参数.一：pxhClient
   In/Out：Out
@@ -62,14 +62,14 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Create(XNETHANDLE x
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Get(XNETHANDLE* pxhClient)
+BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if (NULL == pxhClient)
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
     unsigned int nListCount = 100000; //最大任务个数
@@ -89,7 +89,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Get(XNETHANDLE* pxh
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Exist
+函数名称：ModuleSession_Client_Exist
 函数功能：客户端是否存在
  参数.一：pxhClient
   In/Out：Out
@@ -121,14 +121,14 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Get(XNETHANDLE* pxh
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
 	if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber))
 	{
 		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
     BOOL bFound = FALSE;
@@ -154,7 +154,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Exist(XNETHANDLE* p
                 {
                     //不匹配,返回错误
 					Session_IsErrorOccur = TRUE;
-					Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_ADDR;
+					Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_ADDR;
 					return FALSE;
                 }
 			}
@@ -169,7 +169,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Exist(XNETHANDLE* p
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Insert
+函数名称：ModuleSession_Client_Insert
 函数功能：绑定插入一个客户端
  参数.一：xhClient
   In/Out：In
@@ -201,14 +201,14 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Exist(XNETHANDLE* p
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
     Session_IsErrorOccur = FALSE;
 
     if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber))
     {
         Session_IsErrorOccur = TRUE;
-        Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_PARAMENT;
+        Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
         return FALSE;
     }
     //查找
@@ -217,7 +217,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Insert(XNETHANDLE x
     if (stl_MapIterator == stl_MapClient.end())
     {
         Session_IsErrorOccur = TRUE;
-        Session_dwErrorCode = ERROR_MODULE_SESSION_JT1078_NOTCLIENT;
+        Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT;
         st_Locker.unlock_shared();
         return FALSE;
     }
@@ -236,7 +236,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Insert(XNETHANDLE x
     return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_DeleteAddr
+函数名称：ModuleSession_Client_DeleteAddr
 函数功能：通过IP地址删除绑定的设备
  参数.一：lpszDeviceAddr
   In/Out：In
@@ -268,7 +268,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Insert(XNETHANDLE x
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, BOOL* pbLive /* = NULL */)
+BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, BOOL* pbLive /* = NULL */)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -315,7 +315,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_DeleteAddr(LPCTSTR 
     return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_DeleteNumber
+函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -337,7 +337,7 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_DeleteAddr(LPCTSTR 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -366,14 +366,14 @@ BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_DeleteNumber(LPCTST
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Destory
+函数名称：ModuleSession_Client_Destory
 函数功能：销毁客户端会话管理器
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_JT1078Client::ModuleSession_JT1078Client_Destory()
+BOOL CModuleSession_Client::ModuleSession_Client_Destory()
 {
 	Session_IsErrorOccur = FALSE;
 

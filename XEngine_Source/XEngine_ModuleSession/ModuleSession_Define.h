@@ -15,10 +15,10 @@
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
 /*********************************************************************************
-*                          JT1078导出会话模块                                    *
+*                          导出会话模块                                          *
 *********************************************************************************/
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Create
+函数名称：ModuleSession_Client_Create
 函数功能：创建一个客户端会话
  参数.一：xhClient
   In/Out：In
@@ -30,9 +30,9 @@ extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_Create(XNETHANDLE xhClient);
+extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Get
+函数名称：ModuleSession_Client_Get
 函数功能：获得一个可以使用的客户端句柄
  参数.一：pxhClient
   In/Out：Out
@@ -44,9 +44,9 @@ extern "C" BOOL ModuleSession_JT1078Client_Create(XNETHANDLE xhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_Get(XNETHANDLE* pxhClient);
+extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE* pxhClient);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Exist
+函数名称：ModuleSession_Client_Exist
 函数功能：客户端是否存在
  参数.一：pxhClient
   In/Out：Out
@@ -78,9 +78,9 @@ extern "C" BOOL ModuleSession_JT1078Client_Get(XNETHANDLE* pxhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Insert
+函数名称：ModuleSession_Client_Insert
 函数功能：绑定插入一个客户端
  参数.一：xhClient
   In/Out：In
@@ -112,9 +112,9 @@ extern "C" BOOL ModuleSession_JT1078Client_Exist(XNETHANDLE* pxhClient, LPCTSTR 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_DeleteAddr
+函数名称：ModuleSession_Client_DeleteAddr
 函数功能：通过IP地址删除绑定的设备
  参数.一：lpszDeviceAddr
   In/Out：In
@@ -146,9 +146,9 @@ extern "C" BOOL ModuleSession_JT1078Client_Insert(XNETHANDLE xhClient, LPCTSTR l
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
+extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_DeleteNumber
+函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -170,18 +170,18 @@ extern "C" BOOL ModuleSession_JT1078Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XN
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
-函数名称：ModuleSession_JT1078Client_Destory
+函数名称：ModuleSession_Client_Destory
 函数功能：销毁客户端会话管理器
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Client_Destory();
+extern "C" BOOL ModuleSession_Client_Destory();
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Create
+函数名称：ModuleSession_Server_Create
 函数功能：创建一个服务器会话管理器
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -203,9 +203,9 @@ extern "C" BOOL ModuleSession_JT1078Client_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Destroy
+函数名称：ModuleSession_Server_Destroy
 函数功能：销毁一个管理器
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -227,9 +227,9 @@ extern "C" BOOL ModuleSession_JT1078Server_Create(LPCTSTR lpszDeviceNumber, int 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Insert
+函数名称：ModuleSession_Server_Insert
 函数功能：数据包插入
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -261,9 +261,9 @@ extern "C" BOOL ModuleSession_JT1078Server_Destroy(LPCTSTR lpszDeviceNumber, int
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen);
+extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen);
 /********************************************************************
-函数名称：ModuleSession_JT1078Server_Get
+函数名称：ModuleSession_Server_Get
 函数功能：获取数据
  参数.一：lpszDeviceNumber
   In/Out：In
@@ -295,7 +295,7 @@ extern "C" BOOL ModuleSession_JT1078Server_Insert(LPCTSTR lpszDeviceNumber, int 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_JT1078Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 /*********************************************************************************
 *                          设备SDK导出会话模块                                   *
 *********************************************************************************/

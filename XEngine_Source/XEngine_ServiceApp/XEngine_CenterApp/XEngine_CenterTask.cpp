@@ -78,7 +78,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 
 			memcpy(pSt_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			//创建会话
-			if (!ModuleSession_JT1078Server_Create(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive))
+			if (!ModuleSession_Server_Create(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, ModuleSession_GetLastError());
 				return FALSE;
@@ -102,7 +102,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
 			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
-			ModuleSession_JT1078Server_Destroy(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+			ModuleSession_Server_Destroy(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,接受请求了销毁流消息,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
@@ -121,7 +121,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			}
 			else
 			{
-				if (!ModuleSession_JT1078Server_Insert(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, lpszMsgBuffer + nPos, nMsgLen - nPos))
+				if (!ModuleSession_Server_Insert(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, lpszMsgBuffer + nPos, nMsgLen - nPos))
 				{
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 					return FALSE;

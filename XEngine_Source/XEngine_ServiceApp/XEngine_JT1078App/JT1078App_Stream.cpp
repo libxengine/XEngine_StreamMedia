@@ -99,13 +99,13 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	st_ProtoDevice.nChannel = pSt_RTPHdr->byChannel;
 	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, st_ProtoDevice.tszDeviceNumber);
 	
-	if (!ModuleSession_JT1078Client_Exist(&xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
+	if (!ModuleSession_Client_Exist(&xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 	{
 		
 		//先移除老的,无论如何
-		ModuleSession_JT1078Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE);
-		ModuleSession_JT1078Client_Get(&xhClient);   //得到新的可用客户端
-		if (!ModuleSession_JT1078Client_Insert(xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
+		ModuleSession_Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE);
+		ModuleSession_Client_Get(&xhClient);   //得到新的可用客户端
+		if (!ModuleSession_Client_Insert(xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,绑定客户端失败,错误：%lX"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, ModuleSession_GetLastError());
 			return FALSE;

@@ -89,7 +89,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 		HelpComponents_PKTCustom_DeleteEx(xhStreamPkt, hSocket);
 		ModuleDB_JT1078_DeviceDelete(lpszClientAddr);
 
-		if (ModuleSession_JT1078Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
+		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
 			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
@@ -113,7 +113,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 		HelpComponents_PKTCustom_DeleteEx(xhRecordPkt, hSocket);
 		ModuleDB_JT1078_DeviceDelete(lpszClientAddr);
 
-		if (ModuleSession_JT1078Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
+		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
 			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);

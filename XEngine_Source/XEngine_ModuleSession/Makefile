@@ -6,7 +6,7 @@ LOADBIN =
 LIB = 
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleSession_JT1078Client.o ModuleSession_JT1078Server.o pch.o
+LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_SDKDevice.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -26,10 +26,12 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleSession.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-ModuleSession_JT1078Client.o:./ModuleSession_JT1078/ModuleSession_JT1078Client.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_JT1078/ModuleSession_JT1078Client.cpp 
-ModuleSession_JT1078Server.o:./ModuleSession_JT1078/ModuleSession_JT1078Server.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_JT1078/ModuleSession_JT1078Server.cpp 
+ModuleSession_Client.o:./ModuleSession_Client/ModuleSession_Client.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_Client/ModuleSession_Client.cpp 
+ModuleSession_Server.o:./ModuleSession_Server/ModuleSession_Server.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_Server/ModuleSession_Server.cpp 
+ModuleSession_SDKDevice.o:./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp 
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp

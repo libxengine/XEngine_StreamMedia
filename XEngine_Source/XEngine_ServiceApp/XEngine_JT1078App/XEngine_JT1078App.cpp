@@ -45,7 +45,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
 		ModuleDB_JT1078_Destory();
-		ModuleSession_JT1078Client_Destory();
+		ModuleSession_Client_Destory();
 
 		HelpComponents_XLog_Destroy(xhLog);
 	}
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
 		XNETHANDLE xhClient;
 		XClient_TCPSelect_StartEx(&xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 		XClient_TCPSelect_HBStartEx(xhClient);
-		ModuleSession_JT1078Client_Create(xhClient);
+		ModuleSession_Client_Create(xhClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort);
 	}
 
@@ -278,7 +278,7 @@ XENGINE_EXITAPP:
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
 		ModuleDB_JT1078_Destory();
-		ModuleSession_JT1078Client_Destory();
+		ModuleSession_Client_Destory();
 
 		HelpComponents_XLog_Destroy(xhLog);
 	}
