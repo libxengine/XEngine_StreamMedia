@@ -309,10 +309,8 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
-		PLUGIN_MQDATA st_MQData;
-		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
-
-		pClass_This->st_Locker.lock();
+		BOOL bFound = FALSE;
+		pClass_This->st_Locker.lock_shared();
 		unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = pClass_This->stl_MapManager.begin();
 		for (; stl_MapIterator != pClass_This->stl_MapManager.end(); stl_MapIterator++)
 		{
@@ -321,6 +319,9 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 			{
 				if (lRealHandle == stl_ListIterator->xhPlay)
 				{
+					PLUGIN_MQDATA st_MQData;
+					memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
+
 					st_MQData.xhToken = stl_MapIterator->second.hSDKModule;
 					st_MQData.nChannel = stl_ListIterator->nChannle;
 					st_MQData.nDType = 1;
@@ -347,10 +348,15 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 						nAllSize -= nCpyCount;
 						nPosSize += nCpyCount;
 					}
+					bFound = TRUE;
 					break;
 				}
 			}
+			if (bFound)
+			{
+				break;
+			}
 		}
-		pClass_This->st_Locker.unlock();
+		pClass_This->st_Locker.unlock_shared();
 	}
 }
