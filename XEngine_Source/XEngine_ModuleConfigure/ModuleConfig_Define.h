@@ -116,6 +116,7 @@ typedef struct
 	{
 		TCHAR tszIPAddr[128];                 //服务器地址
 		int nPort;                            //服务器端口
+		int nMaxClient;                       //每个设备绑定的客户端个数
 	}st_XClient;
 	struct  
 	{

@@ -349,7 +349,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nHTTPTimeOut = st_JsonXTime["nHttpTimeout"].asInt();
 	//客户端解析
-	if (st_JsonRoot["XClient"].empty() || (2 != st_JsonRoot["XClient"].size()))
+	if (st_JsonRoot["XClient"].empty() || (3 != st_JsonRoot["XClient"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XCLIENT;
@@ -357,6 +357,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 	}
 	Json::Value st_JsonXClient = st_JsonRoot["XClient"];
 	pSt_ServerConfig->st_XClient.nPort = st_JsonXClient["nPort"].asInt();
+	pSt_ServerConfig->st_XClient.nMaxClient = st_JsonXClient["nMaxClient"].asInt();
 	_tcscpy(pSt_ServerConfig->st_XClient.tszIPAddr, st_JsonXClient["tszIPAddr"].asCString());
 	//解析插件
 	pSt_ServerConfig->st_XPlugin.pStl_ListPlugin = new list<XENGINE_PLUGININFO>;
