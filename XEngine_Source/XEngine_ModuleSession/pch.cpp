@@ -80,21 +80,29 @@ extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel,
 /*********************************************************************************
 *                          设备SDK导出会话模块                                   *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhToken, XNETHANDLE xhClient)
+extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhDevice)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_Create(xhToken, xhClient);
+	return m_SDKDevice.ModuleSession_SDKDevice_Create(xhDevice);
 }
-extern "C" BOOL ModuleSession_SDKDevice_Insert(XNETHANDLE xhToken, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XNETHANDLE xhClient)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_Insert(xhToken, nChannel, bLive);
+	return m_SDKDevice.ModuleSession_SDKDevice_InsertClient(xhDevice, xhClient);
 }
-extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhToken, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XNETHANDLE xhClient, int nChannel, BOOL bLive)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhToken, nChannel, bLive);
+	return m_SDKDevice.ModuleSession_SDKDevice_InsertDevice(xhDevice, xhClient, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_SDKDevice_Get(XNETHANDLE xhToken, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+extern "C" BOOL ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice, XNETHANDLE * pxhClient)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_Get(xhToken, nChannel, bLive, pxhClient);
+	return m_SDKDevice.ModuleSession_SDKDevice_GetIdleClient(xhDevice, pxhClient);
+}
+extern "C" BOOL ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_GetClient(xhDevice, nChannel, bLive, pxhClient);
+}
+extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhDevice, nChannel, bLive, pxhClient);
 }
 extern "C" BOOL ModuleSession_SDKDevice_Destory()
 {

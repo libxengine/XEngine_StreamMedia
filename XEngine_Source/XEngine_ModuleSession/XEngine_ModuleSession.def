@@ -17,7 +17,9 @@ EXPORTS
 	ModuleSession_Server_Get
 
 	ModuleSession_SDKDevice_Create
-	ModuleSession_SDKDevice_Insert
+	ModuleSession_SDKDevice_InsertClient
+	ModuleSession_SDKDevice_InsertDevice
+	ModuleSession_SDKDevice_GetIdleClient
+	ModuleSession_SDKDevice_GetClient
 	ModuleSession_SDKDevice_Delete
-	ModuleSession_SDKDevice_Get
 	ModuleSession_SDKDevice_Destory
