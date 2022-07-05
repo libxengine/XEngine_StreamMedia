@@ -10,7 +10,7 @@
 //    Purpose:     插件处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken)
+XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice)
 {
 	int nMsgLen = 0;
 	TCHAR tszMsgBuffer[4096];
@@ -20,17 +20,17 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken)
 		PLUGIN_MQDATA st_MQData;
 		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
 
-		if (ModulePlugin_Core_GetData(xhToken, &st_MQData))
+		if (ModulePlugin_Core_GetData(xhDevice, &st_MQData))
 		{
 			XNETHANDLE xhClient = 0;
-			if (ModuleSession_SDKDevice_Get(xhToken, st_MQData.nChannel, st_MQData.bLive, &xhClient))
+			if (ModuleSession_SDKDevice_GetClient(xhDevice, st_MQData.nChannel, st_MQData.bLive, &xhClient))
 			{
 				XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 				memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
 				st_ProtocolDevice.bLive = TRUE;
 				st_ProtocolDevice.nChannel = st_MQData.nChannel;
-				_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhToken);
+				_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhDevice);
 
 				ModuleProtocol_Stream_Push(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice, st_MQData.tszMsgBuffer, st_MQData.nMsgLen, 0);
 				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);

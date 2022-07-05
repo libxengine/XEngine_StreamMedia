@@ -80,7 +80,6 @@ extern XENGINE_JT1078CONFIG st_JT1078Config;
 extern FILE* pSt_FileVideo;
 extern FILE* pSt_FileAudio;
 
-
 //连接库
 #ifdef _WINDOWS
 #ifdef _WIN64

@@ -142,8 +142,8 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			}
 			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
 			ModulePlugin_Core_Play(_ttoi64(tszValue), _ttoi(tszChannel));
-			//通知推流服务
-			if (!ModuleSession_SDKDevice_Get(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
+			//是否已经播放
+			if (!ModuleSession_SDKDevice_GetClient(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
 			{
 				st_HDRParam.nHttpCode = 500;
 				ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
@@ -153,6 +153,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备失败,获取客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 				return FALSE;
 			}
+			//通知推流服务
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
@@ -160,6 +161,8 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
 			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
 			ModuleProtocol_Stream_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), &xhClient);
+			ModuleSession_SDKDevice_InsertDevice(_ttoi64(st_ProtocolDevice.tszDeviceNumber), xhClient, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
@@ -188,13 +191,13 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
 			ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
 			//通知推流服务
-			if (!ModuleSession_SDKDevice_Get(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
+			if (!ModuleSession_SDKDevice_Delete(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
 			{
-				st_HDRParam.nHttpCode = 500;
+				st_HDRParam.nHttpCode = 404;
 				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备失败,获取客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备失败,删除客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 				return FALSE;
 			}
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;

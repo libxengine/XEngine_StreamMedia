@@ -10,4 +10,4 @@
 //    Purpose:     插件处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhToken);
+XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice);
