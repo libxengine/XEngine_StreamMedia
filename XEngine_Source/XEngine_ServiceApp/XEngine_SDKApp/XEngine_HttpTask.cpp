@@ -88,7 +88,6 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 	TCHAR tszValue[128];
 	LPCTSTR lpszFuncName = _T("api");
 	LPCTSTR lpszParamFuncKey = _T("function");
-	LPCTSTR lpszParamName = _T("params1");
 	LPCTSTR lpszParamPlay = _T("play");
 	LPCTSTR lpszParamStop = _T("stop");
 
@@ -121,45 +120,33 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 	}
 	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
 	{
-		//播放:http://127.0.0.1:5601/api?function=play&params1=10001001&params2=1
+		//播放:http://127.0.0.1:5601/api?function=play&token=10001001&channel=1&live=1
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
-			TCHAR tszChannel[64];
 			XNETHANDLE xhClient = 0;
-
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
-			memset(tszChannel, '\0', sizeof(tszChannel));
-			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszValue);
-			if (0 != _tcsnicmp(lpszParamName, tszKey, _tcslen(lpszParamName)))
-			{
-				st_HDRParam.nHttpCode = 404;
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-				return FALSE;
-			}
-			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
-			ModulePlugin_Core_Play(_ttoi64(tszValue), _ttoi(tszChannel));
-			//是否已经播放
-			if (!ModuleSession_SDKDevice_GetClient(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
-			{
-				st_HDRParam.nHttpCode = 500;
-				ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备失败,获取客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-				return FALSE;
-			}
-			//通知推流服务
-			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
-			st_ProtocolDevice.bLive = TRUE;
-			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
-			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
+			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, st_ProtocolDevice.tszDeviceNumber);
+			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszValue);
+			st_ProtocolDevice.nChannel = _ttoi(tszValue);
+			BaseLib_OperatorString_GetKeyValue(pptszList[3], "=", tszKey, tszValue);
+			st_ProtocolDevice.bLive = _ttoi(tszValue);
+
+			//是否已经播放
+			if (ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
+			{
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
+				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,成功,设备已经在播放"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+				return FALSE;
+			}
+			ModulePlugin_Core_Play(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
+			//通知推流服务
 			ModuleProtocol_Stream_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 			ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), &xhClient);
 			ModuleSession_SDKDevice_InsertDevice(_ttoi64(st_ProtocolDevice.tszDeviceNumber), xhClient, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
@@ -167,51 +154,35 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d 成功"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
 		{
-			//停止:http://127.0.0.1:5601/api?function=stop&params1=10001001&params2=1
-			TCHAR tszChannel[64];
+			//停止:http://127.0.0.1:5601/api?function=stop&token=10001001&channel=1&live=1
 			XNETHANDLE xhClient = 0;
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 
 			memset(tszKey, '\0', sizeof(tszKey));
 			memset(tszValue, '\0', sizeof(tszValue));
-			memset(tszChannel, '\0', sizeof(tszChannel));
-			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszValue);
-			if (0 != _tcsnicmp(lpszParamName, tszKey, _tcslen(lpszParamName)))
-			{
-				st_HDRParam.nHttpCode = 404;
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-				return FALSE;
-			}
-			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszChannel);
-			ModulePlugin_Core_Stop(_ttoi64(tszValue), _ttoi(tszChannel));
-			//通知推流服务
-			if (!ModuleSession_SDKDevice_Delete(_ttoi64(tszValue), _ttoi(tszChannel), TRUE, &xhClient))
-			{
-				st_HDRParam.nHttpCode = 404;
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备失败,删除客户端失败:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-				return FALSE;
-			}
-			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
-			st_ProtocolDevice.bLive = TRUE;
-			st_ProtocolDevice.nChannel = _ttoi(tszChannel);
-			_tcscpy(st_ProtocolDevice.tszDeviceNumber, tszValue);
-			ModuleProtocol_Stream_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
-			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, st_ProtocolDevice.tszDeviceNumber);
+			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszValue);
+			st_ProtocolDevice.nChannel = _ttoi(tszValue);
+			BaseLib_OperatorString_GetKeyValue(pptszList[3], "=", tszKey, tszValue);
+			st_ProtocolDevice.bLive = _ttoi(tszValue);
 
+			ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
+			//通知推流服务
+			if (ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
+			{
+				ModuleProtocol_Stream_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+			}
+			
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s 通道:%s 成功"), lpszClientAddr, tszValue, tszChannel);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s_%d_%d 成功"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	}

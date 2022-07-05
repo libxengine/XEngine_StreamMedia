@@ -25,9 +25,9 @@ extern "C" DWORD PluginCore_GetLastError()
 /*********************************************************************************
 *                                导出函数定义                                    *
 *********************************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE * pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
+extern "C" BOOL PluginCore_Init(XNETHANDLE * pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
 {
-	return m_PluginDH.PluginCore_Init(pxhToken, lpszAddr, nPort, lpszUser, lpszPass);
+	return m_PluginDH.PluginCore_Init(pxhToken, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
 }
 extern "C" BOOL PluginCore_UnInit(XNETHANDLE xhToken)
 {
@@ -41,7 +41,7 @@ extern "C" BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginDH.PluginCore_Stop(xhToken, nChannel);
 }
-extern "C" BOOL PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA * pSt_MQData)
+extern "C" BOOL PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA * pSt_MQData)
 {
-	return m_PluginDH.PluginCore_GetData(xhToken, pSt_MQData);
+	return m_PluginDH.PluginCore_GetData(xhToken, nIndex, pSt_MQData);
 }

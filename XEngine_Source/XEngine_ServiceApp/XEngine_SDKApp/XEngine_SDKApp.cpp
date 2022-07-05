@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 		{
 			if (ModulePlugin_Core_Insert(&stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile))
 			{
-				if (ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass))
+				if (ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient))
 				{
 					//标准协议服务
 					for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
@@ -193,7 +193,7 @@ int main(int argc, char** argv)
 						ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, xhClient);
 						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 						//线程
-						std::thread m_STDThread(XEngine_PluginTask_Thread, stl_ListIterator->xhToken);
+						std::thread m_STDThread(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
 						m_STDThread.detach();
 					}
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);

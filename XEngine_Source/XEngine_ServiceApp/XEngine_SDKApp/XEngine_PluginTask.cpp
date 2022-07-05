@@ -10,7 +10,7 @@
 //    Purpose:     插件处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice)
+XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice, int nThread)
 {
 	int nMsgLen = 0;
 	TCHAR tszMsgBuffer[4096];
@@ -20,7 +20,7 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice)
 		PLUGIN_MQDATA st_MQData;
 		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
 
-		if (ModulePlugin_Core_GetData(xhDevice, &st_MQData))
+		if (ModulePlugin_Core_GetData(xhDevice, nThread, &st_MQData))
 		{
 			XNETHANDLE xhClient = 0;
 			if (ModuleSession_SDKDevice_GetClient(xhDevice, st_MQData.nChannel, st_MQData.bLive, &xhClient))

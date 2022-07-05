@@ -265,12 +265,17 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   类型：常量字符指针
   可空：N
   意思：输入密码
+ 参数.六：nMaxPool
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入最大线程池个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
+BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
 {
     ModulePlugin_IsErrorOccur = FALSE;
 
@@ -283,7 +288,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
 	st_Locker.unlock_shared();
 	return bRet;
 }
@@ -395,7 +400,12 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel
   类型：句柄
   可空：N
   意思：输入要操作的句柄
- 参数.二：pSt_MQData
+ 参数.二：nIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：线程索引
+ 参数.三：pSt_MQData
   In/Out：Out
   类型：数据结构指针
   可空：N
@@ -405,7 +415,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQData)
+BOOL CModulePlugin_Core::ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData)
 {
 	ModulePlugin_IsErrorOccur = FALSE;
 
@@ -418,7 +428,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_GetData(XNETHANDLE xhToken, PLUGIN_MQ
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_GetData(stl_MapIterator->second.xhModule, pSt_MQData);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_GetData(stl_MapIterator->second.xhModule, nIndex, pSt_MQData);
 	st_Locker.unlock_shared();
 	return bRet;
 }

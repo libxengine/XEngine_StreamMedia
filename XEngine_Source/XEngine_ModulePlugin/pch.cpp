@@ -41,9 +41,9 @@ extern "C" BOOL ModulePlugin_Core_Destory()
 {
 	return m_PluginCore.ModulePlugin_Core_Destory();
 }
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass)
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
 {
-	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass);
+	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
 }
 extern "C" BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken)
 {
@@ -57,7 +57,7 @@ extern "C" BOOL ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginCore.ModulePlugin_Core_Stop(xhToken, nChannel);
 }
-extern "C" BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA * pSt_MQData)
+extern "C" BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA * pSt_MQData)
 {
-	return m_PluginCore.ModulePlugin_Core_GetData(xhToken, pSt_MQData);
+	return m_PluginCore.ModulePlugin_Core_GetData(xhToken, nIndex, pSt_MQData);
 }
