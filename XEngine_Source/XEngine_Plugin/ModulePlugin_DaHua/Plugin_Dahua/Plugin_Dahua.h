@@ -20,10 +20,13 @@ typedef struct
 
 typedef struct  
 {
+	shared_ptr<std::mutex> st_Locker;
 	LLONG hSDKModule;
 	NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevLoginInfo;
 	NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevOutInfo;
-	list<PLUGIN_PLAYINFO> *pStl_ListChannel;
+
+	list<PLUGIN_PLAYINFO>* pStl_ListChannel;
+	list<PLUGIN_MQDATA>* pStl_ListDatas;
 }PLUGIN_SDKDAHUA;
 
 class CPlugin_Dahua
@@ -42,10 +45,7 @@ protected:
 	static void CALLBACK PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser);
 private:
-	BOOL bH264Init;
 	shared_mutex st_Locker;
-	shared_mutex st_MQLocker;
 private:
-	list<PLUGIN_MQDATA> stl_ListDatas;
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA> stl_MapManager;
 };

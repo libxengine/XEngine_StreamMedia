@@ -13,8 +13,6 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
-	bH264Init = FALSE;
-	
 }
 CPlugin_Dahua::~CPlugin_Dahua()
 {
@@ -99,6 +97,7 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_MALLOC;
 		return FALSE;
 	}
+	st_SDKDahua.st_Locker = make_shared<std::mutex>();
 
 	*pxhToken = st_SDKDahua.hSDKModule;
 	st_Locker.lock();
@@ -281,15 +280,29 @@ BOOL CPlugin_Dahua::PluginCore_GetData(XNETHANDLE xhToken, PLUGIN_MQDATA* pSt_MQ
 {
 	SDKPlugin_IsErrorOccur = FALSE;
 
-	st_MQLocker.lock();
-	if (stl_ListDatas.empty())
+	st_Locker.lock_shared();
+	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = stl_MapManager.find(xhToken);
+	if (stl_MapIterator == stl_MapManager.end())
 	{
-		st_MQLocker.unlock();
+		SDKPlugin_IsErrorOccur = TRUE;
+		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_NOTFOUND;
+		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	*pSt_MQData = stl_ListDatas.front();
-	stl_ListDatas.pop_front();
-	st_MQLocker.unlock();
+
+	stl_MapIterator->second.st_Locker->lock();
+	if (stl_MapIterator->second.pStl_ListDatas->empty())
+	{
+		SDKPlugin_IsErrorOccur = TRUE;
+		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_EMPTY;
+		stl_MapIterator->second.st_Locker->unlock();
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	*pSt_MQData = stl_MapIterator->second.pStl_ListDatas->front();
+	stl_MapIterator->second.pStl_ListDatas->pop_front();
+	stl_MapIterator->second.st_Locker->unlock();
+	st_Locker.unlock_shared();
 	return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -342,9 +355,9 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 						st_MQData.nMsgLen = nCpyCount;
 						memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
 
-						pClass_This->st_MQLocker.lock();
-						pClass_This->stl_ListDatas.push_back(st_MQData);
-						pClass_This->st_MQLocker.unlock();
+						stl_MapIterator->second.st_Locker->lock();
+						stl_MapIterator->second.pStl_ListDatas->push_back(st_MQData);
+						stl_MapIterator->second.st_Locker->unlock();
 						nAllSize -= nCpyCount;
 						nPosSize += nCpyCount;
 					}
