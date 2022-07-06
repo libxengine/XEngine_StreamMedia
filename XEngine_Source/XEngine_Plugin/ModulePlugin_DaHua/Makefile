@@ -2,7 +2,7 @@ CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../../../XEngine_Release
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../../../XEngine_Release/XEngine_Plugin
 LIB = -lXEngine_BaseLib -lavnetsdk -ldhconfigsdk -ldhnetsdk -lStreamConvertor
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=../:./,--disable-new-dtags

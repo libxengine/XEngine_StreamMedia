@@ -8,7 +8,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool 
       -ljsoncpp \
 	  -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModulePlugin -lXEngine_ModuleSession
 LIBEX = -static-libgcc -ldl -lrt -lpthread
-LOADSO = -Wl,-rpath=./,--disable-new-dtags
+LOADSO = -Wl,-rpath=./:./XEngine_Plugin,--disable-new-dtags
 LIBINCLUDE = XEngine_Configure.o XEngine_Client.o XEngine_Network.o XEngine_HttpTask.o XEngine_PluginTask.o XEngine_SDKApp.o
 
 ifeq ($(RELEASE),1)
