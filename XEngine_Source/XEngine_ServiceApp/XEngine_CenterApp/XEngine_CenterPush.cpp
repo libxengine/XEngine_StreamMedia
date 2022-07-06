@@ -18,7 +18,7 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 	_stprintf(tszPushAddr, _T("%s/%s_%d_%d"), st_ServiceConfig.tszSMSUrl, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
 
-	if (!XClient_FilePush_Init(&xhToken))
+	if (!XClient_FilePush_Init(&xhToken, FALSE))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
@@ -71,7 +71,7 @@ int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 		}
 		nTimeStart = time(NULL);
 		memcpy(puszMsgBuffer, tszMsgBuffer, nMsgLen);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,推送到NGINX成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,推送成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
 		break;
 	}
 	return nMsgLen;

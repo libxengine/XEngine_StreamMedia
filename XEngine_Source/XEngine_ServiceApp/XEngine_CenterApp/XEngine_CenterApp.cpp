@@ -13,10 +13,10 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 //业务服务器
-XNETHANDLE xhCenterSocket = 0;
-XNETHANDLE xhCenterHeart = 0;
-XNETHANDLE xhCenterPool = 0;
+XHANDLE xhCenterSocket = NULL;
+XHANDLE xhCenterHeart = NULL;
 XHANDLE xhCenterPacket = NULL;
+XNETHANDLE xhCenterPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_JT1078CONFIG st_JT1078Config;
@@ -143,7 +143,8 @@ int main(int argc, char** argv)
 		//启动心跳
 		if (st_ServiceConfig.st_XTime.nCenterTimeOut > 0)
 		{
-			if (!SocketOpt_HeartBeat_InitEx(&xhCenterHeart, st_ServiceConfig.st_XTime.nCenterTimeOut, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_CenterHeart))
+			xhCenterHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeOut, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_CenterHeart);
+			if (NULL == xhCenterHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,初始化业务心跳服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
@@ -155,7 +156,8 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,业务心跳服务被设置为不启用"));
 		}
 		//启动网络
-		if (!NetCore_TCPXCore_StartEx(&xhCenterSocket, st_ServiceConfig.nCenterPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread))
+		xhCenterSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nCenterPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
+		if (NULL == xhCenterSocket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,启动业务网络服务器失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;

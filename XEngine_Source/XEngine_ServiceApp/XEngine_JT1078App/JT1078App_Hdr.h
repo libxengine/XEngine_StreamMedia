@@ -60,15 +60,15 @@ typedef enum
 extern BOOL bIsRun;
 extern XLOG xhLog;
 
-extern XNETHANDLE xhStreamNet;
-extern XNETHANDLE xhStreamHeart;
-extern XNETHANDLE xhStreamPool;
+extern XHANDLE xhStreamNet;
+extern XHANDLE xhStreamHeart;
 extern XHANDLE xhStreamPkt;
+extern XNETHANDLE xhStreamPool;
 
-extern XNETHANDLE xhRecordNet;
-extern XNETHANDLE xhRecordHeart;
-extern XNETHANDLE xhRecordPool;
+extern XHANDLE xhRecordNet;
+extern XHANDLE xhRecordHeart;
 extern XHANDLE xhRecordPkt;
+extern XNETHANDLE xhRecordPool;
 
 extern XENGINE_SERVICECONFIG st_ServiceCfg;
 extern XENGINE_JT1078CONFIG st_JT1078Cfg;

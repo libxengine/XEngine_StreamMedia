@@ -13,15 +13,15 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 
-XNETHANDLE xhStreamNet = 0;
-XNETHANDLE xhStreamHeart = 0;
-XNETHANDLE xhStreamPool = 0;
+XHANDLE xhStreamNet = NULL;
+XHANDLE xhStreamHeart = NULL;
 XHANDLE xhStreamPkt = NULL;
+XNETHANDLE xhStreamPool = 0;
 
-XNETHANDLE xhRecordNet = 0;
-XNETHANDLE xhRecordHeart = 0;
-XNETHANDLE xhRecordPool = 0;
+XHANDLE xhRecordNet = NULL;
+XHANDLE xhRecordHeart = NULL;
 XHANDLE xhRecordPkt = NULL;
+XNETHANDLE xhRecordPool = 0;
 
 XENGINE_SERVICECONFIG st_ServiceCfg;
 XENGINE_JT1078CONFIG st_JT1078Cfg;
@@ -150,7 +150,8 @@ int main(int argc, char** argv)
 
 		if (st_JT1078Cfg.st_XTime.nStreamTimeout > 0)
 		{
-			if (!SocketOpt_HeartBeat_InitEx(&xhStreamHeart, st_JT1078Cfg.st_XTime.nStreamTimeout, st_JT1078Cfg.st_XTime.nTimeCheck, XEngine_Callback_StreamHBLeave))
+			xhStreamHeart = SocketOpt_HeartBeat_InitEx(st_JT1078Cfg.st_XTime.nStreamTimeout, st_JT1078Cfg.st_XTime.nTimeCheck, XEngine_Callback_StreamHBLeave);
+			if (NULL == xhStreamHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化实时端心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_EXITAPP;
@@ -161,8 +162,8 @@ int main(int argc, char** argv)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，实时端心跳管理服务没有启用!"));
 		}
-
-		if (!NetCore_TCPXCore_StartEx(&xhStreamNet, st_JT1078Cfg.nStreamPort, st_JT1078Cfg.st_XMax.nMaxClient, st_JT1078Cfg.st_XMax.nIOThread))
+		xhStreamNet = NetCore_TCPXCore_StartEx(st_JT1078Cfg.nStreamPort, st_JT1078Cfg.st_XMax.nMaxClient, st_JT1078Cfg.st_XMax.nIOThread);
+		if (NULL == xhStreamNet)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动实时端网络服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
@@ -205,7 +206,8 @@ int main(int argc, char** argv)
 
 		if (st_JT1078Cfg.st_XTime.nRecordTimeout > 0)
 		{
-			if (!SocketOpt_HeartBeat_InitEx(&xhRecordHeart, st_JT1078Cfg.st_XTime.nRecordTimeout, st_JT1078Cfg.st_XTime.nTimeCheck, XEngine_Callback_RecordHBLeave))
+			xhRecordHeart = SocketOpt_HeartBeat_InitEx(st_JT1078Cfg.st_XTime.nRecordTimeout, st_JT1078Cfg.st_XTime.nTimeCheck, XEngine_Callback_RecordHBLeave);
+			if (NULL == xhRecordHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化录像端心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_EXITAPP;
@@ -216,8 +218,8 @@ int main(int argc, char** argv)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，录像端心跳管理服务没有启用!"));
 		}
-
-		if (!NetCore_TCPXCore_StartEx(&xhRecordNet, st_JT1078Cfg.nRecordPort, st_JT1078Cfg.st_XMax.nMaxClient, st_JT1078Cfg.st_XMax.nIOThread))
+		xhRecordNet = NetCore_TCPXCore_StartEx(st_JT1078Cfg.nRecordPort, st_JT1078Cfg.st_XMax.nMaxClient, st_JT1078Cfg.st_XMax.nIOThread);
+		if (NULL == xhRecordNet)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动录像端网络服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;

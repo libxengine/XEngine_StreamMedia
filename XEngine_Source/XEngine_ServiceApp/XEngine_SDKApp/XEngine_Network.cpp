@@ -49,7 +49,7 @@ void XEngine_Network_Close(LPCTSTR lpszClientAddr, BOOL bHeart)
 		SocketOpt_HeartBeat_DeleteAddrEx(xhHttpHeart, lpszClientAddr);
 	}
 	//需要主动删除与客户端对应的组包器队列中的资源
-	RfcComponents_HttpServer_CloseClinetEx(xhHttpPacket, lpszClientAddr);
+	RfcComponents_HttpServer_CloseClinetEx(xhHttpPacket, lpszClientAddr); 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,离开服务器"), lpszClientAddr);
 }
 //////////////////////////////////////////////////////////////////////////

@@ -69,10 +69,10 @@ using namespace std;
 extern BOOL bIsRun;
 extern XLOG xhLog;
 //业务服务器
-extern XNETHANDLE xhCenterSocket;
-extern XNETHANDLE xhCenterHeart;
-extern XNETHANDLE xhCenterPool;
+extern XHANDLE xhCenterSocket;
+extern XHANDLE xhCenterHeart;
 extern XHANDLE xhCenterPacket;
+extern XNETHANDLE xhCenterPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_JT1078CONFIG st_JT1078Config;

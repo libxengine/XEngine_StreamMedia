@@ -13,10 +13,10 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 //HTTP服务器
-XNETHANDLE xhHttpSocket = 0;
-XNETHANDLE xhHttpHeart = 0;
-XNETHANDLE xhHttpPool = 0;
+XHANDLE xhHttpSocket = NULL;
+XHANDLE xhHttpHeart = NULL;
 XHANDLE xhHttpPacket = NULL;
+XNETHANDLE xhHttpPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_SDKCONFIG st_SDKConfig;;
@@ -100,13 +100,12 @@ int main(int argc, char** argv)
 	{
 		return -1;
 	}
-	XNETHANDLE xhClient = 0;
-	XClient_TCPSelect_StartEx(&xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 	//判断是否以守护进程启动
 	if (st_ServiceConfig.bDeamon)
 	{
 		ServiceApp_Deamon();
 	}
+	
 	//初始日志
 	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_STD | HELPCOMPONENTS_XLOG_OUTTYPE_FILE, &st_XLogConfig);
 	if (NULL == xhLog)
@@ -136,7 +135,8 @@ int main(int argc, char** argv)
 		//启动心跳
 		if (st_SDKConfig.st_XTime.nHTTPTimeOut > 0)
 		{
-			if (!SocketOpt_HeartBeat_InitEx(&xhHttpHeart, st_SDKConfig.st_XTime.nHTTPTimeOut, st_SDKConfig.st_XTime.nTimeCheck, Network_Callback_HttpHeart))
+			xhHttpHeart = SocketOpt_HeartBeat_InitEx(st_SDKConfig.st_XTime.nHTTPTimeOut, st_SDKConfig.st_XTime.nTimeCheck, Network_Callback_HttpHeart);
+			if (NULL == xhHttpHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,初始化HTTP心跳服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
@@ -146,9 +146,10 @@ int main(int argc, char** argv)
 		else
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,HTTP心跳服务被设置为不启用"));
-		}
+		}	
 		//网络
-		if (!NetCore_TCPXCore_StartEx(&xhHttpSocket, st_SDKConfig.nHttpPort, st_SDKConfig.st_XMax.nMaxClient, st_SDKConfig.st_XMax.nIOThread))
+		xhHttpSocket = NetCore_TCPXCore_StartEx(st_SDKConfig.nHttpPort, st_SDKConfig.st_XMax.nMaxClient, st_SDKConfig.st_XMax.nIOThread);
+		if (NULL == xhHttpSocket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,启动HTTP网络服务器失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
@@ -189,7 +190,6 @@ int main(int argc, char** argv)
 					//标准协议服务
 					for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
 					{
-						/*
 						XNETHANDLE xhClient = 0;
 						XClient_TCPSelect_StartEx(&xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 						XClient_TCPSelect_HBStartEx(xhClient);
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
 						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 						//线程
 						std::thread m_STDThread(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
-						m_STDThread.detach();*/
+						m_STDThread.detach();
 					}
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 				}
@@ -218,7 +218,7 @@ int main(int argc, char** argv)
 		}
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共加载:%d 个插件"), st_SDKConfig.st_XPlugin.pStl_ListPlugin->size());
-	
+
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_SDKConfig.st_XVer.pStl_ListVer->front().c_str(), st_SDKConfig.st_XVer.pStl_ListVer->size());
 	while (bIsRun)
 	{

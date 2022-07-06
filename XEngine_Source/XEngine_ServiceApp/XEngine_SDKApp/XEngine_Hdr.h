@@ -27,12 +27,12 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/NetCore_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
-#include <XEngine_Include/XEngine_Client/XClient_Define.h>
-#include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
+#include <XEngine_Include/XEngine_Client/XClient_Define.h>
+#include <XEngine_Include/XEngine_Client/XClient_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -43,8 +43,6 @@ using namespace std;
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
 #include "../../XEngine_ModulePlugin/ModulePlugin_Define.h"
 #include "../../XEngine_ModulePlugin/ModulePlugin_Error.h"
-
-#include "../../XEngine_Plugin/ModulePlugin_DaHua/PluginDahua_Define.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
@@ -65,10 +63,10 @@ using namespace std;
 extern BOOL bIsRun;
 extern XLOG xhLog;
 //HTTP服务器
-extern XNETHANDLE xhHttpSocket;
-extern XNETHANDLE xhHttpHeart;
-extern XNETHANDLE xhHttpPool;
+extern XHANDLE xhHttpSocket;
+extern XHANDLE xhHttpHeart;
 extern XHANDLE xhHttpPacket;
+extern XNETHANDLE xhHttpPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_SDKCONFIG st_SDKConfig;
