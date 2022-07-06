@@ -351,7 +351,7 @@ BOOL CPlugin_Dahua::PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQ
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_NOTFOUND;
-		st_LockerData.unlock();
+		st_LockerData.unlock_shared();
 		return FALSE;
 	}
 	stl_MapIndexIterator->second.st_Locker->lock();
@@ -360,13 +360,13 @@ BOOL CPlugin_Dahua::PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQ
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_EMPTY;
 		stl_MapIndexIterator->second.st_Locker->unlock();
-		st_LockerData.unlock();
+		st_LockerData.unlock_shared();
 		return FALSE;
 	}
 	*pSt_MQData = stl_MapIndexIterator->second.stl_ListMQData.front();
 	stl_MapIndexIterator->second.stl_ListMQData.pop_front();
 	stl_MapIndexIterator->second.st_Locker->unlock();
-	st_LockerData.unlock();
+	st_LockerData.unlock_shared();
 	return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -401,6 +401,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 
 					st_MQData.xhToken = stl_MapIterator->second.hSDKModule;
 					st_MQData.nChannel = stl_ListIterator->nChannel;
+					st_MQData.bLive = TRUE;
 					st_MQData.nDType = 1;
 					//分拆数据包
 					int nCpyCount = 0;

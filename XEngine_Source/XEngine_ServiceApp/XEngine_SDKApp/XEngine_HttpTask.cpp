@@ -171,11 +171,10 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			st_ProtocolDevice.nChannel = _ttoi(tszValue);
 			BaseLib_OperatorString_GetKeyValue(pptszList[3], "=", tszKey, tszValue);
 			st_ProtocolDevice.bLive = _ttoi(tszValue);
-
-			ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
 			//通知推流服务
 			if (ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
 			{
+				ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
 				ModuleProtocol_Stream_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 			}
