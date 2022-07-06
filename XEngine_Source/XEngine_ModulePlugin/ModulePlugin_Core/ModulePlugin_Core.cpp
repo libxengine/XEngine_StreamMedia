@@ -59,6 +59,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR 
 #endif
 	if (NULL == st_FrameWork.mhFile)
 	{
+		fprintf(stderr, "dlerror:%s\n", dlerror());
 		ModulePlugin_IsErrorOccur = TRUE;
 		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_OPENDL;
 		return FALSE;

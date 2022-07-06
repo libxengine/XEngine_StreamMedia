@@ -68,8 +68,8 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
 		return FALSE;
 	}
-	CLIENT_Init(PluginCore_CB_Disconnect, (DWORD)this);
-	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (DWORD)this);
+	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
+	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
 	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
 	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
 	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
@@ -246,7 +246,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	st_PlayIn.nChannelID = nChannel;
 	//st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
 	st_PlayIn.hWnd = NULL;
-	st_PlayIn.dwUser = (DWORD)this;
+	st_PlayIn.dwUser = (LDWORD)this;
 
 	st_SDKInfo.nIndex = nIndex;
 	st_SDKInfo.nChannel = nChannel;

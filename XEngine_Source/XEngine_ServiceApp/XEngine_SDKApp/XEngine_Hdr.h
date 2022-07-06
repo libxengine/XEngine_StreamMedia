@@ -43,6 +43,8 @@ using namespace std;
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
 #include "../../XEngine_ModulePlugin/ModulePlugin_Define.h"
 #include "../../XEngine_ModulePlugin/ModulePlugin_Error.h"
+
+#include "../../XEngine_Plugin/ModulePlugin_DaHua/PluginDahua_Define.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"

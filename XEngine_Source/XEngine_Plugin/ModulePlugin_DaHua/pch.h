@@ -13,6 +13,7 @@
 #include <tchar.h>
 #endif
 #endif //PCH_H
+#include <string.h>
 #include <string>
 #include <list>
 #include <shared_mutex>
@@ -41,4 +42,8 @@ extern DWORD SDKPlugin_dwErrorCode;
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Plugin_SDKLib/dhnetsdk_x86")
 #pragma comment(lib,"Plugin_SDKLib/dhconfigsdk_x86")
+#endif
+
+#ifdef __linux__
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif

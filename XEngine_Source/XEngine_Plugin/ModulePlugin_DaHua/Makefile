@@ -2,10 +2,10 @@ CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib 
-LIB = -lXEngine_BaseLib
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../../../XEngine_Release
+LIB = -lXEngine_BaseLib -lavnetsdk -ldhconfigsdk -ldhnetsdk -lStreamConvertor
 LIBEX = -static-libgcc -lrt -ldl -lpthread
-LOADSO = -Wl,-rpath=../,--disable-new-dtags
+LOADSO = -Wl,-rpath=../:./,--disable-new-dtags
 LIBINCLUDE = Plugin_Dahua.o pch.o
 
 ifeq ($(RELEASE),1)
