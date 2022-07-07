@@ -380,3 +380,137 @@ BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, i
 	st_Locker.unlock_shared();
 	return TRUE;
 }
+/********************************************************************
+函数名称：ModuleSession_Server_SetPush
+函数功能：设置推送句柄
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+ 参数.四：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要设置的推送句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if (NULL == lpszDeviceNumber)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+	st_Locker.lock_shared();
+	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
+	if (stl_MapDeviceIterator == stl_MapServer.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
+	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
+	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	stl_MapLiveIterator->second->xhToken = xhToken;
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：ModuleSession_Server_GetPush
+函数功能：获取推送句柄
+ 参数.一：lpszDeviceNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入设备编号
+ 参数.二：nChannel
+  In/Out：In
+  类型：nChannel
+  可空：N
+  意思：输入设备通道
+ 参数.三：bLive
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入直播还是录像
+ 参数.四：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出获取到的推送句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if (NULL == lpszDeviceNumber)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+	st_Locker.lock_shared();
+	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
+	if (stl_MapDeviceIterator == stl_MapServer.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
+	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
+	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	*pxhToken = stl_MapLiveIterator->second->xhToken;
+	st_Locker.unlock_shared();
+	return TRUE;
+}

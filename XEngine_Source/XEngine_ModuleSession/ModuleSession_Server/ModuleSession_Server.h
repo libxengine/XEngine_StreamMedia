@@ -17,6 +17,7 @@ typedef struct
 }SESSION_MSGBUFFER;
 typedef struct
 {
+	XNETHANDLE xhToken;
 	shared_mutex st_Locker;
 	list<SESSION_MSGBUFFER>* pStl_ListBuffer;
 }SESSION_RTPPACKET;
@@ -31,6 +32,8 @@ public:
 	BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 	BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen);
 	BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+	BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken);
+	BOOL ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken);
 private:
 	shared_mutex st_Locker;
 private:
