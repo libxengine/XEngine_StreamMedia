@@ -101,7 +101,6 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	
 	if (!ModuleSession_Client_Exist(&xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 	{
-		
 		//先移除老的,无论如何
 		ModuleSession_Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE);
 		ModuleSession_Client_Get(&xhClient);   //得到新的可用客户端

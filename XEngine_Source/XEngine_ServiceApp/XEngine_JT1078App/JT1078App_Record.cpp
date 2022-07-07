@@ -102,8 +102,6 @@ BOOL XEngine_Record_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 	if (!ModuleSession_Client_Exist(&xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, FALSE))
 	{
-		XENGINE_PROTOCOLSTREAM st_ProtoAttr;
-		memset(&st_ProtoAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 		//先移除老的,无论如何
 		ModuleSession_Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, FALSE);
 		ModuleSession_Client_Get(&xhClient);   //得到新的可用客户端

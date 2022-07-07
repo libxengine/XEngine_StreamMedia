@@ -19,7 +19,9 @@ XHANDLE xhHttpPacket = NULL;
 XNETHANDLE xhHttpPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
-XENGINE_SDKCONFIG st_SDKConfig;;
+XENGINE_SDKCONFIG st_SDKConfig;
+//其他
+list<shared_ptr<std::thread>> stl_ListThreads;
 
 void ServiceApp_Stop(int signo)
 {
@@ -27,6 +29,15 @@ void ServiceApp_Stop(int signo)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("服务器退出..."));
 		bIsRun = FALSE;
+		//销毁线程
+		for (list<shared_ptr<std::thread>>::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		{
+			if ((*stl_ListIterator)->joinable())
+			{
+				(*stl_ListIterator)->join();
+			}
+		}
+		stl_ListThreads.clear();
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -197,8 +208,8 @@ int main(int argc, char** argv)
 						ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, xhClient);
 						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 						//线程
-						std::thread m_STDThread(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
-						m_STDThread.detach();
+						shared_ptr<std::thread> pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
+						stl_ListThreads.push_back(pSTDThread);
 					}
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 				}
@@ -230,6 +241,15 @@ XENGINE_SERVICEAPP_EXIT:
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("有服务启动失败,服务器退出..."));
 		bIsRun = FALSE;
+		//销毁线程
+		for (list<shared_ptr<std::thread>>::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		{
+			if ((*stl_ListIterator)->joinable())
+			{
+				(*stl_ListIterator)->join();
+			}
+		}
+		stl_ListThreads.clear();
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
