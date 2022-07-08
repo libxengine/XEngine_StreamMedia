@@ -26,7 +26,7 @@ typedef struct
 	NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevLoginInfo;
 	NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevOutInfo;
 
-	shared_ptr<std::mutex> st_Locker;
+	shared_ptr<std::shared_mutex> st_Locker;
 	list<PLUGIN_SDKINFO>* pStl_ListChannel;
 }PLUGIN_SDKDAHUA;
 typedef struct

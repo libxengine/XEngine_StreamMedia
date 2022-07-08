@@ -102,7 +102,7 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_MALLOC;
 		return FALSE;
 	}
-	st_SDKDahua.st_Locker = make_shared<std::mutex>();
+	st_SDKDahua.st_Locker = make_shared<std::shared_mutex>();
 
 	*pxhToken = st_SDKDahua.hSDKModule;
 	st_LockerManage.lock();
@@ -304,6 +304,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 		{
 			CLIENT_StopRealPlayEx(stl_ListIterator->xhPlay);
 			stl_MapIterator->second.pStl_ListChannel->erase(stl_ListIterator);
+			break;
 		}
 	}
 	stl_MapIterator->second.st_Locker->unlock();
@@ -391,6 +392,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 		unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = pClass_This->stl_MapManager.begin();
 		for (; stl_MapIterator != pClass_This->stl_MapManager.end(); stl_MapIterator++)
 		{
+			stl_MapIterator->second.st_Locker->lock();
 			list<PLUGIN_SDKINFO>::const_iterator stl_ListIterator = stl_MapIterator->second.pStl_ListChannel->begin();
 			for (; stl_ListIterator != stl_MapIterator->second.pStl_ListChannel->end(); stl_ListIterator++)
 			{
@@ -440,6 +442,8 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 					break;
 				}
 			}
+			stl_MapIterator->second.st_Locker->unlock();
+
 			if (bFound)
 			{
 				break;
