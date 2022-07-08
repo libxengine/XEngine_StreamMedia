@@ -89,7 +89,7 @@ typedef struct
 	BOOL bEnable;
 	int nPort;
 	XNETHANDLE xhToken;
-	TCHAR tszPluginMethod[MAX_PATH];
+	TCHAR tszPluginName[MAX_PATH];
 	TCHAR tszPluginFile[MAX_PATH];
 	TCHAR tszPluginAddr[128];
 	TCHAR tszPluginUser[128];

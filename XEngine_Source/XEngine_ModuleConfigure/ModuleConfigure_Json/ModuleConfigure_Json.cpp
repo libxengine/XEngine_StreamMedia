@@ -377,7 +377,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 		st_PluginInfo.nPort = st_JsonArray[i]["PluginPort"].asInt();
 		st_PluginInfo.xhToken = st_JsonArray[i]["PluginToken"].asInt64();
 		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
-		_tcscpy(st_PluginInfo.tszPluginMethod, st_JsonArray[i]["PluginMethod"].asCString());
+		_tcscpy(st_PluginInfo.tszPluginName, st_JsonArray[i]["PluginName"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginAddr, st_JsonArray[i]["PluginAddr"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginUser, st_JsonArray[i]["PluginUser"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginPass, st_JsonArray[i]["PluginPass"].asCString());

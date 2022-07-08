@@ -14,13 +14,14 @@
     },
     "XClient":{
         "tszIPAddr":"127.0.0.1",
-        "nPort":5600
+        "nPort":5600,
+        "nMaxClient":4
     },
     "XPlugin":[
         {
             "PluginEnable":true,
             "PluginToken":10001001,
-            "PluginMethod":"dahuasdk",
+            "PluginName":"dahuasdk",
             "PluginAddr":"192.168.8.152",
             "PluginPort":37777,
             "PluginUser":"admin",

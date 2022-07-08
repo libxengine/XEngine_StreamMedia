@@ -211,16 +211,16 @@ int main(int argc, char** argv)
 						shared_ptr<std::thread> pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
 						stl_ListThreads.push_back(pSTDThread);
 					}
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginMethod, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 				}
 				else
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				}
 			}
 			else
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginMethod, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 			}
 		}
 		else
