@@ -205,6 +205,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Delete(XNETHANDLE xhToken)
 #else
 		dlclose(stl_MapIterator->second.mhFile);
 #endif
+		stl_MapFrameWork.erase(stl_MapIterator);
 	}
 	st_Locker.unlock();
 	return TRUE;
