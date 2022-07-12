@@ -75,7 +75,8 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
 
 	PLUGIN_SDKDAHUA st_SDKDahua;
-	memset(&st_SDKDahua, '\0', sizeof(PLUGIN_SDKDAHUA));
+	memset(&st_SDKDahua.st_DevLoginInfo, '\0', sizeof(NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY));
+	memset(&st_SDKDahua.st_DevOutInfo, '\0', sizeof(NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY));
 
 	st_SDKDahua.st_DevLoginInfo.dwSize = sizeof(NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY);
 	strncpy(st_SDKDahua.st_DevLoginInfo.szIP, lpszAddr, sizeof(st_SDKDahua.st_DevLoginInfo.szIP) - 1);
@@ -93,13 +94,6 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		// 例如：#define NET_NOT_SUPPORTED_EC(23) // 当前 SDK 未支持该功能，对应的错误码为 0x80000017, 23 对应的 16 进制为 0x17
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = CLIENT_GetLastError();
-		return FALSE;
-	}
-	st_SDKDahua.pStl_ListChannel = new list<PLUGIN_SDKINFO>;
-	if (NULL == st_SDKDahua.pStl_ListChannel)
-	{
-		SDKPlugin_IsErrorOccur = TRUE;
-		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_MALLOC;
 		return FALSE;
 	}
 	st_SDKDahua.st_Locker = make_shared<std::shared_mutex>();
@@ -153,11 +147,6 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	{
 		CLIENT_Logout(stl_MapIterator->second.hSDKModule);
 	}
-	stl_MapIterator->second.st_Locker->lock();
-	delete stl_MapIterator->second.pStl_ListChannel;
-	stl_MapIterator->second.pStl_ListChannel = NULL;
-	stl_MapIterator->second.st_Locker->unlock();
-
 	stl_MapManager.erase(stl_MapIterator);
 	st_LockerManage.unlock();
 
@@ -196,11 +185,11 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 		st_LockerData.unlock_shared();
 		return FALSE;
 	}
-	int nCount = 100000;
+	int nCount = 10000;
 	int nIndex = 0;
 	for (auto stl_MapMQIndexIterator = stl_MapMQIterator->second.begin(); stl_MapMQIndexIterator != stl_MapMQIterator->second.end(); stl_MapMQIndexIterator++)
-	{
-		if (nCount < (int)stl_MapMQIndexIterator->second.stl_ListMQData.size())
+	{  
+		if ((int)stl_MapMQIndexIterator->second.stl_ListMQData.size() < nCount)
 		{
 			nCount = stl_MapMQIndexIterator->second.stl_ListMQData.size();
 			nIndex = stl_MapMQIndexIterator->first;
@@ -209,7 +198,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	st_LockerData.unlock_shared();
 
 	st_LockerManage.lock_shared();
-	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = stl_MapManager.find(xhToken);
+	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
@@ -219,10 +208,10 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	}
 	BOOL bFound = FALSE;
 	//通道是否打开
-	list<PLUGIN_SDKINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListChannel->begin();
-	for (; stl_ListIterator != stl_MapIterator->second.pStl_ListChannel->end(); stl_ListIterator++)
+	list<PLUGIN_SDKINFO*>::iterator stl_ListIterator = stl_MapIterator->second.stl_ListChannel.begin();
+	for (; stl_ListIterator != stl_MapIterator->second.stl_ListChannel.end(); stl_ListIterator++)
 	{
-		if (nChannel == stl_ListIterator->nChannel)
+		if (nChannel == (*stl_ListIterator)->nChannel)
 		{
 			bFound = TRUE;
 			break;
@@ -236,22 +225,32 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 		return FALSE;
 	}
 	//开始播放
-	PLUGIN_SDKINFO st_SDKInfo;
+	PLUGIN_SDKINFO *pSt_SDKInfo = new PLUGIN_SDKINFO;
+	if (NULL == pSt_SDKInfo)
+	{
+		SDKPlugin_IsErrorOccur = TRUE;
+		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_MALLOC;
+		st_LockerManage.unlock_shared();
+		return FALSE;
+	}
+	pSt_SDKInfo->xhToken = xhToken;
+	pSt_SDKInfo->nIndex = nIndex;
+	pSt_SDKInfo->nChannel = nChannel;
+	pSt_SDKInfo->lClass = this;
+
 	NET_IN_REALPLAY_BY_DATA_TYPE st_PlayIn = { sizeof(st_PlayIn) };
 	NET_OUT_REALPLAY_BY_DATA_TYPE st_PlayOut = { sizeof(st_PlayOut) };
-
 	st_PlayIn.cbRealData = PluginCore_CB_RealData;
 	st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
 	st_PlayIn.rType = DH_RType_Realplay;
 	st_PlayIn.nChannelID = nChannel;
 	//st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
 	st_PlayIn.hWnd = NULL;
-	st_PlayIn.dwUser = (LDWORD)this;
+	//st_PlayIn.dwUser = (LDWORD)this;
+	st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
 
-	st_SDKInfo.nIndex = nIndex;
-	st_SDKInfo.nChannel = nChannel;
-	st_SDKInfo.xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 5000);
-	if (0 == st_SDKInfo.xhPlay)
+	pSt_SDKInfo->xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 5000);
+	if (0 == pSt_SDKInfo->xhPlay)
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = CLIENT_GetLastError();
@@ -259,7 +258,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 		return FALSE;
 	}
 	stl_MapIterator->second.st_Locker->lock();
-	stl_MapIterator->second.pStl_ListChannel->push_back(st_SDKInfo);
+	stl_MapIterator->second.stl_ListChannel.push_back(pSt_SDKInfo);
 	stl_MapIterator->second.st_Locker->unlock();
 	st_LockerManage.unlock_shared();
 	return TRUE;
@@ -287,7 +286,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	SDKPlugin_IsErrorOccur = FALSE;
 
 	st_LockerManage.lock();
-	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = stl_MapManager.find(xhToken);
+	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
@@ -297,13 +296,16 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	}
 	//查找通道
 	stl_MapIterator->second.st_Locker->lock();
-	list<PLUGIN_SDKINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListChannel->begin();
-	for (; stl_ListIterator != stl_MapIterator->second.pStl_ListChannel->end(); stl_ListIterator++)
+	list<PLUGIN_SDKINFO*>::iterator stl_ListIterator = stl_MapIterator->second.stl_ListChannel.begin();
+	for (; stl_ListIterator != stl_MapIterator->second.stl_ListChannel.end(); stl_ListIterator++)
 	{
-		if (nChannel == stl_ListIterator->nChannel)
+		if (nChannel == (*stl_ListIterator)->nChannel)
 		{
-			CLIENT_StopRealPlayEx(stl_ListIterator->xhPlay);
-			stl_MapIterator->second.pStl_ListChannel->erase(stl_ListIterator);
+			CLIENT_StopRealPlayEx((*stl_ListIterator)->xhPlay);
+
+			delete (*stl_ListIterator);
+			(*stl_ListIterator) = NULL;
+			stl_MapIterator->second.stl_ListChannel.erase(stl_ListIterator);
 			break;
 		}
 	}
@@ -383,72 +385,50 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_AutoConnect(LLONG lLoginID, char* pch
 }
 void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser)
 {
-	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)dwUser;
+	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)dwUser;
+	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
 
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
-		BOOL bFound = FALSE;
-		pClass_This->st_LockerManage.lock_shared();
-		unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::const_iterator stl_MapIterator = pClass_This->stl_MapManager.begin();
-		for (; stl_MapIterator != pClass_This->stl_MapManager.end(); stl_MapIterator++)
+		PLUGIN_MQDATA st_MQData;
+		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
+
+		st_MQData.xhToken = pSt_SDKInfo->xhToken;
+		st_MQData.nChannel = pSt_SDKInfo->nChannel;
+		st_MQData.bLive = TRUE;
+		st_MQData.nDType = 1;
+		//分拆数据包
+		int nCpyCount = 0;
+		int nPosSize = 0;
+		int nAllSize = dwBufSize;
+		while (nAllSize > 0)
 		{
-			stl_MapIterator->second.st_Locker->lock();
-			list<PLUGIN_SDKINFO>::const_iterator stl_ListIterator = stl_MapIterator->second.pStl_ListChannel->begin();
-			for (; stl_ListIterator != stl_MapIterator->second.pStl_ListChannel->end(); stl_ListIterator++)
+			if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
 			{
-				if (lRealHandle == stl_ListIterator->xhPlay)
+				nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+			}
+			else
+			{
+				nCpyCount = nAllSize;
+			}
+			st_MQData.nMsgLen = nCpyCount;
+			memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
+
+			pClass_This->st_LockerData.lock_shared();
+			unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapMQIterator = pClass_This->stl_MapSDKData.find(pSt_SDKInfo->xhToken);
+			if (stl_MapMQIterator != pClass_This->stl_MapSDKData.end())
+			{
+				unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapMQIndexIterator = stl_MapMQIterator->second.find(pSt_SDKInfo->nIndex);
+				if (stl_MapMQIndexIterator != stl_MapMQIterator->second.end())
 				{
-					PLUGIN_MQDATA st_MQData;
-					memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
-
-					st_MQData.xhToken = stl_MapIterator->second.hSDKModule;
-					st_MQData.nChannel = stl_ListIterator->nChannel;
-					st_MQData.bLive = TRUE;
-					st_MQData.nDType = 1;
-					//分拆数据包
-					int nCpyCount = 0;
-					int nPosSize = 0;
-					int nAllSize = dwBufSize;
-					while (nAllSize > 0)
-					{
-						if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
-						{
-							nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
-						}
-						else
-						{
-							nCpyCount = nAllSize;
-						}
-						st_MQData.nMsgLen = nCpyCount;
-						memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
-
-						pClass_This->st_LockerData.lock_shared();
-						unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapMQIterator = pClass_This->stl_MapSDKData.find(stl_MapIterator->first);
-						if (stl_MapMQIterator != pClass_This->stl_MapSDKData.end())
-						{
-							unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapMQIndexIterator = stl_MapMQIterator->second.find(stl_ListIterator->nIndex);
-							if (stl_MapMQIndexIterator != stl_MapMQIterator->second.end())
-							{
-								stl_MapMQIndexIterator->second.st_Locker->lock();
-								stl_MapMQIndexIterator->second.stl_ListMQData.push_back(st_MQData);
-								stl_MapMQIndexIterator->second.st_Locker->unlock();
-							}
-						}
-						pClass_This->st_LockerData.unlock_shared();
-						nAllSize -= nCpyCount;
-						nPosSize += nCpyCount;
-					}
-					bFound = TRUE;
-					break;
+					stl_MapMQIndexIterator->second.st_Locker->lock();
+					stl_MapMQIndexIterator->second.stl_ListMQData.push_back(st_MQData);
+					stl_MapMQIndexIterator->second.st_Locker->unlock();
 				}
 			}
-			stl_MapIterator->second.st_Locker->unlock();
-
-			if (bFound)
-			{
-				break;
-			}
+			pClass_This->st_LockerData.unlock_shared();
+			nAllSize -= nCpyCount;
+			nPosSize += nCpyCount;
 		}
-		pClass_This->st_LockerManage.unlock_shared();
 	}
 }

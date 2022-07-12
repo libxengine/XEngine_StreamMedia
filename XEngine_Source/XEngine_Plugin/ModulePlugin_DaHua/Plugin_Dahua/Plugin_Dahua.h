@@ -15,9 +15,11 @@
 
 typedef struct
 {
+	XNETHANDLE xhToken;
 	LLONG xhPlay;
 	int nChannel;
 	int nIndex;
+	LPVOID lClass;
 }PLUGIN_SDKINFO;
 
 typedef struct  
@@ -27,7 +29,7 @@ typedef struct
 	NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevOutInfo;
 
 	shared_ptr<std::shared_mutex> st_Locker;
-	list<PLUGIN_SDKINFO>* pStl_ListChannel;
+	list<PLUGIN_SDKINFO*> stl_ListChannel;
 }PLUGIN_SDKDAHUA;
 typedef struct
 {
