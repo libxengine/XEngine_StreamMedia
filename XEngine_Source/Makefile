@@ -21,8 +21,12 @@ APP_CENTER_PATH = ./XEngine_ServiceApp/XEngine_CenterApp
 
 XENGINE_MODULES = libjsoncpp.so                                   \
                   libXEngine_ModuleConfigure.so libXEngine_ModuleDatabase.so libXEngine_ModuleHelp.so libXEngine_ModulePlugin.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so        \
-				  libModulePlugin_DaHua.so       \
 				  XEngine_JT1078App.exe XEngine_SDKApp.exe XEngine_CenterApp.exe
+				  
+ifeq ($(shell uname),Darwin)
+else
+XENGINE_MODULES += libModulePlugin_DaHua.so
+endif
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)

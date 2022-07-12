@@ -1,19 +1,33 @@
 CC = g++ -Wall -std=c++17 -fPIC
+SHAREFLAG = -shared
+SHAREDLL = so
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./ 
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib
 LIB = -lXEngine_BaseLib
-LIBEX = -static-libgcc -lrt -ldl -lpthread
+LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
 LIBINCLUDE = ModulePlugin_Core.o pch.o
+
+ifeq ($(OS),Windows_NT)
+else
+	ifeq ($(shell uname),Darwin)
+		SHAREDLL = dylib
+		SHAREFLAG = -dynamiclib
+		LOADSO = 
+	else
+		SHAREDLL = so
+		SHAREFLAG = -shared
+	endif
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+FLAGS = -c 
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)
@@ -24,7 +38,7 @@ endif
 
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModulePlugin.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModulePlugin.$(SHAREDLL) $(SHAREFLAG) -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 ModulePlugin_Core.o:./ModulePlugin_Core/ModulePlugin_Core.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModulePlugin_Core/ModulePlugin_Core.cpp 
@@ -34,12 +48,12 @@ pch.o:./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModulePlugin.so
-	cp ./libXEngine_ModulePlugin.so ../../XEngine_Release/libXEngine_ModulePlugin.so
+InstallSo:./libXEngine_ModulePlugin.$(SHAREDLL)
+	cp ./libXEngine_ModulePlugin.$(SHAREDLL) ../../XEngine_Release/libXEngine_ModulePlugin.$(SHAREDLL)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:                                               
 	rm *.o
 CleanMk:                             
-	rm *.so                        
+	rm *.$(SHAREDLL)                        

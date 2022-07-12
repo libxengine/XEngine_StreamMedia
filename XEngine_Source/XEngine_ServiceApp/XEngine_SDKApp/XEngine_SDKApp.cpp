@@ -21,7 +21,7 @@ XNETHANDLE xhHttpPool = 0;
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_SDKCONFIG st_SDKConfig;
 //其他
-list<shared_ptr<std::thread>> stl_ListThreads;
+list<shared_ptr<std::thread> > stl_ListThreads;
 
 void ServiceApp_Stop(int signo)
 {
@@ -30,7 +30,7 @@ void ServiceApp_Stop(int signo)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("服务器退出..."));
 		bIsRun = FALSE;
 		//销毁线程
-		for (list<shared_ptr<std::thread>>::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		for (list<shared_ptr<std::thread> >::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
 		{
 			if ((*stl_ListIterator)->joinable())
 			{
@@ -242,7 +242,7 @@ XENGINE_SERVICEAPP_EXIT:
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("有服务启动失败,服务器退出..."));
 		bIsRun = FALSE;
 		//销毁线程
-		for (list<shared_ptr<std::thread>>::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		for (list<shared_ptr<std::thread> >::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
 		{
 			if ((*stl_ListIterator)->joinable())
 			{

@@ -1,4 +1,4 @@
-CC = g++ -Wall
+CC = g++ -Wall -std=c++17
 RELEASE = 0
 UNICODE = 0  
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_Client -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents \
@@ -7,16 +7,24 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXClient_Socket -lHelpComponents_XLog -lRfcComponents_HttpServer  \
       -ljsoncpp \
 	  -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModulePlugin -lXEngine_ModuleSession
-LIBEX = -static-libgcc -ldl -lrt -lpthread
+LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./:./XEngine_Plugin,--disable-new-dtags
 LIBINCLUDE = XEngine_Configure.o XEngine_Client.o XEngine_Network.o XEngine_HttpTask.o XEngine_PluginTask.o XEngine_SDKApp.o
+
+ifeq ($(OS),Windows_NT)
+else
+	ifeq ($(shell uname),Darwin)
+		LOADSO = 
+	else
+	endif
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+FLAGS = -c
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)

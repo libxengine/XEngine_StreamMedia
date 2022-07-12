@@ -71,7 +71,7 @@ extern XNETHANDLE xhHttpPool;
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_SDKCONFIG st_SDKConfig;
 //其他
-extern list<shared_ptr<std::thread>> stl_ListThreads;
+extern list<shared_ptr<std::thread> > stl_ListThreads;
 
 //连接库
 #ifdef _MSC_BUILD

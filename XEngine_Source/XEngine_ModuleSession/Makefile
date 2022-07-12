@@ -1,19 +1,33 @@
 CC = g++ -Wall -std=c++17 -fPIC
+SHAREFLAG = -shared
+SHAREDLL = so
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
 LOADBIN = 
 LIB = 
-LIBEX = -static-libgcc -lrt -ldl -lpthread
+LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
 LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_SDKDevice.o pch.o
+
+ifeq ($(OS),Windows_NT)
+else
+	ifeq ($(shell uname),Darwin)
+		SHAREDLL = dylib
+		SHAREFLAG = -dynamiclib
+		LOADSO = 
+	else
+		SHAREDLL = so
+		SHAREFLAG = -shared
+	endif
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+FLAGS = -c
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)
@@ -24,7 +38,7 @@ endif
 
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleSession.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleSession.$(SHAREDLL) $(SHAREFLAG) -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 ModuleSession_Client.o:./ModuleSession_Client/ModuleSession_Client.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_Client/ModuleSession_Client.cpp 
@@ -38,12 +52,12 @@ pch.o:./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModuleSession.so
-	cp ./libXEngine_ModuleSession.so ../../XEngine_Release/libXEngine_ModuleSession.so
+InstallSo:./libXEngine_ModuleSession.$(SHAREDLL)
+	cp ./libXEngine_ModuleSession.$(SHAREDLL) ../../XEngine_Release/libXEngine_ModuleSession.$(SHAREDLL)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:                                               
 	rm *.o
 CleanMk:                             
-	rm *.so                        
+	rm *.$(SHAREDLL)                        
