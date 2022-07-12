@@ -249,7 +249,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	//st_PlayIn.dwUser = (LDWORD)this;
 	st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
 
-	pSt_SDKInfo->xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 5000);
+	pSt_SDKInfo->xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 3000);
 	if (0 == pSt_SDKInfo->xhPlay)
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
@@ -391,8 +391,6 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
 		PLUGIN_MQDATA st_MQData;
-		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
-
 		st_MQData.xhToken = pSt_SDKInfo->xhToken;
 		st_MQData.nChannel = pSt_SDKInfo->nChannel;
 		st_MQData.bLive = TRUE;
