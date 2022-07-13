@@ -13,9 +13,15 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
+	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
+	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
+	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
+	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
+	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
 }
 CPlugin_Dahua::~CPlugin_Dahua()
 {
+	CLIENT_Cleanup();
 }
 //////////////////////////////////////////////////////////////////////////
 //                       公有函数
@@ -68,12 +74,6 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
 		return FALSE;
 	}
-	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
-	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
-	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
-	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
-	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
-
 	PLUGIN_SDKDAHUA st_SDKDahua;
 	memset(&st_SDKDahua.st_DevLoginInfo, '\0', sizeof(NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY));
 	memset(&st_SDKDahua.st_DevOutInfo, '\0', sizeof(NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY));
@@ -149,8 +149,10 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	}
 	stl_MapManager.erase(stl_MapIterator);
 	st_LockerManage.unlock();
-
-	CLIENT_Cleanup();
+	
+	st_LockerData.lock();
+	stl_MapSDKData.clear();
+	st_LockerData.unlock();
 	return TRUE;
 }
 /********************************************************************
