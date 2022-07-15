@@ -21,7 +21,8 @@ XNETHANDLE xhHttpPool = 0;
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_SDKCONFIG st_SDKConfig;
 //其他
-list<shared_ptr<std::thread> > stl_ListThreads;
+int nSDKCount = 0;
+SDKLIST_THREADINFO** ppSt_ThreadInfo;
 
 void ServiceApp_Stop(int signo)
 {
@@ -30,14 +31,12 @@ void ServiceApp_Stop(int signo)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("服务器退出..."));
 		bIsRun = FALSE;
 		//销毁线程
-		for (list<shared_ptr<std::thread> >::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		for (int i = 0; i < nSDKCount; i++)
 		{
-			if ((*stl_ListIterator)->joinable())
-			{
-				(*stl_ListIterator)->join();
-			}
+			ppSt_ThreadInfo[i]->pSTDThread->join();
+			XClient_TCPSelect_StopEx(ppSt_ThreadInfo[i]->xhClient);
 		}
-		stl_ListThreads.clear();
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ThreadInfo, nSDKCount);
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -194,34 +193,30 @@ int main(int argc, char** argv)
 	{
 		if (stl_ListIterator->bEnable)
 		{
-			if (ModulePlugin_Core_Insert(&stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile))
-			{
-				if (ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient))
-				{
-					//标准协议服务
-					for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
-					{
-						XNETHANDLE xhClient = 0;
-						XClient_TCPSelect_StartEx(&xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
-						XClient_TCPSelect_HBStartEx(xhClient);
-						ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
-						ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, xhClient);
-						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
-						//线程
-						shared_ptr<std::thread> pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
-						stl_ListThreads.push_back(pSTDThread);
-					}
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
-				}
-				else
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
-				}
-			}
-			else
+			if (!ModulePlugin_Core_Insert(&stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
 			}
+			if (!ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			nSDKCount = st_SDKConfig.st_XClient.nMaxClient;
+			BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ThreadInfo, nSDKCount, sizeof(SDKLIST_THREADINFO));
+			//标准协议服务
+			for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
+			{
+				XClient_TCPSelect_StartEx(&ppSt_ThreadInfo[i]->xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
+				XClient_TCPSelect_HBStartEx(ppSt_ThreadInfo[i]->xhClient, 2);
+				ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
+				ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, ppSt_ThreadInfo[i]->xhClient);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,句柄:%lld,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, ppSt_ThreadInfo[i]->xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
+				//线程
+				ppSt_ThreadInfo[i]->pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 		}
 		else
 		{
@@ -231,6 +226,7 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共加载:%d 个插件"), st_SDKConfig.st_XPlugin.pStl_ListPlugin->size());
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_SDKConfig.st_XVer.pStl_ListVer->front().c_str(), st_SDKConfig.st_XVer.pStl_ListVer->size());
+
 	while (bIsRun)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -242,14 +238,12 @@ XENGINE_SERVICEAPP_EXIT:
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("有服务启动失败,服务器退出..."));
 		bIsRun = FALSE;
 		//销毁线程
-		for (list<shared_ptr<std::thread> >::iterator stl_ListIterator = stl_ListThreads.begin(); stl_ListIterator != stl_ListThreads.end(); stl_ListIterator++)
+		for (int i = 0; i < nSDKCount; i++)
 		{
-			if ((*stl_ListIterator)->joinable())
-			{
-				(*stl_ListIterator)->join();
-			}
+			ppSt_ThreadInfo[i]->pSTDThread->join();
+			XClient_TCPSelect_StopEx(ppSt_ThreadInfo[i]->xhClient);
 		}
-		stl_ListThreads.clear();
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ThreadInfo, nSDKCount);
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);

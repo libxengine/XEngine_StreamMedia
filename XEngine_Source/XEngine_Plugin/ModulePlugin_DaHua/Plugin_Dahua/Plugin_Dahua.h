@@ -25,8 +25,7 @@ typedef struct
 typedef struct  
 {
 	LLONG hSDKModule;
-	NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevLoginInfo;
-	NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY st_DevOutInfo;
+	NET_DEVICEINFO_Ex st_DevInfo;
 
 	shared_ptr<std::shared_mutex> st_Locker;
 	list<PLUGIN_SDKINFO*> stl_ListChannel;

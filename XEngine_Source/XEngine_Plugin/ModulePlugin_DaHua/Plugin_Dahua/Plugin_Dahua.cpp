@@ -13,15 +13,9 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
-	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
-	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
-	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
-	int nTryTimes = 3;    // 登录时尝试建立链接 3 次
-	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
 }
 CPlugin_Dahua::~CPlugin_Dahua()
 {
-	CLIENT_Cleanup();
 }
 //////////////////////////////////////////////////////////////////////////
 //                       公有函数
@@ -74,20 +68,22 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
 		return FALSE;
 	}
+	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
+	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
+
+	NET_PARAM st_NetParam;
+	memset(&st_NetParam, '\0', sizeof(NET_PARAM));
+	st_NetParam.nWaittime = 8000;
+	st_NetParam.nConnectTime = 3000;
+	st_NetParam.nConnectTryNum = 3;
+	st_NetParam.nSubConnectSpaceTime = 100;
+	st_NetParam.nGetConnInfoTime = 3000;
+	CLIENT_SetNetworkParam(&st_NetParam);
+
 	PLUGIN_SDKDAHUA st_SDKDahua;
-	memset(&st_SDKDahua.st_DevLoginInfo, '\0', sizeof(NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY));
-	memset(&st_SDKDahua.st_DevOutInfo, '\0', sizeof(NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY));
-
-	st_SDKDahua.st_DevLoginInfo.dwSize = sizeof(NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY);
-	strncpy(st_SDKDahua.st_DevLoginInfo.szIP, lpszAddr, sizeof(st_SDKDahua.st_DevLoginInfo.szIP) - 1);
-	strncpy(st_SDKDahua.st_DevLoginInfo.szPassword, lpszPass, sizeof(st_SDKDahua.st_DevLoginInfo.szPassword) - 1);
-	strncpy(st_SDKDahua.st_DevLoginInfo.szUserName, lpszUser, sizeof(st_SDKDahua.st_DevLoginInfo.szUserName) - 1);
-	st_SDKDahua.st_DevLoginInfo.nPort = nPort;
-	st_SDKDahua.st_DevLoginInfo.emSpecCap = EM_LOGIN_SPEC_CAP_TCP;
-
-	st_SDKDahua.st_DevOutInfo.dwSize = sizeof(NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY);
 	// 登录设备
-	st_SDKDahua.hSDKModule = CLIENT_LoginWithHighLevelSecurity(&st_SDKDahua.st_DevLoginInfo, &st_SDKDahua.st_DevOutInfo);
+	int nErrcode = 0;
+	st_SDKDahua.hSDKModule = CLIENT_LoginEx2(lpszAddr, nPort, lpszUser, lpszPass, EM_LOGIN_SPEC_CAP_TCP, NULL, &st_SDKDahua.st_DevInfo, &nErrcode);
 	if (0 == st_SDKDahua.hSDKModule)
 	{
 		// 根据错误码，可以在 dhnetsdk.h 中找到相应的解释，此处打印的是 16 进制，头文件中是十进制，其中的转换需注意
@@ -153,6 +149,7 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	st_LockerData.lock();
 	stl_MapSDKData.clear();
 	st_LockerData.unlock();
+	CLIENT_Cleanup();
 	return TRUE;
 }
 /********************************************************************

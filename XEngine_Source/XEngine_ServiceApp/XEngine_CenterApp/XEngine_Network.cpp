@@ -56,7 +56,7 @@ void XEngine_Network_Close(LPCTSTR lpszClientAddr, BOOL bHeart)
 	}
 	//需要主动删除与客户端对应的组包器队列中的资源
 	HelpComponents_Datas_DeleteEx(xhCenterPacket, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,离开服务器"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 }
 //////////////////////////////////////////////////////////////////////////
 BOOL XEngine_Network_Send(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)

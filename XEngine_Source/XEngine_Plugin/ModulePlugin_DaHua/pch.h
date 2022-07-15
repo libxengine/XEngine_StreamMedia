@@ -40,8 +40,13 @@ extern BOOL SDKPlugin_IsErrorOccur;
 extern DWORD SDKPlugin_dwErrorCode;
 
 #ifdef _MSC_BUILD
+#ifdef _WIN64
+#pragma comment(lib,"Plugin_SDKLib/dhnetsdk_x64")
+#pragma comment(lib,"Plugin_SDKLib/dhconfigsdk_x64")
+#else
 #pragma comment(lib,"Plugin_SDKLib/dhnetsdk_x86")
 #pragma comment(lib,"Plugin_SDKLib/dhconfigsdk_x86")
+#endif
 #endif
 
 #ifdef __linux__

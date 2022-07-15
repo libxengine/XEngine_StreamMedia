@@ -60,6 +60,12 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
+typedef struct  
+{
+	XNETHANDLE xhClient;
+	shared_ptr<std::thread> pSTDThread;
+}SDKLIST_THREADINFO;
+//////////////////////////////////////////////////////////////////////////
 extern BOOL bIsRun;
 extern XLOG xhLog;
 //HTTP服务器
@@ -71,7 +77,8 @@ extern XNETHANDLE xhHttpPool;
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_SDKCONFIG st_SDKConfig;
 //其他
-extern list<shared_ptr<std::thread> > stl_ListThreads;
+extern int nSDKCount;
+extern SDKLIST_THREADINFO** ppSt_ThreadInfo;
 
 //连接库
 #ifdef _MSC_BUILD

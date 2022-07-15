@@ -89,16 +89,32 @@ extern XENGINE_JT1078CONFIG st_JT1078Cfg;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleConfigure")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleDatabase")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol")
+#else
 #pragma comment(lib,"../../Debug/XEngine_ModuleConfigure")
 #pragma comment(lib,"../../Debug/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Debug/XEngine_ModuleSession")
 #pragma comment(lib,"../../Debug/XEngine_ModuleProtocol")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleDatabase")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleSession")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol")
 #else
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure")
 #pragma comment(lib,"../../Release/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Release/XEngine_ModuleSession")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol")
+#endif
 #endif
 #endif
