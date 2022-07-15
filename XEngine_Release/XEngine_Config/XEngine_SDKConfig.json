@@ -26,10 +26,10 @@
             "PluginPort":37777,
             "PluginUser":"admin",
             "PluginPass":"sihan123",
-            "PluginFile":"./XEngine_Plugin/ModulePlugin_DaHua.dll"
+            "PluginFile":"./XEngine_Plugin/libModulePlugin_Dahua.so"
         }
     ],
     "XVer":[
-        "1.0.0.1001 Build20220631"
+        "1.0.0.1001 Build20220715"
     ]
 }
