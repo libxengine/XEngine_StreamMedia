@@ -1,0 +1,8 @@
+LIBRARY
+
+EXPORTS
+	ModuleConfigure_GetLastError
+
+	ModuleConfigure_Json_File
+	ModuleConfigure_Json_Sdk
+	ModuleConfigure_Json_JT1078

@@ -1,0 +1,8 @@
+LIBRARY
+
+EXPORTS
+	ModuleProtocol_GetLastError
+
+	ModuleProtocol_Stream_Create
+	ModuleProtocol_Stream_Push
+	ModuleProtocol_Stream_Destroy

@@ -1,0 +1,23 @@
+XEngine_StreamMedia V1.0.0.1001
+
+增加:插件系统
+增加:配置模块
+增加:数据库模块
+增加:帮助模块
+增加:协议模块
+增加:会话模块
+增加:JT1078框架
+增加:SDK框架
+增加:推流框架
+增加:大华SDK插件
+
+added:plugin system
+added:configure module
+added:database module
+added:help module
+added:protocol module
+added:session module
+added:jt1078 app
+added:sdk app
+added:center app
+added:dahua sdk module

@@ -1,0 +1,10 @@
+LIBRARY
+
+EXPORTS
+	PluginCore_GetLastError
+
+	PluginCore_Init
+	PluginCore_UnInit
+	PluginCore_Play
+	PluginCore_Stop
+	PluginCore_GetData

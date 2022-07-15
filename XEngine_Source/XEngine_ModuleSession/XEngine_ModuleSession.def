@@ -1,0 +1,27 @@
+LIBRARY
+
+EXPORTS
+	ModuleSession_GetLastError
+
+	ModuleSession_Client_Create
+	ModuleSession_Client_Get
+	ModuleSession_Client_Exist
+	ModuleSession_Client_Insert
+	ModuleSession_Client_DeleteAddr
+	ModuleSession_Client_DeleteNumber
+	ModuleSession_Client_Destory
+
+	ModuleSession_Server_Create
+	ModuleSession_Server_Destroy
+	ModuleSession_Server_Insert
+	ModuleSession_Server_Get
+	ModuleSession_Server_SetPush
+	ModuleSession_Server_GetPush
+
+	ModuleSession_SDKDevice_Create
+	ModuleSession_SDKDevice_InsertClient
+	ModuleSession_SDKDevice_InsertDevice
+	ModuleSession_SDKDevice_GetIdleClient
+	ModuleSession_SDKDevice_GetClient
+	ModuleSession_SDKDevice_Delete
+	ModuleSession_SDKDevice_Destory

@@ -1,0 +1,13 @@
+LIBRARY
+
+EXPORTS
+	ModuleDB_GetLastError
+
+	ModuleDB_JT1078_Init
+	ModuleDB_JT1078_Destory
+	ModuleDB_JT1078_DeviceInsert
+	ModuleDB_JT1078_DeviceDelete
+	ModuleDB_JT1078_DeviceClear
+	ModuleDB_JT1078_InfoInsert
+	ModuleDB_JT1078_InfoQuery
+	ModuleDB_JT1078_InfoUPDate
