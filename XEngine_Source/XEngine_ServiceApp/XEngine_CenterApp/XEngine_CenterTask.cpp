@@ -35,8 +35,6 @@ XHTHREAD CALLBACK XEngine_CenterTask_Thread(LPVOID lParam)
 				int nMsgLen = 0;                             //客户端发送的数据大小,不包括头
 				TCHAR* ptszMsgBuffer = NULL;                 //客户端发送的数据
 				XENGINE_PROTOCOLHDR st_ProtocolHdr;          //客户端发送的数据的协议头
-
-				memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
 				//得到一个指定客户端的完整数据包
 				if (HelpComponents_Datas_GetMemoryEx(xhCenterPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
 				{
