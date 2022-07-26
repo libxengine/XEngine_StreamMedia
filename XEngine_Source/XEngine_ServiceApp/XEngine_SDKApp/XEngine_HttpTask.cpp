@@ -147,11 +147,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			}
 			if (!ModulePlugin_Core_Play(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel))
 			{
-				st_HDRParam.nHttpCode = 500;
+				st_HDRParam.nHttpCode = 404;
 				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,失败,设备无法是正常播放,错误码:%lX"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModulePlugin_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,失败,设备无法正常播放,错误码:%lX"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModulePlugin_GetLastError());
 				return FALSE;
 			}
 			//通知推流服务

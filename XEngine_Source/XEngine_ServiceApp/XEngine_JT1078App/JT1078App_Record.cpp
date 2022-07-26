@@ -53,7 +53,7 @@ BOOL XEngine_Record_Handle(SOCKET hSocket, LPCTSTR lpszMsgBuffer, int nMsgLen, L
 	memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
 	NetXApi_Socket_GetAddress(hSocket, tszClientAddr, FALSE);
-	if (nHDRLen + sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL))
+	if (nHDRLen + sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL) + sizeof(WORD))
 	{
 		XENGINE_RTPPACKETHDR2016 st_RTPHdr;
 		XENGINE_RTPPACKETTAIL st_RTPTail;
