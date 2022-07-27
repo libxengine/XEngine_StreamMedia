@@ -37,7 +37,9 @@ void ServiceApp_Stop(int signo)
 		HelpComponents_Datas_Destory(xhCenterPacket);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
+		ModuleDB_AVInfo_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
+
 		if (NULL != pSt_FileAudio)
 		{
 			fclose(pSt_FileAudio);
@@ -129,6 +131,16 @@ int main(int argc, char** argv)
 
 	//调试相关
 	//pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	//启动数据库
+	if (st_ServiceConfig.st_XSql.bEnable)
+	{
+		if (!ModuleDB_AVInfo_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceConfig.st_XSql))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化音视频信息数据库失败，错误：%lX"), ModuleDB_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化音视频信息数据库成功"));
+	}
 	//启动业务服务相关代码
 	if (st_ServiceConfig.nCenterPort > 0)
 	{
@@ -205,7 +217,9 @@ XENGINE_SERVICEAPP_EXIT:
 		HelpComponents_Datas_Destory(xhCenterPacket);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
+		ModuleDB_AVInfo_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
+
 		if (NULL != pSt_FileAudio)
 		{
 			fclose(pSt_FileAudio);

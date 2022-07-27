@@ -108,13 +108,14 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nTCPTimeOut"].asInt();
 	//数据库配置
-	if (st_JsonRoot["XSQL"].empty() || (4 != st_JsonRoot["XSQL"].size()))
+	if (st_JsonRoot["XSQL"].empty() || (5 != st_JsonRoot["XSQL"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XSQL;
 		return FALSE;
 	}
 	Json::Value st_JsonXSQL = st_JsonRoot["XSQL"];
+	pSt_ServerConfig->st_XSql.bEnable = st_JsonXSQL["bEnable"].asInt();
 	pSt_ServerConfig->st_XSql.nSQLPort = st_JsonXSQL["nSQLPort"].asInt();
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLAddr, st_JsonXSQL["tszSQLAddr"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSQL["tszSQLUser"].asCString());
