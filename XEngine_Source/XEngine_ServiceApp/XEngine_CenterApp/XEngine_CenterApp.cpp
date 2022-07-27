@@ -19,11 +19,9 @@ XHANDLE xhCenterPacket = NULL;
 XNETHANDLE xhCenterPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
-XENGINE_JT1078CONFIG st_JT1078Config;
 //调试用
 FILE* pSt_FileVideo = NULL;
 FILE* pSt_FileAudio = NULL;
-
 
 void ServiceApp_Stop(int signo)
 {
@@ -98,7 +96,6 @@ int main(int argc, char** argv)
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
-	memset(&st_JT1078Config, '\0', sizeof(XENGINE_JT1078CONFIG));
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
@@ -130,7 +127,14 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,初始化信号量成功"));
 
 	//调试相关
-	//pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	if (st_ServiceConfig.st_XDebug.bAudio)
+	{
+		pSt_FileAudio = _tfopen(_T("./Audio.aac"), "wb");
+	}
+	if (st_ServiceConfig.st_XDebug.bVideo)
+	{
+		pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	}
 	//启动数据库
 	if (st_ServiceConfig.st_XSql.bEnable)
 	{

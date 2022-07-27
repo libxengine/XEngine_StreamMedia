@@ -38,6 +38,7 @@ typedef struct tag_XEngine_ServiceConfig
 		TCHAR tszSQLPass[128];                //数据库密码
 		TCHAR tszSQLName[128];                //数据库表名
 		int nSQLPort;                         //端口
+		BOOL bEnable;                         //是否启用数据库
 	}st_XSql;
 	struct
 	{
@@ -45,6 +46,11 @@ typedef struct tag_XEngine_ServiceConfig
 		int nMaxCount;                        //最大日志个数
 		int nLogLeave;                        //日志等级
 	}st_XLog;
+	struct  
+	{
+		BOOL bVideo;                          //启用视频调试记录
+		BOOL bAudio;                          //启用音频调试记录
+	}st_XDebug;
 	struct  
 	{
 		list<string> *pStl_ListVer;           //版本列表

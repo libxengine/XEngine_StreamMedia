@@ -122,24 +122,15 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			nPos = sizeof(XENGINE_PROTOCOLDEVICE);
-			if (ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A == pSt_ProtocolHdr->wReserve)
+
+			if (!ModuleSession_Server_Insert(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, lpszMsgBuffer + nPos, nMsgLen - nPos))
 			{
-				if (st_ProtocolDevice.nChannel != st_JT1078Config.nAudio)
-				{
-					return TRUE;
-				}
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
+				return FALSE;
 			}
-			else
+			if (NULL != pSt_FileVideo)
 			{
-				if (!ModuleSession_Server_Insert(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, lpszMsgBuffer + nPos, nMsgLen - nPos))
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
-					return FALSE;
-				}
-				if (NULL != pSt_FileVideo)
-				{
-					fwrite(lpszMsgBuffer + nPos, 1, nMsgLen - nPos, pSt_FileVideo);
-				}
+				fwrite(lpszMsgBuffer + nPos, 1, nMsgLen - nPos, pSt_FileVideo);
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen);
 		}
