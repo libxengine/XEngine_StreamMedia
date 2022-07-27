@@ -1,20 +1,20 @@
 ﻿#include "pch.h"
-#include "ModuleDB_JT1078.h"
+#include "ModuleDB_AVInfo.h"
 /********************************************************************
-//    Created:     2022/04/24  14:45:01
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleDatabase\ModuleDB_JT1078\ModuleDB_JT1078.cpp
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleDatabase\ModuleDB_JT1078
-//    File Base:   ModuleDB_JT1078
+//    Created:     2022/07/27  10:29:42
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleDatabase\ModuleDB_AVInfo\ModuleDB_AVInfo.cpp
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleDatabase\ModuleDB_AVInfo
+//    File Base:   ModuleDB_AVInfo
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     JT1078数据库表操作
+//    Purpose:     音视频信息数据库表操作
 //    History:
 *********************************************************************/
-CModuleDB_JT1078::CModuleDB_JT1078()
+CModuleDB_AVInfo::CModuleDB_AVInfo()
 {
 }
-CModuleDB_JT1078::~CModuleDB_JT1078()
+CModuleDB_AVInfo::~CModuleDB_AVInfo()
 {
 
 }
@@ -34,11 +34,11 @@ CModuleDB_JT1078::~CModuleDB_JT1078()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector)
+BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector)
 {
 	DBModule_IsErrorOccur = FALSE;
 
-	_tcscpy(pSt_MySQLConnector->tszDBName, _T("StreamMedia_JT1078"));
+	_tcscpy(pSt_MySQLConnector->tszDBName, _T("StreamMedia_AVInfo"));
 	//打开数据库
 	if (!DataBase_MySQL_Connect(&xhSQL, pSt_MySQLConnector))
 	{
@@ -56,7 +56,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQ
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_Destory()
+BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Destory()
 {
 	DBModule_IsErrorOccur = FALSE;
 
@@ -64,127 +64,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_Destory()
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleDB_JT1078_DeviceInsert
-函数功能：设备插入
- 参数.一：lpszDeviceAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备IP地址
- 参数.二：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.三：nChannel
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入通道号
- 参数.四：xhClient
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入绑定的客户端
- 参数.五：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：直播还是录像
- 参数.六：lpszDeviceVer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：设备版本
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer)
-{
-	DBModule_IsErrorOccur = FALSE;
-
-	if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber) || (NULL == lpszDeviceVer))
-	{
-		DBModule_IsErrorOccur = TRUE;
-		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
-		return FALSE;
-	}
-	TCHAR tszSQLQuery[4096];
-	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-
-	_stprintf_s(tszSQLQuery, _T("INSERT INTO `DeviceList` (tszDeviceAddr,tszDeviceNumber,nChannel,xhClient,bLive,tszVersion,CreateTime) VALUES('%s','%s',%d,%lld,%d,'%s',now())"), lpszDeviceAddr, lpszDeviceNumber, nChannel, xhClient, bLive, lpszDeviceVer);
-
-	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
-	{
-		DBModule_IsErrorOccur = TRUE;
-		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
-	}
-	return TRUE;
-}
-/********************************************************************
-函数名称：ModuleDB_JT1078_DeviceDelete
-函数功能：设备删除
- 参数.一：lpszDeviceAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备地址
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr)
-{
-	DBModule_IsErrorOccur = FALSE;
-
-	if (NULL == lpszDeviceAddr)
-	{
-		DBModule_IsErrorOccur = TRUE;
-		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
-		return FALSE;
-	}
-	TCHAR tszSQLQuery[4096];
-	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-
-	_stprintf_s(tszSQLQuery, _T("DELETE FROM `DeviceList` WHERE tszDeviceAddr = '%s'"), lpszDeviceAddr);
-	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
-	{
-		DBModule_IsErrorOccur = TRUE;
-		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
-	}
-	return TRUE;
-}
-/********************************************************************
-函数名称：ModuleDB_JT1078_DeviceClear
-函数功能：清空设备表
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceClear()
-{
-	DBModule_IsErrorOccur = FALSE;
-
-	TCHAR tszSQLQuery[4096];
-	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-
-	_stprintf_s(tszSQLQuery, _T("TRUNCATE TABLE `DeviceList`"));
-	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
-	{
-		DBModule_IsErrorOccur = TRUE;
-		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
-	}
-	return TRUE;
-}
-/********************************************************************
-函数名称：ModuleDB_JT1078_InfoInsert
+函数名称：ModuleDB_AVInfo_InfoInsert
 函数功能：音视频参数插入
  参数.一：pSt_ProtocolStream
   In/Out：In
@@ -196,7 +76,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_DeviceClear()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
 	DBModule_IsErrorOccur = FALSE;
 
@@ -209,7 +89,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
 	TCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	if (ModuleDB_JT1078_InfoQuery(pSt_ProtocolStream))
+	if (ModuleDB_AVInfo_InfoQuery(pSt_ProtocolStream))
 	{
 		return TRUE;
 	}
@@ -225,7 +105,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleDB_JT1078_InfoQuery
+函数名称：ModuleDB_AVInfo_InfoQuery
 函数功能：音视频信息参数查询
  参数.一：pSt_ProtocolStream
   In/Out：Out
@@ -237,7 +117,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
 	DBModule_IsErrorOccur = FALSE;
 
@@ -335,7 +215,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleDB_JT1078_InfoUPDate
+函数名称：ModuleDB_AVInfo_InfoUPDate
 函数功能：更新音视频参数信息
  参数.一：pSt_ProtocolStream
   In/Out：In
@@ -347,7 +227,7 @@ BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_JT1078::ModuleDB_JT1078_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
 	DBModule_IsErrorOccur = FALSE;
 

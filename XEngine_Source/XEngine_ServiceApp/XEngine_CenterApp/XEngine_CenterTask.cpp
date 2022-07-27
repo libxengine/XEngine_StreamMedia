@@ -80,7 +80,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 				return FALSE;
 			}
 			//查询音视频数据,没有将无法使用特性
-			if (ModuleDB_JT1078_InfoQuery(pSt_ProtocolAVAttr))
+			if (ModuleDB_AVInfo_InfoQuery(pSt_ProtocolAVAttr))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
 			}
