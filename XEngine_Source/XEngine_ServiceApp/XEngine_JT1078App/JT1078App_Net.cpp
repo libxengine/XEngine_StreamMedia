@@ -87,8 +87,6 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 			SocketOpt_HeartBeat_DeleteAddrEx(xhStreamHeart, lpszClientAddr);
 		}
 		HelpComponents_PKTCustom_DeleteEx(xhStreamPkt, hSocket);
-		ModuleDB_JT1078_DeviceDelete(lpszClientAddr);
-
 		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
@@ -111,8 +109,6 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRecordHeart, lpszClientAddr);
 		}
 		HelpComponents_PKTCustom_DeleteEx(xhRecordPkt, hSocket);
-		ModuleDB_JT1078_DeviceDelete(lpszClientAddr);
-
 		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Stream_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);

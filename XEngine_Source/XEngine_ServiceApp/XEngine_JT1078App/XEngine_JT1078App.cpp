@@ -44,9 +44,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
-		ModuleDB_JT1078_Destory();
 		ModuleSession_Client_Destory();
-
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 	exit(0);
@@ -124,14 +122,6 @@ int main(int argc, char** argv)
 	signal(SIGTERM, ServiceApp_Stop);
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
-
-	if (!ModuleDB_JT1078_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化JT1078数据库失败，错误：%lX"), ModuleDB_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化JT1078数据库成功"));
-	ModuleDB_JT1078_DeviceClear();
 	//启动直播流
 	if (st_JT1078Cfg.nStreamPort > 0)
 	{
@@ -282,9 +272,7 @@ XENGINE_EXITAPP:
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
-		ModuleDB_JT1078_Destory();
 		ModuleSession_Client_Destory();
-
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 #ifdef _MSC_BUILD

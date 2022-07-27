@@ -110,7 +110,6 @@ BOOL XEngine_Record_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("录像端：%s,登录到服务,设备ID：%s,通道：%d,绑定客户端失败,错误：%lX"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, ModuleSession_GetLastError());
 			return FALSE;
 		}
-		ModuleDB_JT1078_DeviceInsert(lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, FALSE, "2016");
 		//创建流
 		ModuleProtocol_Stream_Create(tszSDBuffer, &nSDLen, &st_ProtoDevice);
 		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
