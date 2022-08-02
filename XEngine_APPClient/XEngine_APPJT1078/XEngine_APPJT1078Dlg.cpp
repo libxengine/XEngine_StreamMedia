@@ -260,7 +260,6 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 
 	int nSeq = 0;
 	int nMsgLen = 0;
-	FILE* pSt_File = _tfopen("D:\\XEngine_JT1078\\XEngine_APPClient\\Debug\\1.rtp", _T("wb"));
 	TCHAR* ptszMsgBuffer = new TCHAR[1024 * 1024 * 10];
 	TCHAR* ptszTmpBuffer = new TCHAR[1024 * 1024 * 10];
 
@@ -311,7 +310,10 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 			while (nMsgCount > 0)
 			{
 				XENGINE_RTPPACKETHDR2016 st_RTPPacket;
+				XENGINE_RTPPACKETTAIL st_PacketTail;
+
 				memset(&st_RTPPacket, '\0', sizeof(XENGINE_RTPPACKETHDR2016));
+				memset(&st_PacketTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
 
 				st_RTPPacket.byFlags[0] = 0x30;
 				st_RTPPacket.byFlags[1] = 0x31;
@@ -359,16 +361,26 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 				}
 
 				st_RTPPacket.wSerial = htons(nSeq++);
-				st_RTPPacket.wLen = htons(nCpyCount);
-
 				pClass_This->XEngine_Device_StrtoBCD(m_StrSim.GetBuffer(), st_RTPPacket.bySIMNumber);
 				BaseLib_OperatorTime_SetXTPTime(&st_RTPPacket.ullTimestamp);
 
-				//fwrite(&st_RTPPacket, 1, sizeof(XENGINE_RTPPACKET2016HDR), pSt_File);
-				//fwrite(ptszTmpBuffer + nUseCount, 1, nCpyCount, pSt_File);
-				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, (const char*)&st_RTPPacket, sizeof(XENGINE_RTPPACKETHDR2016));
+				int nPos = 0;
+				TCHAR tszMsgBuffer[2048];
+				memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
+				memcpy(tszMsgBuffer, &st_RTPPacket, sizeof(XENGINE_RTPPACKETHDR2016));
+				nPos += sizeof(XENGINE_RTPPACKETHDR2016);
+				
+				memcpy(tszMsgBuffer + nPos, &st_PacketTail, sizeof(XENGINE_RTPPACKETTAIL));
+				nPos += sizeof(XENGINE_RTPPACKETTAIL);
+
+				WORD wLen = htons(nCpyCount);
+				memcpy(tszMsgBuffer + nPos, &wLen, sizeof(WORD));
+				nPos += sizeof(WORD);
+
+				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, tszMsgBuffer, nPos);
 				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, ptszTmpBuffer + nUseCount, nCpyCount);
-				Sleep(10);
+				Sleep(1);
 				nUseCount += nCpyCount;
 				nMsgCount -= nCpyCount;
 			}
@@ -385,7 +397,6 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 	delete[] ptszTmpBuffer;
 	ptszMsgBuffer = NULL;
 	ptszTmpBuffer = NULL;
-	fclose(pSt_File);
 	return 0;
 }
 
