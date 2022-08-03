@@ -4,7 +4,8 @@ After=network.target XStreamCenter.service
  
 [Service]
 Type=simple  
-ExecStart=/home/ubuntu/XEngine_StreamMedia/XEngine_Release/XEngine_JT1078App -d 1
+WorkingDirectory=/home/ubuntu/XEngine_StreamMedia/XEngine_Release/
+ExecStart=/home/ubuntu/XEngine_StreamMedia/XEngine_Release/XEngine_JT1078App
 ExecStop=killall XEngine_JT1078App
  
 [Install]
