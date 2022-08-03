@@ -19,9 +19,10 @@
     "XClient":{
         "tszIPAddr":"127.0.0.1",
         "nPort":5600,
-        "nMaxConnect":1
+        "nMaxConnect":2
     },
     "XVer":[
-        "1.22.0.1001 Build1127"
+        "2.0.0.1001 Build20220805",
+        "1.22.0.1001 Build20211127"
     ]
 }
