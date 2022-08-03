@@ -1,0 +1,11 @@
+[Unit]
+Description=XEngine_StreamMedia SDKApp
+After=network.target XStreamCenter.service
+ 
+[Service]
+Type=simple  
+ExecStart=/home/ubuntu/XEngine_StreamMedia/XEngine_Release/XEngine_SDKApp -d 1
+ExecStop=killall XEngine_SDKApp
+ 
+[Install]
+WantedBy=multi-user.target

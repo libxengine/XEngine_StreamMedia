@@ -1,0 +1,11 @@
+[Unit]
+Description=XEngine_StreamMedia JT1078App
+After=network.target XStreamCenter.service
+ 
+[Service]
+Type=simple  
+ExecStart=/home/ubuntu/XEngine_StreamMedia/XEngine_Release/XEngine_JT1078App -d 1
+ExecStop=killall XEngine_JT1078App
+ 
+[Install]
+WantedBy=multi-user.target
