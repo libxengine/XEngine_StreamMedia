@@ -63,7 +63,7 @@ make FLAGS=CleanAll 清理编译
 #### Linux
 如果在Linux下运行,你可以使用service脚本运行,需要先修改release目录中的.service脚本中的ExecStart和WorkingDirectory路径.  
 接着拷贝service脚本到/usr/lib/systemd/system/目录,然后执行systemctl start 服务名,还可以设置自启动,systemctl enable 服务名  
-需要先启动XEngine_CenterApp.exe(XStreamCenter.service服务),在启动对应的服务,比如:XEngine_SDKApp(XStreamSdk.service)  
+需要先启动XEngine_CenterApp.exe -d 1(XStreamCenter.service服务),在启动对应的服务,比如:XEngine_SDKApp -d 1(XStreamSdk.service)  
 
 ## 目录结构
 - XEngine_Docment 文档目录结构

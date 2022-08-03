@@ -62,7 +62,7 @@ make FLAGS=CleanAll Clear Complie
 #### Linux
 If running under Linux, you can use the service script to run, you need to modify the ExecStart and WorkingDirectory path in the .service script in the release directory first  
 and copy the service script to the /usr/lib/systemd/system/ directory, then execute systemctl start service name, you can also set self-start, systemctl enable service name  
-You need to start XEngine_CenterApp.exe (XStreamCenter.service service) first, and then start the service, such as: XEngine_SDKApp (XStreamSdk.service)  
+You need to start XEngine_CenterApp.exe -d 1(XStreamCenter.service service) first, and then start the service, such as: XEngine_SDKApp -d 1(XStreamSdk.service)  
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
