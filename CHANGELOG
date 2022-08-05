@@ -9,6 +9,8 @@ XEngine_StreamMedia V1.1.0.1001
 修改:centerapp 支持音视频信息数据库了
 修改:大华sdk使用默认超时了
 修改:大华sdk设置回调函数位置
+修改:插件内存大小
+修改:内存导出方式
 修复:某些时候退出崩溃的问题
 修复:ModuleSession_Client_Exist函数没有找到还处理的问题
 修复:rtp包处理错误
@@ -24,6 +26,8 @@ modify:unified Database Interface
 modify:centerapp support avinfo database
 modify:Dahua SDK use to default timeout
 modify:dahua sdk set callback function location
+modify:plugin memory size
+modify:memory export method
 fixed:sometime is crashed when program exit
 fixed:ModuleSession_Client_Exist does not process notfound is incorrent
 fixed:the problem that rtp packet is incorrent
