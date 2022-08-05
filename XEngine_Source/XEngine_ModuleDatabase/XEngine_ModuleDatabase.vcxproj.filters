@@ -13,11 +13,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleDB_JT1078">
-      <UniqueIdentifier>{6c597ee9-c5c7-4bc8-bb8a-07aba67a2c9b}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleDB_AVInfo">
+      <UniqueIdentifier>{468d96cc-55c1-4a85-b2c9-b7884eaed916}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleDB_JT1078">
-      <UniqueIdentifier>{94802519-1824-40ff-b966-6248ee838b5f}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleDB_AVInfo">
+      <UniqueIdentifier>{d6f7f839-1c56-4289-8ed7-c741c2e6da60}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,8 +33,8 @@
     <ClInclude Include="ModuleDB_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleDB_JT1078\ModuleDB_JT1078.h">
-      <Filter>头文件\ModuleDB_JT1078</Filter>
+    <ClInclude Include="ModuleDB_AVInfo\ModuleDB_AVInfo.h">
+      <Filter>头文件\ModuleDB_AVInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +44,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleDB_JT1078\ModuleDB_JT1078.cpp">
-      <Filter>源文件\ModuleDB_JT1078</Filter>
+    <ClCompile Include="ModuleDB_AVInfo\ModuleDB_AVInfo.cpp">
+      <Filter>源文件\ModuleDB_AVInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

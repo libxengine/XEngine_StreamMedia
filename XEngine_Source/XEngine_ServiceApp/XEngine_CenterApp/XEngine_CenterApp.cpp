@@ -19,11 +19,9 @@ XHANDLE xhCenterPacket = NULL;
 XNETHANDLE xhCenterPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
-XENGINE_JT1078CONFIG st_JT1078Config;
 //调试用
 FILE* pSt_FileVideo = NULL;
 FILE* pSt_FileAudio = NULL;
-
 
 void ServiceApp_Stop(int signo)
 {
@@ -37,7 +35,9 @@ void ServiceApp_Stop(int signo)
 		HelpComponents_Datas_Destory(xhCenterPacket);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
+		ModuleDB_AVInfo_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
+
 		if (NULL != pSt_FileAudio)
 		{
 			fclose(pSt_FileAudio);
@@ -96,7 +96,6 @@ int main(int argc, char** argv)
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
-	memset(&st_JT1078Config, '\0', sizeof(XENGINE_JT1078CONFIG));
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
@@ -128,7 +127,24 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,初始化信号量成功"));
 
 	//调试相关
-	//pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	if (st_ServiceConfig.st_XDebug.bAudio)
+	{
+		pSt_FileAudio = _tfopen(_T("./Audio.aac"), "wb");
+	}
+	if (st_ServiceConfig.st_XDebug.bVideo)
+	{
+		pSt_FileVideo = _tfopen(_T("./Video.h264"), "wb");
+	}
+	//启动数据库
+	if (st_ServiceConfig.st_XSql.bEnable)
+	{
+		if (!ModuleDB_AVInfo_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceConfig.st_XSql))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化音视频信息数据库失败，错误：%lX"), ModuleDB_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化音视频信息数据库成功"));
+	}
 	//启动业务服务相关代码
 	if (st_ServiceConfig.nCenterPort > 0)
 	{
@@ -189,7 +205,7 @@ int main(int argc, char** argv)
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
-	while (bIsRun)
+	while (TRUE)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -205,7 +221,9 @@ XENGINE_SERVICEAPP_EXIT:
 		HelpComponents_Datas_Destory(xhCenterPacket);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
 		//销毁其他资源
+		ModuleDB_AVInfo_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
+
 		if (NULL != pSt_FileAudio)
 		{
 			fclose(pSt_FileAudio);

@@ -307,9 +307,9 @@ BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：ptszMsgBuffer
+ 参数.四：pptszMsgBuffer
   In/Out：In
-  类型：字符指针
+  类型：字符指针的指针
   可空：N
   意思：输出获取到的数据
  参数.五：pInt_MsgLen
@@ -322,11 +322,11 @@ BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR** pptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if ((NULL == lpszDeviceNumber) || (NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	if ((NULL == lpszDeviceNumber) || (NULL == pptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
@@ -370,10 +370,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, i
 		return FALSE;
 	}
 	*pInt_MsgLen = stl_MapLiveIterator->second->pStl_ListBuffer->front().nMsgLen;
-	memcpy(ptszMsgBuffer, stl_MapLiveIterator->second->pStl_ListBuffer->front().ptszMsgBuffer, stl_MapLiveIterator->second->pStl_ListBuffer->front().nMsgLen);
-
-	free(stl_MapLiveIterator->second->pStl_ListBuffer->front().ptszMsgBuffer);
-	stl_MapLiveIterator->second->pStl_ListBuffer->front().ptszMsgBuffer = NULL;
+	*pptszMsgBuffer = stl_MapLiveIterator->second->pStl_ListBuffer->front().ptszMsgBuffer;
 	stl_MapLiveIterator->second->pStl_ListBuffer->pop_front();
 
 	stl_MapLiveIterator->second->st_Locker.unlock();

@@ -92,6 +92,7 @@ int main(int argc, char** argv)
 	SetDllDirectory(_T("./XEngine_Plugin"));
 #endif
 	bIsRun = TRUE;
+	int nLoadCount = 0;
 	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
 	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
 	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_SDKApp.Log");
@@ -216,6 +217,7 @@ int main(int argc, char** argv)
 				//线程
 				ppSt_ThreadInfo[i]->pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
 			}
+			nLoadCount++;
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 		}
 		else
@@ -223,11 +225,11 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,插件模块:%s 被设置为禁用"), stl_ListIterator->tszPluginFile);
 		}
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共加载:%d 个插件"), st_SDKConfig.st_XPlugin.pStl_ListPlugin->size());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,插件加载完毕,一共有:%d 个插件,加载:%d 个插件"), st_SDKConfig.st_XPlugin.pStl_ListPlugin->size(), nLoadCount);
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_SDKConfig.st_XVer.pStl_ListVer->front().c_str(), st_SDKConfig.st_XVer.pStl_ListVer->size());
 
-	while (bIsRun)
+	while (TRUE)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}

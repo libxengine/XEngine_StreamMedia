@@ -13,29 +13,31 @@
 BOOL XEngine_Configure_Parament(int argc, char** argv)
 {
 	LPCTSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
-	LPCTSTR lpszJT1078Cfg = _T("./XEngine_Config/XEngine_JT1078Config.json");
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
 		return FALSE;
 	}
-	if (!ModuleConfigure_Json_JT1078(lpszJT1078Cfg, &st_JT1078Config))
-	{
-		printf("解析配置文件失败,ModuleConfigure_Json_JT1078:%lX\n", ModuleConfigure_GetLastError());
-		return FALSE;
-	}
 
 	for (int i = 0; i < argc; i++)
 	{
-		if ((0 == _tcscmp("-h", argv[i])) || (0 == _tcscmp("-H", argv[i])))
+		if (0 == _tcsicmp("-h", argv[i]))
 		{
 			XEngine_Configure_Help();
 			return FALSE;
 		}
-		else if (0 == _tcscmp("-d", argv[i]))
+		else if (0 == _tcsicmp("-d", argv[i]))
 		{
 			st_ServiceConfig.bDeamon = _ttoi(argv[i + 1]);
+		}
+		else if (0 == _tcsicmp("-a", argv[i]))
+		{
+			st_ServiceConfig.st_XDebug.bAudio = TRUE;
+		}
+		else if (0 == _tcsicmp("-v", argv[i]))
+		{
+			st_ServiceConfig.st_XDebug.bVideo = TRUE;
 		}
 	}
 

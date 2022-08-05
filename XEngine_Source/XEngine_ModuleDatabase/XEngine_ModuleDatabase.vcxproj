@@ -165,14 +165,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="ModuleDB_AVInfo\ModuleDB_AVInfo.h" />
     <ClInclude Include="ModuleDB_Define.h" />
     <ClInclude Include="ModuleDB_Error.h" />
-    <ClInclude Include="ModuleDB_JT1078\ModuleDB_JT1078.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ModuleDB_JT1078\ModuleDB_JT1078.cpp" />
+    <ClCompile Include="ModuleDB_AVInfo\ModuleDB_AVInfo.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

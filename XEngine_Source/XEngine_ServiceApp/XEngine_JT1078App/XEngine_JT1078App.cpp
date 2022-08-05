@@ -44,9 +44,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
-		ModuleDB_JT1078_Destory();
 		ModuleSession_Client_Destory();
-
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 	exit(0);
@@ -124,14 +122,6 @@ int main(int argc, char** argv)
 	signal(SIGTERM, ServiceApp_Stop);
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
-
-	if (!ModuleDB_JT1078_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化JT1078数据库失败，错误：%lX"), ModuleDB_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化JT1078数据库成功"));
-	ModuleDB_JT1078_DeviceClear();
 	//启动直播流
 	if (st_JT1078Cfg.nStreamPort > 0)
 	{
@@ -142,8 +132,11 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化实时端流包管理器成功,最大队列:%d,最大线程:%d"), st_JT1078Cfg.st_XMax.nMaxQueue, st_JT1078Cfg.st_XMax.nStreamThread);
-		HelpComponents_PKTCustom_SetHdrEx(xhStreamPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016));
+		//协议头大小.需要加上长度字段
+		HelpComponents_PKTCustom_SetHdrEx(xhStreamPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(WORD));
+		//如果packet == 4,透传,没有时间戳
 		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 4, -8, TRUE, TRUE);
+		//如果packet == 0,1,2 I帧P帧B帧,需要添加视频帧间隔时间,两个WORD大小
 		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 0, 4, TRUE, TRUE);
 		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 1, 4, TRUE, TRUE);
 		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 2, 4, TRUE, TRUE);
@@ -156,7 +149,7 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化实时端心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_EXITAPP;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化实时端心跳管理服务成功，句柄：%llu,检测时间:%d"), xhStreamHeart, st_JT1078Cfg.st_XTime.nStreamTimeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化实时端心跳管理服务成功，检测时间:%d"), st_JT1078Cfg.st_XTime.nStreamTimeout);
 		}
 		else
 		{
@@ -168,7 +161,7 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动实时端网络服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动实时端网络服务成功，句柄：%llu，端口：%d"), xhStreamNet, st_JT1078Cfg.nStreamPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动实时端网络服务成功，端口：%d"), st_JT1078Cfg.nStreamPort);
 		NetCore_TCPXCore_RegisterCallBackEx(xhStreamNet, XEngine_Callback_StreamLogin, XEngine_Callback_StreamRecv, XEngine_Callback_StreamLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册实时端网络服务事件成功！"));
 
@@ -198,7 +191,7 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化录像端流包管理器成功,最大队列:%d,最大线程:%d"), st_JT1078Cfg.st_XMax.nMaxQueue, st_JT1078Cfg.st_XMax.nRecordThread);
-		HelpComponents_PKTCustom_SetHdrEx(xhRecordPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016));
+		HelpComponents_PKTCustom_SetHdrEx(xhRecordPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(WORD));
 		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 4, -8, TRUE, TRUE);
 		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 0, 4, TRUE, TRUE);
 		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 1, 4, TRUE, TRUE);
@@ -212,7 +205,7 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化录像端心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_EXITAPP;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化录像端心跳管理服务成功，句柄：%llu,检测时间:%d"), xhRecordHeart, st_JT1078Cfg.st_XTime.nRecordTimeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化录像端心跳管理服务成功，检测时间:%d"), st_JT1078Cfg.st_XTime.nRecordTimeout);
 		}
 		else
 		{
@@ -224,7 +217,7 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动录像端网络服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动录像端网络服务成功，句柄：%llu，端口：%d"), xhRecordNet, st_JT1078Cfg.nRecordPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动录像端网络服务成功，端口：%d"), st_JT1078Cfg.nRecordPort);
 		NetCore_TCPXCore_RegisterCallBackEx(xhRecordNet, XEngine_Callback_RecordLogin, XEngine_Callback_RecordRecv, XEngine_Callback_RecordLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册录像端网络服务事件成功！"));
 
@@ -255,7 +248,7 @@ int main(int argc, char** argv)
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，JT1078流媒体服务运行中，XEngine版本:%s,发行次数:%d,当前运行版本：%s。。。"), XENGINE_VERSION_STR, st_JT1078Cfg.st_XVer.pStl_ListVer->size(), st_JT1078Cfg.st_XVer.pStl_ListVer->front().c_str());
-	while (bIsRun)
+	while (TRUE)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -279,9 +272,7 @@ XENGINE_EXITAPP:
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
-		ModuleDB_JT1078_Destory();
 		ModuleSession_Client_Destory();
-
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 #ifdef _MSC_BUILD

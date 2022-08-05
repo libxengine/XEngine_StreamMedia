@@ -13,6 +13,8 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
+	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
+	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
 }
 CPlugin_Dahua::~CPlugin_Dahua()
 {
@@ -68,18 +70,6 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
 		return FALSE;
 	}
-	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
-	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
-
-	NET_PARAM st_NetParam;
-	memset(&st_NetParam, '\0', sizeof(NET_PARAM));
-	st_NetParam.nWaittime = 8000;
-	st_NetParam.nConnectTime = 3000;
-	st_NetParam.nConnectTryNum = 3;
-	st_NetParam.nSubConnectSpaceTime = 100;
-	st_NetParam.nGetConnInfoTime = 3000;
-	CLIENT_SetNetworkParam(&st_NetParam);
-
 	PLUGIN_SDKDAHUA st_SDKDahua;
 	// 登录设备
 	int nErrcode = 0;

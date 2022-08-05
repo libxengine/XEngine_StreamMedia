@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "ModuleDB_JT1078/ModuleDB_JT1078.h"
+#include "ModuleDB_AVInfo/ModuleDB_AVInfo.h"
 /********************************************************************
 //    Created:     2022/03/01  09:17:08
 //    File Name:   D:\XEngine_ServiceApp\XEngine_Source\XEngine_ModuleDatabase\pch.cpp
@@ -14,7 +14,7 @@
 DWORD DBModule_IsErrorOccur = FALSE;
 BOOL DBModule_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
-CModuleDB_JT1078 m_JT1078;
+CModuleDB_AVInfo m_AVInfo;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -29,35 +29,23 @@ extern "C" DWORD ModuleDB_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的JT1078操作函数                         */
 /************************************************************************/
-extern "C" BOOL ModuleDB_JT1078_Init(DATABASE_MYSQL_CONNECTINFO * pSt_MySQLConnector)
+extern "C" BOOL ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO * pSt_MySQLConnector)
 {
-	return m_JT1078.ModuleDB_JT1078_Init(pSt_MySQLConnector);
+	return m_AVInfo.ModuleDB_AVInfo_Init(pSt_MySQLConnector);
 }
-extern "C" BOOL ModuleDB_JT1078_Destory()
+extern "C" BOOL ModuleDB_AVInfo_Destory()
 {
-	return m_JT1078.ModuleDB_JT1078_Destory();
+	return m_AVInfo.ModuleDB_AVInfo_Destory();
 }
-extern "C" BOOL ModuleDB_JT1078_DeviceInsert(LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, XNETHANDLE xhClient, BOOL bLive, LPCTSTR lpszDeviceVer)
+extern "C" BOOL ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
 {
-	return m_JT1078.ModuleDB_JT1078_DeviceInsert(lpszDeviceAddr, lpszDeviceNumber, nChannel, xhClient, bLive, lpszDeviceVer);
+	return m_AVInfo.ModuleDB_AVInfo_InfoInsert(pSt_ProtocolStream);
 }
-extern "C" BOOL ModuleDB_JT1078_DeviceDelete(LPCTSTR lpszDeviceAddr)
+extern "C" BOOL ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
 {
-	return m_JT1078.ModuleDB_JT1078_DeviceDelete(lpszDeviceAddr);
+	return m_AVInfo.ModuleDB_AVInfo_InfoQuery(pSt_ProtocolStream);
 }
-extern "C" BOOL ModuleDB_JT1078_DeviceClear()
+extern "C" BOOL ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
 {
-	return m_JT1078.ModuleDB_JT1078_DeviceClear();
-}
-extern "C" BOOL ModuleDB_JT1078_InfoInsert(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
-{
-	return m_JT1078.ModuleDB_JT1078_InfoInsert(pSt_ProtocolStream);
-}
-extern "C" BOOL ModuleDB_JT1078_InfoQuery(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
-{
-	return m_JT1078.ModuleDB_JT1078_InfoQuery(pSt_ProtocolStream);
-}
-extern "C" BOOL ModuleDB_JT1078_InfoUPDate(XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
-{
-	return m_JT1078.ModuleDB_JT1078_InfoUPDate(pSt_ProtocolStream);
+	return m_AVInfo.ModuleDB_AVInfo_InfoUPDate(pSt_ProtocolStream);
 }

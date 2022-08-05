@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct  
 {
-	TCHAR tszMsgBuffer[2048];     //通过free释放
+	TCHAR tszMsgBuffer[4096];     //通过free释放
 	XNETHANDLE xhToken;
 	BOOL bLive;
 	int nChannel;

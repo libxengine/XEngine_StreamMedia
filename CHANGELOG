@@ -1,3 +1,39 @@
+XEngine_StreamMedia V1.1.0.1001
+
+添加:为centerapp添加debug命令模式
+优化:获取任务性能
+修改:加载插件会显示所有模块信息了
+修改:jt1078app现在不使用数据库了
+修改:删除数据库设备管理代码
+修改:统一数据接口
+修改:centerapp 支持音视频信息数据库了
+修改:大华sdk使用默认超时了
+修改:大华sdk设置回调函数位置
+修改:插件内存大小
+修改:内存导出方式
+修复:某些时候退出崩溃的问题
+修复:ModuleSession_Client_Exist函数没有找到还处理的问题
+修复:rtp包处理错误
+修复:句柄打印错误
+删除:jt1078配置代码在centerapp中
+
+added:command debug av file for centerapp
+improved:get task perf
+modify:Loading and all plugin module information is display now
+modify:jt1078app does not use database
+modify:delete device manage for database module
+modify:unified Database Interface
+modify:centerapp support avinfo database
+modify:Dahua SDK use to default timeout
+modify:dahua sdk set callback function location
+modify:plugin memory size
+modify:memory export method
+fixed:sometime is crashed when program exit
+fixed:ModuleSession_Client_Exist does not process notfound is incorrent
+fixed:the problem that rtp packet is incorrent
+fixed:handle printf is incorrent
+delete:jt1078 configure code in centerapp
+=======================================================
 XEngine_StreamMedia V1.0.0.1001
 
 增加:插件系统

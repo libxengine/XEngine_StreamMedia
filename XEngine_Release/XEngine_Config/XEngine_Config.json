@@ -14,6 +14,7 @@
         "nCenterTimeOut":5
     },
     "XSQL":{
+        "bEnable":false,
         "tszSQLAddr":"192.168.1.12",
         "nSQLPort":3306,
         "tszSQLUser":"ruiyue",
@@ -25,7 +26,7 @@
         "LogLeave":32
     },
     "XVer":[
-        "V1.1.0.1001 Build20220715",
-        "V1.0.0.1001 Build20220422"
+        "V1.1.0.1001 Build20220805",
+        "V1.0.0.1001 Build20220715"
     ]
 }

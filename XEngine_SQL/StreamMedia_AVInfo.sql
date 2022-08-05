@@ -18,22 +18,6 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for DeviceList
--- ----------------------------
-DROP TABLE IF EXISTS `DeviceList`;
-CREATE TABLE `DeviceList`  (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `tszDeviceAddr` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '设备地址',
-  `tszDeviceNumber` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '设备编号',
-  `nChannel` int NOT NULL COMMENT '通道号',
-  `xhClient` bigint NOT NULL COMMENT '客户端句柄',
-  `bLive` tinyint NOT NULL COMMENT '直播还是录像',
-  `tszVersion` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备版本2014,2016?',
-  `CreateTime` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`ID`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
 -- Table structure for DeviceList_AVInfo
 -- ----------------------------
 DROP TABLE IF EXISTS `DeviceList_AVInfo`;

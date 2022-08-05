@@ -8,7 +8,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents
 LIB = -lHelpComponents_DataBase
 LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleDB_JT1078.o pch.o
+LIBINCLUDE = ModuleDB_AVInfo.o pch.o
 
 ifeq ($(OS),Windows_NT)
 else
@@ -40,8 +40,8 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleDatabase.$(SHAREDLL) $(SHAREFLAG) -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-ModuleDB_JT1078.o:./ModuleDB_JT1078/ModuleDB_JT1078.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleDB_JT1078/ModuleDB_JT1078.cpp 
+ModuleDB_AVInfo.o:./ModuleDB_AVInfo/ModuleDB_AVInfo.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleDB_AVInfo/ModuleDB_AVInfo.cpp 
 						              
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp

@@ -19,7 +19,7 @@
     },
     "XPlugin":[
         {
-            "PluginEnable":true,
+            "PluginEnable":false,
             "PluginToken":10001001,
             "PluginName":"dahuasdk",
             "PluginAddr":"192.168.8.152",
@@ -30,6 +30,7 @@
         }
     ],
     "XVer":[
+        "1.1.0.1001 Build20220805",
         "1.0.0.1001 Build20220715"
     ]
 }

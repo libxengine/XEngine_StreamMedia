@@ -280,9 +280,9 @@ extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChann
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：ptszMsgBuffer
+ 参数.四：pptszMsgBuffer
   In/Out：In
-  类型：字符指针
+  类型：字符指针的指针
   可空：N
   意思：输出获取到的数据
  参数.五：pInt_MsgLen
@@ -295,7 +295,7 @@ extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChann
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * *pptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：ModuleSession_Server_SetPush
 函数功能：设置推送句柄

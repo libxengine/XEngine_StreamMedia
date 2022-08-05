@@ -53,7 +53,7 @@ BOOL XEngine_Stream_Handle(SOCKET hSocket, LPCTSTR lpszMsgBuffer, int nMsgLen, L
 	memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
 	NetXApi_Socket_GetAddress(hSocket, tszClientAddr, FALSE);
-	if (nHDRLen == sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL))
+	if (nHDRLen == sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL) + sizeof(WORD))
 	{
 		XENGINE_RTPPACKETHDR2016 st_RTPHdr;
 		XENGINE_RTPPACKETTAIL st_RTPTail;
@@ -109,7 +109,6 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,绑定客户端失败,错误：%lX"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, ModuleSession_GetLastError());
 			return FALSE;
 		}
-		ModuleDB_JT1078_DeviceInsert(lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, TRUE, "2016");
 		//创建流
 		ModuleProtocol_Stream_Create(tszSDBuffer, &nSDLen, &st_ProtoDevice);
 		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);

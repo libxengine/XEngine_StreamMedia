@@ -46,15 +46,14 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 {
 	XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = (XENGINE_PROTOCOLDEVICE*)lParam;
-
-	int nMsgLen = 4096;
 	time_t nTimeStart = time(NULL);
-	TCHAR tszMsgBuffer[4096];
-	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+	int nMsgLen = 0;
 
 	while (1)
 	{
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
+		nMsgLen = 0;
+		TCHAR* ptszMsgBuffer = NULL;
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, &ptszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{
@@ -71,7 +70,8 @@ int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 			continue;
 		}
 		nTimeStart = time(NULL);
-		memcpy(puszMsgBuffer, tszMsgBuffer, nMsgLen);
+		memcpy(puszMsgBuffer, ptszMsgBuffer, nMsgLen);
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,推送成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
 		break;
 	}
@@ -80,15 +80,14 @@ int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 {
 	XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = (XENGINE_PROTOCOLDEVICE*)lParam;
-
-	int nMsgLen = 4096;
 	time_t nTimeStart = time(NULL);
-	TCHAR tszMsgBuffer[4096];
-	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+	int nMsgLen = 0;
 
 	while (1)
 	{
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, tszMsgBuffer, &nMsgLen))
+		nMsgLen = 0;
+		TCHAR* ptszMsgBuffer = NULL;
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, &ptszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{
@@ -105,7 +104,8 @@ int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 			continue;
 		}
 		nTimeStart = time(NULL);
-		memcpy(puszMsgBuffer, tszMsgBuffer, nMsgLen);
+		memcpy(puszMsgBuffer, ptszMsgBuffer, nMsgLen);
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("音频流,设备ID：%s,设备通道：%d,流类型：%d,推送到NGINX成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
 		break;
 	}

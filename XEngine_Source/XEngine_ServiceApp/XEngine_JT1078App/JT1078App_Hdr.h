@@ -35,13 +35,9 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
-#include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
-#include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Error.h"
-#include "../../XEngine_ModuleDatabase/ModuleDB_Define.h"
-#include "../../XEngine_ModuleDatabase/ModuleDB_Error.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Define.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
 #include "../../XEngine_ModuleSession/ModuleSession_Define.h"
@@ -91,13 +87,11 @@ extern XENGINE_JT1078CONFIG st_JT1078Cfg;
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleConfigure")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol")
 #else
 #pragma comment(lib,"../../Debug/XEngine_ModuleConfigure")
-#pragma comment(lib,"../../Debug/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Debug/XEngine_ModuleSession")
 #pragma comment(lib,"../../Debug/XEngine_ModuleProtocol")
@@ -105,13 +99,11 @@ extern XENGINE_JT1078CONFIG st_JT1078Cfg;
 #else
 #ifdef _WIN64
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure")
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleSession")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol")
 #else
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure")
-#pragma comment(lib,"../../Release/XEngine_ModuleDatabase")
 #pragma comment(lib,"../../Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Release/XEngine_ModuleSession")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol")

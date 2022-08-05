@@ -166,6 +166,13 @@ BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
         }
 	}
 	st_Locker.unlock_shared();
+
+    if (!bFound)
+    {
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return FALSE;
+    }
 	return TRUE;
 }
 /********************************************************************
