@@ -233,7 +233,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
 	st_PlayIn.rType = DH_RType_Realplay;
 	st_PlayIn.nChannelID = nChannel;
-	//st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
+	st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
 	st_PlayIn.hWnd = NULL;
 	//st_PlayIn.dwUser = (LDWORD)this;
 	st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
@@ -378,6 +378,47 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
 
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
+	{
+		PLUGIN_MQDATA st_MQData;
+		st_MQData.xhToken = pSt_SDKInfo->xhToken;
+		st_MQData.nChannel = pSt_SDKInfo->nChannel;
+		st_MQData.bLive = TRUE;
+		st_MQData.nDType = 0;
+		//分拆数据包
+		int nCpyCount = 0;
+		int nPosSize = 0;
+		int nAllSize = dwBufSize;
+		while (nAllSize > 0)
+		{
+			if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+			{
+				nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+			}
+			else
+			{
+				nCpyCount = nAllSize;
+			}
+			st_MQData.nMsgLen = nCpyCount;
+			memcpy(st_MQData.tszMsgBuffer, pBuffer + nPosSize, nCpyCount);
+
+			pClass_This->st_LockerData.lock_shared();
+			unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapMQIterator = pClass_This->stl_MapSDKData.find(pSt_SDKInfo->xhToken);
+			if (stl_MapMQIterator != pClass_This->stl_MapSDKData.end())
+			{
+				unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapMQIndexIterator = stl_MapMQIterator->second.find(pSt_SDKInfo->nIndex);
+				if (stl_MapMQIndexIterator != stl_MapMQIterator->second.end())
+				{
+					stl_MapMQIndexIterator->second.st_Locker->lock();
+					stl_MapMQIndexIterator->second.stl_ListMQData.push_back(st_MQData);
+					stl_MapMQIndexIterator->second.st_Locker->unlock();
+				}
+			}
+			pClass_This->st_LockerData.unlock_shared();
+			nAllSize -= nCpyCount;
+			nPosSize += nCpyCount;
+		}
+	}
+	else if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_AUDIO_DATA_TYPE_AAC))
 	{
 		PLUGIN_MQDATA st_MQData;
 		st_MQData.xhToken = pSt_SDKInfo->xhToken;

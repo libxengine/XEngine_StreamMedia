@@ -32,7 +32,7 @@ XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice, int nThread)
 				st_ProtocolDevice.nChannel = st_MQData.nChannel;
 				_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhDevice);
 
-				ModuleProtocol_Stream_Push(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice, st_MQData.tszMsgBuffer, st_MQData.nMsgLen, 0);
+				ModuleProtocol_Stream_Push(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice, st_MQData.tszMsgBuffer, st_MQData.nMsgLen, st_MQData.nDType);
 				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 			}
 		}
