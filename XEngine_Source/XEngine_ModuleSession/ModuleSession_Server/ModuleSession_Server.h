@@ -19,7 +19,8 @@ typedef struct
 {
 	XNETHANDLE xhToken;
 	shared_mutex st_Locker;
-	list<SESSION_MSGBUFFER>* pStl_ListBuffer;
+	list<SESSION_MSGBUFFER>* pStl_ListVideo;
+	list<SESSION_MSGBUFFER>* pStl_ListAudio;
 }SESSION_RTPPACKET;
 
 class CModuleSession_Server
@@ -30,8 +31,8 @@ public:
 public:
 	BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 	BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen);
-	BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR** pptszMsgBuffer, int* pInt_MsgLen);
+	BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType);
+	BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, int nMsgType, TCHAR** pptszMsgBuffer, int* pInt_MsgLen);
 	BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken);
 	BOOL ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken);
 private:

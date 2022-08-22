@@ -23,7 +23,7 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, NULL, pSt_ProtocolDevice))
+	if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, FramePush_Stream_CBAudio, pSt_ProtocolDevice))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
@@ -53,7 +53,7 @@ int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 	{
 		nMsgLen = 0;
 		TCHAR* ptszMsgBuffer = NULL;
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, &ptszMsgBuffer, &nMsgLen))
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 0, &ptszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{
@@ -87,7 +87,7 @@ int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
 	{
 		nMsgLen = 0;
 		TCHAR* ptszMsgBuffer = NULL;
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, &ptszMsgBuffer, &nMsgLen))
+		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 1, &ptszMsgBuffer, &nMsgLen))
 		{
 			if (-1 == nMsgLen)
 			{

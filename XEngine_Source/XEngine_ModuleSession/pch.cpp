@@ -69,13 +69,13 @@ extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChan
 {
 	return m_Server.ModuleSession_Server_Destroy(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
+extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
-	return m_Server.ModuleSession_Server_Insert(lpszDeviceNumber, nChannel, bLive, lpszMsgBuffer, nMsgLen);
+	return m_Server.ModuleSession_Server_Insert(lpszDeviceNumber, nChannel, bLive, lpszMsgBuffer, nMsgLen, nMsgType);
 }
-extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * *pptszMsgBuffer, int* pInt_MsgLen)
+extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, int nMsgType, TCHAR * *pptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_Server.ModuleSession_Server_Get(lpszDeviceNumber, nChannel, bLive, pptszMsgBuffer, pInt_MsgLen);
+	return m_Server.ModuleSession_Server_Get(lpszDeviceNumber, nChannel, bLive, nMsgType, pptszMsgBuffer, pInt_MsgLen);
 }
 extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken)
 {

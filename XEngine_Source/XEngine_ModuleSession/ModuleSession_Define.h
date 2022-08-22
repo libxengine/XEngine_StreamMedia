@@ -256,12 +256,17 @@ extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChan
   类型：整数型
   可空：N
   意思：输入数据大小
+ 参数.六：nMsgType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据类型0视频,1音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen);
+extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType);
 /********************************************************************
 函数名称：ModuleSession_Server_Get
 函数功能：获取数据
@@ -280,12 +285,17 @@ extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChann
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：pptszMsgBuffer
+ 参数.四：nMsgType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：要获取的数据类型
+ 参数.五：pptszMsgBuffer
   In/Out：In
   类型：字符指针的指针
   可空：N
   意思：输出获取到的数据
- 参数.五：pInt_MsgLen
+ 参数.六：pInt_MsgLen
   In/Out：In
   类型：整数型指针
   可空：N
@@ -295,7 +305,7 @@ extern "C" BOOL ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChann
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR * *pptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, int nMsgType, TCHAR * *pptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：ModuleSession_Server_SetPush
 函数功能：设置推送句柄

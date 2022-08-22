@@ -61,8 +61,9 @@ BOOL CModuleSession_Server::ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return FALSE;
 	}
-	pSt_RTPPacket->pStl_ListBuffer = new list<SESSION_MSGBUFFER>;
-	if (NULL == pSt_RTPPacket->pStl_ListBuffer)
+	pSt_RTPPacket->pStl_ListVideo = new list<SESSION_MSGBUFFER>;
+	pSt_RTPPacket->pStl_ListAudio = new list<SESSION_MSGBUFFER>;
+	if ((NULL == pSt_RTPPacket->pStl_ListVideo) || (NULL == pSt_RTPPacket->pStl_ListAudio))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
@@ -173,15 +174,24 @@ BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumbe
 		return FALSE;
 	}
 	stl_MapIteratorLive->second->st_Locker.lock();
-	list<SESSION_MSGBUFFER>::iterator stl_ListIterator = stl_MapIteratorLive->second->pStl_ListBuffer->begin();
-	for (; stl_ListIterator != stl_MapIteratorLive->second->pStl_ListBuffer->end(); stl_ListIterator++)
+	list<SESSION_MSGBUFFER>::iterator stl_ListIterator = stl_MapIteratorLive->second->pStl_ListVideo->begin();
+	for (; stl_ListIterator != stl_MapIteratorLive->second->pStl_ListVideo->end(); stl_ListIterator++)
 	{
 		free(stl_ListIterator->ptszMsgBuffer);
 		stl_ListIterator->ptszMsgBuffer = NULL;
 	}
-	stl_MapIteratorLive->second->pStl_ListBuffer->clear();
-	delete stl_MapIteratorLive->second->pStl_ListBuffer;
-	stl_MapIteratorLive->second->pStl_ListBuffer = NULL;
+	stl_ListIterator = stl_MapIteratorLive->second->pStl_ListAudio->begin();
+	for (; stl_ListIterator != stl_MapIteratorLive->second->pStl_ListAudio->end(); stl_ListIterator++)
+	{
+		free(stl_ListIterator->ptszMsgBuffer);
+		stl_ListIterator->ptszMsgBuffer = NULL;
+	}
+	stl_MapIteratorLive->second->pStl_ListVideo->clear();
+	stl_MapIteratorLive->second->pStl_ListAudio->clear();
+	delete stl_MapIteratorLive->second->pStl_ListVideo;
+	delete stl_MapIteratorLive->second->pStl_ListAudio;
+	stl_MapIteratorLive->second->pStl_ListVideo = NULL;
+	stl_MapIteratorLive->second->pStl_ListAudio = NULL;
 	stl_MapIteratorLive->second->st_Locker.unlock();
 
 	delete stl_MapIteratorLive->second;
@@ -227,12 +237,17 @@ BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumbe
   类型：整数型
   可空：N
   意思：输入数据大小
+ 参数.六：nMsgType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据类型0视频,1音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen)
+BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -283,8 +298,15 @@ BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber
 	st_MsgBuffer.nMsgLen = nMsgLen;
 	memcpy(st_MsgBuffer.ptszMsgBuffer, lpszMsgBuffer, nMsgLen);
 
-	stl_MapLiveIterator->second->st_Locker.lock();;
-	stl_MapLiveIterator->second->pStl_ListBuffer->push_back(st_MsgBuffer);
+	stl_MapLiveIterator->second->st_Locker.lock();
+	if (0 == nMsgType)
+	{
+		stl_MapLiveIterator->second->pStl_ListVideo->push_back(st_MsgBuffer);
+	}
+	else
+	{
+		stl_MapLiveIterator->second->pStl_ListAudio->push_back(st_MsgBuffer);
+	}
 	stl_MapLiveIterator->second->st_Locker.unlock();
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -307,12 +329,17 @@ BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：pptszMsgBuffer
+ 参数.四：nMsgType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：要获取的数据类型
+ 参数.五：pptszMsgBuffer
   In/Out：In
   类型：字符指针的指针
   可空：N
   意思：输出获取到的数据
- 参数.五：pInt_MsgLen
+ 参数.六：pInt_MsgLen
   In/Out：In
   类型：整数型指针
   可空：N
@@ -322,7 +349,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_Insert(LPCTSTR lpszDeviceNumber
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, TCHAR** pptszMsgBuffer, int* pInt_MsgLen)
+BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, int nMsgType, TCHAR** pptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -361,18 +388,34 @@ BOOL CModuleSession_Server::ModuleSession_Server_Get(LPCTSTR lpszDeviceNumber, i
 		return FALSE;
 	}
 	stl_MapLiveIterator->second->st_Locker.lock();
-	if (stl_MapLiveIterator->second->pStl_ListBuffer->empty())
+	if (0 == nMsgType)
 	{
-		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY;
-		stl_MapLiveIterator->second->st_Locker.unlock();
-		st_Locker.unlock_shared();
-		return FALSE;
+		if (stl_MapLiveIterator->second->pStl_ListVideo->empty())
+		{
+			Session_IsErrorOccur = TRUE;
+			Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY;
+			stl_MapLiveIterator->second->st_Locker.unlock();
+			st_Locker.unlock_shared();
+			return FALSE;
+		}
+		*pInt_MsgLen = stl_MapLiveIterator->second->pStl_ListVideo->front().nMsgLen;
+		*pptszMsgBuffer = stl_MapLiveIterator->second->pStl_ListVideo->front().ptszMsgBuffer;
+		stl_MapLiveIterator->second->pStl_ListVideo->pop_front();
 	}
-	*pInt_MsgLen = stl_MapLiveIterator->second->pStl_ListBuffer->front().nMsgLen;
-	*pptszMsgBuffer = stl_MapLiveIterator->second->pStl_ListBuffer->front().ptszMsgBuffer;
-	stl_MapLiveIterator->second->pStl_ListBuffer->pop_front();
-
+	else
+	{
+		if (stl_MapLiveIterator->second->pStl_ListAudio->empty())
+		{
+			Session_IsErrorOccur = TRUE;
+			Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY;
+			stl_MapLiveIterator->second->st_Locker.unlock();
+			st_Locker.unlock_shared();
+			return FALSE;
+		}
+		*pInt_MsgLen = stl_MapLiveIterator->second->pStl_ListAudio->front().nMsgLen;
+		*pptszMsgBuffer = stl_MapLiveIterator->second->pStl_ListAudio->front().ptszMsgBuffer;
+		stl_MapLiveIterator->second->pStl_ListAudio->pop_front();
+	}
 	stl_MapLiveIterator->second->st_Locker.unlock();
 	st_Locker.unlock_shared();
 	return TRUE;
