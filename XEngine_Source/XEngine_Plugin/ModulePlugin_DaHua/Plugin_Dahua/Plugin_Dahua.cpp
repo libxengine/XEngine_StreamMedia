@@ -13,6 +13,8 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
+	pSt_VFile = NULL;
+	pSt_AFile = NULL;
 	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
 	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
 }
@@ -71,16 +73,25 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 		return FALSE;
 	}
 	PLUGIN_SDKDAHUA st_SDKDahua;
-	// 登录设备
-	int nErrcode = 0;
-	st_SDKDahua.hSDKModule = CLIENT_LoginEx2(lpszAddr, nPort, lpszUser, lpszPass, EM_LOGIN_SPEC_CAP_TCP, NULL, &st_SDKDahua.st_DevInfo, &nErrcode);
-	if (0 == st_SDKDahua.hSDKModule)
+	//pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
+	//pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");
+	if (NULL == pSt_VFile)
 	{
-		// 根据错误码，可以在 dhnetsdk.h 中找到相应的解释，此处打印的是 16 进制，头文件中是十进制，其中的转换需注意
-		// 例如：#define NET_NOT_SUPPORTED_EC(23) // 当前 SDK 未支持该功能，对应的错误码为 0x80000017, 23 对应的 16 进制为 0x17
-		SDKPlugin_IsErrorOccur = TRUE;
-		SDKPlugin_dwErrorCode = CLIENT_GetLastError();
-		return FALSE;
+		// 登录设备
+		int nErrcode = 0;
+		st_SDKDahua.hSDKModule = CLIENT_LoginEx2(lpszAddr, nPort, lpszUser, lpszPass, EM_LOGIN_SPEC_CAP_TCP, NULL, &st_SDKDahua.st_DevInfo, &nErrcode);
+		if (0 == st_SDKDahua.hSDKModule)
+		{
+			// 根据错误码，可以在 dhnetsdk.h 中找到相应的解释，此处打印的是 16 进制，头文件中是十进制，其中的转换需注意
+			// 例如：#define NET_NOT_SUPPORTED_EC(23) // 当前 SDK 未支持该功能，对应的错误码为 0x80000017, 23 对应的 16 进制为 0x17
+			SDKPlugin_IsErrorOccur = TRUE;
+			SDKPlugin_dwErrorCode = CLIENT_GetLastError();
+			return FALSE;
+		}
+	}
+	else
+	{
+		st_SDKDahua.hSDKModule = rand();
 	}
 	st_SDKDahua.st_Locker = make_shared<std::shared_mutex>();
 
@@ -133,6 +144,15 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	{
 		CLIENT_Logout(stl_MapIterator->second.hSDKModule);
 	}
+	if (NULL != pSt_VFile)
+	{
+		fclose(pSt_VFile);
+	}
+	if (NULL != pSt_AFile)
+	{
+		fclose(pSt_AFile);
+	}
+	
 	stl_MapManager.erase(stl_MapIterator);
 	st_LockerManage.unlock();
 	
@@ -141,6 +161,118 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 	st_LockerData.unlock();
 	CLIENT_Cleanup();
 	return TRUE;
+}
+DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
+{
+	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)lParam;
+	CPlugin_Dahua* pClass_This = (CPlugin_Dahua *)pSt_SDKInfo->lClass;
+
+	while (TRUE)
+	{
+		if (NULL != pClass_This->pSt_VFile)
+		{
+			TCHAR tszMsgBuffer[8196];
+			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
+			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_VFile);
+			if (nRet <= 0)
+			{
+				fseek(pClass_This->pSt_VFile, 0, SEEK_SET);
+				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_VFile);
+			}
+
+			PLUGIN_MQDATA st_MQData;
+			st_MQData.xhToken = pSt_SDKInfo->xhToken;
+			st_MQData.nChannel = pSt_SDKInfo->nChannel;
+			st_MQData.bLive = TRUE;
+			st_MQData.nDType = 0;
+			//分拆数据包
+			int nCpyCount = 0;
+			int nPosSize = 0;
+			int nAllSize = nRet;
+			while (nAllSize > 0)
+			{
+				if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+				{
+					nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+				}
+				else
+				{
+					nCpyCount = nAllSize;
+				}
+				st_MQData.nMsgLen = nCpyCount;
+				memcpy(st_MQData.tszMsgBuffer, tszMsgBuffer + nPosSize, nCpyCount);
+
+				pClass_This->st_LockerData.lock_shared();
+				unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapMQIterator = pClass_This->stl_MapSDKData.find(pSt_SDKInfo->xhToken);
+				if (stl_MapMQIterator != pClass_This->stl_MapSDKData.end())
+				{
+					unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapMQIndexIterator = stl_MapMQIterator->second.find(pSt_SDKInfo->nIndex);
+					if (stl_MapMQIndexIterator != stl_MapMQIterator->second.end())
+					{
+						stl_MapMQIndexIterator->second.st_Locker->lock();
+						stl_MapMQIndexIterator->second.stl_ListMQData.push_back(st_MQData);
+						stl_MapMQIndexIterator->second.st_Locker->unlock();
+					}
+				}
+				pClass_This->st_LockerData.unlock_shared();
+				nAllSize -= nCpyCount;
+				nPosSize += nCpyCount;
+			}
+		}
+		if (NULL != pClass_This->pSt_AFile)
+		{
+			TCHAR tszMsgBuffer[8196];
+			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
+			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_AFile);
+			if (nRet <= 0)
+			{
+				fseek(pClass_This->pSt_AFile, 0, SEEK_SET);
+				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_AFile);
+			}
+
+			PLUGIN_MQDATA st_MQData;
+			st_MQData.xhToken = pSt_SDKInfo->xhToken;
+			st_MQData.nChannel = pSt_SDKInfo->nChannel;
+			st_MQData.bLive = TRUE;
+			st_MQData.nDType = 1;
+			//分拆数据包
+			int nCpyCount = 0;
+			int nPosSize = 0;
+			int nAllSize = nRet;
+			while (nAllSize > 0)
+			{
+				if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+				{
+					nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+				}
+				else
+				{
+					nCpyCount = nAllSize;
+				}
+				st_MQData.nMsgLen = nCpyCount;
+				memcpy(st_MQData.tszMsgBuffer, tszMsgBuffer + nPosSize, nCpyCount);
+
+				pClass_This->st_LockerData.lock_shared();
+				unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapMQIterator = pClass_This->stl_MapSDKData.find(pSt_SDKInfo->xhToken);
+				if (stl_MapMQIterator != pClass_This->stl_MapSDKData.end())
+				{
+					unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapMQIndexIterator = stl_MapMQIterator->second.find(pSt_SDKInfo->nIndex);
+					if (stl_MapMQIndexIterator != stl_MapMQIterator->second.end())
+					{
+						stl_MapMQIndexIterator->second.st_Locker->lock();
+						stl_MapMQIndexIterator->second.stl_ListMQData.push_back(st_MQData);
+						stl_MapMQIndexIterator->second.st_Locker->unlock();
+					}
+				}
+				pClass_This->st_LockerData.unlock_shared();
+				nAllSize -= nCpyCount;
+				nPosSize += nCpyCount;
+			}
+		}
+		Sleep(38);
+	}
 }
 /********************************************************************
 函数名称：PluginCore_Play
@@ -226,25 +358,32 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel)
 	pSt_SDKInfo->nIndex = nIndex;
 	pSt_SDKInfo->nChannel = nChannel;
 	pSt_SDKInfo->lClass = this;
-
-	NET_IN_REALPLAY_BY_DATA_TYPE st_PlayIn = { sizeof(st_PlayIn) };
-	NET_OUT_REALPLAY_BY_DATA_TYPE st_PlayOut = { sizeof(st_PlayOut) };
-	st_PlayIn.cbRealData = PluginCore_CB_RealData;
-	st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
-	st_PlayIn.rType = DH_RType_Realplay;
-	st_PlayIn.nChannelID = nChannel;
-	st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
-	st_PlayIn.hWnd = NULL;
-	//st_PlayIn.dwUser = (LDWORD)this;
-	st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
-
-	pSt_SDKInfo->xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 3000);
-	if (0 == pSt_SDKInfo->xhPlay)
+	
+	if (NULL == pSt_VFile)
 	{
-		SDKPlugin_IsErrorOccur = TRUE;
-		SDKPlugin_dwErrorCode = CLIENT_GetLastError();
-		st_LockerManage.unlock_shared();
-		return FALSE;
+		pSt_SDKInfo->pSTDThread = make_shared<thread>(PluginCore_Thread, pSt_SDKInfo);
+	}
+	else
+	{
+		NET_IN_REALPLAY_BY_DATA_TYPE st_PlayIn = { sizeof(st_PlayIn) };
+		NET_OUT_REALPLAY_BY_DATA_TYPE st_PlayOut = { sizeof(st_PlayOut) };
+		st_PlayIn.cbRealData = PluginCore_CB_RealData;
+		st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
+		st_PlayIn.rType = DH_RType_Realplay;
+		st_PlayIn.nChannelID = nChannel;
+		st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
+		st_PlayIn.hWnd = NULL;
+		//st_PlayIn.dwUser = (LDWORD)this;
+		st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
+
+		pSt_SDKInfo->xhPlay = CLIENT_RealPlayByDataType(stl_MapIterator->second.hSDKModule, &st_PlayIn, &st_PlayOut, 3000);
+		if (0 == pSt_SDKInfo->xhPlay)
+		{
+			SDKPlugin_IsErrorOccur = TRUE;
+			SDKPlugin_dwErrorCode = CLIENT_GetLastError();
+			st_LockerManage.unlock_shared();
+			return FALSE;
+		}
 	}
 	stl_MapIterator->second.st_Locker->lock();
 	stl_MapIterator->second.stl_ListChannel.push_back(pSt_SDKInfo);

@@ -16,6 +16,7 @@
 typedef struct
 {
 	XNETHANDLE xhToken;
+	shared_ptr<thread> pSTDThread;
 	LLONG xhPlay;
 	int nChannel;
 	int nIndex;
@@ -48,10 +49,13 @@ public:
 	BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel);
 	BOOL PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);
 protected:
+	static DWORD CALLBACK PluginCore_Thread(LPVOID lParam);
 	static void CALLBACK PluginCore_CB_Disconnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser);
 private:
+	FILE* pSt_VFile;
+	FILE* pSt_AFile;
 	shared_mutex st_LockerData;
 	shared_mutex st_LockerManage;
 private:
