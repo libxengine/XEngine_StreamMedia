@@ -271,12 +271,17 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   类型：整数型
   可空：N
   意思：输入最大线程池个数
+ 参数.七：bDebug
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用调试
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
+BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug)
 {
     ModulePlugin_IsErrorOccur = FALSE;
 
@@ -289,7 +294,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool, bDebug);
 	st_Locker.unlock_shared();
 	return bRet;
 }
@@ -336,12 +341,17 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_UnInit(XNETHANDLE xhToken)
   类型：整数型
   可空：N
   意思：输入要操作的通道
+ 参数.三：bAudio
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel)
+BOOL CModulePlugin_Core::ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio)
 {
 	ModulePlugin_IsErrorOccur = FALSE;
 
@@ -354,7 +364,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Play(stl_MapIterator->second.xhModule, nChannel);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Play(stl_MapIterator->second.xhModule, nChannel, bAudio);
 	st_Locker.unlock_shared();
 	return bRet;
 }

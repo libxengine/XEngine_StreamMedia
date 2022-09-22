@@ -104,12 +104,17 @@ extern "C" BOOL ModulePlugin_Core_Destory();
   类型：整数型
   可空：N
   意思：输入最大线程池个数
+ 参数.七：bDebug
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用调试
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug = FALSE);
 /********************************************************************
 函数名称：ModulePlugin_Core_UnInit
 函数功能：卸载设备
@@ -137,12 +142,17 @@ extern "C" BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken);
   类型：整数型
   可空：N
   意思：输入要操作的通道
+ 参数.三：bAudio
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel);
+extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
 /********************************************************************
 函数名称：ModulePlugin_Core_Stop
 函数功能：停止播放

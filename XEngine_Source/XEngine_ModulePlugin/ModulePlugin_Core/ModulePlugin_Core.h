@@ -10,9 +10,9 @@
 //    Purpose:     插件核心架构定义
 //    History:
 *********************************************************************/
-typedef BOOL(*FPCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+typedef BOOL(*FPCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug);
 typedef BOOL(*FPCall_PluginCore_UnInit)(XNETHANDLE xhToken);
-typedef BOOL(*FPCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel);
+typedef BOOL(*FPCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel, BOOL bAudio);
 typedef BOOL(*FPCall_PluginCore_Stop)(XNETHANDLE xhToken, int nChannel);
 typedef BOOL(*FPCall_PluginCore_GetData)(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);
 typedef DWORD(*FPCall_PluginCore_GetLastError)();
@@ -25,9 +25,9 @@ typedef struct
 	TCHAR tszModuleName[MAX_PATH];
 	TCHAR tszModuleMode[MAX_PATH];
 
-	BOOL(*fpCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+	BOOL(*fpCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug);
 	BOOL(*fpCall_PluginCore_UnInit)(XNETHANDLE xhToken);
-	BOOL(*fpCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel);
+	BOOL(*fpCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel, BOOL bAudio);
 	BOOL(*fpCall_PluginCore_Stop)(XNETHANDLE xhToken, int nChannel);
 	BOOL(*fpCall_PluginCore_GetData)(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);
 	DWORD(*fpCall_PluginCore_GetLastError)();
@@ -43,9 +43,9 @@ public:
 	BOOL ModulePlugin_Core_Delete(XNETHANDLE xhToken);
 	BOOL ModulePlugin_Core_Destory();
 
-	BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+	BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug = FALSE);
 	BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken);
-	BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel);
+	BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
 	BOOL ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel);
 	BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);
 private:

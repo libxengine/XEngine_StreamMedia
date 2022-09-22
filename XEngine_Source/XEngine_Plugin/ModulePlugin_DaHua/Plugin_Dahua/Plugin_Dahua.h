@@ -17,6 +17,7 @@ typedef struct
 {
 	XNETHANDLE xhToken;
 	shared_ptr<thread> pSTDThread;
+	BOOL bAudio;
 	LLONG xhPlay;
 	int nChannel;
 	int nIndex;
@@ -43,17 +44,19 @@ public:
 	CPlugin_Dahua();
 	~CPlugin_Dahua();
 public:
-	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug = FALSE);
 	BOOL PluginCore_UnInit(XNETHANDLE xhToken);
-	BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel);
+	BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
 	BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel);
 	BOOL PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);
 protected:
-	static DWORD CALLBACK PluginCore_Thread(LPVOID lParam);
 	static void CALLBACK PluginCore_CB_Disconnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser);
 	static void CALLBACK PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser);
+protected:
+	static DWORD CALLBACK PluginCore_Thread(LPVOID lParam);
 private:
+	BOOL m_bDebug;
 	FILE* pSt_VFile;
 	FILE* pSt_AFile;
 	shared_mutex st_LockerData;
