@@ -260,6 +260,15 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 
 	if (m_bDebug)
 	{
+		pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
+		if (bAudio)
+		{
+			pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");
+		}
+		pSt_SDKInfo->pSTDThread = make_shared<thread>(PluginCore_Thread, pSt_SDKInfo);
+	}
+	else
+	{
 		NET_IN_REALPLAY_BY_DATA_TYPE st_PlayIn = { sizeof(st_PlayIn) };
 		NET_OUT_REALPLAY_BY_DATA_TYPE st_PlayOut = { sizeof(st_PlayOut) };
 		st_PlayIn.cbRealData = PluginCore_CB_RealData;
@@ -282,15 +291,6 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 			st_LockerManage.unlock_shared();
 			return FALSE;
 		}
-	}
-	else
-	{
-		pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
-		if (bAudio)
-		{
-			pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");
-		}
-		pSt_SDKInfo->pSTDThread = make_shared<thread>(PluginCore_Thread, pSt_SDKInfo);
 	}
 	stl_MapIterator->second.st_Locker->lock();
 	stl_MapIterator->second.stl_ListChannel.push_back(pSt_SDKInfo);

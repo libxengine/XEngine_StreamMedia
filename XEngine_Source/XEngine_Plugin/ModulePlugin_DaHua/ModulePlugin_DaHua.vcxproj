@@ -24,6 +24,7 @@
     <ProjectGuid>{b4e26f2d-82dd-44e5-8300-ca7baa3d198e}</ProjectGuid>
     <RootNamespace>ModulePluginDaHua</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>libModulePlugin_DaHua</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
