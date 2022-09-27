@@ -123,6 +123,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		//播放:http://127.0.0.1:5601/api?function=play&token=10001001&channel=1&live=1
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
+			BOOL bAudio = FALSE;
 			XNETHANDLE xhClient = 0;
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			
@@ -135,7 +136,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			st_ProtocolDevice.nChannel = _ttoi(tszValue);
 			BaseLib_OperatorString_GetKeyValue(pptszList[3], "=", tszKey, tszValue);
 			st_ProtocolDevice.bLive = _ttoi(tszValue);
-
+			if (nListCount == 5)
+			{
+				BaseLib_OperatorString_GetKeyValue(pptszList[4], "=", tszKey, tszValue);
+				bAudio = _ttoi(tszValue);
+			}
 			//是否已经播放
 			if (ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
 			{
@@ -145,7 +150,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,成功,设备已经在播放"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 				return FALSE;
 			}
-			if (!ModulePlugin_Core_Play(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel))
+			if (!ModulePlugin_Core_Play(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, bAudio))
 			{
 				st_HDRParam.nHttpCode = 404;
 				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);

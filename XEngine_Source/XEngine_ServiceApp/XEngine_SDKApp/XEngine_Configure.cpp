@@ -37,6 +37,10 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		{
 			st_ServiceConfig.bDeamon = _ttoi(argv[i + 1]);
 		}
+		else if (0 == _tcscmp("-b", argv[i]))
+		{
+			st_ServiceConfig.bDebug = TRUE;
+		}
 	}
 
 	return TRUE;

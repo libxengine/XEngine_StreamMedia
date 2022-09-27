@@ -199,7 +199,7 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			if (!ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient))
+			if (!ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient, st_ServiceConfig.bDebug))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
