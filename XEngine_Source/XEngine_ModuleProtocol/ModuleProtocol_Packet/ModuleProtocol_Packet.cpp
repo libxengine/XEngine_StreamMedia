@@ -1,20 +1,20 @@
 ﻿#include "pch.h"
-#include "ModuleProtocol_Stream.h"
+#include "ModuleProtocol_Packet.h"
 /********************************************************************
-//    Created:     2022/07/04  14:06:04
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Stream\ModuleProtocol_Stream.cpp
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Stream
-//    File Base:   ModuleProtocol_Stream
+//    Created:     2022/09/28  15:30:22
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Packet\ModuleProtocol_Packet.cpp
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleProtocol\ModuleProtocol_Packet
+//    File Base:   ModuleProtocol_Packet
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     流媒体协议
+//    Purpose:     协议打包工具
 //    History:
 *********************************************************************/
-CModuleProtocol_Stream::CModuleProtocol_Stream()
+CModuleProtocol_Packet::CModuleProtocol_Packet()
 {
 }
-CModuleProtocol_Stream::~CModuleProtocol_Stream()
+CModuleProtocol_Packet::~CModuleProtocol_Packet()
 {
 
 }
@@ -22,7 +22,7 @@ CModuleProtocol_Stream::~CModuleProtocol_Stream()
 //                             公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：ModuleProtocol_Stream_Create
+函数名称：ModuleProtocol_Packet_Create
 函数功能：流媒体创建
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -44,7 +44,7 @@ CModuleProtocol_Stream::~CModuleProtocol_Stream()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -71,7 +71,7 @@ BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Create(TCHAR* ptszMsgBuffer, 
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleProtocol_Stream_Push
+函数名称：ModuleProtocol_Packet_Push
 函数功能：推流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -108,7 +108,7 @@ BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Create(TCHAR* ptszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -136,7 +136,7 @@ BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Push(TCHAR* ptszMsgBuffer, in
 	return TRUE;
 }
 /********************************************************************
-函数名称：ModuleProtocol_Stream_Destroy
+函数名称：ModuleProtocol_Packet_Destroy
 函数功能：销毁流协议
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -158,7 +158,7 @@ BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Push(TCHAR* ptszMsgBuffer, in
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Stream::ModuleProtocol_Stream_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 

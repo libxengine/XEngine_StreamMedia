@@ -166,12 +166,14 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModuleProtocol_Define.h" />
     <ClInclude Include="ModuleProtocol_Error.h" />
-    <ClInclude Include="ModuleProtocol_Stream\ModuleProtocol_Stream.h" />
+    <ClInclude Include="ModuleProtocol_Packet\ModuleProtocol_Packet.h" />
+    <ClInclude Include="ModuleProtocol_Parse\ModuleProtocol_Parse.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ModuleProtocol_Stream\ModuleProtocol_Stream.cpp" />
+    <ClCompile Include="ModuleProtocol_Packet\ModuleProtocol_Packet.cpp" />
+    <ClCompile Include="ModuleProtocol_Parse\ModuleProtocol_Parse.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

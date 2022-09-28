@@ -160,7 +160,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				return FALSE;
 			}
 			//通知推流服务
-			ModuleProtocol_Stream_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			ModuleProtocol_Packet_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 			ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), &xhClient);
 			ModuleSession_SDKDevice_InsertDevice(_ttoi64(st_ProtocolDevice.tszDeviceNumber), xhClient, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
@@ -188,7 +188,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			if (ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
 			{
 				ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
-				ModuleProtocol_Stream_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+				ModuleProtocol_Packet_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
 				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
 			}
 			
