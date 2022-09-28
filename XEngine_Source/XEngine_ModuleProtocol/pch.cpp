@@ -31,6 +31,10 @@ extern "C" DWORD ModuleProtocol_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的协议封装函数                           */
 /************************************************************************/
+extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer)
+{
+	return m_ProtocolPacket.ModuleProtocol_Packet_Comm(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer);
+}
 extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Create(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);

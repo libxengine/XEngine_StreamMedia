@@ -22,6 +22,60 @@ CModuleProtocol_Packet::~CModuleProtocol_Packet()
 //                             公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
+函数名称：ModuleProtocol_Packet_Comm
+函数功能：通用打包回复函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：nCode
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入回复的CODE
+ 参数.四：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要处理的缓冲区
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCTSTR lpszMsgBuffer /* = NULL */)
+{
+	ModuleProtocol_IsErrorOccur = FALSE;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+
+	st_JsonRoot["code"] = nCode;
+
+	if (NULL == lpszMsgBuffer)
+	{
+		st_JsonRoot["msg"] = "success";
+	}
+	else
+	{
+		st_JsonRoot["msg"] = lpszMsgBuffer;
+	}
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	return TRUE;
+}
+/********************************************************************
 函数名称：ModuleProtocol_Packet_Create
 函数功能：流媒体创建
  参数.一：ptszMsgBuffer
@@ -51,7 +105,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		ModuleProtocol_IsErrorOccur = TRUE;
-		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_JT1078_PARAMENT;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
 		return FALSE;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
@@ -115,7 +169,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, in
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		ModuleProtocol_IsErrorOccur = TRUE;
-		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_JT1078_PARAMENT;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
 		return FALSE;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
@@ -165,7 +219,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		ModuleProtocol_IsErrorOccur = TRUE;
-		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_JT1078_PARAMENT;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
 		return FALSE;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
