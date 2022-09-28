@@ -54,15 +54,18 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(LPVOID lParam)
 	}
 	return 0;
 }
-BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR lpszClientAddr, LPCTSTR lpszRVBuffer, int nRVLen)
+BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
-	int nMsgLen = 4096;
+	int nSDLen = 4096;
+	int nRVLen = 4096;
 	LPCTSTR lpszMethodPost = _T("POST");
 	LPCTSTR lpszMethodGet = _T("GET");
-	TCHAR tszMsgBuffer[4096];
+	TCHAR tszSDBuffer[4096];
+	TCHAR tszRVBuffer[4096];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;    //发送给客户端的参数
 
-	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
@@ -77,9 +80,9 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 	RfcComponents_HttpHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszList, &nListCount, tszUrlName);
 	if (nListCount < 1)
 	{
-		st_HDRParam.nHttpCode = 404;
-		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-		XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 400, "Bad Request,parament is incorrent");
+		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return FALSE;
@@ -96,9 +99,9 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 
 	if (0 != _tcsnicmp(lpszFuncName, tszUrlName, _tcslen(lpszFuncName)))
 	{
-		st_HDRParam.nHttpCode = 404;
-		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-		XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 400, "Bad Request,parament is incorrent");
+		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return FALSE;
@@ -107,9 +110,9 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 	BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
 	if (0 != _tcsnicmp(lpszParamFuncKey, tszKey, _tcslen(lpszParamFuncKey)))
 	{
-		st_HDRParam.nHttpCode = 404;
-		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-		XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 400, "Bad Request,parament is incorrent");
+		RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return FALSE;
@@ -144,29 +147,31 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			//是否已经播放
 			if (ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
 			{
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,成功,设备已经在播放"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 				return FALSE;
 			}
 			if (!ModulePlugin_Core_Play(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, bAudio))
 			{
-				st_HDRParam.nHttpCode = 404;
-				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-				XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 404, "Not found,parament is incorrent");
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d,失败,设备无法正常播放,错误码:%lX"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModulePlugin_GetLastError());
 				return FALSE;
 			}
 			//通知推流服务
-			ModuleProtocol_Packet_Create(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
+			ModuleProtocol_Packet_Create(tszSDBuffer, &nSDLen, &st_ProtocolDevice);
 			ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), &xhClient);
 			ModuleSession_SDKDevice_InsertDevice(_ttoi64(st_ProtocolDevice.tszDeviceNumber), xhClient, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
-			XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
-
-			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
+			//返回数据
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
+			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放设备:%s_%d_%d 成功"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
@@ -188,12 +193,12 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			if (ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
 			{
 				ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
-				ModuleProtocol_Packet_Destroy(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice);
-				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
+				ModuleProtocol_Packet_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDevice);
+				XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 			}
-			
-			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-			XEngine_Network_Send(lpszClientAddr, tszMsgBuffer, nMsgLen);
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
+			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%s_%d_%d 成功"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
