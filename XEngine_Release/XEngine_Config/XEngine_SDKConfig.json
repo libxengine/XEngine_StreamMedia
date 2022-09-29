@@ -1,5 +1,5 @@
 {
-    "tszIPAddr":"192.168.1.8",
+    "tszIPAddr":"127.0.0.1",
     "bDeamon":false,
     "nHttpPort":5601,
     "XMax":{
@@ -19,17 +19,18 @@
     },
     "XPlugin":[
         {
-            "PluginEnable":false,
+            "PluginEnable":true,
             "PluginToken":10001001,
             "PluginName":"dahuasdk",
-            "PluginAddr":"192.168.8.152",
+            "PluginAddr":"192.168.0.170",
             "PluginPort":37777,
             "PluginUser":"admin",
             "PluginPass":"sihan123",
-            "PluginFile":"./XEngine_Plugin/libModulePlugin_Dahua.so"
+            "PluginFile":"./XEngine_Plugin/libModulePlugin_DaHua"
         }
     ],
     "XVer":[
+        "1.2.0.1001 Build20220930",
         "1.1.0.1001 Build20220805",
         "1.0.0.1001 Build20220715"
     ]

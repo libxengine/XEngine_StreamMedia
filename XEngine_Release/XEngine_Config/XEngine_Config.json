@@ -1,5 +1,5 @@
 {
-    "tszSMSUrl":"rtmp://app.xyry.org/live",
+    "tszSMSUrl":"rtmp://127.0.0.1/live",
     "tszIPAddr":"192.168.1.12",
     "bDeamon":0,
     "nCenterPort":5600,
@@ -15,7 +15,7 @@
     },
     "XSQL":{
         "bEnable":false,
-        "tszSQLAddr":"192.168.1.12",
+        "tszSQLAddr":"127.0.0.1",
         "nSQLPort":3306,
         "tszSQLUser":"ruiyue",
         "tszSQLPass":"123123Ruiyue"
@@ -26,6 +26,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V1.2.0.1001 Build20220930",
         "V1.1.0.1001 Build20220805",
         "V1.0.0.1001 Build20220715"
     ]
