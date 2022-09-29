@@ -295,7 +295,12 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool, bDebug);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
 	st_Locker.unlock_shared();
+	
 	return bRet;
 }
 /********************************************************************
@@ -325,6 +330,10 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_UnInit(XNETHANDLE xhToken)
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
 	st_Locker.unlock_shared();
 	return bRet;
 }
@@ -365,6 +374,10 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Play(stl_MapIterator->second.xhModule, nChannel, bAudio);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
 	st_Locker.unlock_shared();
 	return bRet;
 }
@@ -400,6 +413,10 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Stop(stl_MapIterator->second.xhModule, nChannel);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
 	st_Locker.unlock_shared();
 	return bRet;
 }
@@ -440,6 +457,10 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nInde
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_GetData(stl_MapIterator->second.xhModule, nIndex, pSt_MQData);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
 	st_Locker.unlock_shared();
 	return bRet;
 }
