@@ -320,6 +320,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	SDKPlugin_IsErrorOccur = FALSE;
 
+	LLONG xhPlay = 0;
 	st_LockerManage.lock();
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
@@ -336,16 +337,33 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	{
 		if (nChannel == (*stl_ListIterator)->nChannel)
 		{
-			CLIENT_StopRealPlayEx((*stl_ListIterator)->xhPlay);
-
+			xhPlay = (*stl_ListIterator)->xhPlay;
 			delete (*stl_ListIterator);
 			(*stl_ListIterator) = NULL;
 			stl_MapIterator->second.stl_ListChannel.erase(stl_ListIterator);
 			break;
 		}
 	}
-	stl_MapIterator->second.st_Locker->unlock();
+	stl_MapIterator->second.st_Locker->unlock_shared();
 	st_LockerManage.unlock();
+
+	if (xhPlay > 0)
+	{
+		CLIENT_StopRealPlayEx(xhPlay);
+	}
+	//释放数据队列
+	st_LockerData.lock();
+	unordered_map<XNETHANDLE, unordered_map<int, PLUGIN_SDKMQLSIT> >::iterator stl_MapDataIterator = stl_MapSDKData.find(xhToken);
+	if (stl_MapDataIterator != stl_MapSDKData.end())
+	{
+		unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapChnIterator = stl_MapDataIterator->second.find(nChannel);
+		if (stl_MapChnIterator != stl_MapDataIterator->second.end())
+		{
+			stl_MapDataIterator->second.erase(stl_MapChnIterator);
+		}
+		stl_MapSDKData.erase(stl_MapDataIterator);
+	}
+	st_LockerData.unlock();
 	return TRUE;
 }
 /********************************************************************
