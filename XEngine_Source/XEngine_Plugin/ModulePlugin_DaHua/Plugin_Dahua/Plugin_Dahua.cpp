@@ -440,7 +440,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 {
 	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)dwUser;
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
-
+	printf("AVType:%d\n", dwDataType);
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
 		PLUGIN_MQDATA st_MQData;
@@ -482,7 +482,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 			nPosSize += nCpyCount;
 		}
 	}
-	else if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_AUDIO_DATA_TYPE_AAC))
+	else if ((dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_AUDIO_DATA_TYPE_AAC)) && pSt_SDKInfo->bAudio)
 	{
 		PLUGIN_MQDATA st_MQData;
 		st_MQData.xhToken = pSt_SDKInfo->xhToken;

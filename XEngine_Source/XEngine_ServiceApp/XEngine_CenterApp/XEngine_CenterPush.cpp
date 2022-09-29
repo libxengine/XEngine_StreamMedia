@@ -23,10 +23,21 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, FramePush_Stream_CBAudio, pSt_ProtocolDevice, pSt_ProtocolDevice))
+	if (pSt_ProtocolDevice->bAudio)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
-		return 0;
+		if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, FramePush_Stream_CBAudio, pSt_ProtocolDevice, pSt_ProtocolDevice))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
+			return 0;
+		}
+	}
+	else
+	{
+		if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, NULL, pSt_ProtocolDevice))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
+			return 0;
+		}
 	}
 	if (!XClient_FilePush_Output(xhToken, tszPushAddr))
 	{
