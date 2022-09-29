@@ -359,9 +359,8 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 		unordered_map<int, PLUGIN_SDKMQLSIT>::iterator stl_MapChnIterator = stl_MapDataIterator->second.find(nChannel);
 		if (stl_MapChnIterator != stl_MapDataIterator->second.end())
 		{
-			stl_MapDataIterator->second.erase(stl_MapChnIterator);
+			stl_MapChnIterator->second.stl_ListMQData.clear();
 		}
-		stl_MapSDKData.erase(stl_MapDataIterator);
 	}
 	st_LockerData.unlock();
 	return TRUE;
@@ -440,7 +439,7 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 {
 	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)dwUser;
 	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
-	printf("AVType:%d\n", dwDataType);
+	//printf("AVType:%d\n", dwDataType);
 	if (dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_REAL_DATA_TYPE_H264))
 	{
 		PLUGIN_MQDATA st_MQData;
