@@ -88,17 +88,12 @@ extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_Msg
   类型：数据结构指针
   可空：N
   意思：输入设备信息
- 参数.四：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入推流数据
- 参数.五：nMsgLen
+ 参数.四：nMsgLen
   In/Out：In
   类型：整数型
   可空：N
   意思：推流数据大小
- 参数.六：nMsgType
+ 参数.五：nMsgType
   In/Out：In
   类型：整数型
   可空：N
@@ -108,7 +103,7 @@ extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_Msg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, LPCTSTR lpszMsgBuffer, int nMsgLen, int nMsgType);
+extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Destroy
 函数功能：销毁流协议
