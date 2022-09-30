@@ -55,7 +55,31 @@ extern "C" DWORD PluginCore_GetLastError();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug = FALSE);
+extern "C" BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
+/********************************************************************
+函数名称：PluginCore_CBSet
+函数功能：设置数据回调
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的设备
+ 参数.二：fpCall_SDKBuffer
+  In/Out：In/Out
+  类型：回调函数
+  可空：N
+  意思：数据处理回调
+ 参数.三：lParam
+  In/Out：In/Out
+  类型：无类型指针
+  可空：Y
+  意思：回调函数自定义参数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam = NULL);
 /********************************************************************
 函数名称：PluginCore_UnInit
 函数功能：卸载插件

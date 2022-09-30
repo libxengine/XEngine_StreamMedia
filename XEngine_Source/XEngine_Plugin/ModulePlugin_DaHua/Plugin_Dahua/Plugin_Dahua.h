@@ -12,7 +12,6 @@
 *********************************************************************/
 #define XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE 2048
 
-
 typedef struct
 {
 	XNETHANDLE xhToken;
@@ -40,7 +39,7 @@ public:
 	CPlugin_Dahua();
 	~CPlugin_Dahua();
 public:
-	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug = FALSE);
+	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
 	BOOL PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam = NULL);
 	BOOL PluginCore_UnInit(XNETHANDLE xhToken);
 	BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
@@ -53,6 +52,7 @@ protected:
 	static DWORD CALLBACK PluginCore_Thread(LPVOID lParam);
 private:
 	BOOL m_bDebug;
+	BOOL m_bPacket;
 	FILE* pSt_VFile;
 	FILE* pSt_AFile;
 	shared_mutex st_LockerManage;

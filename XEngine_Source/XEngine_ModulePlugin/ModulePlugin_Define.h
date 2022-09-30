@@ -91,7 +91,12 @@ extern "C" BOOL ModulePlugin_Core_Destory();
   类型：常量字符指针
   可空：N
   意思：输入密码
- 参数.六：bDebug
+ 参数.六：bPacket
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用分包传递
+ 参数.七：bDebug
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -101,7 +106,7 @@ extern "C" BOOL ModulePlugin_Core_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug = FALSE);
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
 /********************************************************************
 函数名称：ModulePlugin_Core_CBSet
 函数功能：设置数据回调

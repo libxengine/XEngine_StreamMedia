@@ -266,7 +266,12 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   类型：常量字符指针
   可空：N
   意思：输入密码
- 参数.六：bDebug
+ 参数.六：bPacket
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用分包传递
+ 参数.七：bDebug
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -276,7 +281,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug)
+BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket /* = TRUE */, BOOL bDebug /* = FALSE */)
 {
     ModulePlugin_IsErrorOccur = FALSE;
 
@@ -289,7 +294,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, bDebug);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();

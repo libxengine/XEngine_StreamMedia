@@ -41,9 +41,9 @@ extern "C" BOOL ModulePlugin_Core_Destory()
 {
 	return m_PluginCore.ModulePlugin_Core_Destory();
 }
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug)
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug)
 {
-	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bDebug);
+	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
 }
 extern "C" BOOL ModulePlugin_Core_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam)
 {
