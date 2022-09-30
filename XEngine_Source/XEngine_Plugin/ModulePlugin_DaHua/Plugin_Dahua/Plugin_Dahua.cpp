@@ -317,13 +317,13 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	SDKPlugin_IsErrorOccur = FALSE;
 
 	LLONG xhPlay = 0;
-	st_LockerManage.lock();
+	st_LockerManage.lock_shared();
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA>::iterator stl_MapIterator = stl_MapManager.find(xhToken);
 	if (stl_MapIterator == stl_MapManager.end())
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_NOTFOUND;
-		st_LockerManage.unlock();
+		st_LockerManage.unlock_shared();
 		return FALSE;
 	}
 	//查找通道
@@ -341,7 +341,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 		}
 	}
 	stl_MapIterator->second.st_Locker->unlock_shared();
-	st_LockerManage.unlock();
+	st_LockerManage.unlock_shared();
 
 	if (xhPlay > 0)
 	{
