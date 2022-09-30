@@ -33,7 +33,6 @@ void ServiceApp_Stop(int signo)
 		//销毁线程
 		for (int i = 0; i < nSDKCount; i++)
 		{
-			ppSt_ThreadInfo[i]->pSTDThread->join();
 			XClient_TCPSelect_StopEx(ppSt_ThreadInfo[i]->xhClient);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ThreadInfo, nSDKCount);
@@ -199,12 +198,12 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,加载插件:%s 路径:%s 失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			if (!ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, st_SDKConfig.st_XClient.nMaxClient, st_ServiceConfig.bDebug))
+			if (!ModulePlugin_Core_Init(stl_ListIterator->xhToken, stl_ListIterator->tszPluginAddr, stl_ListIterator->nPort, stl_ListIterator->tszPluginUser, stl_ListIterator->tszPluginPass, TRUE, st_ServiceConfig.bDebug))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			ModulePlugin_Core_CBSet(stl_ListIterator->xhToken,)
+			ModulePlugin_Core_CBSet(stl_ListIterator->xhToken, XEngine_PluginTask_CBRecv);
 			nSDKCount = st_SDKConfig.st_XClient.nMaxClient;
 			BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ThreadInfo, nSDKCount, sizeof(SDKLIST_THREADINFO));
 			//标准协议服务
@@ -215,8 +214,6 @@ int main(int argc, char** argv)
 				ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
 				ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, ppSt_ThreadInfo[i]->xhClient);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,句柄:%lld,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, ppSt_ThreadInfo[i]->xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
-				//线程
-				ppSt_ThreadInfo[i]->pSTDThread = make_shared<std::thread>(XEngine_PluginTask_Thread, stl_ListIterator->xhToken, i);
 			}
 			nLoadCount++;
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
@@ -243,7 +240,6 @@ XENGINE_SERVICEAPP_EXIT:
 		//销毁线程
 		for (int i = 0; i < nSDKCount; i++)
 		{
-			ppSt_ThreadInfo[i]->pSTDThread->join();
 			XClient_TCPSelect_StopEx(ppSt_ThreadInfo[i]->xhClient);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ThreadInfo, nSDKCount);

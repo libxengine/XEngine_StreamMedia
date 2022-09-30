@@ -10,7 +10,4 @@
 //    Purpose:     推流代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr);
-//////////////////////////////////////////////////////////////////////////
-int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize);
-int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize);
+XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XNETHANDLE xhToken, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr);

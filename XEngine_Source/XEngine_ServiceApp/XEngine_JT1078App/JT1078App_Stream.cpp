@@ -114,8 +114,9 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,推流端客户端：%lld,设备版本：2016"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient);
 	}
-	ModuleProtocol_Packet_Push(tszSDBuffer, &nSDLen, &st_ProtoDevice, lpszMsgBuffer, nMsgLen, 0);
+	ModuleProtocol_Packet_Push(tszSDBuffer, &nSDLen, &st_ProtoDevice, nMsgLen, 0);
 	XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
+	XClient_TCPSelect_SendEx(xhClient, lpszMsgBuffer, &nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, nSDLen);
 	return TRUE;
 }

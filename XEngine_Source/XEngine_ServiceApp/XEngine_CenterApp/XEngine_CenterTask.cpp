@@ -73,6 +73,13 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			memset(pSt_ProtocolAVAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
 			memcpy(pSt_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
+			//创建流
+			XNETHANDLE xhToken = 0;
+			if (!XClient_FilePush_Init(&xhToken, FALSE))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
+				return FALSE;
+			}
 			//创建会话
 			if (!ModuleSession_Server_Create(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive))
 			{
@@ -96,8 +103,9 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,没有启用音视频数据库,可能无法处理音频数据"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
 			}
+			ModuleSession_Server_SetPush(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, xhToken);
 			//开始创建音视频
-			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, pSt_ProtocolDevice, pSt_ProtocolAVAttr);
+			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, xhToken, pSt_ProtocolDevice, pSt_ProtocolAVAttr);
 			m_ThreadAV.detach();
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
 		}

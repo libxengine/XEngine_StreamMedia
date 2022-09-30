@@ -10,34 +10,17 @@
 //    Purpose:     推流代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr)
+XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XNETHANDLE xhToken, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr)
 {
-	XNETHANDLE xhToken = 0;
 	TCHAR tszPushAddr[512];
 
 	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 	_stprintf(tszPushAddr, _T("%s/%s_%d_%d"), st_ServiceConfig.tszSMSUrl, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
 
-	if (!XClient_FilePush_Init(&xhToken, FALSE))
+	if (!XClient_FilePush_Input(xhToken))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
-	}
-	if (pSt_ProtocolDevice->bAudio)
-	{
-		if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, FramePush_Stream_CBAudio, pSt_ProtocolDevice, pSt_ProtocolDevice))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
-			return 0;
-		}
-	}
-	else
-	{
-		if (!XClient_FilePush_Input(xhToken, NULL, NULL, FramePush_Stream_CBVideo, NULL, pSt_ProtocolDevice))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
-			return 0;
-		}
 	}
 	if (!XClient_FilePush_Output(xhToken, tszPushAddr))
 	{
@@ -49,76 +32,6 @@ XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XENGINE_PROTOCOLDEVICE* pSt_
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建启动流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	ModuleSession_Server_SetPush(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, xhToken);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("推流创建事件,处理完毕,推流地址:%s,此流不带音频"), tszPushAddr);
 	return 0;
-}
-///////////////////////////////////////////////////////////////////////////////////
-int FramePush_Stream_CBVideo(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
-{
-	XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = (XENGINE_PROTOCOLDEVICE*)lParam;
-	time_t nTimeStart = time(NULL);
-	int nMsgLen = 0;
-
-	while (1)
-	{
-		nMsgLen = 0;
-		TCHAR* ptszMsgBuffer = NULL;
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 0, &ptszMsgBuffer, &nMsgLen))
-		{
-			if (-1 == nMsgLen)
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,读取错误,设备通道已经被关闭,无法继续"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
-				break;
-			}
-			if ((time(NULL) - nTimeStart) > 5)
-			{
-				nMsgLen = -1;
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,读取错误,获取流失败,数据队列为空,无法继续"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
-				break;
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			continue;
-		}
-		nTimeStart = time(NULL);
-		memcpy(puszMsgBuffer, ptszMsgBuffer, nMsgLen);
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("视频流,设备ID：%s,设备通道：%d,流类型：%d,推送成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
-		break;
-	}
-	return nMsgLen;
-}
-int FramePush_Stream_CBAudio(LPVOID lParam, uint8_t* puszMsgBuffer, int nSize)
-{
-	XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = (XENGINE_PROTOCOLDEVICE*)lParam;
-	time_t nTimeStart = time(NULL);
-	int nMsgLen = 0;
-
-	while (1)
-	{
-		nMsgLen = 0;
-		TCHAR* ptszMsgBuffer = NULL;
-		if (!ModuleSession_Server_Get(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, 1, &ptszMsgBuffer, &nMsgLen))
-		{
-			if (-1 == nMsgLen)
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("音频流,设备ID：%s,设备通道：%d,流类型：%d,读取错误,设备通道已经被关闭,无法继续"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
-				break;
-			}
-			if ((time(NULL) - nTimeStart) > 5)
-			{
-				nMsgLen = -1;
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("音频流,设备ID：%s,设备通道：%d,流类型：%d,读取错误,获取流失败,数据队列为空,无法继续"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
-				break;
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			continue;
-		}
-		nTimeStart = time(NULL);
-		memcpy(puszMsgBuffer, ptszMsgBuffer, nMsgLen);
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("音频流,设备ID：%s,设备通道：%d,流类型：%d,推送到NGINX成功,大小：%d"), pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, nMsgLen);
-		break;
-	}
-	return nMsgLen;
 }

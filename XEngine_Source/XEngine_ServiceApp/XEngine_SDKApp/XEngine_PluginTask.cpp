@@ -10,33 +10,23 @@
 //    Purpose:     插件处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice, int nThread)
+void CALLBACK XEngine_PluginTask_CBRecv(XNETHANDLE xhToken, int nChannel, BOOL bLive, int nDType, LPCTSTR lpszMsgBuffer, int nMsgLen, LPVOID lParam)
 {
-	int nMsgLen = 0;
-	TCHAR tszMsgBuffer[4096];
+	int nSDLen = 0;
+	XNETHANDLE xhClient = 0;
+	TCHAR tszMsgBuffer[1024];
 
-	while (bIsRun)
+	if (ModuleSession_SDKDevice_GetClient(xhToken, nChannel, bLive, &xhClient))
 	{
-		PLUGIN_MQDATA st_MQData;
-		memset(&st_MQData, '\0', sizeof(PLUGIN_MQDATA));
+		XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+		memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
 
-		if (ModulePlugin_Core_GetData(xhDevice, nThread, &st_MQData))
-		{
-			XNETHANDLE xhClient = 0;
-			if (ModuleSession_SDKDevice_GetClient(xhDevice, st_MQData.nChannel, st_MQData.bLive, &xhClient))
-			{
-				XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
-				memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+		st_ProtocolDevice.bLive = TRUE;
+		st_ProtocolDevice.nChannel = nChannel;
+		_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhToken);
 
-				st_ProtocolDevice.bLive = TRUE;
-				st_ProtocolDevice.nChannel = st_MQData.nChannel;
-				_stprintf(st_ProtocolDevice.tszDeviceNumber, _T("%lld"), xhDevice);
-
-				ModuleProtocol_Packet_Push(tszMsgBuffer, &nMsgLen, &st_ProtocolDevice, st_MQData.tszMsgBuffer, st_MQData.nMsgLen, st_MQData.nDType);
-				XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nMsgLen);
-			}
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		ModuleProtocol_Packet_Push(tszMsgBuffer, &nSDLen, &st_ProtocolDevice, nMsgLen, nDType);
+		XClient_TCPSelect_SendEx(xhClient, tszMsgBuffer, &nSDLen);
+		XClient_TCPSelect_SendEx(xhClient, lpszMsgBuffer, &nMsgLen);
 	}
-	return 0;
 }
