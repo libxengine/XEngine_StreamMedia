@@ -45,12 +45,7 @@ extern "C" DWORD PluginCore_GetLastError();
   类型：常量字符指针
   可空：N
   意思：输入密码
- 参数.六：nMaxPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入最大线程个数
- 参数.七：bDebug
+ 参数.六：bDebug
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -60,7 +55,7 @@ extern "C" DWORD PluginCore_GetLastError();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug = FALSE);
+extern "C" BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug = FALSE);
 /********************************************************************
 函数名称：PluginCore_UnInit
 函数功能：卸载插件
@@ -118,27 +113,3 @@ extern "C" BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = 
 备注：
 *********************************************************************/
 extern "C" BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel);
-/********************************************************************
-函数名称：PluginCore_GetData
-函数功能：获取一个设备的数据
- 参数.一：xhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要操作的句柄
- 参数.二：nIndex
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入线程索引
- 参数.三：pSt_MQData
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出获取到的信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA * pSt_MQData);

@@ -80,6 +80,23 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR 
 		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPINIT;
 		return FALSE;
 	}
+	//设置回调
+#ifdef _MSC_BUILD
+	st_FrameWork.fpCall_PluginCore_CBSet = (FPCall_PluginCore_CBSet)GetProcAddress(st_FrameWork.mhFile, "PluginCore_CBSet");
+#else
+	* (void**)(&st_FrameWork.fpCall_PluginCore_CBSet) = dlsym(st_FrameWork.mhFile, _T("PluginCore_CBSet"));
+#endif
+	if (NULL == st_FrameWork.fpCall_PluginCore_CBSet)
+	{
+#ifdef _MSC_BUILD
+		FreeLibrary(st_FrameWork.mhFile);
+#else
+		dlclose(st_FrameWork.mhFile);
+#endif
+		ModulePlugin_IsErrorOccur = TRUE;
+		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPDATA;
+		return FALSE;
+	}
 	//卸载
 #ifdef _MSC_BUILD
 	st_FrameWork.fpCall_PluginCore_UnInit = (FPCall_PluginCore_UnInit)GetProcAddress(st_FrameWork.mhFile, "PluginCore_UnInit");
@@ -129,23 +146,6 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Insert(XNETHANDLE* pxhToken, LPCTSTR 
 #endif
 		ModulePlugin_IsErrorOccur = TRUE;
 		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPSTOP;
-		return FALSE;
-	}
-	//获取
-#ifdef _MSC_BUILD
-	st_FrameWork.fpCall_PluginCore_GetData = (FPCall_PluginCore_GetData)GetProcAddress(st_FrameWork.mhFile, "PluginCore_GetData");
-#else
-	* (void**)(&st_FrameWork.fpCall_PluginCore_GetData) = dlsym(st_FrameWork.mhFile, _T("PluginCore_GetData"));
-#endif
-	if (NULL == st_FrameWork.fpCall_PluginCore_GetData)
-	{
-#ifdef _MSC_BUILD
-		FreeLibrary(st_FrameWork.mhFile);
-#else
-		dlclose(st_FrameWork.mhFile);
-#endif
-		ModulePlugin_IsErrorOccur = TRUE;
-		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_FPDATA;
 		return FALSE;
 	}
 	//错误
@@ -266,12 +266,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   类型：常量字符指针
   可空：N
   意思：输入密码
- 参数.六：nMaxPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入最大线程池个数
- 参数.七：bDebug
+ 参数.六：bDebug
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -281,7 +276,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool, BOOL bDebug)
+BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bDebug)
 {
     ModulePlugin_IsErrorOccur = FALSE;
 
@@ -294,13 +289,58 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool, bDebug);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, bDebug);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
 	}
 	st_Locker.unlock_shared();
 	
+	return bRet;
+}
+/********************************************************************
+函数名称：ModulePlugin_Core_CBSet
+函数功能：设置数据回调
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的设备
+ 参数.二：fpCall_SDKBuffer
+  In/Out：In/Out
+  类型：回调函数
+  可空：N
+  意思：数据处理回调
+ 参数.三：lParam
+  In/Out：In/Out
+  类型：无类型指针
+  可空：Y
+  意思：回调函数自定义参数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModulePlugin_Core::ModulePlugin_Core_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam /* = NULL */)
+{
+	ModulePlugin_IsErrorOccur = FALSE;
+
+	st_Locker.lock_shared();
+	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::iterator stl_MapIterator = stl_MapFrameWork.find(xhToken);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		ModulePlugin_IsErrorOccur = TRUE;
+		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_CBSet(stl_MapIterator->second.xhModule, fpCall_SDKBuffer, lParam);
+	if (!bRet)
+	{
+		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+	}
+	st_Locker.unlock_shared();
+
 	return bRet;
 }
 /********************************************************************
@@ -413,50 +453,6 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel
 		return FALSE;
 	}
 	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Stop(stl_MapIterator->second.xhModule, nChannel);
-	if (!bRet)
-	{
-		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
-	}
-	st_Locker.unlock_shared();
-	return bRet;
-}
-/********************************************************************
-函数名称：PluginCore_GetData
-函数功能：获取一个设备的数据
- 参数.一：xhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要操作的句柄
- 参数.二：nIndex
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：线程索引
- 参数.三：pSt_MQData
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出获取到的信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CModulePlugin_Core::ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData)
-{
-	ModulePlugin_IsErrorOccur = FALSE;
-
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhToken);
-	if (stl_MapIterator == stl_MapFrameWork.end())
-	{
-		ModulePlugin_IsErrorOccur = TRUE;
-		ModulePlugin_dwErrorCode = ERROR_XENGINE_APISERVICE_MODULE_PLUGIN_NOTFOUND;
-		st_Locker.unlock_shared();
-		return FALSE;
-	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_GetData(stl_MapIterator->second.xhModule, nIndex, pSt_MQData);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();

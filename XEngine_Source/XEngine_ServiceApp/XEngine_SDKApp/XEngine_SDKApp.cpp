@@ -204,6 +204,7 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
+			ModulePlugin_Core_CBSet(stl_ListIterator->xhToken,)
 			nSDKCount = st_SDKConfig.st_XClient.nMaxClient;
 			BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ThreadInfo, nSDKCount, sizeof(SDKLIST_THREADINFO));
 			//标准协议服务

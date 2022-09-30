@@ -7,4 +7,3 @@ EXPORTS
 	PluginCore_UnInit
 	PluginCore_Play
 	PluginCore_Stop
-	PluginCore_GetData
