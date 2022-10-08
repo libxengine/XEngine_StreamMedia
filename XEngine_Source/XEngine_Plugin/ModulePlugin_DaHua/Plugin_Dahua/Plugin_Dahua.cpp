@@ -272,10 +272,7 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 		st_PlayIn.emDataType = EM_REAL_DATA_TYPE_H264;
 		st_PlayIn.rType = DH_RType_Realplay;
 		st_PlayIn.nChannelID = nChannel;
-		if (bAudio)
-		{
-			st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
-		}
+		st_PlayIn.emAudioType = EM_AUDIO_DATA_TYPE_AAC;
 		st_PlayIn.hWnd = NULL;
 		st_PlayIn.dwUser = (LDWORD)pSt_SDKInfo;
 
@@ -340,7 +337,7 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 			break;
 		}
 	}
-	stl_MapIterator->second.st_Locker->unlock_shared();
+	stl_MapIterator->second.st_Locker->unlock();
 	st_LockerManage.unlock_shared();
 
 	if (xhPlay > 0)
