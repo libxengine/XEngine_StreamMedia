@@ -13,8 +13,6 @@
 *********************************************************************/
 CPlugin_Dahua::CPlugin_Dahua()
 {
-	pSt_VFile = NULL;
-	pSt_AFile = NULL;
 	CLIENT_Init(PluginCore_CB_Disconnect, (LDWORD)this);
 	CLIENT_SetAutoReconnect(PluginCore_CB_AutoConnect, (LDWORD)this);
 }
@@ -27,11 +25,11 @@ CPlugin_Dahua::~CPlugin_Dahua()
 /********************************************************************
 函数名称：PluginCore_Init
 函数功能：初始化插件模块
- 参数.一：pxhToken
-  In/Out：Out
+ 参数.一：xhToken
+  In/Out：In
   类型：句柄
   可空：N
-  意思：导出初始化后的句柄
+  意思：输入句柄
  参数.二：lpszAddr
   In/Out：In
   类型：常量字符指针
@@ -67,11 +65,11 @@ CPlugin_Dahua::~CPlugin_Dahua()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket /* = TRUE */, BOOL bDebug /* = FALSE */)
+BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket /* = TRUE */, BOOL bDebug /* = FALSE */)
 {
 	SDKPlugin_IsErrorOccur = FALSE;
 
-	if ((NULL == pxhToken) || (NULL == lpszAddr) || (NULL == lpszUser) || (NULL == lpszPass))
+	if ((NULL == lpszAddr) || (NULL == lpszUser) || (NULL == lpszPass))
 	{
 		SDKPlugin_IsErrorOccur = TRUE;
 		SDKPlugin_dwErrorCode = ERROR_XENGINE_STREAMMEDIA_PLUGIN_MODULE_DH_PARAMENT;
@@ -79,11 +77,7 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 	}
 	PLUGIN_SDKDAHUA st_SDKDahua;
 	
-	if (bDebug)
-	{
-		st_SDKDahua.hSDKModule = rand();
-	}
-	else
+	if (!bDebug)
 	{
 		// 登录设备
 		int nErrcode = 0;
@@ -101,9 +95,8 @@ BOOL CPlugin_Dahua::PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int 
 
 	m_bDebug = bDebug;
 	m_bPacket = bPacket;
-	*pxhToken = st_SDKDahua.hSDKModule;
 	st_LockerManage.lock();
-	stl_MapManager.insert(make_pair(st_SDKDahua.hSDKModule, st_SDKDahua));
+	stl_MapManager.insert(make_pair(xhToken, st_SDKDahua));
 	st_LockerManage.unlock();
 	return TRUE;
 }
@@ -143,7 +136,8 @@ BOOL CPlugin_Dahua::PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MO
 		st_LockerManage.unlock();
 		return FALSE;
 	}
-
+	stl_MapIterator->second.lParam = lParam;
+	stl_MapIterator->second.lpCall_SDKBuffer = fpCall_SDKBuffer;
 	st_LockerManage.unlock();
 	return TRUE;
 }
@@ -172,14 +166,6 @@ BOOL CPlugin_Dahua::PluginCore_UnInit(XNETHANDLE xhToken)
 		if (0 != stl_MapIterator->second.hSDKModule)
 		{
 			CLIENT_Logout(stl_MapIterator->second.hSDKModule);
-		}
-		if (NULL != pSt_VFile)
-		{
-			fclose(pSt_VFile);
-		}
-		if (NULL != pSt_AFile)
-		{
-			fclose(pSt_AFile);
 		}
 		stl_MapManager.erase(stl_MapIterator);
 	}
@@ -250,17 +236,21 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 		st_LockerManage.unlock_shared();
 		return FALSE;
 	}
+	pSt_SDKInfo->pSt_AFile = NULL;
+	pSt_SDKInfo->pSt_VFile = NULL;
 	pSt_SDKInfo->xhToken = xhToken;
 	pSt_SDKInfo->nChannel = nChannel;
 	pSt_SDKInfo->lClass = this;
 	pSt_SDKInfo->bAudio = bAudio;
+	pSt_SDKInfo->lParam = stl_MapIterator->second.lParam;
+	pSt_SDKInfo->lpCall_SDKBuffer = stl_MapIterator->second.lpCall_SDKBuffer;
 
 	if (m_bDebug)
 	{
-		pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
+		pSt_SDKInfo->pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
 		if (bAudio)
 		{
-			pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");
+			pSt_SDKInfo->pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");
 		}
 		pSt_SDKInfo->pSTDThread = make_shared<thread>(PluginCore_Thread, pSt_SDKInfo);
 	}
@@ -330,6 +320,15 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	{
 		if (nChannel == (*stl_ListIterator)->nChannel)
 		{
+			if (NULL != (*stl_ListIterator)->pSt_AFile)
+			{
+				fclose((*stl_ListIterator)->pSt_AFile);
+			}
+			if (NULL != (*stl_ListIterator)->pSt_VFile)
+			{
+				fclose((*stl_ListIterator)->pSt_VFile);
+			}
+			
 			xhPlay = (*stl_ListIterator)->xhPlay;
 			delete (*stl_ListIterator);
 			(*stl_ListIterator) = NULL;
@@ -426,16 +425,16 @@ DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 
 	while (TRUE)
 	{
-		if (NULL != pClass_This->pSt_VFile)
+		if (NULL != pSt_SDKInfo->pSt_VFile)
 		{
 			TCHAR tszMsgBuffer[8196];
 			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_VFile);
+			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_VFile);
 			if (nRet <= 0)
 			{
-				fseek(pClass_This->pSt_VFile, 0, SEEK_SET);
-				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_VFile);
+				fseek(pSt_SDKInfo->pSt_VFile, 0, SEEK_SET);
+				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_VFile);
 			}
 			//分拆数据包
 			int nCpyCount = 0;
@@ -456,16 +455,16 @@ DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 				nPosSize += nCpyCount;
 			}
 		}
-		if (NULL != pClass_This->pSt_AFile)
+		if (NULL != pSt_SDKInfo->pSt_AFile)
 		{
 			TCHAR tszMsgBuffer[8196];
 			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_AFile);
+			int nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_AFile);
 			if (nRet <= 0)
 			{
-				fseek(pClass_This->pSt_AFile, 0, SEEK_SET);
-				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pClass_This->pSt_AFile);
+				fseek(pSt_SDKInfo->pSt_AFile, 0, SEEK_SET);
+				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_AFile);
 			}
 			//分拆数据包
 			int nCpyCount = 0;

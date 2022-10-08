@@ -140,7 +140,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			{
 				fwrite(lpszMsgBuffer + nPos, 1, nMsgLen - nPos, pSt_FileVideo);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen);
 		}
 		else
 		{

@@ -20,11 +20,11 @@ extern "C" DWORD PluginCore_GetLastError();
 /********************************************************************
 函数名称：PluginCore_Init
 函数功能：初始化插件模块
- 参数.一：pxhToken
-  In/Out：Out
+ 参数.一：xhToken
+  In/Out：In
   类型：句柄
   可空：N
-  意思：导出初始化后的句柄
+  意思：初始化后的句柄
  参数.二：lpszAddr
   In/Out：In
   类型：常量字符指针
@@ -55,7 +55,7 @@ extern "C" DWORD PluginCore_GetLastError();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
+extern "C" BOOL PluginCore_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
 /********************************************************************
 函数名称：PluginCore_CBSet
 函数功能：设置数据回调

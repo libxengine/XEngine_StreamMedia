@@ -199,7 +199,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Delete(XNETHANDLE xhToken)
 	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::iterator stl_MapIterator = stl_MapFrameWork.find(xhToken);
 	if (stl_MapIterator != stl_MapFrameWork.end())
 	{
-		stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
+		stl_MapIterator->second.fpCall_PluginCore_UnInit(xhToken);
 #ifdef _MSC_BUILD
 		FreeLibrary(stl_MapIterator->second.mhFile);
 #else
@@ -227,7 +227,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Destory()
 	unordered_map<XNETHANDLE, PLUGINCORE_FRAMEWORK>::iterator stl_MapIterator = stl_MapFrameWork.begin();
 	for (; stl_MapIterator != stl_MapFrameWork.end(); stl_MapIterator++)
 	{
-		stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
+		stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->first);
 #ifdef _MSC_BUILD
 		FreeLibrary(stl_MapIterator->second.mhFile);
 #else
@@ -294,7 +294,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpsz
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(&stl_MapIterator->second.xhModule, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
@@ -339,7 +339,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_CBSet(XNETHANDLE xhToken, CALLBACK_ST
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_CBSet(stl_MapIterator->second.xhModule, fpCall_SDKBuffer, lParam);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_CBSet(xhToken, fpCall_SDKBuffer, lParam);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
@@ -374,7 +374,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_UnInit(XNETHANDLE xhToken)
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_UnInit(stl_MapIterator->second.xhModule);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_UnInit(xhToken);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
@@ -418,7 +418,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Play(stl_MapIterator->second.xhModule, nChannel, bAudio);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Play(xhToken, nChannel, bAudio);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
@@ -457,7 +457,7 @@ BOOL CModulePlugin_Core::ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Stop(stl_MapIterator->second.xhModule, nChannel);
+	BOOL bRet = stl_MapIterator->second.fpCall_PluginCore_Stop(xhToken, nChannel);
 	if (!bRet)
 	{
 		ModulePlugin_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();

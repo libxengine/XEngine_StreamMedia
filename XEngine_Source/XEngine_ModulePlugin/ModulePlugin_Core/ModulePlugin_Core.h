@@ -10,7 +10,7 @@
 //    Purpose:     插件核心架构定义
 //    History:
 *********************************************************************/
-typedef BOOL(*FPCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug);
+typedef BOOL(*FPCall_PluginCore_Init)(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug);
 typedef BOOL(*FPCall_PluginCore_CBSet)(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam);
 typedef BOOL(*FPCall_PluginCore_UnInit)(XNETHANDLE xhToken);
 typedef BOOL(*FPCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel, BOOL bAudio);
@@ -20,12 +20,11 @@ typedef DWORD(*FPCall_PluginCore_GetLastError)();
 typedef struct 
 {
 	HMODULE mhFile;
-	XNETHANDLE xhModule;
 	TCHAR tszModuleFile[MAX_PATH];
 	TCHAR tszModuleName[MAX_PATH];
 	TCHAR tszModuleMode[MAX_PATH];
 
-	BOOL(*fpCall_PluginCore_Init)(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug);
+	BOOL(*fpCall_PluginCore_Init)(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug);
 	BOOL(*fpCall_PluginCore_CBSet)(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam);
 	BOOL(*fpCall_PluginCore_UnInit)(XNETHANDLE xhToken);
 	BOOL(*fpCall_PluginCore_Play)(XNETHANDLE xhToken, int nChannel, BOOL bAudio);

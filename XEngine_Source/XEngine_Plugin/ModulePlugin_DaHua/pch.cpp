@@ -25,9 +25,9 @@ extern "C" DWORD PluginCore_GetLastError()
 /*********************************************************************************
 *                                导出函数定义                                    *
 *********************************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE * pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug)
+extern "C" BOOL PluginCore_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug)
 {
-	return m_PluginDH.PluginCore_Init(pxhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
+	return m_PluginDH.PluginCore_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
 }
 extern "C" BOOL PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam)
 {

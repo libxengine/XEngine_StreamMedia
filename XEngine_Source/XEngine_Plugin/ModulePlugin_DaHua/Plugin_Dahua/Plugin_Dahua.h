@@ -19,6 +19,10 @@ typedef struct
 	BOOL bAudio;
 	LLONG xhPlay;
 	int nChannel;
+
+	FILE* pSt_VFile;
+	FILE* pSt_AFile;
+
 	LPVOID lClass;
 	LPVOID lParam;
 	CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER lpCall_SDKBuffer;
@@ -31,6 +35,9 @@ typedef struct
 
 	shared_ptr<std::shared_mutex> st_Locker;
 	list<PLUGIN_SDKINFO*> stl_ListChannel;
+
+	LPVOID lParam;
+	CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER lpCall_SDKBuffer;
 }PLUGIN_SDKDAHUA;
 
 class CPlugin_Dahua
@@ -39,7 +46,7 @@ public:
 	CPlugin_Dahua();
 	~CPlugin_Dahua();
 public:
-	BOOL PluginCore_Init(XNETHANDLE* pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
+	BOOL PluginCore_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
 	BOOL PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam = NULL);
 	BOOL PluginCore_UnInit(XNETHANDLE xhToken);
 	BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
@@ -53,8 +60,6 @@ protected:
 private:
 	BOOL m_bDebug;
 	BOOL m_bPacket;
-	FILE* pSt_VFile;
-	FILE* pSt_AFile;
 	shared_mutex st_LockerManage;
 private:
 	unordered_map<XNETHANDLE, PLUGIN_SDKDAHUA> stl_MapManager;
