@@ -10,7 +10,7 @@
 //    Purpose:     推流代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XNETHANDLE xhToken, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr)
+XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XHANDLE xhToken, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr)
 {
 	TCHAR tszPushAddr[512];
 

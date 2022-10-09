@@ -69,13 +69,13 @@ extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChan
 {
 	return m_Server.ModuleSession_Server_Destroy(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken)
+extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken)
 {
 	return m_Server.ModuleSession_Server_SetPush(lpszDeviceNumber, nChannel, bLive, xhToken);
 }
-extern "C" BOOL ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE * pxhToken)
+extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
-	return m_Server.ModuleSession_Server_GetPush(lpszDeviceNumber, nChannel, bLive, pxhToken);
+	return m_Server.ModuleSession_Server_GetPush(lpszDeviceNumber, nChannel, bLive);
 }
 /*********************************************************************************
 *                          设备SDK导出会话模块                                   *

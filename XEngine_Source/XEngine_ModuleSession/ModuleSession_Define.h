@@ -256,7 +256,7 @@ extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChan
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken);
+extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken);
 /********************************************************************
 函数名称：ModuleSession_Server_GetPush
 函数功能：获取推送句柄
@@ -275,17 +275,12 @@ extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChan
   类型：逻辑型
   可空：N
   意思：输入直播还是录像
- 参数.四：pxhToken
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出获取到的推送句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken);
+extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /*********************************************************************************
 *                          设备SDK导出会话模块                                   *
 *********************************************************************************/

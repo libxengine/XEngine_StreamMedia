@@ -12,7 +12,7 @@
 *********************************************************************/
 typedef struct
 {
-	XNETHANDLE xhToken;
+	XHANDLE xhToken;
 }SESSION_RTPPACKET;
 
 class CModuleSession_Server
@@ -23,8 +23,8 @@ public:
 public:
 	BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 	BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken);
-	BOOL ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken);
+	BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken);
+	XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 private:
 	shared_mutex st_Locker;
 private:

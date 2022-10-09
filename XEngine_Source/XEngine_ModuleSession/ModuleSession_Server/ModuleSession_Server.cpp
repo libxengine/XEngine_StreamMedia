@@ -209,7 +209,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumbe
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE xhToken)
+BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -272,11 +272,11 @@ BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumbe
   可空：N
   意思：输出获取到的推送句柄
 返回值
-  类型：逻辑型
-  意思：是否成功
+  类型：句柄
+  意思：返回获取的信息
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XNETHANDLE* pxhToken)
+XHANDLE CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -293,7 +293,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumbe
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
 	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
 	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
@@ -301,7 +301,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumbe
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
 	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
 	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
@@ -309,9 +309,9 @@ BOOL CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumbe
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
-	*pxhToken = stl_MapLiveIterator->second->xhToken;
+	XHANDLE xhToken = stl_MapLiveIterator->second->xhToken;
 	st_Locker.unlock_shared();
-	return TRUE;
+	return xhToken;
 }
