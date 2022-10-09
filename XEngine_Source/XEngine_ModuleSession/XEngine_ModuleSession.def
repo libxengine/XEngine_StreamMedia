@@ -13,8 +13,6 @@ EXPORTS
 
 	ModuleSession_Server_Create
 	ModuleSession_Server_Destroy
-	ModuleSession_Server_Insert
-	ModuleSession_Server_Get
 	ModuleSession_Server_SetPush
 	ModuleSession_Server_GetPush
 
