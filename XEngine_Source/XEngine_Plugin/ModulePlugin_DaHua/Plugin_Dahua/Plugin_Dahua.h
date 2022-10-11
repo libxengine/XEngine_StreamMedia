@@ -17,6 +17,7 @@ typedef struct
 	XNETHANDLE xhToken;
 	shared_ptr<thread> pSTDThread;
 	BOOL bAudio;
+	BOOL bPlay;
 	LLONG xhPlay;
 	int nChannel;
 

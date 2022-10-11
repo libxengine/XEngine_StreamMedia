@@ -238,10 +238,12 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 	}
 	pSt_SDKInfo->pSt_AFile = NULL;
 	pSt_SDKInfo->pSt_VFile = NULL;
+	pSt_SDKInfo->pSTDThread = NULL;
 	pSt_SDKInfo->xhToken = xhToken;
 	pSt_SDKInfo->nChannel = nChannel;
 	pSt_SDKInfo->lClass = this;
 	pSt_SDKInfo->bAudio = bAudio;
+	pSt_SDKInfo->bPlay = TRUE;
 	pSt_SDKInfo->lParam = stl_MapIterator->second.lParam;
 	pSt_SDKInfo->lpCall_SDKBuffer = stl_MapIterator->second.lpCall_SDKBuffer;
 
@@ -320,6 +322,11 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 	{
 		if (nChannel == (*stl_ListIterator)->nChannel)
 		{
+			(*stl_ListIterator)->bPlay = FALSE;
+			if (NULL != (*stl_ListIterator)->pSTDThread)
+			{
+				(*stl_ListIterator)->pSTDThread->join();
+			}
 			if (NULL != (*stl_ListIterator)->pSt_AFile)
 			{
 				fclose((*stl_ListIterator)->pSt_AFile);
@@ -421,9 +428,8 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 {
 	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)lParam;
-	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
 
-	while (TRUE)
+	while (pSt_SDKInfo->bPlay)
 	{
 		if (NULL != pSt_SDKInfo->pSt_VFile)
 		{
@@ -488,4 +494,5 @@ DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 		//25帧每秒
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}
+	return 0;
 }
