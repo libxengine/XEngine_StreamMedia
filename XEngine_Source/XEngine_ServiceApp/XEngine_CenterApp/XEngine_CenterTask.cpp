@@ -74,7 +74,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 
 			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			//创建流
-			XHANDLE xhToken = XClient_FilePush_Init(TRUE, FALSE, FALSE);
+			XHANDLE xhToken = XClient_FilePush_Init(TRUE, st_ProtocolDevice.bAudio, FALSE);
 			if (NULL == xhToken)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
