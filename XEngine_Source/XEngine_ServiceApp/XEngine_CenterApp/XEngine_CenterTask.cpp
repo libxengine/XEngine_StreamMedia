@@ -66,48 +66,48 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 	{
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQCREATE == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice = new XENGINE_PROTOCOLDEVICE;
-			XENGINE_PROTOCOLSTREAM* pSt_ProtocolAVAttr = new XENGINE_PROTOCOLSTREAM;
+			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
+			XENGINE_PROTOCOLSTREAM st_ProtocolAVAttr;
 
-			memset(pSt_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
-			memset(pSt_ProtocolAVAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
+			memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+			memset(&st_ProtocolAVAttr, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
-			memcpy(pSt_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
+			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			//创建流
 			XHANDLE xhToken = XClient_FilePush_Init(TRUE, FALSE, FALSE);
 			if (NULL == xhToken)
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, StreamClient_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
 				return FALSE;
 			}
 			//创建会话
-			if (!ModuleSession_Server_Create(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive))
+			if (!ModuleSession_Server_Create(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive))
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, ModuleSession_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 				return FALSE;
 			}
 			//是否启用音视频数据信息
 			if (st_ServiceConfig.st_XSql.bEnable)
 			{
 				//查询音视频数据,没有将无法使用特性
-				if (ModuleDB_AVInfo_InfoQuery(pSt_ProtocolAVAttr))
+				if (ModuleDB_AVInfo_InfoQuery(&st_ProtocolAVAttr))
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
 				}
 				else
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,音视频数据不存在数据库,请插入！"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,音视频数据不存在数据库,请插入！"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
 				}
 			}
 			else
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,没有启用音视频数据库,可能无法处理音频数据"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,没有启用音视频数据库,可能无法处理音频数据"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
 			}
-			ModuleSession_Server_SetPush(pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive, xhToken);
+			ModuleSession_Server_SetPush(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, xhToken);
 			//开始创建音视频
-			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, xhToken, pSt_ProtocolDevice, pSt_ProtocolAVAttr);
+			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, xhToken, st_ProtocolDevice);
 			m_ThreadAV.detach();
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, pSt_ProtocolDevice->tszDeviceNumber, pSt_ProtocolDevice->nChannel, pSt_ProtocolDevice->bLive);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,处理创建流消息成功,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
