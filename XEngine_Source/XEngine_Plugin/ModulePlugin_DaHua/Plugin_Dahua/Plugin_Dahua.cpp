@@ -372,10 +372,6 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 	{
 		if (pClass_This->m_bPacket)
 		{
-			pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 0, (LPCTSTR)pBuffer, dwBufSize, pSt_SDKInfo->lParam);
-		}
-		else
-		{
 			//分拆数据包
 			int nCpyCount = 0;
 			int nPosSize = 0;
@@ -395,14 +391,14 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 				nPosSize += nCpyCount;
 			}
 		}
+		else
+		{
+			pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 0, (LPCTSTR)pBuffer, dwBufSize, pSt_SDKInfo->lParam);
+		}
 	}
 	else if ((dwDataType == (NET_DATA_CALL_BACK_VALUE + EM_AUDIO_DATA_TYPE_AAC)) && pSt_SDKInfo->bAudio)
 	{
 		if (pClass_This->m_bPacket)
-		{
-			pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 1, (LPCTSTR)pBuffer, dwBufSize, pSt_SDKInfo->lParam);
-		}
-		else
 		{
 			//分拆数据包
 			int nCpyCount = 0;
@@ -423,11 +419,16 @@ void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwD
 				nPosSize += nCpyCount;
 			}
 		}
+		else
+		{
+			pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 1, (LPCTSTR)pBuffer, dwBufSize, pSt_SDKInfo->lParam);
+		}
 	}
 }
 DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 {
 	PLUGIN_SDKINFO* pSt_SDKInfo = (PLUGIN_SDKINFO*)lParam;
+	CPlugin_Dahua* pClass_This = (CPlugin_Dahua*)pSt_SDKInfo->lClass;
 
 	while (pSt_SDKInfo->bPlay)
 	{
@@ -442,23 +443,31 @@ DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 				fseek(pSt_SDKInfo->pSt_VFile, 0, SEEK_SET);
 				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_VFile);
 			}
-			//分拆数据包
-			int nCpyCount = 0;
-			int nPosSize = 0;
-			int nAllSize = nRet;
-			while (nAllSize > 0)
+
+			if (pClass_This->m_bPacket)
 			{
-				if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+				//分拆数据包
+				int nCpyCount = 0;
+				int nPosSize = 0;
+				int nAllSize = nRet;
+				while (nAllSize > 0)
 				{
-					nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+					if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+					{
+						nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+					}
+					else
+					{
+						nCpyCount = nAllSize;
+					}
+					pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 0, tszMsgBuffer + nPosSize, nCpyCount, pSt_SDKInfo->lParam);
+					nAllSize -= nCpyCount;
+					nPosSize += nCpyCount;
 				}
-				else
-				{
-					nCpyCount = nAllSize;
-				}
-				pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 0, tszMsgBuffer + nPosSize, nCpyCount, pSt_SDKInfo->lParam);
-				nAllSize -= nCpyCount;
-				nPosSize += nCpyCount;
+			}
+			else
+			{
+				pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 0, tszMsgBuffer, nRet, pSt_SDKInfo->lParam);
 			}
 		}
 		if (NULL != pSt_SDKInfo->pSt_AFile)
@@ -472,23 +481,30 @@ DWORD CPlugin_Dahua::PluginCore_Thread(LPVOID lParam)
 				fseek(pSt_SDKInfo->pSt_AFile, 0, SEEK_SET);
 				nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_SDKInfo->pSt_AFile);
 			}
-			//分拆数据包
-			int nCpyCount = 0;
-			int nPosSize = 0;
-			int nAllSize = nRet;
-			while (nAllSize > 0)
+			if (pClass_This->m_bPacket)
 			{
-				if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+				//分拆数据包
+				int nCpyCount = 0;
+				int nPosSize = 0;
+				int nAllSize = nRet;
+				while (nAllSize > 0)
 				{
-					nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+					if (nAllSize >= XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE)
+					{
+						nCpyCount = XENGINE_STREAMMEDIA_PLUGIN_DAHUA_PACKET_SIZE;
+					}
+					else
+					{
+						nCpyCount = nAllSize;
+					}
+					pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 1, tszMsgBuffer + nPosSize, nCpyCount, pSt_SDKInfo->lParam);
+					nAllSize -= nCpyCount;
+					nPosSize += nCpyCount;
 				}
-				else
-				{
-					nCpyCount = nAllSize;
-				}
-				pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 1, tszMsgBuffer + nPosSize, nCpyCount, pSt_SDKInfo->lParam);
-				nAllSize -= nCpyCount;
-				nPosSize += nCpyCount;
+			}
+			else
+			{
+				pSt_SDKInfo->lpCall_SDKBuffer(pSt_SDKInfo->xhToken, pSt_SDKInfo->nChannel, TRUE, 1, tszMsgBuffer, nRet, pSt_SDKInfo->lParam);
 			}
 		}
 		//25帧每秒
