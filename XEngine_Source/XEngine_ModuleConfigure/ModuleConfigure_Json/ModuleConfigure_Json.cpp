@@ -326,6 +326,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 	}
 	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
+	pSt_ServerConfig->bPacket = st_JsonRoot["bPacket"].asBool();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
 
 	if (st_JsonRoot["XMax"].empty() || (4 != st_JsonRoot["XMax"].size()))

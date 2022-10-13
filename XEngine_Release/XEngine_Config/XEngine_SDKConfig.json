@@ -1,6 +1,7 @@
 {
     "tszIPAddr":"127.0.0.1",
     "bDeamon":false,
+    "bPacket":false,
     "nHttpPort":5601,
     "XMax":{
         "MaxClient":10000,

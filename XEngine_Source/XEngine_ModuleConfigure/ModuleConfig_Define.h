@@ -106,6 +106,7 @@ typedef struct
 {
 	TCHAR tszIPAddr[64];                      //本机IP地址
 	BOOL bDeamon;                             //是否使用守护进程
+	BOOL bPacket;                             //是否启用分包传输
 	int nHttpPort;                            //HTTP服务端口
 	struct
 	{
