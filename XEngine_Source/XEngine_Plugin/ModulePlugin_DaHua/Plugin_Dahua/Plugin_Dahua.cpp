@@ -249,7 +249,11 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 
 	if (m_bDebug)
 	{
+#ifdef _MSC_BUILD
 		pSt_SDKInfo->pSt_VFile = _tfopen("D:\\h264 file\\480p.264", "rb");
+#else
+		pSt_SDKInfo->pSt_VFile = _tfopen("./480p.264", "rb");
+#endif
 		if (bAudio)
 		{
 			pSt_SDKInfo->pSt_AFile = _tfopen("D:\\h264 file\\test.aac", "rb");

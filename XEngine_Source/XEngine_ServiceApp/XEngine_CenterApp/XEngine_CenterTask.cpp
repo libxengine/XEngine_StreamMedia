@@ -135,19 +135,13 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 				return FALSE;
 			}
-			while (TRUE)
-			{
-				if (XClient_FilePush_Push(xhToken, lpszMsgBuffer + nPos, nMsgLen - nPos, pSt_ProtocolHdr->wReserve))
-				{
-					break;
-				}
-			}
+			XClient_FilePush_Push(xhToken, lpszMsgBuffer + nPos, nMsgLen - nPos, pSt_ProtocolHdr->wReserve);
 			
 			if (NULL != pSt_FileVideo)
 			{
 				fwrite(lpszMsgBuffer + nPos, 1, nMsgLen - nPos, pSt_FileVideo);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d,报个数:%lld"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen, HelpComponents_Datas_GetCountEx(xhCenterPacket));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s,接受推流数据,设备ID：%s,设备通道：%d,流类型：%d,大小：%d,报个数:%lld"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, nMsgLen, HelpComponents_Datas_GetCountEx(xhCenterPacket));
 		}
 		else
 		{
