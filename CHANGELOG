@@ -1,3 +1,43 @@
+XEngine_StreamMedia V1.2.0.1001
+
+增加:HTTP的请求现在返回JSON负载了
+增加:公有打包协议函数
+增加:大华的SDK模块到项目中
+增加:大华SDK插件支持测试模式
+增加:音频开关支持
+增加:SDK分包开关支持
+修改:启用了大华SDK插件音频支持
+修改:中心服务支持音频模式了
+修改:统一插件名称
+修改:协议模块区分打包和解析器了
+修改:获取插件数据现在改为回调方式
+修改:支持设置插件数据分包
+修改:从会话模块推送数据到xclient模块了
+优化:SDK关闭通道函数
+修正:关闭通知没有释放通道内存的问题
+修正:停止锁不正确的问题
+修正:Center没有正确释放内存的问题
+删除:插件池支持
+
+added:http request return to json payload
+added:comm packet for protocol module
+added:dahua linux x64 and win32 module
+added:test code for dahua sdk
+added:audio and debug switch for plugin
+added:sdk packet switch support
+modify:enable to audio support for dahua plugin
+modify:center app support audio
+modify:Adaptive plugin name
+modify:The protocol module is divided into packaged and parsed
+modify:get plugin data to callback
+modify:support set data packet for plugin
+modify:push data to xclient from module session
+improved:sdk close channel
+fixed:not free channel data when close sdk
+fixed:stop lock error
+fixed:memory leak on centerapp
+delete:plugin pool support
+=======================================================
 XEngine_StreamMedia V1.1.0.1001
 
 添加:为centerapp添加debug命令模式
