@@ -361,11 +361,11 @@ BOOL CPlugin_Dahua::PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 //////////////////////////////////////////////////////////////////////////
 void CALLBACK CPlugin_Dahua::PluginCore_CB_Disconnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser)
 {
-
+	printf("PluginCore_CB_Disconnect:Login = %ld Disconnect\n", lLoginID);
 }
 void CALLBACK CPlugin_Dahua::PluginCore_CB_AutoConnect(LLONG lLoginID, char* pchDVRIP, LONG nDVRPort, LDWORD dwUser)
 {
-
+	printf("PluginCore_CB_AutoConnect:Login = %ld Auto Connect\n", lLoginID);
 }
 void CALLBACK CPlugin_Dahua::PluginCore_CB_RealData(LLONG lRealHandle, DWORD dwDataType, BYTE* pBuffer, DWORD dwBufSize, LONG param, LDWORD dwUser)
 {
