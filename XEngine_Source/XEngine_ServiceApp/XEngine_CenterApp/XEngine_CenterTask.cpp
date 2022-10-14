@@ -86,23 +86,6 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
 				return FALSE;
 			}
-			//是否启用音视频数据信息
-			if (st_ServiceConfig.st_XSql.bEnable)
-			{
-				//查询音视频数据,没有将无法使用特性
-				if (ModuleDB_AVInfo_InfoQuery(&st_ProtocolAVAttr))
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,设备ID：%s,通道：%d,从数据库缓存获取音视频属性成功！"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
-				}
-				else
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,音视频数据不存在数据库,请插入！"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
-				}
-			}
-			else
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端：%s,设备ID：%s,通道：%d,没有启用音视频数据库,可能无法处理音频数据"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel);
-			}
 			ModuleSession_Server_SetPush(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, xhToken);
 			//开始创建音视频
 			std::thread m_ThreadAV(XEngine_CenterPush_CreateAVThread, xhToken, st_ProtocolDevice);
