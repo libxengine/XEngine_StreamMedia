@@ -4,7 +4,7 @@ EXPORTS
 	PluginCore_GetLastError
 
 	PluginCore_Init
+	PluginCore_CBSet
 	PluginCore_UnInit
 	PluginCore_Play
 	PluginCore_Stop
-	PluginCore_GetData

@@ -11,17 +11,9 @@
 //    History:
 *********************************************************************/
 //////////////////////////////////////////////////////////////////////////
-//                       导出函数定义
+//                       导出回调函数
 //////////////////////////////////////////////////////////////////////////
-typedef struct  
-{
-	TCHAR tszMsgBuffer[4096];     //通过free释放
-	XNETHANDLE xhToken;
-	BOOL bLive;
-	int nChannel;
-	int nDType;
-	int nMsgLen;
-}PLUGIN_MQDATA;
+typedef void(CALLBACK* CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER)(XNETHANDLE xhToken, int nChannel, BOOL bLive, int nDType, LPCTSTR lpszMsgBuffer, int nMsgLen, LPVOID lParam);
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -99,17 +91,46 @@ extern "C" BOOL ModulePlugin_Core_Destory();
   类型：常量字符指针
   可空：N
   意思：输入密码
- 参数.六：nMaxPool
+ 参数.六：bPacket
   In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入最大线程池个数
+  类型：逻辑型
+  可空：Y
+  意思：是否启用分包传递
+ 参数.七：bDebug
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用调试
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool);
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket = TRUE, BOOL bDebug = FALSE);
+/********************************************************************
+函数名称：ModulePlugin_Core_CBSet
+函数功能：设置数据回调
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的设备
+ 参数.二：fpCall_SDKBuffer
+  In/Out：In/Out
+  类型：回调函数
+  可空：N
+  意思：数据处理回调
+ 参数.三：lParam
+  In/Out：In/Out
+  类型：无类型指针
+  可空：Y
+  意思：回调函数自定义参数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModulePlugin_Core_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam = NULL);
 /********************************************************************
 函数名称：ModulePlugin_Core_UnInit
 函数功能：卸载设备
@@ -137,12 +158,17 @@ extern "C" BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken);
   类型：整数型
   可空：N
   意思：输入要操作的通道
+ 参数.三：bAudio
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用音频
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel);
+extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio = FALSE);
 /********************************************************************
 函数名称：ModulePlugin_Core_Stop
 函数功能：停止播放
@@ -162,27 +188,3 @@ extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel);
 备注：
 *********************************************************************/
 extern "C" BOOL ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel);
-/********************************************************************
-函数名称：PluginCore_GetData
-函数功能：获取一个设备的数据
- 参数.一：xhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要操作的句柄
- 参数.二：nIndex
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：线程索引
- 参数.三：pSt_MQData
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出获取到的信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA* pSt_MQData);

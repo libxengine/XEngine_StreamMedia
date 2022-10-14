@@ -24,7 +24,7 @@ endif
 
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libModulePlugin_Dahua.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE) -o libModulePlugin_DaHua.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 Plugin_Dahua.o:./Plugin_Dahua/Plugin_Dahua.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Plugin_Dahua/Plugin_Dahua.cpp 
@@ -34,8 +34,8 @@ pch.o:./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libModulePlugin_Dahua.so
-	cp ./libModulePlugin_Dahua.so ../../../XEngine_Release/XEngine_Plugin/libModulePlugin_Dahua.so
+InstallSo:./libModulePlugin_DaHua.so
+	cp ./libModulePlugin_DaHua.so ../../../XEngine_Release/XEngine_Plugin/libModulePlugin_DaHua.so
 
 CleanAll:CleanObj CleanMk
 CleanObj:                                               

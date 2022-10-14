@@ -63,7 +63,6 @@ using namespace std;
 typedef struct  
 {
 	XNETHANDLE xhClient;
-	shared_ptr<std::thread> pSTDThread;
 }SDKLIST_THREADINFO;
 //////////////////////////////////////////////////////////////////////////
 extern BOOL bIsRun;

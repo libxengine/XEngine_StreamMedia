@@ -3,6 +3,7 @@ LIBRARY
 EXPORTS
 	ModuleProtocol_GetLastError
 
-	ModuleProtocol_Stream_Create
-	ModuleProtocol_Stream_Push
-	ModuleProtocol_Stream_Destroy
+	ModuleProtocol_Packet_Comm
+	ModuleProtocol_Packet_Create
+	ModuleProtocol_Packet_Push
+	ModuleProtocol_Packet_Destroy

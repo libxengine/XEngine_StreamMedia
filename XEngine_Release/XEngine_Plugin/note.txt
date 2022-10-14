@@ -1,0 +1,2 @@
+note:so is linux x64 module
+     dll is windows x86 module

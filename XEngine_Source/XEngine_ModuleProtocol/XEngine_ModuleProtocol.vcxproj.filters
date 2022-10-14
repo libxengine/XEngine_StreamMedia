@@ -13,11 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleProtocol_Stream">
-      <UniqueIdentifier>{207f999a-d244-4ffc-b340-b8c960ae75ce}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleProtocol_Packet">
+      <UniqueIdentifier>{29d2c5a5-fcc4-4c20-b8ef-f24e7d5a017e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleProtocol_Stream">
-      <UniqueIdentifier>{15a26df5-14ce-4ad2-b499-0a5f2088b1f7}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleProtocol_Packet">
+      <UniqueIdentifier>{e3864eff-e17c-45dc-9932-9b67925c0adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\ModuleProtocol_Parse">
+      <UniqueIdentifier>{8957f442-4075-44c4-81c1-11e4ebe188c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleProtocol_Parse">
+      <UniqueIdentifier>{2492d69b-282a-4ea2-8795-8e9ca160303f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,8 +39,11 @@
     <ClInclude Include="ModuleProtocol_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleProtocol_Stream\ModuleProtocol_Stream.h">
-      <Filter>头文件\ModuleProtocol_Stream</Filter>
+    <ClInclude Include="ModuleProtocol_Packet\ModuleProtocol_Packet.h">
+      <Filter>头文件\ModuleProtocol_Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleProtocol_Parse\ModuleProtocol_Parse.h">
+      <Filter>头文件\ModuleProtocol_Parse</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +53,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleProtocol_Stream\ModuleProtocol_Stream.cpp">
-      <Filter>源文件\ModuleProtocol_Stream</Filter>
+    <ClCompile Include="ModuleProtocol_Packet\ModuleProtocol_Packet.cpp">
+      <Filter>源文件\ModuleProtocol_Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleProtocol_Parse\ModuleProtocol_Parse.cpp">
+      <Filter>源文件\ModuleProtocol_Parse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

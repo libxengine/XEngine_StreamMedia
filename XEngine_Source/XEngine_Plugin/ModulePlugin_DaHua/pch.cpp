@@ -25,23 +25,23 @@ extern "C" DWORD PluginCore_GetLastError()
 /*********************************************************************************
 *                                导出函数定义                                    *
 *********************************************************************************/
-extern "C" BOOL PluginCore_Init(XNETHANDLE * pxhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
+extern "C" BOOL PluginCore_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug)
 {
-	return m_PluginDH.PluginCore_Init(pxhToken, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
+	return m_PluginDH.PluginCore_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
+}
+extern "C" BOOL PluginCore_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam)
+{
+	return m_PluginDH.PluginCore_CBSet(xhToken, fpCall_SDKBuffer, lParam);
 }
 extern "C" BOOL PluginCore_UnInit(XNETHANDLE xhToken)
 {
 	return m_PluginDH.PluginCore_UnInit(xhToken);
 }
-extern "C" BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel)
+extern "C" BOOL PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio)
 {
-	return m_PluginDH.PluginCore_Play(xhToken, nChannel);
+	return m_PluginDH.PluginCore_Play(xhToken, nChannel, bAudio);
 }
 extern "C" BOOL PluginCore_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginDH.PluginCore_Stop(xhToken, nChannel);
-}
-extern "C" BOOL PluginCore_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA * pSt_MQData)
-{
-	return m_PluginDH.PluginCore_GetData(xhToken, nIndex, pSt_MQData);
 }

@@ -10,4 +10,4 @@
 //    Purpose:     插件处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_PluginTask_Thread(XNETHANDLE xhDevice, int nThread);
+void CALLBACK XEngine_PluginTask_CBRecv(XNETHANDLE xhToken, int nChannel, BOOL bLive, int nDType, LPCTSTR lpszMsgBuffer, int nMsgLen, LPVOID lParam);

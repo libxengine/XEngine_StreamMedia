@@ -326,6 +326,7 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 	}
 	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
+	pSt_ServerConfig->bPacket = st_JsonRoot["bPacket"].asBool();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
 
 	if (st_JsonRoot["XMax"].empty() || (4 != st_JsonRoot["XMax"].size()))
@@ -377,7 +378,13 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 		st_PluginInfo.bEnable = st_JsonArray[i]["PluginEnable"].asBool();
 		st_PluginInfo.nPort = st_JsonArray[i]["PluginPort"].asInt();
 		st_PluginInfo.xhToken = st_JsonArray[i]["PluginToken"].asInt64();
+#ifdef _MSC_BUILD
 		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
+		_tcscat(st_PluginInfo.tszPluginFile, ".dll");
+#else
+		_tcscpy(st_PluginInfo.tszPluginFile, st_JsonArray[i]["PluginFile"].asCString());
+		_tcscat(st_PluginInfo.tszPluginFile, ".so");
+#endif
 		_tcscpy(st_PluginInfo.tszPluginName, st_JsonArray[i]["PluginName"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginAddr, st_JsonArray[i]["PluginAddr"].asCString());
 		_tcscpy(st_PluginInfo.tszPluginUser, st_JsonArray[i]["PluginUser"].asCString());

@@ -8,7 +8,7 @@ EXPORTS
 	ModulePlugin_Core_Destory
 
 	ModulePlugin_Core_Init
+	ModulePlugin_Core_CBSet
 	ModulePlugin_Core_UnInit
 	ModulePlugin_Core_Play
 	ModulePlugin_Core_Stop
-	ModulePlugin_Core_GetData

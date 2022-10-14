@@ -18,6 +18,7 @@ typedef struct tag_XEngine_ServiceConfig
 	TCHAR tszSMSUrl[MAX_PATH];                //流媒体服务器地址
 	TCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
 	BOOL bDeamon;                             //是否以守护进程启动,LINUX有效
+	BOOL bDebug;                              //是否使用DEBUG
 	int nCenterPort;                          //业务端口
 	struct
 	{
@@ -105,6 +106,7 @@ typedef struct
 {
 	TCHAR tszIPAddr[64];                      //本机IP地址
 	BOOL bDeamon;                             //是否使用守护进程
+	BOOL bPacket;                             //是否启用分包传输
 	int nHttpPort;                            //HTTP服务端口
 	struct
 	{

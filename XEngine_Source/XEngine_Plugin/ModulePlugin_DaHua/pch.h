@@ -16,6 +16,7 @@
 #include <string.h>
 #include <string>
 #include <list>
+#include <thread>
 #include <shared_mutex>
 #include <unordered_map>
 #include <XEngine_Include/XEngine_CommHdr.h>

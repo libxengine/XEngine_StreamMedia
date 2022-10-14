@@ -41,23 +41,23 @@ extern "C" BOOL ModulePlugin_Core_Destory()
 {
 	return m_PluginCore.ModulePlugin_Core_Destory();
 }
-extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, int nMaxPool)
+extern "C" BOOL ModulePlugin_Core_Init(XNETHANDLE xhToken, LPCTSTR lpszAddr, int nPort, LPCTSTR lpszUser, LPCTSTR lpszPass, BOOL bPacket, BOOL bDebug)
 {
-	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, nMaxPool);
+	return m_PluginCore.ModulePlugin_Core_Init(xhToken, lpszAddr, nPort, lpszUser, lpszPass, bPacket, bDebug);
+}
+extern "C" BOOL ModulePlugin_Core_CBSet(XNETHANDLE xhToken, CALLBACK_STREAMMEIDA_MODULE_PLUGIN_SDKBUFFER fpCall_SDKBuffer, LPVOID lParam)
+{
+	return m_PluginCore.ModulePlugin_Core_CBSet(xhToken, fpCall_SDKBuffer, lParam);
 }
 extern "C" BOOL ModulePlugin_Core_UnInit(XNETHANDLE xhToken)
 {
 	return m_PluginCore.ModulePlugin_Core_UnInit(xhToken);
 }
-extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel)
+extern "C" BOOL ModulePlugin_Core_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudio)
 {
-	return m_PluginCore.ModulePlugin_Core_Play(xhToken, nChannel);
+	return m_PluginCore.ModulePlugin_Core_Play(xhToken, nChannel, bAudio);
 }
 extern "C" BOOL ModulePlugin_Core_Stop(XNETHANDLE xhToken, int nChannel)
 {
 	return m_PluginCore.ModulePlugin_Core_Stop(xhToken, nChannel);
-}
-extern "C" BOOL ModulePlugin_Core_GetData(XNETHANDLE xhToken, int nIndex, PLUGIN_MQDATA * pSt_MQData)
-{
-	return m_PluginCore.ModulePlugin_Core_GetData(xhToken, nIndex, pSt_MQData);
 }
