@@ -128,3 +128,35 @@ extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLe
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
+/************************************************************************/
+/*                         导出的协议解析函数                           */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleProtocol_Parse_HTTPForward
+函数功能：转发解析
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入解析大小
+ 参数.三：ptszAVUrl
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出解析到的URL
+ 参数.四：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：Y
+  意思：输出解析到的URL
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl, XNETHANDLE * pxhToken = NULL);
