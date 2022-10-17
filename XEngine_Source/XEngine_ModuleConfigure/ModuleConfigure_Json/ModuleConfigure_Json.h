@@ -20,6 +20,7 @@ public:
 	BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
 	BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
 	BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG* pSt_ServerConfig);
+	BOOL ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);
 protected:
 private:
 };

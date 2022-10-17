@@ -135,6 +135,28 @@ typedef struct
 		list<string>* pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_SDKCONFIG;
+typedef struct
+{
+	TCHAR tszIPAddr[64];                      //本机IP地址
+	BOOL bDeamon;                             //是否使用守护进程
+	int nHttpPort;                            //HTTP服务端口
+	struct
+	{
+		int nMaxClient;                       //最大客户端个数
+		int nMaxQueue;                        //队列最大个数
+		int nIOThread;                        //网络线程池个数
+		int nHTTPThread;                      //HTTP任务处理线程数
+	}st_XMax;
+	struct
+	{
+		int nTimeCheck;                       //检测次数
+		int nHTTPTimeOut;                     //HTTP超时时间
+	}st_XTime;
+	struct
+	{
+		list<string>* pStl_ListVer;           //版本列表
+	}st_XVer;
+}XENGINE_FORWARDCONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -199,3 +221,22 @@ extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT10
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG * pSt_ServerConfig);
+/********************************************************************
+函数名称：ModuleConfigure_Json_Forward
+函数功能：读取JSON配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出SDK服务配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);
