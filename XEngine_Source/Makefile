@@ -18,10 +18,11 @@ PLUGIN_DAHUA_PATH = ./XEngine_Plugin/ModulePlugin_DaHua
 APP_JT1078_PATH = ./XEngine_ServiceApp/XEngine_JT1078App
 APP_SDKAPP_PATH = ./XEngine_ServiceApp/XEngine_SDKApp
 APP_CENTER_PATH = ./XEngine_ServiceApp/XEngine_CenterApp
+APP_FORWARD_PATH = ./XEngine_ServiceApp/XEngine_ForwardApp
 
 XENGINE_MODULES = libjsoncpp.so                                   \
                   libXEngine_ModuleConfigure.so libXEngine_ModuleDatabase.so libXEngine_ModuleHelp.so libXEngine_ModulePlugin.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so        \
-				  XEngine_JT1078App.exe XEngine_SDKApp.exe XEngine_CenterApp.exe
+				  XEngine_JT1078App.exe XEngine_SDKApp.exe XEngine_CenterApp.exe XEngine_ForwardApp.exe
 				  
 ifeq ($(shell uname),Darwin)
 else
@@ -56,6 +57,8 @@ XEngine_SDKApp.exe:
 	make -C $(APP_SDKAPP_PATH) $(FLAGS)
 XEngine_CenterApp.exe:
 	make -C $(APP_CENTER_PATH) $(FLAGS)
+XEngine_ForwardApp.exe:
+	make -C $(APP_FORWARD_PATH) $(FLAGS)
 
 SetFlags_Install:
 	export FLAGS=InstallAll
