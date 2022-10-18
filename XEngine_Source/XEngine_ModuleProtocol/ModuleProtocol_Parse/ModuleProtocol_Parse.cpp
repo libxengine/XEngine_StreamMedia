@@ -41,15 +41,15 @@ CModuleProtocol_Parse::~CModuleProtocol_Parse()
   意思：输出解析到的URL
  参数.四：pxhToken
   In/Out：Out
-  类型：句柄
+  类型：字符指针
   可空：Y
-  意思：输出解析到的URL
+  意思：输出解析的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl, XNETHANDLE* pxhToken /* = NULL */)
+BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl, TCHAR* ptszToken /* = NULL */)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -70,17 +70,14 @@ BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuff
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PARSE_JSON;
 		return FALSE;
 	}
-	if (st_JsonRoot["tszAVUrl"].isNull())
+	if (!st_JsonRoot["tszAVUrl"].isNull() && (NULL != ptszAVUrl))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
-		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PARSE_JSON;
-		return FALSE;
+		_tcscpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
 	}
-	_tcscpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
-
-	if (!st_JsonRoot["xhToken"].isNull() && (NULL != pxhToken))
+	
+	if (!st_JsonRoot["token"].isNull() && (NULL != ptszToken))
 	{
-		*pxhToken = st_JsonRoot["xhToken"].asUInt64();
+		_tcscpy(ptszToken, st_JsonRoot["token"].asCString());
 	}
 	return TRUE;
 }

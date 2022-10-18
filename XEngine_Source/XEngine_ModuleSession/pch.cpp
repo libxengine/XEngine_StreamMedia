@@ -2,6 +2,7 @@
 #include "ModuleSession_Server/ModuleSession_Server.h"
 #include "ModuleSession_Client/ModuleSession_Client.h"
 #include "ModuleSession_SDKDevice/ModuleSession_SDKDevice.h"
+#include "ModuleSession_Forward/ModuleSession_Forward.h"
 /********************************************************************
 //    Created:     2022/04/25  10:21:36
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\pch.cpp
@@ -19,6 +20,7 @@ DWORD Session_dwErrorCode = 0;
 CModuleSession_Client m_Client;
 CModuleSession_Server m_Server;
 CModuleSession_SDKDevice m_SDKDevice;
+CModuleSession_Forward m_Forward;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -107,4 +109,19 @@ extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel
 extern "C" BOOL ModuleSession_SDKDevice_Destory()
 {
 	return m_SDKDevice.ModuleSession_SDKDevice_Destory();
+}
+/*********************************************************************************
+*                          流转发导出会话模块                                    *
+*********************************************************************************/
+extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken)
+{
+	return m_Forward.ModuleSession_Forward_Create(lpszPlay, xhToken);
+}
+extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay)
+{
+	return m_Forward.ModuleSession_Forward_Get(lpszPlay);
+}
+extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
+{
+	return m_Forward.ModuleSession_Forward_Delete(lpszPlay);
 }

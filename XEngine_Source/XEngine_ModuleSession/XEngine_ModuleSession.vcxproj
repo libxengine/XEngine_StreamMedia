@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModuleSession_Client\ModuleSession_Client.h" />
+    <ClInclude Include="ModuleSession_Forward\ModuleSession_Forward.h" />
     <ClInclude Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.h" />
     <ClInclude Include="ModuleSession_Server\ModuleSession_Server.h" />
     <ClInclude Include="pch.h" />
@@ -174,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ModuleSession_Client\ModuleSession_Client.cpp" />
+    <ClCompile Include="ModuleSession_Forward\ModuleSession_Forward.cpp" />
     <ClCompile Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.cpp" />
     <ClCompile Include="ModuleSession_Server\ModuleSession_Server.cpp" />
     <ClCompile Include="pch.cpp">

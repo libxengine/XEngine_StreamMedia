@@ -44,12 +44,17 @@ CModuleProtocol_Packet::~CModuleProtocol_Packet()
   类型：常量字符指针
   可空：Y
   意思：输入要处理的缓冲区
+ 参数.五：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：输入打包的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCTSTR lpszMsgBuffer /* = NULL */)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCTSTR lpszMsgBuffer /* = NULL */, LPCTSTR lpszToken /* = NULL */)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -70,6 +75,10 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, in
 	else
 	{
 		st_JsonRoot["msg"] = lpszMsgBuffer;
+	}
+	if (NULL != lpszToken)
+	{
+		st_JsonRoot["token"] = lpszToken;
 	}
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());

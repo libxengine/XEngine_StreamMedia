@@ -31,9 +31,9 @@ extern "C" DWORD ModuleProtocol_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的协议封装函数                           */
 /************************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer)
+extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer, LPCTSTR lpszToken)
 {
-	return m_ProtocolPacket.ModuleProtocol_Packet_Comm(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer);
+	return m_ProtocolPacket.ModuleProtocol_Packet_Comm(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer, lpszToken);
 }
 extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
 {
@@ -50,7 +50,7 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR * ptszMsgBuffer, int* pInt_M
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/
-extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl, XNETHANDLE * pxhToken)
+extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl, TCHAR * ptszToken)
 {
-	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl, pxhToken);
+	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl, ptszToken);
 }

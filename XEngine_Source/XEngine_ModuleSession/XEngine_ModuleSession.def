@@ -23,3 +23,7 @@ EXPORTS
 	ModuleSession_SDKDevice_GetClient
 	ModuleSession_SDKDevice_Delete
 	ModuleSession_SDKDevice_Destory
+
+	ModuleSession_Forward_Create
+	ModuleSession_Forward_Get
+	ModuleSession_Forward_Delete
