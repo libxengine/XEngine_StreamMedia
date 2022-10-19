@@ -69,7 +69,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 {
 	int nSDLen = 0;
 	TCHAR tszSDBuffer[2048];
-	XNETHANDLE xhClient = 0;
+	XHANDLE xhClient = NULL;
 	XENGINE_PROTOCOLDEVICE st_ProtocolDev;
 	LPCTSTR lpszLeaveMsg = bHBLeave ? _T("心跳超时") : _T("主动断开");
 

@@ -62,7 +62,7 @@ extern XLOG xhLog;
 extern XHANDLE xhHttpSocket;
 extern XHANDLE xhHttpHeart;
 extern XHANDLE xhHttpPacket;
-extern XNETHANDLE xhHttpPool;
+extern XHANDLE xhHttpPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_FORWARDCONFIG st_ForwardConfig;

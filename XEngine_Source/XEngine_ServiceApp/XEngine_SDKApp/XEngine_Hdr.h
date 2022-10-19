@@ -62,7 +62,7 @@ using namespace std;
 *********************************************************************/
 typedef struct  
 {
-	XNETHANDLE xhClient;
+	XHANDLE xhClient;
 }SDKLIST_THREADINFO;
 //////////////////////////////////////////////////////////////////////////
 extern BOOL bIsRun;
@@ -71,7 +71,7 @@ extern XLOG xhLog;
 extern XHANDLE xhHttpSocket;
 extern XHANDLE xhHttpHeart;
 extern XHANDLE xhHttpPacket;
-extern XNETHANDLE xhHttpPool;
+extern XHANDLE xhHttpPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern XENGINE_SDKCONFIG st_SDKConfig;

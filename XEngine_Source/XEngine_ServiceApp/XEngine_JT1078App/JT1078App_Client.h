@@ -10,4 +10,4 @@
 //    Purpose:     客户端操作类
 //    History:
 *********************************************************************/
-void CALLBACK XEngine_Client_CBRecv(XNETHANDLE xhNet, ENUM_NETCLIENT_TCPEVENTS enTCPClientEvents, LPCSTR lpszMsgBuffer, int nLen, LPVOID lParam);
+void CALLBACK XEngine_Client_CBRecv(SOCKET hSocket, ENUM_NETCLIENT_TCPEVENTS enTCPClientEvents, LPCSTR lpszMsgBuffer, int nLen, LPVOID lParam);

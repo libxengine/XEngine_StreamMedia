@@ -16,7 +16,7 @@ XLOG xhLog = NULL;
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
 XHANDLE xhHttpPacket = NULL;
-XNETHANDLE xhHttpPool = 0;
+XHANDLE xhHttpPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_SDKCONFIG st_SDKConfig;
@@ -177,7 +177,8 @@ int main(int argc, char** argv)
 			ppSt_ListHTTPParam[i]->lParam = pInt_Pos;
 			ppSt_ListHTTPParam[i]->fpCall_ThreadsTask = XEngine_HTTPTask_Thread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhHttpPool, &ppSt_ListHTTPParam, st_SDKConfig.st_XMax.nHTTPThread))
+		xhHttpPool = ManagePool_Thread_NQCreate(&ppSt_ListHTTPParam, st_SDKConfig.st_XMax.nHTTPThread);
+		if (NULL == xhHttpPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,启动HTTP线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
@@ -209,11 +210,11 @@ int main(int argc, char** argv)
 			//标准协议服务
 			for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
 			{
-				XClient_TCPSelect_StartEx(&ppSt_ThreadInfo[i]->xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
+				ppSt_ThreadInfo[i]->xhClient = XClient_TCPSelect_StartEx(st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 				XClient_TCPSelect_HBStartEx(ppSt_ThreadInfo[i]->xhClient, 2);
 				ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
 				ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, ppSt_ThreadInfo[i]->xhClient);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,句柄:%lld,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, ppSt_ThreadInfo[i]->xhClient, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 			}
 			nLoadCount++;
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,加载插件:%s,句柄:%lld 路径:%s,连接地址:%s,端口:%d 成功"), stl_ListIterator->tszPluginName, stl_ListIterator->xhToken, stl_ListIterator->tszPluginFile, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);

@@ -89,7 +89,7 @@ BOOL XEngine_Record_Handle2014(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 BOOL XEngine_Record_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
 {
 	int nSDLen = 0;
-	XNETHANDLE xhClient = 0;
+	XHANDLE xhClient = NULL;
 	TCHAR tszSDBuffer[2048];
 	XENGINE_PROTOCOLDEVICE st_ProtoDevice;
 

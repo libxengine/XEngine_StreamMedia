@@ -126,7 +126,6 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		//播放:http://127.0.0.1:5601/api?function=play&token=10001001&channel=1&live=1
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
-			XNETHANDLE xhClient = 0;
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 			
 			memset(tszKey, '\0', sizeof(tszKey));
@@ -144,7 +143,8 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				st_ProtocolDevice.bAudio = _ttoi(tszValue);
 			}
 			//是否已经播放
-			if (ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
+			XHANDLE xhClient = xhClient = ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+			if (NULL != xhClient)
 			{
 				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
 				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -164,7 +164,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			}
 			//通知推流服务
 			ModuleProtocol_Packet_Create(tszSDBuffer, &nSDLen, &st_ProtocolDevice);
-			ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), &xhClient);
+			xhClient = ModuleSession_SDKDevice_GetIdleClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber));
 			ModuleSession_SDKDevice_InsertDevice(_ttoi64(st_ProtocolDevice.tszDeviceNumber), xhClient, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
 			//返回数据
@@ -176,7 +176,6 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
 		{
 			//停止:http://127.0.0.1:5601/api?function=stop&token=10001001&channel=1&live=1
-			XNETHANDLE xhClient = 0;
 			XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 
 			memset(tszKey, '\0', sizeof(tszKey));
@@ -189,7 +188,8 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			BaseLib_OperatorString_GetKeyValue(pptszList[3], "=", tszKey, tszValue);
 			st_ProtocolDevice.bLive = _ttoi(tszValue);
 			//通知推流服务
-			if (ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, &xhClient))
+			XHANDLE xhClient = ModuleSession_SDKDevice_Delete(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+			if (NULL != xhClient)
 			{
 				ModulePlugin_Core_Stop(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel);
 				ModuleProtocol_Packet_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDevice);

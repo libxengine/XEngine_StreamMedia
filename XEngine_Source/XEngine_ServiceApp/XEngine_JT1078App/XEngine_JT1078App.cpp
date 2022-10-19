@@ -16,12 +16,12 @@ XLOG xhLog = NULL;
 XHANDLE xhStreamNet = NULL;
 XHANDLE xhStreamHeart = NULL;
 XHANDLE xhStreamPkt = NULL;
-XNETHANDLE xhStreamPool = 0;
+XHANDLE xhStreamPool = 0;
 
 XHANDLE xhRecordNet = NULL;
 XHANDLE xhRecordHeart = NULL;
 XHANDLE xhRecordPkt = NULL;
-XNETHANDLE xhRecordPool = 0;
+XHANDLE xhRecordPool = 0;
 
 XENGINE_SERVICECONFIG st_ServiceCfg;
 XENGINE_JT1078CONFIG st_JT1078Cfg;
@@ -174,7 +174,8 @@ int main(int argc, char** argv)
 			ppSt_ListStream[i]->lParam = pInt_Pos;
 			ppSt_ListStream[i]->fpCall_ThreadsTask = XEngine_Stream_Thread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhStreamPool, &ppSt_ListStream, st_JT1078Cfg.st_XMax.nStreamThread))
+		xhStreamPool = ManagePool_Thread_NQCreate(&ppSt_ListStream, st_JT1078Cfg.st_XMax.nStreamThread);
+		if (NULL == xhStreamPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动实时端处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -230,7 +231,8 @@ int main(int argc, char** argv)
 			ppSt_ListRecord[i]->lParam = pInt_Pos;
 			ppSt_ListRecord[i]->fpCall_ThreadsTask = XEngine_Record_Thread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhRecordPool, &ppSt_ListRecord, st_JT1078Cfg.st_XMax.nRecordThread))
+		xhRecordPool = ManagePool_Thread_NQCreate(&ppSt_ListRecord, st_JT1078Cfg.st_XMax.nRecordThread);
+		if (NULL == xhRecordPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动录像端处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -240,8 +242,7 @@ int main(int argc, char** argv)
 	//标准协议服务
 	for (int i = 0; i < st_JT1078Cfg.st_XClient.nMaxConnect; i++)
 	{
-		XNETHANDLE xhClient;
-		XClient_TCPSelect_StartEx(&xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
+		XHANDLE xhClient = XClient_TCPSelect_StartEx(st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 		XClient_TCPSelect_HBStartEx(xhClient);
 		ModuleSession_Client_Create(xhClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort);

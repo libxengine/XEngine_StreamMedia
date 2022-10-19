@@ -16,7 +16,7 @@ XLOG xhLog = NULL;
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
 XHANDLE xhHttpPacket = NULL;
-XNETHANDLE xhHttpPool = 0;
+XHANDLE xhHttpPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_FORWARDCONFIG st_ForwardConfig;
@@ -167,7 +167,8 @@ int main(int argc, char** argv)
 			ppSt_ListHTTPParam[i]->lParam = pInt_Pos;
 			ppSt_ListHTTPParam[i]->fpCall_ThreadsTask = XEngine_HTTPTask_Thread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhHttpPool, &ppSt_ListHTTPParam, st_ForwardConfig.st_XMax.nHTTPThread))
+		xhHttpPool = ManagePool_Thread_NQCreate(&ppSt_ListHTTPParam, st_ForwardConfig.st_XMax.nHTTPThread);
+		if (NULL == xhHttpPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,启动HTTP线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;

@@ -67,7 +67,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_Create(XNETHANDLE xhDevic
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XNETHANDLE xhClient)
+BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XHANDLE xhClient)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -116,7 +116,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertClient(XNETHANDLE x
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XNETHANDLE xhClient, int nChannel, BOOL bLive)
+BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XHANDLE xhClient, int nChannel, BOOL bLive)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -132,7 +132,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertDevice(XNETHANDLE x
     }
     //开始绑定,查找客户端
     stl_MapIterator->second->st_Locker.lock();
-    unordered_map<XNETHANDLE, list<MODULESESSION_SDKCLIENT> >::iterator stl_MapClientIterator = stl_MapIterator->second->stl_MapClient.find(xhClient);
+    unordered_map<XHANDLE, list<MODULESESSION_SDKCLIENT> >::iterator stl_MapClientIterator = stl_MapIterator->second->stl_MapClient.find(xhClient);
     if (stl_MapClientIterator == stl_MapIterator->second->stl_MapClient.end())
     {
 		Session_IsErrorOccur = TRUE;
@@ -178,26 +178,16 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_InsertDevice(XNETHANDLE x
   类型：句柄
   可空：N
   意思：输入要操作的设备
- 参数.二：pxhClient
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出获得的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice, XNETHANDLE* pxhClient)
+XHANDLE CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice)
 {
     Session_IsErrorOccur = FALSE;
-
-    if (NULL == pxhClient)
-    {
-        Session_IsErrorOccur = TRUE;
-        Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-        return FALSE;
-    }
+    
+    XHANDLE xhClient = NULL;
 	//查找
 	st_Locker.lock_shared();
 	unordered_map<XNETHANDLE, MODULESESSION_SDKLIST*>::iterator stl_MapIterator = stl_MapClient.find(xhDevice);
@@ -206,7 +196,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE 
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
     unsigned int nListCount = 100000; //最大任务个数
     //查找最小
@@ -216,12 +206,12 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE 
         if (stl_MapClientIterator->second.size() < nListCount)
         {
             nListCount = stl_MapClientIterator->second.size();
-            *pxhClient = stl_MapClientIterator->first;
+            xhClient = stl_MapClientIterator->first;
         }
     }
     stl_MapIterator->second->st_Locker.unlock();
     st_Locker.unlock_shared();
-    return TRUE;
+    return xhClient;
 }
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_GetClient
@@ -241,20 +231,16 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE 
   类型：逻辑型
   可空：N
   意思：输入是直播还是录像
- 参数.四：pxhClient
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出客户端句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE* pxhClient)
+XHANDLE CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
 {
     Session_IsErrorOccur = FALSE;
 
+    XHANDLE xhClient = NULL;
 	//查找
 	st_Locker.lock_shared();
 	unordered_map<XNETHANDLE, MODULESESSION_SDKLIST*>::iterator stl_MapIterator = stl_MapClient.find(xhDevice);
@@ -263,7 +249,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDe
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
     BOOL bFound = FALSE;
     stl_MapIterator->second->st_Locker.lock_shared();
@@ -276,7 +262,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDe
             if ((nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
             {
 				bFound = TRUE; //直接退出
-				*pxhClient = stl_MapClientIterator->first;
+                xhClient = stl_MapClientIterator->first;
 				break;
             }
         }
@@ -292,9 +278,9 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDe
     {
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		return FALSE;
+		return NULL;
     }
-    return TRUE;
+    return xhClient;
 }
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_Delete
@@ -314,20 +300,16 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDe
   类型：整数型
   可空：N
   意思：直播还是录播
- 参数.四：pxhClient
-  In/Out：Out
-  类型：句柄指针
-  可空：Y
-  意思：输出绑定的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE* pxhClient /* = NULL */)
+XHANDLE CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
 {
     Session_IsErrorOccur = FALSE;
 
+    XHANDLE xhClient = NULL;
 	//查找
 	st_Locker.lock_shared();
 	unordered_map<XNETHANDLE, MODULESESSION_SDKLIST*>::iterator stl_MapIterator = stl_MapClient.find(xhDevice);
@@ -336,7 +318,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevic
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return NULL;
 	}
 	BOOL bFound = FALSE;
 	stl_MapIterator->second->st_Locker.lock();
@@ -349,10 +331,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevic
 			if ((nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
 			{
 				bFound = TRUE;
-                if (NULL != pxhClient)
-                {
-                    *pxhClient = stl_MapClientIterator->first;
-                }
+                xhClient = stl_MapClientIterator->first;
                 stl_MapClientIterator->second.erase(stl_ListIterator);
 				break;
 			}
@@ -364,7 +343,7 @@ BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevic
 	}
 	stl_MapIterator->second->st_Locker.unlock();
 	st_Locker.unlock_shared();
-    return TRUE;
+    return xhClient;
 }
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_Destory

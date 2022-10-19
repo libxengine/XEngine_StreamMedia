@@ -35,23 +35,23 @@ extern "C" DWORD ModuleSession_GetLastError(int* pInt_SysError)
 /*********************************************************************************
 *                          导出会话模块                                          *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient)
+extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient)
 {
 	return m_Client.ModuleSession_Client_Create(xhClient);
 }
-extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE * pxhClient)
+extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient)
 {
 	return m_Client.ModuleSession_Client_Get(pxhClient);
 }
-extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	return m_Client.ModuleSession_Client_Exist(pxhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	return m_Client.ModuleSession_Client_Insert(xhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, BOOL * pbLive)
+extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, BOOL * pbLive)
 {
 	return m_Client.ModuleSession_Client_DeleteAddr(lpszDeviceAddr, pxhClient, ptszDeviceNumber, pInt_Channel, pbLive);
 }
@@ -86,25 +86,25 @@ extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhDevice)
 {
 	return m_SDKDevice.ModuleSession_SDKDevice_Create(xhDevice);
 }
-extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XNETHANDLE xhClient)
+extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XHANDLE xhClient)
 {
 	return m_SDKDevice.ModuleSession_SDKDevice_InsertClient(xhDevice, xhClient);
 }
-extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XNETHANDLE xhClient, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XHANDLE xhClient, int nChannel, BOOL bLive)
 {
 	return m_SDKDevice.ModuleSession_SDKDevice_InsertDevice(xhDevice, xhClient, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice, XNETHANDLE * pxhClient)
+extern "C" XHANDLE ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_GetIdleClient(xhDevice, pxhClient);
+	return m_SDKDevice.ModuleSession_SDKDevice_GetIdleClient(xhDevice);
 }
-extern "C" BOOL ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+extern "C" XHANDLE ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_GetClient(xhDevice, nChannel, bLive, pxhClient);
+	return m_SDKDevice.ModuleSession_SDKDevice_GetClient(xhDevice, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE * pxhClient)
+extern "C" XHANDLE ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
 {
-	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhDevice, nChannel, bLive, pxhClient);
+	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhDevice, nChannel, bLive);
 }
 extern "C" BOOL ModuleSession_SDKDevice_Destory()
 {

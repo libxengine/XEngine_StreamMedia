@@ -59,12 +59,12 @@ extern XLOG xhLog;
 extern XHANDLE xhStreamNet;
 extern XHANDLE xhStreamHeart;
 extern XHANDLE xhStreamPkt;
-extern XNETHANDLE xhStreamPool;
+extern XHANDLE xhStreamPool;
 
 extern XHANDLE xhRecordNet;
 extern XHANDLE xhRecordHeart;
 extern XHANDLE xhRecordPkt;
-extern XNETHANDLE xhRecordPool;
+extern XHANDLE xhRecordPool;
 
 extern XENGINE_SERVICECONFIG st_ServiceCfg;
 extern XENGINE_JT1078CONFIG st_JT1078Cfg;

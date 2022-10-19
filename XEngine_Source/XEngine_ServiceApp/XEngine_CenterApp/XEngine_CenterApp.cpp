@@ -16,7 +16,7 @@ XLOG xhLog = NULL;
 XHANDLE xhCenterSocket = NULL;
 XHANDLE xhCenterHeart = NULL;
 XHANDLE xhCenterPacket = NULL;
-XNETHANDLE xhCenterPool = 0;
+XHANDLE xhCenterPool = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试用
@@ -192,7 +192,8 @@ int main(int argc, char** argv)
 			ppSt_ListCenterParam[i]->lParam = pInt_Pos;
 			ppSt_ListCenterParam[i]->fpCall_ThreadsTask = XEngine_CenterTask_Thread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhCenterPool, &ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread))
+		xhCenterPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread);
+		if (NULL == xhCenterPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,启动业务线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
