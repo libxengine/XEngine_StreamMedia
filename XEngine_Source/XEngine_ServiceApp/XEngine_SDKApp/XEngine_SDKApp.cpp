@@ -204,6 +204,7 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,加载插件:%s 路径:%s 失败,初始化失败,错误码:%lX"), stl_ListIterator->tszPluginName, stl_ListIterator->tszPluginFile, ModulePlugin_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
+			ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
 			ModulePlugin_Core_CBSet(stl_ListIterator->xhToken, XEngine_PluginTask_CBRecv);
 			nSDKCount = st_SDKConfig.st_XClient.nMaxClient;
 			BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ThreadInfo, nSDKCount, sizeof(SDKLIST_THREADINFO));
@@ -212,7 +213,6 @@ int main(int argc, char** argv)
 			{
 				ppSt_ThreadInfo[i]->xhClient = XClient_TCPSelect_StartEx(st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
 				XClient_TCPSelect_HBStartEx(ppSt_ThreadInfo[i]->xhClient, 2);
-				ModuleSession_SDKDevice_Create(stl_ListIterator->xhToken);
 				ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, ppSt_ThreadInfo[i]->xhClient);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);
 			}
