@@ -39,17 +39,12 @@ CModuleProtocol_Parse::~CModuleProtocol_Parse()
   类型：字符指针
   可空：N
   意思：输出解析到的URL
- 参数.四：pxhToken
-  In/Out：Out
-  类型：字符指针
-  可空：Y
-  意思：输出解析的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl, TCHAR* ptszToken /* = NULL */)
+BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -73,11 +68,6 @@ BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuff
 	if (!st_JsonRoot["tszAVUrl"].isNull() && (NULL != ptszAVUrl))
 	{
 		_tcscpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
-	}
-	
-	if (!st_JsonRoot["token"].isNull() && (NULL != ptszToken))
-	{
-		_tcscpy(ptszToken, st_JsonRoot["token"].asCString());
 	}
 	return TRUE;
 }

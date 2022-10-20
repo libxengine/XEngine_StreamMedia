@@ -50,7 +50,7 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR * ptszMsgBuffer, int* pInt_M
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/
-extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl, TCHAR * ptszToken)
+extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl)
 {
-	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl, ptszToken);
+	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl);
 }

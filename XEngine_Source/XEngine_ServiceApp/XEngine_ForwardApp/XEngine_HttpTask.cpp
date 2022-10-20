@@ -120,7 +120,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 
 	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
 	{
-		//播放:http://127.0.0.1:5601/api?function=play
+		//播放:http://127.0.0.1:5601/api?function=play&token=100010101
 		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
 		{
 			TCHAR tszSMSUrl[1024];
@@ -131,9 +131,10 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			memset(tszAVUrl, '\0', MAX_PATH);
 			memset(tszToken, '\0', MAX_PATH);
 
-			ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, tszAVUrl, tszToken);
-			if (_tcslen(tszToken) > 0)
+			ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, tszAVUrl);
+			if (2 == nListCount)
 			{
+				BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszToken);
 				if (NULL != ModuleSession_Forward_Get(tszToken))
 				{
 					_stprintf(tszSMSUrl, _T("%s/%s.flv"), st_ServiceConfig.tszSMSUrl, tszToken);
@@ -176,6 +177,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				return FALSE;
 			}
 			XClient_StreamPull_Start(xhToken);
+			ModuleSession_Forward_Create(tszToken, xhToken);
 			//返回数据
 			_tcscat(tszSMSUrl, _T(".flv"));
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, tszSMSUrl, tszToken);
@@ -185,23 +187,33 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		}
 		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
 		{
-			//停止:http://127.0.0.1:5601/api?function=stop
+			//停止:http://127.0.0.1:5601/api?function=stop&token=100010101
 			TCHAR tszToken[MAX_PATH];
 			TCHAR tszSMSUrl[MAX_PATH];
 
 			memset(tszToken, '\0', MAX_PATH);
 			memset(tszSMSUrl, '\0', MAX_PATH);
 
-			ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, NULL, tszToken);
+			if (2 != nListCount)
+			{
+				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, -404, "url parament have no token");
+				RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
+				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("HTTP客户端:%s,请求停止流失败失败,没有传输令牌信息"), lpszClientAddr);
+				return FALSE;
+			}
+			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszToken);
 			XHANDLE xhToken = ModuleSession_Forward_Get(tszToken);
 			if (NULL != xhToken)
 			{
 				XClient_StreamPull_Close(xhToken);
+				ModuleSession_Forward_Delete(tszToken);
 			}
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止设备:%lld 成功"), lpszClientAddr, xhToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止推流:%s 成功"), lpszClientAddr, tszToken);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	}

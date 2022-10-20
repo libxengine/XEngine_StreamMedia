@@ -143,7 +143,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				st_ProtocolDevice.bAudio = _ttoi(tszValue);
 			}
 			//是否已经播放
-			XHANDLE xhClient = xhClient = ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+			XHANDLE xhClient = ModuleSession_SDKDevice_GetClient(_ttoi64(st_ProtocolDevice.tszDeviceNumber), st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			if (NULL != xhClient)
 			{
 				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);

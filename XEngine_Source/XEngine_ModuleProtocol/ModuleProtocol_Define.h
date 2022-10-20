@@ -154,14 +154,9 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_Ms
   类型：字符指针
   可空：N
   意思：输出解析到的URL
- 参数.四：pxhToken
-  In/Out：Out
-  类型：字符指针
-  可空：Y
-  意思：输出解析的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl, TCHAR * ptszToken = NULL);
+extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl = NULL);
