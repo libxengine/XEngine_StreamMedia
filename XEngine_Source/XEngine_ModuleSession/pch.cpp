@@ -110,6 +110,10 @@ extern "C" BOOL ModuleSession_SDKDevice_Destory()
 {
 	return m_SDKDevice.ModuleSession_SDKDevice_Destory();
 }
+extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT * **pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken)
+{
+	return m_SDKDevice.ModuleSession_SDKDevice_GetList(xhDevice, pppSt_SDKClient, pInt_ListCount, xhToken);
+}
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
 *********************************************************************************/

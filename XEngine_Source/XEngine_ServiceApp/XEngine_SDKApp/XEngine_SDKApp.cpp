@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 			//标准协议服务
 			for (int i = 0; i < st_SDKConfig.st_XClient.nMaxClient; i++)
 			{
-				ppSt_ThreadInfo[i]->xhClient = XClient_TCPSelect_StartEx(st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
+				ppSt_ThreadInfo[i]->xhClient = XClient_TCPSelect_StartEx(st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort, 2, XEngine_Client_CBRecv, &stl_ListIterator->xhToken, TRUE);
 				XClient_TCPSelect_HBStartEx(ppSt_ThreadInfo[i]->xhClient, 2);
 				ModuleSession_SDKDevice_InsertClient(stl_ListIterator->xhToken, ppSt_ThreadInfo[i]->xhClient);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_SDKConfig.st_XClient.nMaxClient, i, st_SDKConfig.st_XClient.tszIPAddr, st_SDKConfig.st_XClient.nPort);

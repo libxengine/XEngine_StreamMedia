@@ -346,6 +346,87 @@ XHANDLE CModuleSession_SDKDevice::ModuleSession_SDKDevice_Delete(XNETHANDLE xhDe
     return xhClient;
 }
 /********************************************************************
+函数名称：ModuleSession_SDKDevice_GetList
+函数功能：获取设备列表
+ 参数.一：xhDevice
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：设备句柄
+ 参数.二：pppSt_SDKClient
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出客户端列表
+ 参数.三：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+ 参数.四：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleSession_SDKDevice::ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT*** pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken /* = NULL */)
+{
+	Session_IsErrorOccur = FALSE;
+
+	//查找
+	st_Locker.lock_shared();
+	unordered_map<XNETHANDLE, MODULESESSION_SDKLIST*>::iterator stl_MapIterator = stl_MapClient.find(xhDevice);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+    list<MODULESESSION_SDKCLIENT> stl_ListClient;
+
+    stl_MapIterator->second->st_Locker.lock_shared();
+    if (NULL == xhToken)
+    {
+		for (auto stl_MapClientIterator = stl_MapIterator->second->stl_MapClient.begin(); stl_MapClientIterator != stl_MapIterator->second->stl_MapClient.end(); stl_MapClientIterator++)
+		{
+			//当前客户端下的设备
+			for (auto stl_ListIterator = stl_MapClientIterator->second.begin(); stl_ListIterator != stl_MapClientIterator->second.end(); stl_ListIterator++)
+			{
+				stl_ListClient.push_back(*stl_ListIterator);
+			}
+		}
+    }
+    else
+    {
+        unordered_map<XHANDLE, list<MODULESESSION_SDKCLIENT> >::const_iterator stl_MapClientIterator = stl_MapIterator->second->stl_MapClient.find(xhToken);
+        if (stl_MapClientIterator != stl_MapIterator->second->stl_MapClient.end())
+        {
+			for (auto stl_ListIterator = stl_MapClientIterator->second.begin(); stl_ListIterator != stl_MapClientIterator->second.end(); stl_ListIterator++)
+			{
+				stl_ListClient.push_back(*stl_ListIterator);
+			}
+        }
+    }
+	stl_MapIterator->second->st_Locker.unlock_shared();
+	st_Locker.unlock_shared();
+
+    *pInt_ListCount = stl_ListClient.size();
+    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_SDKClient, stl_ListClient.size(), sizeof(MODULESESSION_SDKCLIENT));
+    list<MODULESESSION_SDKCLIENT>::const_iterator stl_ListIterator = stl_ListClient.begin();
+    for (int i = 0; stl_ListIterator != stl_ListClient.end(); stl_ListIterator++, i++)
+    {
+        (*pppSt_SDKClient)[i]->bLive = stl_ListIterator->bLive;
+        (*pppSt_SDKClient)[i]->nChannel = stl_ListIterator->nChannel;
+    }
+    stl_ListClient.clear();
+	return TRUE;
+}
+/********************************************************************
 函数名称：ModuleSession_SDKDevice_Destory
 函数功能：销毁客户端会话管理器
 返回值

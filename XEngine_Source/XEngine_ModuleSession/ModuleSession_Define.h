@@ -10,6 +10,11 @@
 //    Purpose:     导出会话模块定义
 //    History:
 *********************************************************************/
+typedef struct
+{
+	int nChannel;
+	BOOL bLive;
+}MODULESESSION_SDKCLIENT;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -417,6 +422,35 @@ extern "C" XHANDLE ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChan
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleSession_SDKDevice_Destory();
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_GetList
+函数功能：获取设备列表
+ 参数.一：xhDevice
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：设备句柄
+ 参数.二：pppSt_SDKClient
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出客户端列表
+ 参数.三：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+ 参数.四：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT * **pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken = NULL);
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
 *********************************************************************************/

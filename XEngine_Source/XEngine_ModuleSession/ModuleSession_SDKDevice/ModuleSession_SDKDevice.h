@@ -12,11 +12,6 @@
 *********************************************************************/
 typedef struct
 {
-	int nChannel;
-	BOOL bLive;
-}MODULESESSION_SDKCLIENT;
-typedef struct
-{
 	shared_mutex st_Locker;
 	unordered_map<XHANDLE, list<MODULESESSION_SDKCLIENT> > stl_MapClient;
 }MODULESESSION_SDKLIST;
@@ -33,6 +28,7 @@ public:
 	XHANDLE ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice);
 	XHANDLE ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive);
 	XHANDLE ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive);
+	BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT*** pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken = NULL);
 	BOOL ModuleSession_SDKDevice_Destory();
 protected:
 private:

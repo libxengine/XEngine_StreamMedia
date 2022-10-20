@@ -24,6 +24,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include "../XEngine_UserProtocol.h"
 #include "ModuleSession_Define.h"
 #include "ModuleSession_Error.h"
@@ -42,4 +44,5 @@ extern BOOL Session_IsErrorOccur;
 extern DWORD Session_dwErrorCode;
 
 #ifdef _MSC_BUILD
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #endif
