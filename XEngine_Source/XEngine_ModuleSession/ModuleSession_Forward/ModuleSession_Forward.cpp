@@ -33,17 +33,25 @@ CModuleSession_Forward::~CModuleSession_Forward()
   类型：句柄
   可空：N
   意思：输入绑定的句柄
+ 参数.三：lpszSMSPlay
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入播放地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Forward::ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken)
+BOOL CModuleSession_Forward::ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay)
 {
     Session_IsErrorOccur = FALSE;
 
     MODULESESSION_FORWARD st_Forward;
+	memset(&st_Forward, '\0', sizeof(MODULESESSION_FORWARD));
+
     st_Forward.xhToken = xhToken;
+	_tcscpy(st_Forward.tszPlayUrl, lpszSMSPlay);
 
     st_Locker.lock();
     stl_MapClient.insert(make_pair(lpszPlay, st_Forward));
@@ -105,4 +113,40 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
 	}
 	st_Locker.unlock();
     return TRUE;
+}
+/********************************************************************
+函数名称：ModuleSession_Forward_List
+函数功能：枚举当前播放列表
+ 参数.一：pppSt_Forward
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出播放列表
+ 参数.二：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDLIST*** pppSt_Forward, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = FALSE;
+
+	st_Locker.lock_shared();
+	*pInt_ListCount = stl_MapClient.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_Forward, *pInt_ListCount, sizeof(MODULESESSION_FORWARDLIST));
+
+	unordered_map<string, MODULESESSION_FORWARD>::const_iterator stl_MapIterator = stl_MapClient.begin();
+	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)
+	{
+		_tcscpy((*pppSt_Forward)[i]->tszToken, stl_MapIterator->first.c_str());
+		_tcscpy((*pppSt_Forward)[i]->tszPlayUrl, stl_MapIterator->second.tszPlayUrl);
+	}
+	st_Locker.unlock_shared();
+	
+	return TRUE;
 }

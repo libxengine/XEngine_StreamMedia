@@ -37,10 +37,10 @@ using namespace std;
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Error.h"
-#include "../../XEngine_ModuleProtocol/ModuleProtocol_Define.h"
-#include "../../XEngine_ModuleProtocol/ModuleProtocol_Error.h"
 #include "../../XEngine_ModuleSession/ModuleSession_Define.h"
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
+#include "../../XEngine_ModuleProtocol/ModuleProtocol_Define.h"
+#include "../../XEngine_ModuleProtocol/ModuleProtocol_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"

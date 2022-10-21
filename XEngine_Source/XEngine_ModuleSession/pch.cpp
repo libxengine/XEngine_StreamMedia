@@ -117,9 +117,9 @@ extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSI
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken)
+extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay)
 {
-	return m_Forward.ModuleSession_Forward_Create(lpszPlay, xhToken);
+	return m_Forward.ModuleSession_Forward_Create(lpszPlay, xhToken, lpszSMSPlay);
 }
 extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay)
 {
@@ -128,4 +128,8 @@ extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay)
 extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
 {
 	return m_Forward.ModuleSession_Forward_Delete(lpszPlay);
+}
+extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDLIST * **pppSt_Forward, int* pInt_ListCount)
+{
+	return m_Forward.ModuleSession_Forward_List(pppSt_Forward, pInt_ListCount);
 }

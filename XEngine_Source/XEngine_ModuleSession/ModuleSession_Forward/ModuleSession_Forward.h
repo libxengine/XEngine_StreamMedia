@@ -12,6 +12,7 @@
 *********************************************************************/
 typedef struct
 {
+	TCHAR tszPlayUrl[MAX_PATH];
 	XHANDLE xhToken;
 }MODULESESSION_FORWARD;
 
@@ -21,9 +22,10 @@ public:
 	CModuleSession_Forward();
 	~CModuleSession_Forward();
 public:
-	BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken);
+	BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay);
 	XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
 	BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
+	BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDLIST*** pppSt_Forward, int* pInt_ListCount);
 protected:
 private:
 	shared_mutex st_Locker;

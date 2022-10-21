@@ -28,3 +28,4 @@ EXPORTS
 	ModuleSession_Forward_Create
 	ModuleSession_Forward_Get
 	ModuleSession_Forward_Delete
+	ModuleSession_Forward_List

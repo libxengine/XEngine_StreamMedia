@@ -15,6 +15,11 @@ typedef struct
 	int nChannel;
 	BOOL bLive;
 }MODULESESSION_SDKCLIENT;
+typedef struct
+{
+	TCHAR tszPlayUrl[MAX_PATH];
+	TCHAR tszToken[128];
+}MODULESESSION_FORWARDLIST;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -467,12 +472,17 @@ extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSI
   类型：句柄
   可空：N
   意思：输入绑定的句柄
+ 参数.三：lpszSMSPlay
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入播放地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken);
+extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay);
 /********************************************************************
 函数名称：ModuleSession_Forward_Get
 函数功能：获取句柄绑定信息
@@ -501,3 +511,22 @@ extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
+/********************************************************************
+函数名称：ModuleSession_Forward_List
+函数功能：枚举当前播放列表
+ 参数.一：pppSt_Forward
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出播放列表
+ 参数.二：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDLIST*** pppSt_Forward, int* pInt_ListCount);
