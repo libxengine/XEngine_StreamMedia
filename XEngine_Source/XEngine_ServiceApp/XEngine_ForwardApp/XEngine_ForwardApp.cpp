@@ -16,7 +16,7 @@ XLOG xhLog = NULL;
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
 XHANDLE xhHttpPacket = NULL;
-XHANDLE xhHttpPool = 0;
+XHANDLE xhHttpPool = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 XENGINE_FORWARDCONFIG st_ForwardConfig;

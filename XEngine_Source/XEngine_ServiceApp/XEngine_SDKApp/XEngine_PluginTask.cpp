@@ -16,7 +16,11 @@ void CALLBACK XEngine_PluginTask_CBRecv(XNETHANDLE xhToken, int nChannel, BOOL b
 	TCHAR tszMsgBuffer[1024];
 
 	XHANDLE xhClient = ModuleSession_SDKDevice_GetClient(xhToken, nChannel, bLive);
-	if (NULL != xhClient)
+	if (NULL == xhClient)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("插件:%lld,通道:%d,回调数据查找客户端失败,可能已经被移除"), xhToken, nChannel);
+	}
+	else
 	{
 		XENGINE_PROTOCOLDEVICE st_ProtocolDevice;
 		memset(&st_ProtocolDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));

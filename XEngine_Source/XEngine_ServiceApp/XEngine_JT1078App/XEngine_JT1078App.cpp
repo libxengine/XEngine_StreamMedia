@@ -16,12 +16,12 @@ XLOG xhLog = NULL;
 XHANDLE xhStreamNet = NULL;
 XHANDLE xhStreamHeart = NULL;
 XHANDLE xhStreamPkt = NULL;
-XHANDLE xhStreamPool = 0;
+XHANDLE xhStreamPool = NULL;
 
 XHANDLE xhRecordNet = NULL;
 XHANDLE xhRecordHeart = NULL;
 XHANDLE xhRecordPkt = NULL;
-XHANDLE xhRecordPool = 0;
+XHANDLE xhRecordPool = NULL;
 
 XENGINE_SERVICECONFIG st_ServiceCfg;
 XENGINE_JT1078CONFIG st_JT1078Cfg;

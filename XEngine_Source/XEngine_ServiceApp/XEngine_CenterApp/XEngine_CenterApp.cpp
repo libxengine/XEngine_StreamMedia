@@ -16,7 +16,7 @@ XLOG xhLog = NULL;
 XHANDLE xhCenterSocket = NULL;
 XHANDLE xhCenterHeart = NULL;
 XHANDLE xhCenterPacket = NULL;
-XHANDLE xhCenterPool = 0;
+XHANDLE xhCenterPool = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试用
