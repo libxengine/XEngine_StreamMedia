@@ -1,0 +1,18 @@
+{
+    "tszIPAddr":"127.0.0.1",
+    "bDeamon":false,
+    "nHttpPort":5602,
+    "XMax":{
+        "MaxClient":10000,
+        "MaxQueue":10000,
+        "IOThread":1,
+        "HttpThread":1
+    },
+    "XTime":{
+        "nTimeCheck":3,
+        "nHttpTimeout":0
+    },
+    "XVer":[
+        "V1.0.0.1001 Build20221025"
+    ]
+}
