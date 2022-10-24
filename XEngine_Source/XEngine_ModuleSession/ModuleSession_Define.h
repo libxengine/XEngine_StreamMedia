@@ -15,6 +15,11 @@ typedef struct
 	int nChannel;
 	BOOL bLive;
 }MODULESESSION_SDKCLIENT;
+typedef struct
+{
+	TCHAR tszAVUrl[MAX_PATH];
+	TCHAR tszToken[MAX_PATH];
+}MODULESESSION_FORWARDINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -509,7 +514,7 @@ extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
 /********************************************************************
 函数名称：ModuleSession_Forward_List
 函数功能：枚举当前播放列表
- 参数.一：ppptszForward
+ 参数.一：pppSt_Forward
   In/Out：In/Out
   类型：三级指针
   可空：N
@@ -524,4 +529,4 @@ extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Forward_List(TCHAR * **ppptszForward, int* pInt_ListCount);
+extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount);

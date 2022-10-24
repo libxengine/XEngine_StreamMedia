@@ -47,9 +47,9 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR * ptszMsgBuffer, int* pInt_M
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDev);
 }
-extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, TCHAR * **ppptszForward, int nListCount)
+extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount)
 {
-	return m_ProtocolPacket.ModuleProtocol_Packet_ForwardList(ptszMsgBuffer, pInt_MsgLen, ppptszForward, nListCount);
+	return m_ProtocolPacket.ModuleProtocol_Packet_ForwardList(ptszMsgBuffer, pInt_MsgLen, pppSt_Forward, nListCount);
 }
 /************************************************************************/
 /*                         导出的协议解析函数                           */

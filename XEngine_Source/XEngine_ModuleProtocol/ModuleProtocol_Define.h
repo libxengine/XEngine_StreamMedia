@@ -161,7 +161,7 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_Ms
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** ppptszForward, int nListCount);
+extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount);
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/

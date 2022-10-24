@@ -139,12 +139,11 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszToken);
 				if (NULL != ModuleSession_Forward_Get(tszToken))
 				{
-					_stprintf(tszSMSUrl, _T("%s/%s.flv"), st_ServiceConfig.tszSMSUrl, tszToken);
-					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, tszSMSUrl, tszToken);
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, NULL, tszToken);
 					RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s,成功,流已经存在,播放地址:%s"), lpszClientAddr, tszAVUrl, tszSMSUrl);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s,成功,流已经存在"), lpszClientAddr, tszAVUrl);
 					return TRUE;
 				}
 			}
@@ -177,7 +176,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 				return FALSE;
 			}
 			XClient_StreamPull_Start(xhToken);
-			ModuleSession_Forward_Create(tszToken, xhToken, tszSMSUrl);
+			ModuleSession_Forward_Create(tszToken, xhToken, tszAVUrl);
 			//返回数据
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, NULL, tszToken);
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -218,13 +217,13 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 		{
 			//枚举:http://127.0.0.1:5602/api?function=list
 			int nListCount = 0;
-			TCHAR** pptszForward;
-			ModuleSession_Forward_List(&pptszForward, &nListCount);
+			MODULESESSION_FORWARDINFO** ppSt_Forward;
+			ModuleSession_Forward_List(&ppSt_Forward, &nListCount);
 
-			ModuleProtocol_Packet_ForwardList(tszRVBuffer, &nRVLen, &pptszForward, nListCount);
+			ModuleProtocol_Packet_ForwardList(tszRVBuffer, &nRVLen, &ppSt_Forward, nListCount);
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&pptszForward, nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Forward, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求列举推流数成功,数量;%d"), lpszClientAddr, nListCount);
 		}
 	}

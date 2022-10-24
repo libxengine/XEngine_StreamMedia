@@ -269,7 +269,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** ppptszForward, int nListCount)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO*** pppSt_Forward, int nListCount)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -286,7 +286,8 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuf
 	{
 		Json::Value st_JsonObject;
 
-		st_JsonObject["tszToken"] = (*ppptszForward)[i];
+		st_JsonObject["tszToken"] = (*pppSt_Forward)[i]->tszToken;
+		st_JsonObject["tszAVUrl"] = (*pppSt_Forward)[i]->tszAVUrl;
 		st_JsonArray.append(st_JsonObject);
 	}
 	st_JsonRoot["code"] = 0;

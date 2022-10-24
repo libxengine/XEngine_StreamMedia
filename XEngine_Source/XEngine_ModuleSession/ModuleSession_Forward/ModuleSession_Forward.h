@@ -25,7 +25,7 @@ public:
 	BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay);
 	XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
 	BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
-	BOOL ModuleSession_Forward_List(TCHAR*** ppptszForward, int* pInt_ListCount);
+	BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDINFO*** pppSt_Forward, int* pInt_ListCount);
 protected:
 private:
 	shared_mutex st_Locker;
