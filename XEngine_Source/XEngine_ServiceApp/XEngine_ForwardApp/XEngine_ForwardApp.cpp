@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 	bIsRun = TRUE;
 	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
 	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
-	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_SDKApp.Log");
+	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_ForwardApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListHTTPParam;
 
