@@ -129,7 +129,7 @@ extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
 {
 	return m_Forward.ModuleSession_Forward_Delete(lpszPlay);
 }
-extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDLIST * **pppSt_Forward, int* pInt_ListCount)
+extern "C" BOOL ModuleSession_Forward_List(TCHAR * **ppptszForward, int* pInt_ListCount)
 {
-	return m_Forward.ModuleSession_Forward_List(pppSt_Forward, pInt_ListCount);
+	return m_Forward.ModuleSession_Forward_List(ppptszForward, pInt_ListCount);
 }

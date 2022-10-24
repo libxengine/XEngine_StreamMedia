@@ -254,7 +254,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：pppSt_Forward
+ 参数.三：ppptszForward
   In/Out：In
   类型：三级指针
   可空：N
@@ -269,7 +269,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDLIST*** pppSt_Forward, int nListCount)
+BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** ppptszForward, int nListCount)
 {
 	ModuleProtocol_IsErrorOccur = FALSE;
 
@@ -286,8 +286,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuf
 	{
 		Json::Value st_JsonObject;
 
-		st_JsonObject["tszToken"] = (*pppSt_Forward)[i]->tszToken;
-		st_JsonObject["tszPlayUrl"] = (*pppSt_Forward)[i]->tszPlayUrl;
+		st_JsonObject["tszToken"] = (*ppptszForward)[i];
 		st_JsonArray.append(st_JsonObject);
 	}
 	st_JsonRoot["code"] = 0;

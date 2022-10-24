@@ -179,8 +179,7 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			XClient_StreamPull_Start(xhToken);
 			ModuleSession_Forward_Create(tszToken, xhToken, tszSMSUrl);
 			//返回数据
-			_tcscat(tszSMSUrl, _T(".flv"));
-			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, tszSMSUrl, tszToken);
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, NULL, tszToken);
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s 成功,设备流个数:%d,播放地址:%s"), lpszClientAddr, tszAVUrl, nStreamCount, tszSMSUrl);
@@ -228,13 +227,13 @@ BOOL XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCTSTR
 			memset(tszSMSUrl, '\0', MAX_PATH);
 
 			int nListCount = 0;
-			MODULESESSION_FORWARDLIST** ppSt_Forward;
-			ModuleSession_Forward_List(&ppSt_Forward, &nListCount);
+			TCHAR** pptszForward;
+			ModuleSession_Forward_List(&pptszForward, &nListCount);
 
-			ModuleProtocol_Packet_ForwardList(tszRVBuffer, &nRVLen, &ppSt_Forward, nListCount);
+			ModuleProtocol_Packet_ForwardList(tszRVBuffer, &nRVLen, &pptszForward, nListCount);
 			RfcComponents_HttpServer_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Forward, nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&pptszForward, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止推流:%s 成功"), lpszClientAddr, tszToken);
 		}
 	}

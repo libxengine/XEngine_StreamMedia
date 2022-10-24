@@ -117,7 +117,7 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
 /********************************************************************
 函数名称：ModuleSession_Forward_List
 函数功能：枚举当前播放列表
- 参数.一：pppSt_Forward
+ 参数.一：ppptszForward
   In/Out：In/Out
   类型：三级指针
   可空：N
@@ -132,19 +132,18 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDLIST*** pppSt_Forward, int* pInt_ListCount)
+BOOL CModuleSession_Forward::ModuleSession_Forward_List(TCHAR*** ppptszForward, int* pInt_ListCount)
 {
 	Session_IsErrorOccur = FALSE;
 
 	st_Locker.lock_shared();
 	*pInt_ListCount = stl_MapClient.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_Forward, *pInt_ListCount, sizeof(MODULESESSION_FORWARDLIST));
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)ppptszForward, *pInt_ListCount, 128);
 
 	unordered_map<string, MODULESESSION_FORWARD>::const_iterator stl_MapIterator = stl_MapClient.begin();
 	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)
 	{
-		_tcscpy((*pppSt_Forward)[i]->tszToken, stl_MapIterator->first.c_str());
-		_tcscpy((*pppSt_Forward)[i]->tszPlayUrl, stl_MapIterator->second.tszPlayUrl);
+		_tcscpy((*ppptszForward)[i], stl_MapIterator->first.c_str());
 	}
 	st_Locker.unlock_shared();
 	
