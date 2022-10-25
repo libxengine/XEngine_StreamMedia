@@ -1,3 +1,17 @@
+XEngine_StreamMedia V1.3.0.1001
+
+增加:流转发服务(play,stop,list)
+更新:匹配xengine v7.42版本
+修正:sdk app多次创建TOKEN的问题
+修正:sdkapp重连到centerapp没有关闭推流的问题
+修正:dahua sdk播放失败没有释放内存的问题
+
+added:stream forward service(play,stop,list)
+update:xengine match v7.42
+fixed:sdkapp created multi token
+fixed:will close push stream when sdkapp reconnect to centerapp
+fixed:play failed does not free memory
+=======================================================
 XEngine_StreamMedia V1.2.0.1001
 
 增加:HTTP的请求现在返回JSON负载了
