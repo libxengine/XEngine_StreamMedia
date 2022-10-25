@@ -31,8 +31,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
-#include <XEngine_Include/XEngine_Client/XClient_Define.h>
-#include <XEngine_Include/XEngine_Client/XClient_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -41,18 +41,14 @@ using namespace std;
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
 #include "../../XEngine_ModuleProtocol/ModuleProtocol_Define.h"
 #include "../../XEngine_ModuleProtocol/ModuleProtocol_Error.h"
-#include "../../XEngine_ModulePlugin/ModulePlugin_Define.h"
-#include "../../XEngine_ModulePlugin/ModulePlugin_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
-#include "XEngine_PluginTask.h"
 #include "XEngine_HttpTask.h"
-#include "XEngine_Client.h"
 /********************************************************************
-//    Created:     2022/06/22  10:11:29
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_SDKApp\XEngine_Hdr.h
-//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_SDKApp
+//    Created:     2022/10/17  10:58:39
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_ForwardApp\XEngine_Hdr.h
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_ForwardApp
 //    File Base:   XEngine_Hdr
 //    File Ext:    h
 //    Project:     XEngine(网络通信引擎)
@@ -60,11 +56,6 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-typedef struct  
-{
-	XHANDLE xhClient;
-}SDKLIST_THREADINFO;
-//////////////////////////////////////////////////////////////////////////
 extern BOOL bIsRun;
 extern XLOG xhLog;
 //HTTP服务器
@@ -74,10 +65,7 @@ extern XHANDLE xhHttpPacket;
 extern XHANDLE xhHttpPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
-extern XENGINE_SDKCONFIG st_SDKConfig;
-//其他
-extern int nSDKCount;
-extern SDKLIST_THREADINFO** ppSt_ThreadInfo;
+extern XENGINE_FORWARDCONFIG st_ForwardConfig;
 
 //连接库
 #ifdef _MSC_BUILD
@@ -86,31 +74,27 @@ extern SDKLIST_THREADINFO** ppSt_ThreadInfo;
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModulePlugin.lib")
 #else
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../x64/Release/XEngine_ModulePlugin.lib")
 #endif
 #else
 #ifdef _DEBUG
 #pragma comment(lib,"../../Debug/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../Debug/XEngine_ModulePlugin.lib")
 #else
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../Release/XEngine_ModulePlugin.lib")
 #endif
 #endif
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
-#pragma comment(lib,"XEngine_Client/XClient_Socket")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

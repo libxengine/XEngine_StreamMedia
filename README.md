@@ -7,9 +7,16 @@
 c c++ 流媒体服务器  
 c c++ streammedia server  
 这不是一个单纯的流媒体服务器,而是一个协议流解析推流服务,需要配合流媒体服务使用,他的主要作用是解析国标协议和其他协议的流媒体协议,然后打包推流到指定流媒体服务器上  
+这个服务是流媒体服务和设备之间的一个补充服务.方便用户更好的管理推流  
 可以支持JT1078,GB28181等协议流.解析这些协议流,然后通过RTMP协议推流到一个流媒体服务器上面.用户可以通过流媒体服务器拉流  
 他是一个流媒体协议解析集合,可以接入任何协议的设备到我们的服务器,然后通过我们服务器解析打包成RTMP协议推流到指定服务器上面
 这是一个跨平台简单高性能网络授权服务器,提供了完整的演示代码  
+
+## 设计模式
+通过XEngine_StreamMedia控制设备流到我们的服务器,然后通过我们服务器推流到第三方流媒体服务,客户端去第三方流媒体服务拉流  
+此服务主要提供标准接口给用户方便的管理推拉流  
+支持所有标准流媒体服务器,比如:nginx-rtmp AMS red5 等等  
+device -> XEngine_StreamMedia -> stream media service -> client  
 
 ## 软件架构
 基于libXEngine开发并实现的一套简洁高性能跨平台流媒体解析推流服务  
@@ -22,6 +29,8 @@ c c++ streammedia server
 6. 支持国际ONVIF协议
 7. 支持SIP流协议
 8. 支持设备厂商SDK(dahua,haikang,suobei等等)
+9. 支持RTSP,RTMP,HLS等转推流
+
 
 ## 安装教程
 
@@ -32,7 +41,6 @@ GITHUB:https://github.com/libxengine/xengine
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.34或者以上版本  
 
 #### Windows
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用

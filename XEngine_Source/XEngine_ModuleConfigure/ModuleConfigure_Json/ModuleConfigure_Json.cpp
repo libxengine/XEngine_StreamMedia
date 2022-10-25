@@ -406,3 +406,102 @@ BOOL CModuleConfigure_Json::ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XEN
 	}
 	return TRUE;
 }
+/********************************************************************
+函数名称：ModuleConfigure_Json_Forward
+函数功能：读取JSON配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出SDK服务配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CModuleConfigure_Json::ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig)
+{
+	Config_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszConfigFile) || (NULL == pSt_ServerConfig))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_JsonBuilder;
+	//读取配置文件所有内容到缓冲区
+	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
+	if (NULL == pSt_File)
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_OPENFILE;
+		return FALSE;
+	}
+	size_t nCount = 0;
+	TCHAR tszMsgBuffer[4096];
+	while (1)
+	{
+		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
+		if (nRet <= 0)
+		{
+			break;
+		}
+		nCount += nRet;
+	}
+	fclose(pSt_File);
+	//开始解析配置文件
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
+		return FALSE;
+	}
+	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
+	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
+	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
+
+	if (st_JsonRoot["XMax"].empty() || (4 != st_JsonRoot["XMax"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XMAX;
+		return FALSE;
+	}
+	Json::Value st_JsonXMax = st_JsonRoot["XMax"];
+	pSt_ServerConfig->st_XMax.nMaxClient = st_JsonXMax["MaxClient"].asInt();
+	pSt_ServerConfig->st_XMax.nMaxQueue = st_JsonXMax["MaxQueue"].asInt();
+	pSt_ServerConfig->st_XMax.nIOThread = st_JsonXMax["IOThread"].asInt();
+	pSt_ServerConfig->st_XMax.nHTTPThread = st_JsonXMax["HttpThread"].asInt();
+
+	if (st_JsonRoot["XTime"].empty() || (2 != st_JsonRoot["XTime"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XTIME;
+		return FALSE;
+	}
+	Json::Value st_JsonXTime = st_JsonRoot["XTime"];
+	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
+	pSt_ServerConfig->st_XTime.nHTTPTimeOut = st_JsonXTime["nHttpTimeout"].asInt();
+	//解析版本
+	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
+	pSt_ServerConfig->st_XVer.pStl_ListVer = new list<string>;
+	if (NULL == pSt_ServerConfig->st_XVer.pStl_ListVer)
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_MALLOC;
+		return FALSE;
+	}
+	for (unsigned int i = 0; i < st_JsonXVer.size(); i++)
+	{
+		pSt_ServerConfig->st_XVer.pStl_ListVer->push_back(st_JsonXVer[i].asCString());
+	}
+	return TRUE;
+}

@@ -41,3 +41,7 @@ extern "C" BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONF
 {
 	return m_ConfigJson.ModuleConfigure_Json_Sdk(lpszConfigFile, pSt_ServerConfig);
 }
+extern "C" BOOL ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG * pSt_ServerConfig)
+{
+	return m_ConfigJson.ModuleConfigure_Json_Forward(lpszConfigFile, pSt_ServerConfig);
+}

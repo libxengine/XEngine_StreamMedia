@@ -33,7 +33,7 @@ CModuleSession_Client::~CModuleSession_Client()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
+BOOL CModuleSession_Client::ModuleSession_Client_Create(XHANDLE xhClient)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -62,7 +62,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
+BOOL CModuleSession_Client::ModuleSession_Client_Get(XHANDLE* pxhClient)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -73,7 +73,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
 		return FALSE;
 	}
     unsigned int nListCount = 100000; //最大任务个数
-    XNETHANDLE xhClient = 0;          //选择的客户端
+    XHANDLE xhClient = 0;          //选择的客户端
     st_Locker.lock_shared();
 	//查找最小
     for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
@@ -121,7 +121,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Client::ModuleSession_Client_Exist(XHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -208,7 +208,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+BOOL CModuleSession_Client::ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
     Session_IsErrorOccur = FALSE;
 
@@ -220,7 +220,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
     }
     //查找
     st_Locker.lock_shared();
-    unordered_map<XNETHANDLE, MODULESESSION_LIST*>::iterator stl_MapIterator = stl_MapClient.find(xhClient);
+    unordered_map<XHANDLE, MODULESESSION_LIST*>::iterator stl_MapIterator = stl_MapClient.find(xhClient);
     if (stl_MapIterator == stl_MapClient.end())
     {
         Session_IsErrorOccur = TRUE;
@@ -275,7 +275,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, BOOL* pbLive /* = NULL */)
+BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, BOOL* pbLive /* = NULL */)
 {
     Session_IsErrorOccur = FALSE;
 

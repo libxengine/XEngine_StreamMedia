@@ -31,6 +31,12 @@
     <Filter Include="源文件\ModuleSession_SDKDevice">
       <UniqueIdentifier>{78f472ee-72fe-40ef-bd86-4482ab4d2887}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\ModuleSession_Forward">
+      <UniqueIdentifier>{afc2de33-8681-4dea-8d9d-58a200f2f474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleSession_Forward">
+      <UniqueIdentifier>{e8555e72-cbd4-4798-8bd2-1af9cb281616}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -54,6 +60,9 @@
     <ClInclude Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.h">
       <Filter>头文件\ModuleSession_SDKDevice</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleSession_Forward\ModuleSession_Forward.h">
+      <Filter>头文件\ModuleSession_Forward</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -70,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="ModuleSession_SDKDevice\ModuleSession_SDKDevice.cpp">
       <Filter>源文件\ModuleSession_SDKDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSession_Forward\ModuleSession_Forward.cpp">
+      <Filter>源文件\ModuleSession_Forward</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

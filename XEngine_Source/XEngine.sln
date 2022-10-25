@@ -32,9 +32,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModulePlugin", "XEn
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Plugin", "XEngine_Plugin", "{7ADB0F28-C5C7-4363-B156-843B28BD6FAB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModulePlugin_DaHua", "XEngine_Plugin\ModulePlugin_DaHua\ModulePlugin_DaHua.vcxproj", "{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libModulePlugin_DaHua", "XEngine_Plugin\ModulePlugin_DaHua\ModulePlugin_DaHua.vcxproj", "{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_SDKApp", "XEngine_ServiceApp\XEngine_SDKApp\XEngine_SDKApp.vcxproj", "{428280EA-36BF-4869-B244-2A9B53B6B403}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ForwardApp", "XEngine_ServiceApp\XEngine_ForwardApp\XEngine_ForwardApp.vcxproj", "{EDF94670-17C1-454E-BE17-5E6242AD32C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +134,14 @@ Global
 		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x64.Build.0 = Release|x64
 		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x86.ActiveCfg = Release|Win32
 		{428280EA-36BF-4869-B244-2A9B53B6B403}.Release|x86.Build.0 = Release|Win32
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Debug|x64.ActiveCfg = Debug|x64
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Debug|x64.Build.0 = Debug|x64
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Debug|x86.ActiveCfg = Debug|Win32
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Debug|x86.Build.0 = Debug|Win32
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Release|x64.ActiveCfg = Release|x64
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Release|x64.Build.0 = Release|x64
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Release|x86.ActiveCfg = Release|Win32
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +152,7 @@ Global
 		{657E83B3-6687-4E28-9D3D-0C23AEE2737A} = {79A9A569-7DA8-4D9D-AD34-D11115199EA1}
 		{B4E26F2D-82DD-44E5-8300-CA7BAA3D198E} = {7ADB0F28-C5C7-4363-B156-843B28BD6FAB}
 		{428280EA-36BF-4869-B244-2A9B53B6B403} = {79A9A569-7DA8-4D9D-AD34-D11115199EA1}
+		{EDF94670-17C1-454E-BE17-5E6242AD32C9} = {79A9A569-7DA8-4D9D-AD34-D11115199EA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9B202F91-A601-429E-BB0F-880DDEE096FE}

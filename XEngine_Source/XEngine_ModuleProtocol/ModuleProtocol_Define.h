@@ -40,12 +40,17 @@ extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
   类型：常量字符指针
   可空：Y
   意思：输入要处理的缓冲区
+ 参数.五：lpszToken
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入打包的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL);
+extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL, LPCTSTR lpszToken = NULL);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Create
 函数功能：流媒体创建
@@ -128,3 +133,59 @@ extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLe
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
+/********************************************************************
+函数名称：ModuleProtocol_Packet_ForwardList
+函数功能：转发流列表打包函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：ppptszForward
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入要打包的列表
+ 参数.四：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount);
+/************************************************************************/
+/*                         导出的协议解析函数                           */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleProtocol_Parse_HTTPForward
+函数功能：转发解析
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入解析大小
+ 参数.三：ptszAVUrl
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出解析到的URL
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl = NULL);

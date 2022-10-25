@@ -44,10 +44,10 @@ using namespace std;
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Error.h"
 #include "../../XEngine_ModuleDatabase/ModuleDB_Define.h"
 #include "../../XEngine_ModuleDatabase/ModuleDB_Error.h"
-#include "../../XEngine_ModuleProtocol/ModuleProtocol_Define.h"
-#include "../../XEngine_ModuleProtocol/ModuleProtocol_Error.h"
 #include "../../XEngine_ModuleSession/ModuleSession_Define.h"
 #include "../../XEngine_ModuleSession/ModuleSession_Error.h"
+#include "../../XEngine_ModuleProtocol/ModuleProtocol_Define.h"
+#include "../../XEngine_ModuleProtocol/ModuleProtocol_Error.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Define.h"
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
 //加载自己的头文件
@@ -72,7 +72,7 @@ extern XLOG xhLog;
 extern XHANDLE xhCenterSocket;
 extern XHANDLE xhCenterHeart;
 extern XHANDLE xhCenterPacket;
-extern XNETHANDLE xhCenterPool;
+extern XHANDLE xhCenterPool;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试用

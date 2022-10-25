@@ -14,3 +14,5 @@
 //                        协议打包错误
 //////////////////////////////////////////////////////////////////////////
 #define ERROR_MODULE_PROTOCOL_PACKET_PARAMENT 0xC0001                    //参数错误
+#define ERROR_MODULE_PROTOCOL_PARSE_PARAMENT 0xC0010                     //参数错误
+#define ERROR_MODULE_PROTOCOL_PARSE_JSON 0xC0020                         //JSON不正确

@@ -277,6 +277,8 @@ BOOL CPlugin_Dahua::PluginCore_Play(XNETHANDLE xhToken, int nChannel, BOOL bAudi
 		{
 			SDKPlugin_IsErrorOccur = TRUE;
 			SDKPlugin_dwErrorCode = CLIENT_GetLastError();
+			delete pSt_SDKInfo;
+			pSt_SDKInfo = NULL;
 			st_LockerManage.unlock_shared();
 			return FALSE;
 		}

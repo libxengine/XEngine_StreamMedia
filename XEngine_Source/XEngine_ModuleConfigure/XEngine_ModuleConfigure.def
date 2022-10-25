@@ -6,3 +6,4 @@ EXPORTS
 	ModuleConfigure_Json_File
 	ModuleConfigure_Json_Sdk
 	ModuleConfigure_Json_JT1078
+	ModuleConfigure_Json_Forward

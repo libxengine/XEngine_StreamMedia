@@ -8,7 +8,7 @@ LOADBIN =
 LIB = 
 LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_SDKDevice.o pch.o
+LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_SDKDevice.o ModuleSession_Forward.o pch.o
 
 ifeq ($(OS),Windows_NT)
 else
@@ -46,6 +46,8 @@ ModuleSession_Server.o:./ModuleSession_Server/ModuleSession_Server.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_Server/ModuleSession_Server.cpp 
 ModuleSession_SDKDevice.o:./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp 
+ModuleSession_Forward.o:./ModuleSession_Forward/ModuleSession_Forward.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleSession_Forward/ModuleSession_Forward.cpp 
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp

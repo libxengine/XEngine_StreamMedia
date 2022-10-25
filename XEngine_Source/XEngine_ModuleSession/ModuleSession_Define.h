@@ -10,6 +10,16 @@
 //    Purpose:     导出会话模块定义
 //    History:
 *********************************************************************/
+typedef struct
+{
+	int nChannel;
+	BOOL bLive;
+}MODULESESSION_SDKCLIENT;
+typedef struct
+{
+	TCHAR tszAVUrl[MAX_PATH];
+	TCHAR tszToken[MAX_PATH];
+}MODULESESSION_FORWARDINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -30,7 +40,7 @@ extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient);
+extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Get
 函数功能：获得一个可以使用的客户端句柄
@@ -44,7 +54,7 @@ extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE* pxhClient);
+extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Exist
 函数功能：客户端是否存在
@@ -78,7 +88,7 @@ extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE* pxhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_Insert
 函数功能：绑定插入一个客户端
@@ -112,7 +122,7 @@ extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDe
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteAddr
 函数功能：通过IP地址删除绑定的设备
@@ -146,7 +156,7 @@ extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDev
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
+extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息
@@ -316,7 +326,7 @@ extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhDevice);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XNETHANDLE xhClient);
+extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XHANDLE xhClient);
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_Insert
 函数功能：绑定插入一个客户端
@@ -345,7 +355,7 @@ extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XNETHA
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XNETHANDLE xhClient, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XHANDLE xhClient, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_GetIdleClient
 函数功能：获得一个可以使用的客户端句柄
@@ -354,17 +364,12 @@ extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XNETHA
   类型：句柄
   可空：N
   意思：输入要操作的设备
- 参数.二：pxhClient
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出获得的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice, XNETHANDLE* pxhClient);
+extern "C" XHANDLE ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice);
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_GetClient
 函数功能：获取设备绑定的客户端
@@ -383,17 +388,12 @@ extern "C" BOOL ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice, XNETH
   类型：逻辑型
   可空：N
   意思：输入是直播还是录像
- 参数.四：pxhClient
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出客户端句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE* pxhClient);
+extern "C" XHANDLE ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_Delete
 函数功能：删除绑定的设备
@@ -412,17 +412,12 @@ extern "C" BOOL ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChan
   类型：整数型
   可空：N
   意思：直播还是录播
- 参数.四：pxhClient
-  In/Out：Out
-  类型：句柄指针
-  可空：Y
-  意思：输出绑定的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive, XNETHANDLE* pxhClient = NULL);
+extern "C" XHANDLE ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_SDKDevice_Destory
 函数功能：销毁客户端会话管理器
@@ -432,3 +427,106 @@ extern "C" BOOL ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleSession_SDKDevice_Destory();
+/********************************************************************
+函数名称：ModuleSession_SDKDevice_GetList
+函数功能：获取设备列表
+ 参数.一：xhDevice
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：设备句柄
+ 参数.二：pppSt_SDKClient
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出客户端列表
+ 参数.三：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+ 参数.四：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT * **pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken = NULL);
+/*********************************************************************************
+*                          流转发导出会话模块                                    *
+*********************************************************************************/
+/********************************************************************
+函数名称：ModuleSession_Forward_Create
+函数功能：创建转发服务
+ 参数.一：xhPlay
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要创建的句柄
+ 参数.二：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入绑定的句柄
+ 参数.三：lpszSMSPlay
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入播放地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay);
+/********************************************************************
+函数名称：ModuleSession_Forward_Get
+函数功能：获取句柄绑定信息
+ 参数.一：xhPlay
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的句柄
+返回值
+  类型：句柄型
+  意思：成功返回句柄,失败返回NULL
+备注：
+*********************************************************************/
+extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
+/********************************************************************
+函数名称：ModuleSession_Forward_Delete
+函数功能：删除绑定句柄
+ 参数.一：xhPlay
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
+/********************************************************************
+函数名称：ModuleSession_Forward_List
+函数功能：枚举当前播放列表
+ 参数.一：pppSt_Forward
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出播放列表
+ 参数.二：pInt_ListCount
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount);
