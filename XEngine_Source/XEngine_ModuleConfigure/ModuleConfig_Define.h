@@ -90,51 +90,6 @@ typedef struct
 		list<string>* pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_JT1078CONFIG;
-//SDK服务配置文件
-typedef struct
-{
-	BOOL bEnable;
-	int nPort;
-	XNETHANDLE xhToken;
-	TCHAR tszPluginName[MAX_PATH];
-	TCHAR tszPluginFile[MAX_PATH];
-	TCHAR tszPluginAddr[128];
-	TCHAR tszPluginUser[128];
-	TCHAR tszPluginPass[128];
-}XENGINE_PLUGININFO;
-typedef struct
-{
-	TCHAR tszIPAddr[64];                      //本机IP地址
-	BOOL bDeamon;                             //是否使用守护进程
-	BOOL bPacket;                             //是否启用分包传输
-	int nHttpPort;                            //HTTP服务端口
-	struct
-	{
-		int nMaxClient;                       //最大客户端个数
-		int nMaxQueue;                        //队列最大个数
-		int nIOThread;                        //网络线程池个数
-		int nHTTPThread;                      //HTTP任务处理线程数
-	}st_XMax;
-	struct
-	{
-		int nTimeCheck;                       //检测次数
-		int nHTTPTimeOut;                     //HTTP超时时间
-	}st_XTime;
-	struct
-	{
-		TCHAR tszIPAddr[128];                 //服务器地址
-		int nPort;                            //服务器端口
-		int nMaxClient;                       //每个设备绑定的客户端个数
-	}st_XClient;
-	struct  
-	{
-		list<XENGINE_PLUGININFO>* pStl_ListPlugin;
-	}st_XPlugin;
-	struct
-	{
-		list<string>* pStl_ListVer;           //版本列表
-	}st_XVer;
-}XENGINE_SDKCONFIG;
 typedef struct
 {
 	TCHAR tszIPAddr[64];                      //本机IP地址
@@ -202,25 +157,6 @@ extern "C" BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVIC
 备注：
 *********************************************************************/
 extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
-/********************************************************************
-函数名称：ModuleConfigure_Json_PluginFile
-函数功能：读取JSON配置文件
- 参数.一：lpszConfigFile
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要读取的配置文件
- 参数.二：pSt_ServerConfig
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出SDK服务配置信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG * pSt_ServerConfig);
 /********************************************************************
 函数名称：ModuleConfigure_Json_Forward
 函数功能：读取JSON配置文件
