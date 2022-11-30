@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "ModuleSession_Server/ModuleSession_Server.h"
 #include "ModuleSession_Client/ModuleSession_Client.h"
-#include "ModuleSession_SDKDevice/ModuleSession_SDKDevice.h"
 #include "ModuleSession_Forward/ModuleSession_Forward.h"
 /********************************************************************
 //    Created:     2022/04/25  10:21:36
@@ -19,7 +18,6 @@ DWORD Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleSession_Client m_Client;
 CModuleSession_Server m_Server;
-CModuleSession_SDKDevice m_SDKDevice;
 CModuleSession_Forward m_Forward;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
@@ -78,41 +76,6 @@ extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChan
 extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	return m_Server.ModuleSession_Server_GetPush(lpszDeviceNumber, nChannel, bLive);
-}
-/*********************************************************************************
-*                          设备SDK导出会话模块                                   *
-*********************************************************************************/
-extern "C" BOOL ModuleSession_SDKDevice_Create(XNETHANDLE xhDevice)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_Create(xhDevice);
-}
-extern "C" BOOL ModuleSession_SDKDevice_InsertClient(XNETHANDLE xhDevice, XHANDLE xhClient)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_InsertClient(xhDevice, xhClient);
-}
-extern "C" BOOL ModuleSession_SDKDevice_InsertDevice(XNETHANDLE xhDevice, XHANDLE xhClient, int nChannel, BOOL bLive)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_InsertDevice(xhDevice, xhClient, nChannel, bLive);
-}
-extern "C" XHANDLE ModuleSession_SDKDevice_GetIdleClient(XNETHANDLE xhDevice)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_GetIdleClient(xhDevice);
-}
-extern "C" XHANDLE ModuleSession_SDKDevice_GetClient(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_GetClient(xhDevice, nChannel, bLive);
-}
-extern "C" XHANDLE ModuleSession_SDKDevice_Delete(XNETHANDLE xhDevice, int nChannel, BOOL bLive)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_Delete(xhDevice, nChannel, bLive);
-}
-extern "C" BOOL ModuleSession_SDKDevice_Destory()
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_Destory();
-}
-extern "C" BOOL ModuleSession_SDKDevice_GetList(XNETHANDLE xhDevice, MODULESESSION_SDKCLIENT * **pppSt_SDKClient, int* pInt_ListCount, XHANDLE xhToken)
-{
-	return m_SDKDevice.ModuleSession_SDKDevice_GetList(xhDevice, pppSt_SDKClient, pInt_ListCount, xhToken);
 }
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
