@@ -27,8 +27,7 @@ A set of concise and high-performance cross-platform streaming media analysis an
 5. Support the parsing and streaming of the national standard GB28181 protocol
 6. Support international ONVIF protocol
 7. Support SIP streaming protocol
-8. support device manufacturer sdk(dahua,haikang,suobei...and more...)
-9. support rtsp,rtmp,hls convert push stream
+8. support rtsp,rtmp,hls convert push stream
 
 ## install
 
@@ -66,10 +65,6 @@ make FLAGS=CleanAll Clear Complie
 6.  use APPClient push stream
 7.  use vlc play
 
-#### Linux
-If running under Linux, you can use the service script to run, you need to modify the ExecStart and WorkingDirectory path in the .service script in the release directory first  
-and copy the service script to the /usr/lib/systemd/system/ directory, then execute systemctl start service name, you can also set self-start, systemctl enable service name  
-You need to start XEngine_CenterApp.exe -d 1(XStreamCenter.service service) first, and then start the service, such as: XEngine_SDKApp -d 1(XStreamSdk.service)  
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
