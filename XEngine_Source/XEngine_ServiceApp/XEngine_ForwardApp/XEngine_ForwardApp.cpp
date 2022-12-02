@@ -34,7 +34,6 @@ void ServiceApp_Stop(int signo)
 		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
-		ModuleSession_SDKDevice_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 #ifdef _MSC_BUILD
@@ -197,7 +196,6 @@ XENGINE_SERVICEAPP_EXIT:
 		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
-		ModuleSession_SDKDevice_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
 #ifdef _MSC_BUILD

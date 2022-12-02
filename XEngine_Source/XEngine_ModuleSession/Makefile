@@ -8,7 +8,7 @@ LOADBIN =
 LIB = 
 LIBEX = -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_SDKDevice.o ModuleSession_Forward.o pch.o
+LIBINCLUDE = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_Forward.o pch.o
 
 ifeq ($(OS),Windows_NT)
 else

@@ -28,8 +28,7 @@ device -> XEngine_StreamMedia -> stream media service -> client
 5. 支持国标GB28181协议的解析和推流
 6. 支持国际ONVIF协议
 7. 支持SIP流协议
-8. 支持设备厂商SDK(dahua,haikang,suobei等等)
-9. 支持RTSP,RTMP,HLS等转推流
+8. 支持RTSP,RTMP,HLS等转推流
 
 
 ## 安装教程
@@ -64,14 +63,9 @@ make FLAGS=CleanAll 清理编译
 2.  下载代码
 3.  编译
 4.  安装
-5.  运行XEngine_CenterApp.exe,在运行XEngine_SDKApp.exe或者XEngine_JT1078App.exe,linux可以使用 -d 1 命令在后台运行
+5.  运行XEngine_CenterApp.exe,XEngine_JT1078App.exe,linux可以使用 -d 1 命令在后台运行
 7.  使用APPClient中的推流例子推流
 8.  使用VLC等工具播放
-
-#### Linux
-如果在Linux下运行,你可以使用service脚本运行,需要先修改release目录中的.service脚本中的ExecStart和WorkingDirectory路径.  
-接着拷贝service脚本到/usr/lib/systemd/system/目录,然后执行systemctl start 服务名,还可以设置自启动,systemctl enable 服务名  
-需要先启动XEngine_CenterApp.exe -d 1(XStreamCenter.service服务),在启动对应的服务,比如:XEngine_SDKApp -d 1(XStreamSdk.service)  
 
 ## 目录结构
 - XEngine_Docment 文档目录结构

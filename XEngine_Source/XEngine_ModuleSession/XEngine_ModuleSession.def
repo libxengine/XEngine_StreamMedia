@@ -16,15 +16,6 @@ EXPORTS
 	ModuleSession_Server_SetPush
 	ModuleSession_Server_GetPush
 
-	ModuleSession_SDKDevice_Create
-	ModuleSession_SDKDevice_InsertClient
-	ModuleSession_SDKDevice_InsertDevice
-	ModuleSession_SDKDevice_GetIdleClient
-	ModuleSession_SDKDevice_GetClient
-	ModuleSession_SDKDevice_Delete
-	ModuleSession_SDKDevice_Destory
-	ModuleSession_SDKDevice_GetList
-
 	ModuleSession_Forward_Create
 	ModuleSession_Forward_Get
 	ModuleSession_Forward_Delete

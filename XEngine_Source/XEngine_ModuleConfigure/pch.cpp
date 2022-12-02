@@ -37,10 +37,6 @@ extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT10
 {
 	return m_ConfigJson.ModuleConfigure_Json_JT1078(lpszConfigFile, pSt_ServerConfig);
 }
-extern "C" BOOL ModuleConfigure_Json_Sdk(LPCTSTR lpszConfigFile, XENGINE_SDKCONFIG * pSt_ServerConfig)
-{
-	return m_ConfigJson.ModuleConfigure_Json_Sdk(lpszConfigFile, pSt_ServerConfig);
-}
 extern "C" BOOL ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG * pSt_ServerConfig)
 {
 	return m_ConfigJson.ModuleConfigure_Json_Forward(lpszConfigFile, pSt_ServerConfig);

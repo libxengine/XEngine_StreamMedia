@@ -1,3 +1,15 @@
+XEngine_StreamMedia V1.4.0.1001
+
+删除:SDK服务程序,不在需要
+删除:插件功能
+删除:sdk配置文件
+删除:不需要的代码
+
+delete:sdk server app
+delete:plugin function
+delete:sdk configure file
+delete:unused code
+=======================================================
 XEngine_StreamMedia V1.3.0.1001
 
 增加:流转发服务(play,stop,list)

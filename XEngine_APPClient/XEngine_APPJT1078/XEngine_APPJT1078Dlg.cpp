@@ -125,18 +125,17 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2014(LPVOID lParam)
 	XENGINE_DEVICEINFO* pSt_DeviceInfo = (XENGINE_DEVICEINFO*)lParam;
 	CXEngineAPPJT1078Dlg* pClass_This = (CXEngineAPPJT1078Dlg*)pSt_DeviceInfo->pClass;
 	CString m_StrSim;
+	XNETHANDLE xhToken = 0;
 	pClass_This->m_EditSim.GetWindowText(m_StrSim);
 
 	int nSeq = 0;
 	int nMsgLen = 0;
-	FILE* pSt_File = _tfopen("D:\\XEngine_JT1078\\XEngine_APPClient\\Debug\\1.rtp", _T("wb"));
-	TCHAR* ptszMsgBuffer = new TCHAR[1024 * 1024 * 10];
-	TCHAR* ptszTmpBuffer = new TCHAR[1024 * 1024 * 10];
+
+	AVHelp_Parse_FrameInit(&xhToken, ENUM_ENTENGINE_AVCODEC_VEDIO_TYPE_H264);
 
 	while (pSt_DeviceInfo->bRun)
 	{
 		TCHAR tszRVBuffer[2048];
-		memset(ptszTmpBuffer, '\0', 1024 * 1024 * 10);
 		memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 
 		int nRet = fread(tszRVBuffer, 1, sizeof(tszRVBuffer), pSt_DeviceInfo->pSt_File);
@@ -150,33 +149,19 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2014(LPVOID lParam)
 				break;
 			}
 		}
-		if (nMsgLen > 0)
+		int nListCount = 0;
+		AVHELP_FRAMEDATA** ppSt_Frame;
+		AVHelp_Parse_FrameGet(xhToken, tszRVBuffer, nRet, &ppSt_Frame, &nListCount);
+		for (int i = 0; i < nListCount; i++)
 		{
-			memcpy(ptszTmpBuffer, ptszMsgBuffer, nMsgLen);
-			memcpy(ptszTmpBuffer + nMsgLen, tszRVBuffer, nRet);
-		}
-		else
-		{
-			memcpy(ptszTmpBuffer, tszRVBuffer, nRet);
-		}
-		nMsgLen += nRet;
-
-		int nPos = 0;
-		while (TRUE)
-		{
-			int nFIXLen = 0;
-			int nNALLen = 0;
-			if (!AVHelp_Parse_NaluHdr(ptszTmpBuffer + nPos, nMsgLen, &nNALLen, &nFIXLen))
-			{
-				break;
-			}
 			BOOL bFirst = TRUE;
-			int nMsgCount = nNALLen;
+			
 			int nCpyCount = 0;
-			int nUseCount = nPos;
+			int nUseCount = 0;
+			int nMsgCount = ppSt_Frame[i]->nMsgLen;
 			XENGINE_AVCODER_VIDEOFRAMETYPE enFrameType;
 
-			AVHelp_Parse_H264NaluType(ptszTmpBuffer + nPos, nFIXLen, &enFrameType);
+			AVHelp_Parse_H264NaluType(ppSt_Frame[i]->ptszMsgBuffer, &enFrameType);
 			while (nMsgCount > 0)
 			{
 				XENGINE_RTPPACKETHDR2014 st_RTPPacket;
@@ -227,28 +212,17 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2014(LPVOID lParam)
 				pClass_This->XEngine_Device_StrtoBCD(m_StrSim.GetBuffer(), st_RTPPacket.bySIMNumber);
 				BaseLib_OperatorTime_SetXTPTime(&st_RTPPacket.ullTimestamp);
 
-				fwrite(&st_RTPPacket, 1, sizeof(XENGINE_RTPPACKETHDR2014), pSt_File);
-				fwrite(ptszTmpBuffer + nUseCount, 1, nCpyCount, pSt_File);
-				//XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, (const char*)tszSDBuffer, nPos);
-
+				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, (LPCTSTR)&st_RTPPacket, sizeof(XENGINE_RTPPACKETHDR2014));
+				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, ppSt_Frame[i]->ptszMsgBuffer + nUseCount, nCpyCount);
 				//Sleep(10);
 				nUseCount += nCpyCount;
 				nMsgCount -= nCpyCount;
+				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_Frame[i]->ptszMsgBuffer);
 			}
-			nPos += nNALLen;
-			nMsgLen -= nNALLen;
 		}
-		if (nMsgLen > 0)
-		{
-			memset(ptszMsgBuffer, '\0', 1024 * 1024 * 10);
-			memcpy(ptszMsgBuffer, ptszTmpBuffer + nPos, nMsgLen);
-		}
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Frame, nListCount);
 	}
-	delete[] ptszMsgBuffer;
-	delete[] ptszTmpBuffer;
-	ptszMsgBuffer = NULL;
-	ptszTmpBuffer = NULL;
-	fclose(pSt_File);
+	AVHelp_Parse_FrameClose(xhToken);
 	return 0;
 }
 DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
@@ -259,14 +233,12 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 	pClass_This->m_EditSim.GetWindowText(m_StrSim);
 
 	int nSeq = 0;
-	int nMsgLen = 0;
-	TCHAR* ptszMsgBuffer = new TCHAR[1024 * 1024 * 10];
-	TCHAR* ptszTmpBuffer = new TCHAR[1024 * 1024 * 10];
+	XNETHANDLE xhToken = 0;
+	AVHelp_Parse_FrameInit(&xhToken, ENUM_ENTENGINE_AVCODEC_VEDIO_TYPE_H264);
 
 	while (pSt_DeviceInfo->bRun)
 	{
 		TCHAR tszRVBuffer[2048];
-		memset(ptszTmpBuffer, '\0', 1024 * 1024 * 10);
 		memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 
 		int nRet = fread(tszRVBuffer, 1, sizeof(tszRVBuffer), pSt_DeviceInfo->pSt_File);
@@ -280,33 +252,18 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 				break;
 			}
 		}
-		if (nMsgLen > 0)
+		int nListCount = 0;
+		AVHELP_FRAMEDATA** ppSt_Frame;
+		AVHelp_Parse_FrameGet(xhToken, tszRVBuffer, nRet, &ppSt_Frame, &nListCount);
+		for (int i = 0; i < nListCount; i++)
 		{
-			memcpy(ptszTmpBuffer, ptszMsgBuffer, nMsgLen);
-			memcpy(ptszTmpBuffer + nMsgLen, tszRVBuffer, nRet);
-		}
-		else
-		{
-			memcpy(ptszTmpBuffer, tszRVBuffer, nRet);
-		}
-		nMsgLen += nRet;
-
-		int nPos = 0;
-		while (TRUE)
-		{
-			int nFIXLen = 0;
-			int nNALLen = 0;
-			if (!AVHelp_Parse_NaluHdr(ptszTmpBuffer + nPos, nMsgLen, &nNALLen, &nFIXLen))
-			{
-				break;
-			}
 			BOOL bFirst = TRUE;
-			int nMsgCount = nNALLen;
 			int nCpyCount = 0;
-			int nUseCount = nPos;
+			int nUseCount = 0;
+			int nMsgCount = ppSt_Frame[i]->nMsgLen;
 			XENGINE_AVCODER_VIDEOFRAMETYPE enFrameType;
 
-			AVHelp_Parse_H264NaluType(ptszTmpBuffer + nPos, nFIXLen, &enFrameType);
+			AVHelp_Parse_H264NaluType(ppSt_Frame[i]->ptszMsgBuffer, &enFrameType);
 			while (nMsgCount > 0)
 			{
 				XENGINE_RTPPACKETHDR2016 st_RTPPacket;
@@ -370,7 +327,7 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 
 				memcpy(tszMsgBuffer, &st_RTPPacket, sizeof(XENGINE_RTPPACKETHDR2016));
 				nPos += sizeof(XENGINE_RTPPACKETHDR2016);
-				
+
 				memcpy(tszMsgBuffer + nPos, &st_PacketTail, sizeof(XENGINE_RTPPACKETTAIL));
 				nPos += sizeof(XENGINE_RTPPACKETTAIL);
 
@@ -379,24 +336,16 @@ DWORD WINAPI CXEngineAPPJT1078Dlg::XEngine_Device_Thread2016(LPVOID lParam)
 				nPos += sizeof(WORD);
 
 				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, tszMsgBuffer, nPos);
-				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, ptszTmpBuffer + nUseCount, nCpyCount);
+				XClient_TCPSelect_SendMsg(pSt_DeviceInfo->hSocket, ppSt_Frame[i]->ptszMsgBuffer + nUseCount, nCpyCount);
 				Sleep(1);
 				nUseCount += nCpyCount;
 				nMsgCount -= nCpyCount;
+				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_Frame[i]->ptszMsgBuffer);
 			}
-			nPos += nNALLen;
-			nMsgLen -= nNALLen;
 		}
-		if (nMsgLen > 0)
-		{
-			memset(ptszMsgBuffer, '\0', 1024 * 1024 * 10);
-			memcpy(ptszMsgBuffer, ptszTmpBuffer + nPos, nMsgLen);
-		}
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Frame, nListCount);
 	}
-	delete[] ptszMsgBuffer;
-	delete[] ptszTmpBuffer;
-	ptszMsgBuffer = NULL;
-	ptszTmpBuffer = NULL;
+	AVHelp_Parse_FrameClose(xhToken);
 	return 0;
 }
 
