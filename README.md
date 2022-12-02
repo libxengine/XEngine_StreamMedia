@@ -63,7 +63,7 @@ make FLAGS=CleanAll 清理编译
 2.  下载代码
 3.  编译
 4.  安装
-5.  运行XEngine_CenterApp.exe,在运行XEngine_SDKApp.exe或者XEngine_JT1078App.exe,linux可以使用 -d 1 命令在后台运行
+5.  运行XEngine_CenterApp.exe,XEngine_JT1078App.exe,linux可以使用 -d 1 命令在后台运行
 7.  使用APPClient中的推流例子推流
 8.  使用VLC等工具播放
 

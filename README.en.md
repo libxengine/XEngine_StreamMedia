@@ -61,7 +61,7 @@ make FLAGS=CleanAll Clear Complie
 2.  download code
 3.  complie
 4.  install
-5.  run XEngine_CenterApp.exe,and running XEngine_SDKApp.exe or XEngine_JT1078App.exe,linux can be set parament -d 1 command
+5.  run XEngine_CenterApp.exe,XEngine_JT1078App.exe,linux can be set parament -d 1 command
 6.  use APPClient push stream
 7.  use vlc play
 
