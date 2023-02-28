@@ -24,5 +24,5 @@ public:
 	BOOL ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
 	BOOL ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
 private:
-	XHDATA xhSQL;
+	XNETHANDLE xhSQL;
 };
