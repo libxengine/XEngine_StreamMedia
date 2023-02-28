@@ -40,7 +40,7 @@ extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient);
+extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Get
 函数功能：获得一个可以使用的客户端句柄
@@ -54,7 +54,7 @@ extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient);
+extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE * pxhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Exist
 函数功能：客户端是否存在
@@ -88,7 +88,7 @@ extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_Insert
 函数功能：绑定插入一个客户端
@@ -122,7 +122,7 @@ extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDevi
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteAddr
 函数功能：通过IP地址删除绑定的设备
@@ -156,7 +156,7 @@ extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDevice
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
+extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE * pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息

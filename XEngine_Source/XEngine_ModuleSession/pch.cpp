@@ -33,23 +33,23 @@ extern "C" DWORD ModuleSession_GetLastError(int* pInt_SysError)
 /*********************************************************************************
 *                          导出会话模块                                          *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient)
+extern "C" BOOL ModuleSession_Client_Create(XNETHANDLE xhClient)
 {
 	return m_Client.ModuleSession_Client_Create(xhClient);
 }
-extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient)
+extern "C" BOOL ModuleSession_Client_Get(XNETHANDLE * pxhClient)
 {
 	return m_Client.ModuleSession_Client_Get(pxhClient);
 }
-extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	return m_Client.ModuleSession_Client_Exist(pxhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" BOOL ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
 {
 	return m_Client.ModuleSession_Client_Insert(xhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, BOOL * pbLive)
+extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, BOOL * pbLive)
 {
 	return m_Client.ModuleSession_Client_DeleteAddr(lpszDeviceAddr, pxhClient, ptszDeviceNumber, pInt_Channel, pbLive);
 }
