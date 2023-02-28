@@ -88,7 +88,7 @@ BOOL XEngine_Stream_Handle2014(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
 {
 	int nSDLen = 0;
-	XHANDLE xhClient = NULL;
+	XNETHANDLE xhToken = 0;
 	TCHAR tszSDBuffer[2048];
 	XENGINE_PROTOCOLDEVICE st_ProtoDevice;
 	
@@ -99,24 +99,24 @@ BOOL XEngine_Stream_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	st_ProtoDevice.nChannel = pSt_RTPHdr->byChannel;
 	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, st_ProtoDevice.tszDeviceNumber);
 	
-	if (!ModuleSession_Client_Exist(&xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
+	if (!ModuleSession_Client_Exist(&xhToken, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 	{
 		//先移除老的,无论如何
 		ModuleSession_Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE);
-		ModuleSession_Client_Get(&xhClient);   //得到新的可用客户端
-		if (!ModuleSession_Client_Insert(xhClient, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
+		ModuleSession_Client_Get(&xhToken);   //得到新的可用客户端
+		if (!ModuleSession_Client_Insert(xhToken, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, TRUE))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,绑定客户端失败,错误：%lX"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, ModuleSession_GetLastError());
 			return FALSE;
 		}
 		//创建流
 		ModuleProtocol_Packet_Create(tszSDBuffer, &nSDLen, &st_ProtoDevice);
-		XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
+		XClient_TCPSelect_SendEx(xhClient, xhToken, tszSDBuffer, &nSDLen);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s,登录到服务,设备ID：%s,通道：%d,推流端客户端：%lld,设备版本：2016"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient);
 	}
 	ModuleProtocol_Packet_Push(tszSDBuffer, &nSDLen, &st_ProtoDevice, nMsgLen, 0);
-	XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
-	XClient_TCPSelect_SendEx(xhClient, lpszMsgBuffer, &nMsgLen);
+	XClient_TCPSelect_SendEx(xhClient, xhToken, tszSDBuffer, &nSDLen);
+	XClient_TCPSelect_SendEx(xhClient, xhToken, lpszMsgBuffer, &nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, xhClient, nSDLen);
 	return TRUE;
 }

@@ -66,6 +66,8 @@ extern XHANDLE xhRecordHeart;
 extern XHANDLE xhRecordPkt;
 extern XHANDLE xhRecordPool;
 
+extern XHANDLE xhClient;
+
 extern XENGINE_SERVICECONFIG st_ServiceCfg;
 extern XENGINE_JT1078CONFIG st_JT1078Cfg;
 

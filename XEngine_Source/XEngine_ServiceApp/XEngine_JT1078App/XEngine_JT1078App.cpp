@@ -23,6 +23,8 @@ XHANDLE xhRecordHeart = NULL;
 XHANDLE xhRecordPkt = NULL;
 XHANDLE xhRecordPool = NULL;
 
+XHANDLE xhClient = NULL;
+
 XENGINE_SERVICECONFIG st_ServiceCfg;
 XENGINE_JT1078CONFIG st_JT1078Cfg;
 
@@ -240,11 +242,13 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动录像端处理线程池成功,线程个数:%d"), st_JT1078Cfg.st_XMax.nStreamThread);
 	}
 	//标准协议服务
+	xhClient = XClient_TCPSelect_StartEx(XEngine_Client_CBRecv);
+	XClient_TCPSelect_HBStartEx(xhClient);
 	for (int i = 0; i < st_JT1078Cfg.st_XClient.nMaxConnect; i++)
 	{
-		XHANDLE xhClient = XClient_TCPSelect_StartEx(st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, 2, XEngine_Client_CBRecv, NULL, TRUE);
-		XClient_TCPSelect_HBStartEx(xhClient);
-		ModuleSession_Client_Create(xhClient);
+		XNETHANDLE xhToken = 0;
+		XClient_TCPSelect_InsertEx(xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, &xhToken, 2, TRUE);
+		ModuleSession_Client_Create(xhToken);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort);
 	}
 

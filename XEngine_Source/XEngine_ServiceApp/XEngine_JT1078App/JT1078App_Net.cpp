@@ -69,7 +69,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 {
 	int nSDLen = 0;
 	TCHAR tszSDBuffer[2048];
-	XHANDLE xhClient = NULL;
+	XNETHANDLE xhToken = 0;
 	XENGINE_PROTOCOLDEVICE st_ProtocolDev;
 	LPCTSTR lpszLeaveMsg = bHBLeave ? _T("心跳超时") : _T("主动断开");
 
@@ -87,10 +87,10 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 			SocketOpt_HeartBeat_DeleteAddrEx(xhStreamHeart, lpszClientAddr);
 		}
 		HelpComponents_PKTCustom_DeleteEx(xhStreamPkt, hSocket);
-		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
+		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhToken, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Packet_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
-			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
+			XClient_TCPSelect_SendEx(xhClient, xhToken, tszSDBuffer, &nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("实时端：%s，设备：%s，通道：%d，与服务器断开，原因：%s"), lpszClientAddr, st_ProtocolDev.tszDeviceNumber, st_ProtocolDev.nChannel, lpszLeaveMsg);
 		}
 		else
@@ -109,10 +109,10 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGIN
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRecordHeart, lpszClientAddr);
 		}
 		HelpComponents_PKTCustom_DeleteEx(xhRecordPkt, hSocket);
-		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhClient, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
+		if (ModuleSession_Client_DeleteAddr(lpszClientAddr, &xhToken, st_ProtocolDev.tszDeviceNumber, &st_ProtocolDev.nChannel, &st_ProtocolDev.bLive))
 		{
 			ModuleProtocol_Packet_Destroy(tszSDBuffer, &nSDLen, &st_ProtocolDev);
-			XClient_TCPSelect_SendEx(xhClient, tszSDBuffer, &nSDLen);
+			XClient_TCPSelect_SendEx(xhClient, xhToken, tszSDBuffer, &nSDLen);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("录像端：%s，设备：%s，通道：%d，与服务器断开，原因：%s"), lpszClientAddr, st_ProtocolDev.tszDeviceNumber, st_ProtocolDev.nChannel, lpszLeaveMsg);
 		}
 		else
