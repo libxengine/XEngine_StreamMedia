@@ -46,6 +46,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
+		XClient_TCPSelect_StopEx(xhClient);
 		ModuleSession_Client_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
@@ -277,6 +278,7 @@ XENGINE_EXITAPP:
 		SocketOpt_HeartBeat_DestoryEx(xhStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRecordHeart);
 
+		XClient_TCPSelect_StopEx(xhClient);
 		ModuleSession_Client_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 	}
