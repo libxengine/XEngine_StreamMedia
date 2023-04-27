@@ -44,15 +44,15 @@ CModuleProtocol_Parse::~CModuleProtocol_Parse()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl)
+bool CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == lpszMsgBuffer) || (0 == nMsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PARSE_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -61,13 +61,13 @@ BOOL CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuff
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PARSE_JSON;
-		return FALSE;
+		return false;
 	}
 	if (!st_JsonRoot["tszAVUrl"].isNull() && (NULL != ptszAVUrl))
 	{
 		_tcscpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
 	}
-	return TRUE;
+	return true;
 }

@@ -34,19 +34,19 @@ CModuleDB_AVInfo::~CModuleDB_AVInfo()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector)
+bool CModuleDB_AVInfo::ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector)
 {
-	DBModule_IsErrorOccur = FALSE;
+	DBModule_IsErrorOccur = false;
 
 	_tcscpy(pSt_MySQLConnector->tszDBName, _T("StreamMedia_AVInfo"));
 	//打开数据库
 	if (!DataBase_MySQL_Connect(&xhSQL, pSt_MySQLConnector))
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleDatabase_MySql_Destory
@@ -56,12 +56,12 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQ
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Destory()
+bool CModuleDB_AVInfo::ModuleDB_AVInfo_Destory()
 {
-	DBModule_IsErrorOccur = FALSE;
+	DBModule_IsErrorOccur = false;
 
 	DataBase_MySQL_Close(xhSQL);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoInsert
@@ -76,33 +76,33 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
-	DBModule_IsErrorOccur = FALSE;
+	DBModule_IsErrorOccur = false;
 
 	if (NULL == pSt_ProtocolStream)
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	TCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
 	if (ModuleDB_AVInfo_InfoQuery(pSt_ProtocolStream))
 	{
-		return TRUE;
+		return true;
 	}
 
 	_stprintf_s(tszSQLQuery, _T("INSERT INTO `DeviceList_AVInfo`(tszDeviceNumber,bVideo,nVideoBit,enVCodec,nWidth,nHeight,nFrameRate,bAudio,nAudioBit,enACodec,nChannel,nSampleRate,nSampleFmt,nFrameSize,TimeUPdate,TimeCreate) VALUES('%s',%d,%lld,%d,%d,%d,%d,%d,%lld,%d,%d,%d,%d,%d,now(),now())"), pSt_ProtocolStream->tszDeviceNumber, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize);
 
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoQuery
@@ -117,15 +117,15 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
-	DBModule_IsErrorOccur = FALSE;
+	DBModule_IsErrorOccur = false;
 
 	if (NULL == pSt_ProtocolStream)
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	__int64u dwLine = 0;
 	__int64u dwField = 0;
@@ -137,23 +137,23 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 	_stprintf_s(tszSQLQuery, _T("SELECT * FROM `DeviceList_AVInfo` WHERE tszDeviceNumber = '%s'"), pSt_ProtocolStream->tszDeviceNumber);
 	if (!DataBase_MySQL_ExecuteQuery(xhSQL, &xhResult, tszSQLQuery, &dwLine, &dwField))
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
+		return false;
 	}
 	if (dwLine <= 0)
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_NODATA;
-		return FALSE;
+		return false;
 	}
 
 	TCHAR** pptszResult = DataBase_MySQL_GetResult(xhSQL, xhResult);
 	if (NULL == pptszResult[0])
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_FAILED;
-		return FALSE;
+		return false;
 	}
 
 	if (NULL != pSt_ProtocolStream)
@@ -212,7 +212,7 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 		}
 	}
 	DataBase_MySQL_FreeResult(xhSQL, xhResult);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoUPDate
@@ -227,15 +227,15 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
+bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream)
 {
-	DBModule_IsErrorOccur = FALSE;
+	DBModule_IsErrorOccur = false;
 
 	if (NULL == pSt_ProtocolStream)
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	TCHAR tszSQLQuery[4096];
 	TCHAR tszSQLTime[MAX_PATH];
@@ -247,9 +247,9 @@ BOOL CModuleDB_AVInfo::ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_Pr
 
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{
-		DBModule_IsErrorOccur = TRUE;
+		DBModule_IsErrorOccur = true;
 		DBModule_dwErrorCode = DataBase_GetLastError();
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }

@@ -10,15 +10,15 @@
 //    Purpose:     网络处理
 //    History:
 *********************************************************************/
-BOOL CALLBACK XEngine_Callback_StreamLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);
-void CALLBACK XEngine_Callback_StreamRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam);
-void CALLBACK XEngine_Callback_StreamLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);
-void CALLBACK XEngine_Callback_StreamHBLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);
+bool CALLBACK XEngine_Callback_StreamLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void CALLBACK XEngine_Callback_StreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
+void CALLBACK XEngine_Callback_StreamLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void CALLBACK XEngine_Callback_StreamHBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 
-BOOL CALLBACK XEngine_Callback_RecordLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);
-void CALLBACK XEngine_Callback_RecordRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam);
-void CALLBACK XEngine_Callback_RecordLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam);
-void CALLBACK XEngine_Callback_RecordHBLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);
+bool CALLBACK XEngine_Callback_RecordLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void CALLBACK XEngine_Callback_RecordRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
+void CALLBACK XEngine_Callback_RecordLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void CALLBACK XEngine_Callback_RecordHBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 
-BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, SOCKET hSocket, ENUM_XENGINE_STREAMAPP_DEVICE_TYPE enDeviceType, BOOL bHBLeave);
-BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMAPP_DEVICE_TYPE enDeviceType);
+bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, XSOCKET hSocket, ENUM_XENGINE_STREAMAPP_DEVICE_TYPE enDeviceType, bool bHBLeave);
+bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMAPP_DEVICE_TYPE enDeviceType);

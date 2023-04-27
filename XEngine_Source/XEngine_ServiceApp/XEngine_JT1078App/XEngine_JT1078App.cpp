@@ -10,8 +10,8 @@
 //    Purpose:     主服务入口
 //    History:
 *********************************************************************/
-BOOL bIsRun = FALSE;
-XLOG xhLog = NULL;
+bool bIsRun = false;
+XHANDLE xhLog = NULL;
 
 XHANDLE xhStreamNet = NULL;
 XHANDLE xhStreamHeart = NULL;
@@ -33,7 +33,7 @@ void ServiceApp_Stop(int signo)
 	if (bIsRun)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("流媒体流媒体服务器退出..."));
-		bIsRun = FALSE;
+		bIsRun = false;
 
 		NetCore_TCPXCore_DestroyEx(xhStreamNet);
 		NetCore_TCPXCore_DestroyEx(xhRecordNet);
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	bIsRun = TRUE;
+	bIsRun = true;
 	THREADPOOL_PARAMENT** ppSt_ListStream;
 	THREADPOOL_PARAMENT** ppSt_ListRecord;
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -138,11 +138,11 @@ int main(int argc, char** argv)
 		//协议头大小.需要加上长度字段
 		HelpComponents_PKTCustom_SetHdrEx(xhStreamPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(WORD));
 		//如果packet == 4,透传,没有时间戳
-		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 4, -8, TRUE, TRUE);
+		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 4, -8, true, true);
 		//如果packet == 0,1,2 I帧P帧B帧,需要添加视频帧间隔时间,两个WORD大小
-		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 0, 4, TRUE, TRUE);
-		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 1, 4, TRUE, TRUE);
-		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 2, 4, TRUE, TRUE);
+		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 0, 4, true, true);
+		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 1, 4, true, true);
+		HelpComponents_PKTCustom_SetConditionsEx(xhStreamPkt, 15, 4, 2, 4, true, true);
 
 		if (st_JT1078Cfg.st_XTime.nStreamTimeout > 0)
 		{
@@ -196,10 +196,10 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化录像端流包管理器成功,最大队列:%d,最大线程:%d"), st_JT1078Cfg.st_XMax.nMaxQueue, st_JT1078Cfg.st_XMax.nRecordThread);
 		HelpComponents_PKTCustom_SetHdrEx(xhRecordPkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(WORD));
-		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 4, -8, TRUE, TRUE);
-		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 0, 4, TRUE, TRUE);
-		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 1, 4, TRUE, TRUE);
-		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 2, 4, TRUE, TRUE);
+		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 4, -8, true, true);
+		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 0, 4, true, true);
+		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 1, 4, true, true);
+		HelpComponents_PKTCustom_SetConditionsEx(xhRecordPkt, 15, 4, 2, 4, true, true);
 
 		if (st_JT1078Cfg.st_XTime.nRecordTimeout > 0)
 		{
@@ -248,13 +248,13 @@ int main(int argc, char** argv)
 	for (int i = 0; i < st_JT1078Cfg.st_XClient.nMaxConnect; i++)
 	{
 		XNETHANDLE xhToken = 0;
-		XClient_TCPSelect_InsertEx(xhClient, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, &xhToken, 2, TRUE);
+		XClient_TCPSelect_InsertEx(xhClient, &xhToken, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort, true);
 		ModuleSession_Client_Create(xhToken);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动推流客户端成功,需要启动个数:%d,当前:%d,连接地址:%s,端口:%d"), st_JT1078Cfg.st_XClient.nMaxConnect, i, st_JT1078Cfg.st_XClient.tszIPAddr, st_JT1078Cfg.st_XClient.nPort);
 	}
 
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，JT1078流媒体服务运行中，XEngine版本:%s,发行次数:%d,当前运行版本：%s。。。"), XENGINE_VERSION_STR, st_JT1078Cfg.st_XVer.pStl_ListVer->size(), st_JT1078Cfg.st_XVer.pStl_ListVer->front().c_str());
-	while (TRUE)
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，JT1078流媒体服务运行中，XEngine版本:%s,发行次数:%d,当前运行版本：%s。。。"), BaseLib_OperatorVer_XNumberStr(), st_JT1078Cfg.st_XVer.pStl_ListVer->size(), st_JT1078Cfg.st_XVer.pStl_ListVer->front().c_str());
+	while (true)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -264,7 +264,7 @@ XENGINE_EXITAPP:
 
 	if (bIsRun)
 	{
-		bIsRun = FALSE;
+		bIsRun = false;
 
 		NetCore_TCPXCore_DestroyEx(xhStreamNet);
 		NetCore_TCPXCore_DestroyEx(xhRecordNet);

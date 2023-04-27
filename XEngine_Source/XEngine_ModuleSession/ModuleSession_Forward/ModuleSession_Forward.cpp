@@ -43,9 +43,9 @@ CModuleSession_Forward::~CModuleSession_Forward()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Forward::ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay)
+bool CModuleSession_Forward::ModuleSession_Forward_Create(LPCXSTR lpszPlay, XHANDLE xhToken, LPCXSTR lpszSMSPlay)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
     MODULESESSION_FORWARD st_Forward;
 	memset(&st_Forward, '\0', sizeof(MODULESESSION_FORWARD));
@@ -56,7 +56,7 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHAN
     st_Locker.lock();
     stl_MapClient.insert(make_pair(lpszPlay, st_Forward));
     st_Locker.unlock();
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Forward_Get
@@ -71,15 +71,15 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHAN
   意思：成功返回句柄,失败返回NULL
 备注：
 *********************************************************************/
-XHANDLE CModuleSession_Forward::ModuleSession_Forward_Get(LPCTSTR lpszPlay)
+XHANDLE CModuleSession_Forward::ModuleSession_Forward_Get(LPCXSTR lpszPlay)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
 	unordered_map<string, MODULESESSION_FORWARD>::const_iterator stl_MapIterator = stl_MapClient.find(lpszPlay);
 	if (stl_MapIterator == stl_MapClient.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
 		return NULL;
@@ -101,9 +101,9 @@ XHANDLE CModuleSession_Forward::ModuleSession_Forward_Get(LPCTSTR lpszPlay)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
+bool CModuleSession_Forward::ModuleSession_Forward_Delete(LPCXSTR lpszPlay)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
 	st_Locker.lock();
 	unordered_map<string, MODULESESSION_FORWARD>::const_iterator stl_MapIterator = stl_MapClient.find(lpszPlay);
@@ -112,7 +112,7 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
         stl_MapClient.erase(stl_MapIterator);
 	}
 	st_Locker.unlock();
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Forward_List
@@ -132,9 +132,9 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDINFO*** pppSt_Forward, int* pInt_ListCount)
+bool CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDINFO*** pppSt_Forward, int* pInt_ListCount)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
 	*pInt_ListCount = stl_MapClient.size();
@@ -148,5 +148,5 @@ BOOL CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDINF
 	}
 	st_Locker.unlock_shared();
 	
-	return TRUE;
+	return true;
 }

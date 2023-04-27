@@ -10,7 +10,7 @@
 //    Purpose:     录像操作
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_Record_Thread(LPVOID lParam);
-BOOL XEngine_Record_Handle(SOCKET hSocket, LPCTSTR lpszMsgBuffer, int nMsgLen, LPCTSTR lpszHDRBuffer, int nHDRLen);
-BOOL XEngine_Record_Handle2014(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2014* pSt_RTPHdr, XENGINE_RTPPACKETTAIL *pSt_RTPTail);
-BOOL XEngine_Record_Handle2016(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail);
+XHTHREAD CALLBACK XEngine_Record_Thread(XPVOID lParam);
+bool XEngine_Record_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen, LPCXSTR lpszHDRBuffer, int nHDRLen);
+bool XEngine_Record_Handle2014(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2014* pSt_RTPHdr, XENGINE_RTPPACKETTAIL *pSt_RTPTail);
+bool XEngine_Record_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail);

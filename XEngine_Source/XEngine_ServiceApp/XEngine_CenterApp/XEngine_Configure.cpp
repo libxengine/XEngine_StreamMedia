@@ -10,14 +10,14 @@
 //    Purpose:     配置文件读写代码
 //    History:
 *********************************************************************/
-BOOL XEngine_Configure_Parament(int argc, char** argv)
+bool XEngine_Configure_Parament(int argc, char** argv)
 {
-	LPCTSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
+	LPCXSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
-		return FALSE;
+		return false;
 	}
 
 	for (int i = 0; i < argc; i++)
@@ -25,7 +25,7 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		if (0 == _tcsicmp("-h", argv[i]))
 		{
 			XEngine_Configure_Help();
-			return FALSE;
+			return false;
 		}
 		else if (0 == _tcsicmp("-d", argv[i]))
 		{
@@ -33,15 +33,15 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		}
 		else if (0 == _tcsicmp("-a", argv[i]))
 		{
-			st_ServiceConfig.st_XDebug.bAudio = TRUE;
+			st_ServiceConfig.st_XDebug.bAudio = true;
 		}
 		else if (0 == _tcsicmp("-v", argv[i]))
 		{
-			st_ServiceConfig.st_XDebug.bVideo = TRUE;
+			st_ServiceConfig.st_XDebug.bVideo = true;
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void XEngine_Configure_Help()

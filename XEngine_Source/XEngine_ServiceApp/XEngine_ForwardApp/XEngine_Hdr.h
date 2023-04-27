@@ -29,10 +29,10 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/StreamClient_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/StreamClient_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -56,8 +56,8 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL bIsRun;
-extern XLOG xhLog;
+extern bool bIsRun;
+extern XHANDLE xhLog;
 //HTTP服务器
 extern XHANDLE xhHttpSocket;
 extern XHANDLE xhHttpHeart;
@@ -94,7 +94,7 @@ extern XENGINE_FORWARDCONFIG st_ForwardConfig;
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
-#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
-#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_StreamClient.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

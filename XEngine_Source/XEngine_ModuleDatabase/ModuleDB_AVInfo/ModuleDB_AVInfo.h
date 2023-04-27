@@ -17,12 +17,12 @@ public:
 	CModuleDB_AVInfo();
 	~CModuleDB_AVInfo();
 public:
-	BOOL ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
-	BOOL ModuleDB_AVInfo_Destory();
+	bool ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
+	bool ModuleDB_AVInfo_Destory();
 public:
-	BOOL ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
-	BOOL ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
-	BOOL ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+	bool ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+	bool ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
+	bool ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
 private:
 	XNETHANDLE xhSQL;
 };

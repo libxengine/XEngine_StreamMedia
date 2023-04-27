@@ -11,14 +11,14 @@
 //    Purpose:     导出函数实现
 //    History:
 *********************************************************************/
-BOOL ModuleHelp_IsErrorOccur = FALSE;
-DWORD ModuleHelp_dwErrorCode = 0;
+bool ModuleHelp_IsErrorOccur = false;
+XLONG ModuleHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleHelp_JT1078 m_HelpJT1078;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleHelp_GetLastError(int* pInt_SysError)
+extern "C" XLONG ModuleHelp_GetLastError(int* pInt_SysError)
 {
 	if (NULL != pInt_SysError)
 	{
@@ -29,11 +29,11 @@ extern "C" DWORD ModuleHelp_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的JT1078帮助函数                         */
 /************************************************************************/
-extern "C" BOOL ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR * ptszMsgBuffer)
+extern "C" bool ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR * ptszMsgBuffer)
 {
 	return m_HelpJT1078.ModuleHelp_JT1078_BCDToString(bySIMNumber, ptszMsgBuffer);
 }
-extern "C" BOOL ModuleHelp_JT1078_StringToBCD(LPCTSTR lpszMsgBuffer, BYTE * pbySIMNumber)
+extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, BYTE * pbySIMNumber)
 {
 	return m_HelpJT1078.ModuleHelp_JT1078_StringToBCD(lpszMsgBuffer, pbySIMNumber);
 }

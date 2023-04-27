@@ -10,8 +10,8 @@
 //    Purpose:     入口函数头文件
 //    History:
 *********************************************************************/
-BOOL bIsRun = FALSE;
-XLOG xhLog = NULL;
+bool bIsRun = false;
+XHANDLE xhLog = NULL;
 //HTTP服务器
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
@@ -27,11 +27,11 @@ void ServiceApp_Stop(int signo)
 	if (bIsRun)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("服务器退出..."));
-		bIsRun = FALSE;
+		bIsRun = false;
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
-		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
+		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
@@ -80,10 +80,10 @@ int main(int argc, char** argv)
 
 	SetDllDirectory(_T("./XEngine_Plugin"));
 #endif
-	bIsRun = TRUE;
-	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
-	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
-	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_ForwardApp.Log");
+	bIsRun = true;
+	LPCXSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
+	LPCXSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
+	LPCXSTR lpszLogFile = _T("./XEngine_XLog/XEngine_ForwardApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListHTTPParam;
 
@@ -124,10 +124,10 @@ int main(int argc, char** argv)
 	if (st_ForwardConfig.nHttpPort > 0)
 	{
 		//HTTP包处理器
-		xhHttpPacket = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ForwardConfig.st_XMax.nHTTPThread);
+		xhHttpPacket = HttpProtocol_Server_InitEx(lpszHTTPCode, lpszHTTPMime, st_ForwardConfig.st_XMax.nHTTPThread);
 		if (NULL == xhHttpPacket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,初始化HTTP组包失败,错误：%lX"), HttpServer_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中,初始化HTTP组包失败,错误：%lX"), HttpProtocol_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中,初始化HTTP组包成功,IO线程个数:%d"), st_ForwardConfig.st_XMax.nHTTPThread);
@@ -178,9 +178,9 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,HTTP消息服务没有被启用"));
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_ForwardConfig.st_XVer.pStl_ListVer->front().c_str(), st_ForwardConfig.st_XVer.pStl_ListVer->size());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ForwardConfig.st_XVer.pStl_ListVer->front().c_str(), st_ForwardConfig.st_XVer.pStl_ListVer->size());
 
-	while (TRUE)
+	while (true)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -189,11 +189,11 @@ XENGINE_SERVICEAPP_EXIT:
 	if (bIsRun)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("有服务启动失败,服务器退出..."));
-		bIsRun = FALSE;
+		bIsRun = false;
 		//销毁HTTP资源
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
-		RfcComponents_HttpServer_DestroyEx(xhHttpPacket);
+		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);

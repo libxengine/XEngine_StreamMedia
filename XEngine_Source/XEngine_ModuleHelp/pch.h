@@ -36,8 +36,8 @@
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL ModuleHelp_IsErrorOccur;
-extern DWORD ModuleHelp_dwErrorCode;
+extern bool ModuleHelp_IsErrorOccur;
+extern XLONG ModuleHelp_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")

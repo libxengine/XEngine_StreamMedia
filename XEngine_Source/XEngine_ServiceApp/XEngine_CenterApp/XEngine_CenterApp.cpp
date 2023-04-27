@@ -10,8 +10,8 @@
 //    Purpose:     入口函数头文件
 //    History:
 *********************************************************************/
-BOOL bIsRun = FALSE;
-XLOG xhLog = NULL;
+bool bIsRun = false;
+XHANDLE xhLog = NULL;
 //业务服务器
 XHANDLE xhCenterSocket = NULL;
 XHANDLE xhCenterHeart = NULL;
@@ -28,7 +28,7 @@ void ServiceApp_Stop(int signo)
 	if (bIsRun)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("服务器退出..."));
-		bIsRun = FALSE;
+		bIsRun = false;
 		//销毁业务资源
 		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
@@ -89,8 +89,8 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	bIsRun = TRUE;
-	LPCTSTR lpszLogFile = _T("./XEngine_XLog/XEngine_CenterApp.Log");
+	bIsRun = true;
+	LPCXSTR lpszLogFile = _T("./XEngine_XLog/XEngine_CenterApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 
@@ -205,8 +205,8 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中,业务消息服务没有被启用"));
 	}
 
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XGetStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
-	while (TRUE)
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
+	while (true)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -215,7 +215,7 @@ XENGINE_SERVICEAPP_EXIT:
 	if (bIsRun)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("有服务启动失败,服务器退出..."));
-		bIsRun = FALSE;
+		bIsRun = false;
 		//销毁业务资源
 		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
 		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);

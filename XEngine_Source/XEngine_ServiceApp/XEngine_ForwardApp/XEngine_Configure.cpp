@@ -10,20 +10,20 @@
 //    Purpose:     配置文件读写代码
 //    History:
 *********************************************************************/
-BOOL XEngine_Configure_Parament(int argc, char** argv)
+bool XEngine_Configure_Parament(int argc, char** argv)
 {
-	LPCTSTR lpszServiceCfg = _T("./XEngine_Config/XEngine_Config.json");
-	LPCTSTR lpszForwardCfg = _T("./XEngine_Config/XEngine_ForwardConfig.json");
+	LPCXSTR lpszServiceCfg = _T("./XEngine_Config/XEngine_Config.json");
+	LPCXSTR lpszForwardCfg = _T("./XEngine_Config/XEngine_ForwardConfig.json");
 
 	if (!ModuleConfigure_Json_File(lpszServiceCfg, &st_ServiceConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File：%lX", ModuleConfigure_GetLastError());
-		return FALSE;
+		return false;
 	}
 	if (!ModuleConfigure_Json_Forward(lpszForwardCfg, &st_ForwardConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_Forward：%lX", ModuleConfigure_GetLastError());
-		return FALSE;
+		return false;
 	}
 
 	for (int i = 0; i < argc; i++)
@@ -31,7 +31,7 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		if ((0 == _tcscmp("-h", argv[i])) || (0 == _tcscmp("-H", argv[i])))
 		{
 			XEngine_Configure_Help();
-			return FALSE;
+			return false;
 		}
 		else if (0 == _tcscmp("-d", argv[i]))
 		{
@@ -39,7 +39,7 @@ BOOL XEngine_Configure_Parament(int argc, char** argv)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void XEngine_Configure_Help()

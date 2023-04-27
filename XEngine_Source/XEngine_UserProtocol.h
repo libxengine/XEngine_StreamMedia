@@ -63,8 +63,8 @@ typedef struct
 {
 	TCHAR tszDeviceNumber[64];
 	int nChannel;
-	BOOL bLive;
-	BOOL bAudio;
+	bool bLive;
+	bool bAudio;
 }XENGINE_PROTOCOLDEVICE;
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct

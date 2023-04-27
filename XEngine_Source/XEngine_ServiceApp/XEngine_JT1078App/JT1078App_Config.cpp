@@ -10,20 +10,20 @@
 //    Purpose:     配置文件
 //    History:
 *********************************************************************/
-BOOL JT1078App_Service_Parament(int argc, char** argv)
+bool JT1078App_Service_Parament(int argc, char** argv)
 {
-	LPCTSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
-	LPCTSTR lpszJT1078Cfg = _T("./XEngine_Config/XEngine_JT1078Config.json");
+	LPCXSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
+	LPCXSTR lpszJT1078Cfg = _T("./XEngine_Config/XEngine_JT1078Config.json");
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceCfg))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File:%lX\n", ModuleConfigure_GetLastError());
-		return FALSE;
+		return false;
 	}
 	if (!ModuleConfigure_Json_JT1078(lpszJT1078Cfg, &st_JT1078Cfg))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_JT1078:%lX\n", ModuleConfigure_GetLastError());
-		return FALSE;
+		return false;
 	}
 
 	for (int i = 0; i < argc; i++)
@@ -31,7 +31,7 @@ BOOL JT1078App_Service_Parament(int argc, char** argv)
 		if ((0 == _tcscmp("-h", argv[i])) || (0 == _tcscmp("-H", argv[i])))
 		{
 			JT1078App_Service_ParamentHelp();
-			return FALSE;
+			return false;
 		}
 		else if (0 == _tcscmp("-l", argv[i]))
 		{
@@ -43,7 +43,7 @@ BOOL JT1078App_Service_Parament(int argc, char** argv)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void JT1078App_Service_ParamentHelp()

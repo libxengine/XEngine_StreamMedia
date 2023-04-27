@@ -34,22 +34,22 @@ CModuleHelp_JT1078::~CModuleHelp_JT1078()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR* ptszMsgBuffer)
+bool CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR* ptszMsgBuffer)
 {
-	ModuleHelp_IsErrorOccur = FALSE;
+	ModuleHelp_IsErrorOccur = false;
 
 	if (NULL == ptszMsgBuffer)
 	{
-		ModuleHelp_IsErrorOccur = TRUE;
+		ModuleHelp_IsErrorOccur = true;
 		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_JT1078_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
 		OPenSsl_Codec_BCDTo2Bytes(bySIMNumber[i], &ptszMsgBuffer[nPos]);
 		nPos += 2;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleHelp_JT1078_StringToBCD
@@ -69,20 +69,20 @@ BOOL CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHA
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleHelp_JT1078::ModuleHelp_JT1078_StringToBCD(LPCTSTR lpszMsgBuffer, BYTE* pbySIMNumber)
+bool CModuleHelp_JT1078::ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, BYTE* pbySIMNumber)
 {
-	ModuleHelp_IsErrorOccur = FALSE;
+	ModuleHelp_IsErrorOccur = false;
 
 	if ((NULL == lpszMsgBuffer) || (NULL == pbySIMNumber))
 	{
-		ModuleHelp_IsErrorOccur = TRUE;
+		ModuleHelp_IsErrorOccur = true;
 		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_JT1078_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
 		OPenSsl_Codec_2BytesToBCD(&lpszMsgBuffer[i], pbySIMNumber[nPos]);
 		nPos += 2;
 	}
-	return TRUE;
+	return true;
 }

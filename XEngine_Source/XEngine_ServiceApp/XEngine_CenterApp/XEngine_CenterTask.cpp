@@ -10,7 +10,7 @@
 //    Purpose:     业务任务处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_CenterTask_Thread(LPVOID lParam)
+XHTHREAD CALLBACK XEngine_CenterTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
@@ -49,7 +49,7 @@ XHTHREAD CALLBACK XEngine_CenterTask_Thread(LPVOID lParam)
 	}
 	return 0;
 }
-BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
+bool XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT == pSt_ProtocolHdr->unOperatorType)
 	{
@@ -74,17 +74,17 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 
 			memcpy(&st_ProtocolDevice, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDEVICE));
 			//创建流
-			XHANDLE xhToken = XClient_FilePush_Init(TRUE, st_ProtocolDevice.bAudio, FALSE);
+			XHANDLE xhToken = StreamClient_FilePush_Init(true, st_ProtocolDevice.bAudio, false);
 			if (NULL == xhToken)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,推流创建事件,处理创建流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
-				return FALSE;
+				return false;
 			}
 			//创建会话
 			if (!ModuleSession_Server_Create(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,创建会话失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
-				return FALSE;
+				return false;
 			}
 			ModuleSession_Server_SetPush(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, xhToken);
 			//开始创建音视频
@@ -101,7 +101,7 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 
 			XHANDLE xhToken = ModuleSession_Server_GetPush(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 			ModuleSession_Server_Destroy(st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
-			XClient_FilePush_Close(xhToken);
+			StreamClient_FilePush_Close(xhToken);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s,接受请求了销毁流消息,设备ID：%s,设备通道：%d,流类型：%d"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
@@ -116,9 +116,9 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 			if (NULL == xhToken)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s,插入流数据到视频队列失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), lpszClientAddr, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, ModuleSession_GetLastError());
-				return FALSE;
+				return false;
 			}
-			XClient_FilePush_Push(xhToken, lpszMsgBuffer + nPos, nMsgLen - nPos, pSt_ProtocolHdr->wReserve);
+			StreamClient_FilePush_Push(xhToken, lpszMsgBuffer + nPos, nMsgLen - nPos, pSt_ProtocolHdr->wReserve);
 			
 			if (NULL != pSt_FileVideo)
 			{
@@ -136,8 +136,8 @@ BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lps
 		//我们可以给客户端发送一条错误信息
 		pSt_ProtocolHdr->wReserve = 0xFF;        //表示不支持的协议
 		pSt_ProtocolHdr->unPacketSize = 0;       //设置没有后续数据包
-		XEngine_Network_Send(lpszClientAddr, (LPCTSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+		XEngine_Network_Send(lpszClientAddr, (LPCXSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
 	}
-	return TRUE;
+	return true;
 }

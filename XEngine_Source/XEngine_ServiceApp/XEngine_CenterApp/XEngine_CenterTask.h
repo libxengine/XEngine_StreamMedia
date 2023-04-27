@@ -11,6 +11,6 @@
 //    History:
 *********************************************************************/
 //任务处理池,用来获取一个完整包
-XHTHREAD CALLBACK XEngine_CenterTask_Thread(LPVOID lParam);
+XHTHREAD CALLBACK XEngine_CenterTask_Thread(XPVOID lParam);
 //任务处理相关函数,处理包的内容
-BOOL XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
+bool XEngine_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);

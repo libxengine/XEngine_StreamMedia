@@ -17,8 +17,8 @@ typedef struct tag_XEngine_ServiceConfig
 {
 	TCHAR tszSMSUrl[MAX_PATH];                //流媒体服务器地址
 	TCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
-	BOOL bDeamon;                             //是否以守护进程启动,LINUX有效
-	BOOL bDebug;                              //是否使用DEBUG
+	bool bDeamon;                             //是否以守护进程启动,LINUX有效
+	bool bDebug;                              //是否使用DEBUG
 	int nCenterPort;                          //业务端口
 	struct
 	{
@@ -39,7 +39,7 @@ typedef struct tag_XEngine_ServiceConfig
 		TCHAR tszSQLPass[128];                //数据库密码
 		TCHAR tszSQLName[128];                //数据库表名
 		int nSQLPort;                         //端口
-		BOOL bEnable;                         //是否启用数据库
+		bool bEnable;                         //是否启用数据库
 	}st_XSql;
 	struct
 	{
@@ -49,8 +49,8 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XLog;
 	struct  
 	{
-		BOOL bVideo;                          //启用视频调试记录
-		BOOL bAudio;                          //启用音频调试记录
+		bool bVideo;                          //启用视频调试记录
+		bool bAudio;                          //启用音频调试记录
 	}st_XDebug;
 	struct  
 	{
@@ -61,7 +61,7 @@ typedef struct tag_XEngine_ServiceConfig
 typedef struct 
 {
 	TCHAR tszIPAddr[64];                      //本机IP地址
-	BOOL bDeamon;                             //是否使用守护进程
+	bool bDeamon;                             //是否使用守护进程
 	int nAudio;                               //音频所适应通道,0不启用
 	int nStreamPort;                          //直播流端口
 	int nRecordPort;                          //录像流端口
@@ -93,7 +93,7 @@ typedef struct
 typedef struct
 {
 	TCHAR tszIPAddr[64];                      //本机IP地址
-	BOOL bDeamon;                             //是否使用守护进程
+	bool bDeamon;                             //是否使用守护进程
 	int nHttpPort;                            //HTTP服务端口
 	struct
 	{
@@ -115,7 +115,7 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
+extern "C" XLONG ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
 /************************************************************************/
 /*                        文件配置读取                                  */
 /************************************************************************/
@@ -137,7 +137,7 @@ extern "C" DWORD ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
+extern "C" bool ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
 /********************************************************************
 函数名称：ModuleConfigure_Json_JT1078
 函数功能：读取1078配置文件
@@ -156,7 +156,7 @@ extern "C" BOOL ModuleConfigure_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVIC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
+extern "C" bool ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
 /********************************************************************
 函数名称：ModuleConfigure_Json_Forward
 函数功能：读取JSON配置文件
@@ -175,4 +175,4 @@ extern "C" BOOL ModuleConfigure_Json_JT1078(LPCTSTR lpszConfigFile, XENGINE_JT10
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleConfigure_Json_Forward(LPCTSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);
+extern "C" bool ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);

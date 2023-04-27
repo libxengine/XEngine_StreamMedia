@@ -53,8 +53,8 @@ typedef enum
 	ENUM_XENGINE_STREAMAPP_DEVICE_TYPE_STREAM = 1
 }ENUM_XENGINE_STREAMAPP_DEVICE_TYPE;
 
-extern BOOL bIsRun;
-extern XLOG xhLog;
+extern bool bIsRun;
+extern XHANDLE xhLog;
 
 extern XHANDLE xhStreamNet;
 extern XHANDLE xhStreamHeart;

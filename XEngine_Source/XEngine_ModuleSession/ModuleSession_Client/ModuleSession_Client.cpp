@@ -33,21 +33,21 @@ CModuleSession_Client::~CModuleSession_Client()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
+bool CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
 	MODULESESSION_LIST *pSt_SessionList = new MODULESESSION_LIST;
 	if (NULL == pSt_SessionList)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
-		return FALSE;
+		return false;
 	}
     st_Locker.lock();
     stl_MapClient.insert(make_pair(xhClient, pSt_SessionList));
     st_Locker.unlock();
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_Get
@@ -62,15 +62,15 @@ BOOL CModuleSession_Client::ModuleSession_Client_Create(XNETHANDLE xhClient)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
+bool CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == pxhClient)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
     unsigned int nListCount = 100000; //最大任务个数
     XNETHANDLE xhClient = 0;          //选择的客户端
@@ -86,7 +86,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
     }
 	st_Locker.unlock_shared();
     *pxhClient = xhClient;
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_Exist
@@ -121,17 +121,17 @@ BOOL CModuleSession_Client::ModuleSession_Client_Get(XNETHANDLE* pxhClient)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+bool CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
-    BOOL bFound = FALSE;
+    bool bFound = false;
 	st_Locker.lock_shared();
     //编译所有
 	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
@@ -146,16 +146,16 @@ BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
                 //如果设备的IP和保存的IP匹配
                 if (0 == _tcsncmp(lpszDeviceAddr, stl_ListIterator->tszDeviceAddr, _tcslen(lpszDeviceAddr)))
                 {
-                    bFound = TRUE; //直接退出
+                    bFound = true; //直接退出
                     *pxhClient = stl_MapIterator->first;
                     break;
                 }
                 else
                 {
                     //不匹配,返回错误
-					Session_IsErrorOccur = TRUE;
+					Session_IsErrorOccur = true;
 					Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_ADDR;
-					return FALSE;
+					return false;
                 }
 			}
         }
@@ -169,11 +169,11 @@ BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
 
     if (!bFound)
     {
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		return FALSE;
+		return false;
     }
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_Insert
@@ -208,25 +208,25 @@ BOOL CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+bool CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
     if ((NULL == lpszDeviceAddr) || (NULL == lpszDeviceNumber))
     {
-        Session_IsErrorOccur = TRUE;
+        Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-        return FALSE;
+        return false;
     }
     //查找
     st_Locker.lock_shared();
     unordered_map<XNETHANDLE, MODULESESSION_LIST*>::iterator stl_MapIterator = stl_MapClient.find(xhClient);
     if (stl_MapIterator == stl_MapClient.end())
     {
-        Session_IsErrorOccur = TRUE;
+        Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCLIENT;
         st_Locker.unlock_shared();
-        return FALSE;
+        return false;
     }
     MODULESESSION_CLIENT st_SessionClient;
     memset(&st_SessionClient, '\0', sizeof(MODULESESSION_CLIENT));
@@ -240,7 +240,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
     stl_MapIterator->second->stl_ListClient.push_back(st_SessionClient);
     stl_MapIterator->second->st_Locker.unlock();
     st_Locker.unlock_shared();
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteAddr
@@ -275,11 +275,11 @@ BOOL CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, BOOL* pbLive /* = NULL */)
+bool CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, bool* pbLive /* = NULL */)
 {
-    Session_IsErrorOccur = FALSE;
+    Session_IsErrorOccur = false;
 
-    BOOL bFound = FALSE;
+    bool bFound = false;
     st_Locker.lock_shared();
     for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
     {
@@ -306,7 +306,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAd
                 {
                     *pbLive = stl_ListIterator->bLive;
                 }
-                bFound = TRUE;
+                bFound = true;
 				stl_MapIterator->second->stl_ListClient.erase(stl_ListIterator);
 				break;
 			}
@@ -319,7 +319,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAd
         }
     }
     st_Locker.unlock_shared();
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteNumber
@@ -344,11 +344,11 @@ BOOL CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAd
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+bool CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
-    BOOL bFound = FALSE;
+    bool bFound = false;
 	st_Locker.lock_shared();
 	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
 	{
@@ -370,7 +370,7 @@ BOOL CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCTSTR lpszDevice
 		}
 	}
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Client_Destory
@@ -380,9 +380,9 @@ BOOL CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCTSTR lpszDevice
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Client::ModuleSession_Client_Destory()
+bool CModuleSession_Client::ModuleSession_Client_Destory()
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock();
     for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
@@ -396,5 +396,5 @@ BOOL CModuleSession_Client::ModuleSession_Client_Destory()
     }
     stl_MapClient.clear();
     st_Locker.unlock();
-	return TRUE;
+	return true;
 }
