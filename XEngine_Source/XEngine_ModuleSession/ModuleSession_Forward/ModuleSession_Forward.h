@@ -12,7 +12,7 @@
 *********************************************************************/
 typedef struct
 {
-	TCHAR tszPlayUrl[MAX_PATH];
+	XCHAR tszPlayUrl[MAX_PATH];
 	XHANDLE xhToken;
 }MODULESESSION_FORWARD;
 

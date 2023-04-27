@@ -12,7 +12,7 @@
 *********************************************************************/
 bool XEngine_Configure_Parament(int argc, char** argv)
 {
-	LPCXSTR lpszServerCfg = _T("./XEngine_Config/XEngine_Config.json");
+	LPCXSTR lpszServerCfg = _X("./XEngine_Config/XEngine_Config.json");
 
 	if (!ModuleConfigure_Json_File(lpszServerCfg, &st_ServiceConfig))
 	{
@@ -22,20 +22,20 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 
 	for (int i = 0; i < argc; i++)
 	{
-		if (0 == _tcsicmp("-h", argv[i]))
+		if (0 == _tcsxcmp("-h", argv[i]))
 		{
 			XEngine_Configure_Help();
 			return false;
 		}
-		else if (0 == _tcsicmp("-d", argv[i]))
+		else if (0 == _tcsxcmp("-d", argv[i]))
 		{
-			st_ServiceConfig.bDeamon = _ttoi(argv[i + 1]);
+			st_ServiceConfig.bDeamon = _ttxoi(argv[i + 1]);
 		}
-		else if (0 == _tcsicmp("-a", argv[i]))
+		else if (0 == _tcsxcmp("-a", argv[i]))
 		{
 			st_ServiceConfig.st_XDebug.bAudio = true;
 		}
-		else if (0 == _tcsicmp("-v", argv[i]))
+		else if (0 == _tcsxcmp("-v", argv[i]))
 		{
 			st_ServiceConfig.st_XDebug.bVideo = true;
 		}
@@ -46,9 +46,9 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 
 void XEngine_Configure_Help()
 {
-	printf(_T("--------------------------启动参数帮助开始--------------------------\n"));
-	printf(_T("网络服务启动参数：程序 参数 参数值，参数是区分大小写的。如果不指定将会加载默认的配置文件里面的参数\n"));
-	printf(_T("-h or -H：启动参数帮助提示信息\n"));
-	printf(_T("-d：1 启用守护进程，2不启用\n"));
-	printf(_T("--------------------------启动参数帮助结束--------------------------\n"));
+	printf(_X("--------------------------启动参数帮助开始--------------------------\n"));
+	printf(_X("网络服务启动参数：程序 参数 参数值，参数是区分大小写的。如果不指定将会加载默认的配置文件里面的参数\n"));
+	printf(_X("-h or -H：启动参数帮助提示信息\n"));
+	printf(_X("-d：1 启用守护进程，2不启用\n"));
+	printf(_X("--------------------------启动参数帮助结束--------------------------\n"));
 }

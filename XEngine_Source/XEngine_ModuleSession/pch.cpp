@@ -49,7 +49,7 @@ extern "C" bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDev
 {
 	return m_Client.ModuleSession_Client_Insert(xhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, bool * pbLive)
+extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient, XCHAR * ptszDeviceNumber, int* pInt_Channel, bool * pbLive)
 {
 	return m_Client.ModuleSession_Client_DeleteAddr(lpszDeviceAddr, pxhClient, ptszDeviceNumber, pInt_Channel, pbLive);
 }

@@ -57,11 +57,11 @@ typedef enum
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	TCHAR tszDeviceNumber[64];
+	XCHAR tszDeviceNumber[64];
 }XENGINE_PROTOCOLSTREAM;
 typedef struct
 {
-	TCHAR tszDeviceNumber[64];
+	XCHAR tszDeviceNumber[64];
 	int nChannel;
 	bool bLive;
 	bool bAudio;
@@ -69,47 +69,47 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct
 {
-	BYTE byFlags[4];
+	XBYTE byFlags[4];
 
-	BYTE byCC : 4;
-	BYTE byX : 1;
-	BYTE byP : 1;
-	BYTE byV : 2;
+	XBYTE byCC : 4;
+	XBYTE byX : 1;
+	XBYTE byP : 1;
+	XBYTE byV : 2;
 
-	BYTE byPT : 7;
-	BYTE byM : 1;
+	XBYTE byPT : 7;
+	XBYTE byM : 1;
 
-	WORD wSerial;
-	BYTE bySIMNumber[6];
-	BYTE byChannel;
+	XSHOT wSerial;
+	XBYTE bySIMNumber[6];
+	XBYTE byChannel;
 
-	BYTE byPacket : 4;
-	BYTE byType : 4;
+	XBYTE byPacket : 4;
+	XBYTE byType : 4;
 	__int64u ullTimestamp;
 }XENGINE_RTPPACKETHDR2016;
 typedef struct
 {
-	BYTE byV : 2;
-	BYTE byP : 1;
-	BYTE byX : 1;
-	BYTE byCC : 4;
+	XBYTE byV : 2;
+	XBYTE byP : 1;
+	XBYTE byX : 1;
+	XBYTE byCC : 4;
 
-	BYTE byM : 1;
-	BYTE byPT : 7;
+	XBYTE byM : 1;
+	XBYTE byPT : 7;
 
-	WORD wSerial;
-	BYTE bySIMNumber[6];
-	BYTE byChannel;
+	XSHOT wSerial;
+	XBYTE bySIMNumber[6];
+	XBYTE byChannel;
 
-	BYTE byType : 4;
-	BYTE byPacket : 4;
+	XBYTE byType : 4;
+	XBYTE byPacket : 4;
 	__int64u ullTimestamp;
-	WORD wLen;
+	XSHOT wLen;
 }XENGINE_RTPPACKETHDR2014;
 
 typedef struct
 {
-	WORD wLastIFrame;
-	WORD wLastPBFrame;
+	XSHOT wLastIFrame;
+	XSHOT wLastPBFrame;
 }XENGINE_RTPPACKETTAIL;
 #pragma pack(pop)

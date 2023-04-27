@@ -30,7 +30,7 @@ extern "C" XLONG ModuleHelp_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR* ptszMsgBuffer);
+extern "C" bool ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR* ptszMsgBuffer);
 /********************************************************************
 函数名称：ModuleHelp_JT1078_StringToBCD
 函数功能：字符串转BCD
@@ -49,4 +49,4 @@ extern "C" bool ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR* ptszMs
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, BYTE* pbySIMNumber);
+extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbySIMNumber);

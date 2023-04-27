@@ -15,8 +15,8 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct tag_XEngine_ServiceConfig
 {
-	TCHAR tszSMSUrl[MAX_PATH];                //流媒体服务器地址
-	TCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
+	XCHAR tszSMSUrl[MAX_PATH];                //流媒体服务器地址
+	XCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
 	bool bDeamon;                             //是否以守护进程启动,LINUX有效
 	bool bDebug;                              //是否使用DEBUG
 	int nCenterPort;                          //业务端口
@@ -34,10 +34,10 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
-		TCHAR tszSQLAddr[128];                //数据库地址
-		TCHAR tszSQLUser[128];                //数据库用户名
-		TCHAR tszSQLPass[128];                //数据库密码
-		TCHAR tszSQLName[128];                //数据库表名
+		XCHAR tszSQLAddr[128];                //数据库地址
+		XCHAR tszSQLUser[128];                //数据库用户名
+		XCHAR tszSQLPass[128];                //数据库密码
+		XCHAR tszSQLName[128];                //数据库表名
 		int nSQLPort;                         //端口
 		bool bEnable;                         //是否启用数据库
 	}st_XSql;
@@ -60,7 +60,7 @@ typedef struct tag_XEngine_ServiceConfig
 //JT1078服务配置文件
 typedef struct 
 {
-	TCHAR tszIPAddr[64];                      //本机IP地址
+	XCHAR tszIPAddr[64];                      //本机IP地址
 	bool bDeamon;                             //是否使用守护进程
 	int nAudio;                               //音频所适应通道,0不启用
 	int nStreamPort;                          //直播流端口
@@ -81,7 +81,7 @@ typedef struct
 	}st_XTime;
 	struct
 	{
-		TCHAR tszIPAddr[128];                 //服务器地址
+		XCHAR tszIPAddr[128];                 //服务器地址
 		int nPort;                            //服务器端口
 		int nMaxConnect;                      //最大连接个数
 	}st_XClient;
@@ -92,7 +92,7 @@ typedef struct
 }XENGINE_JT1078CONFIG;
 typedef struct
 {
-	TCHAR tszIPAddr[64];                      //本机IP地址
+	XCHAR tszIPAddr[64];                      //本机IP地址
 	bool bDeamon;                             //是否使用守护进程
 	int nHttpPort;                            //HTTP服务端口
 	struct

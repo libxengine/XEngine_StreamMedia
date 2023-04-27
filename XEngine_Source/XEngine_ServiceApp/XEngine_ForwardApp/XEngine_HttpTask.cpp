@@ -34,7 +34,7 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 			for (int j = 0; j < ppSst_ListAddr[i]->nPktCount; j++)
 			{
 				int nMsgLen = 0;                                    //客户端发送的数据大小,不包括头
-				CHAR* ptszMsgBuffer = NULL;                         //客户端发送的数据
+				XCHAR* ptszMsgBuffer = NULL;                         //客户端发送的数据
 				RFCCOMPONENTS_HTTP_REQPARAM st_HTTPReqparam;        //客户端的请求参数
 
 				memset(&st_HTTPReqparam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
@@ -56,10 +56,10 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 {
 	int nSDLen = 4096;
 	int nRVLen = 4096;
-	LPCXSTR lpszMethodPost = _T("POST");
-	LPCXSTR lpszMethodGet = _T("GET");
-	TCHAR tszSDBuffer[4096];
-	TCHAR tszRVBuffer[4096];
+	LPCXSTR lpszMethodPost = _X("POST");
+	LPCXSTR lpszMethodGet = _X("GET");
+	XCHAR tszSDBuffer[4096];
+	XCHAR tszRVBuffer[4096];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;    //发送给客户端的参数
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -69,8 +69,8 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	TCHAR** pptszList;
-	TCHAR tszUrlName[128];
+	XCHAR** pptszList;
+	XCHAR tszUrlName[128];
 	int nListCount = 0;
 
 	memset(tszUrlName, '\0', sizeof(tszUrlName));
@@ -82,49 +82,49 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
-	TCHAR tszKey[128];
-	TCHAR tszValue[128];
-	LPCXSTR lpszFuncName = _T("api");
-	LPCXSTR lpszParamFuncKey = _T("function");
-	LPCXSTR lpszParamPlay = _T("play");
-	LPCXSTR lpszParamStop = _T("stop");
-	LPCXSTR lpszParamList = _T("list");
+	XCHAR tszKey[128];
+	XCHAR tszValue[128];
+	LPCXSTR lpszFuncName = _X("api");
+	LPCXSTR lpszParamFuncKey = _X("function");
+	LPCXSTR lpszParamPlay = _X("play");
+	LPCXSTR lpszParamStop = _X("stop");
+	LPCXSTR lpszParamList = _X("list");
 
 	memset(tszKey, '\0', sizeof(tszKey));
 	memset(tszValue, '\0', sizeof(tszValue));
 
-	if (0 != _tcsnicmp(lpszFuncName, tszUrlName, _tcslen(lpszFuncName)))
+	if (0 != _tcsxnicmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 400, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
 	//获得函数名
 	BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
-	if (0 != _tcsnicmp(lpszParamFuncKey, tszKey, _tcslen(lpszParamFuncKey)))
+	if (0 != _tcsxnicmp(lpszParamFuncKey, tszKey, _tcsxlen(lpszParamFuncKey)))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 400, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
 
-	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
+	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
 		//播放:http://127.0.0.1:5602/api?function=play&token=100010101
-		if (0 == _tcsnicmp(lpszParamPlay, tszValue, _tcslen(lpszParamPlay)))
+		if (0 == _tcsxnicmp(lpszParamPlay, tszValue, _tcsxlen(lpszParamPlay)))
 		{
-			TCHAR tszSMSUrl[1024];
-			TCHAR tszAVUrl[MAX_PATH];
-			TCHAR tszToken[MAX_PATH];
+			XCHAR tszSMSUrl[1024];
+			XCHAR tszAVUrl[MAX_PATH];
+			XCHAR tszToken[MAX_PATH];
 
 			memset(tszSMSUrl, '\0', sizeof(tszSMSUrl));
 			memset(tszAVUrl, '\0', MAX_PATH);
@@ -143,7 +143,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s,成功,流已经存在"), lpszClientAddr, tszAVUrl);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,请求播放RTSP:%s,成功,流已经存在"), lpszClientAddr, tszAVUrl);
 					return true;
 				}
 			}
@@ -151,7 +151,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			{
 				XNETHANDLE xhPlay = 0;
 				BaseLib_OperatorHandle_Create(&xhPlay);
-				_stprintf(tszToken, _T("%lld"), xhPlay);
+				_xstprintf(tszToken, _X("%lld"), xhPlay);
 			}
 			
 			XHANDLE xhToken = StreamClient_StreamPull_Init(tszAVUrl, &ppSt_PullStream, &nStreamCount);
@@ -161,10 +161,10 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 				HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s,失败"), lpszClientAddr, tszAVUrl);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,请求播放RTSP:%s,失败"), lpszClientAddr, tszAVUrl);
 				return false;
 			}
-			_stprintf(tszSMSUrl, _T("%s/%s"), st_ServiceConfig.tszSMSUrl, tszToken);
+			_xstprintf(tszSMSUrl, _X("%s/%s"), st_ServiceConfig.tszSMSUrl, tszToken);
 			if (!StreamClient_StreamPull_PushStream(xhToken, tszSMSUrl, &ppSt_PullStream, nStreamCount))
 			{
 				ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, -2, "push stream is failed");
@@ -172,7 +172,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 				StreamClient_StreamPull_Close(xhToken);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("HTTP客户端:%s,请求播放RTSP:%s,失败"), lpszClientAddr, tszAVUrl);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,请求播放RTSP:%s,失败"), lpszClientAddr, tszAVUrl);
 				return false;
 			}
 			StreamClient_StreamPull_Start(xhToken);
@@ -181,12 +181,12 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, 0, NULL, tszToken);
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求播放RTSP:%s 成功,设备流个数:%d"), lpszClientAddr, tszAVUrl, nStreamCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,请求播放RTSP:%s 成功,设备流个数:%d"), lpszClientAddr, tszAVUrl, nStreamCount);
 		}
-		else if (0 == _tcsnicmp(lpszParamStop, tszValue, _tcslen(lpszParamStop)))
+		else if (0 == _tcsxnicmp(lpszParamStop, tszValue, _tcsxlen(lpszParamStop)))
 		{
 			//停止:http://127.0.0.1:5602/api?function=stop&token=100010101
-			TCHAR tszToken[MAX_PATH];
+			XCHAR tszToken[MAX_PATH];
 			memset(tszToken, '\0', MAX_PATH);
 
 			if (2 != nListCount)
@@ -195,7 +195,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 				HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("HTTP客户端:%s,请求停止流失败失败,没有传输令牌信息"), lpszClientAddr);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,请求停止流失败失败,没有传输令牌信息"), lpszClientAddr);
 				return false;
 			}
 			BaseLib_OperatorString_GetKeyValue(pptszList[1], "=", tszKey, tszToken);
@@ -208,12 +208,12 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求停止推流:%s 成功"), lpszClientAddr, tszToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,请求停止推流:%s 成功"), lpszClientAddr, tszToken);
 		}
 	}
-	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
+	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
-		if (0 == _tcsnicmp(lpszParamList, tszValue, _tcslen(lpszParamList)))
+		if (0 == _tcsxnicmp(lpszParamList, tszValue, _tcsxlen(lpszParamList)))
 		{
 			//枚举:http://127.0.0.1:5602/api?function=list
 			int nListCount = 0;
@@ -224,12 +224,12 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Forward, nListCount);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("HTTP客户端:%s,请求列举推流数成功,数量;%d"), lpszClientAddr, nListCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,请求列举推流数成功,数量;%d"), lpszClientAddr, nListCount);
 		}
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("HTTP客户端:%s,协议错误"), lpszClientAddr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("HTTP客户端:%s,协议错误"), lpszClientAddr);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;

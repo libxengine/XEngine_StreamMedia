@@ -51,7 +51,7 @@ bool CModuleSession_Forward::ModuleSession_Forward_Create(LPCXSTR lpszPlay, XHAN
 	memset(&st_Forward, '\0', sizeof(MODULESESSION_FORWARD));
 
     st_Forward.xhToken = xhToken;
-	_tcscpy(st_Forward.tszPlayUrl, lpszSMSPlay);
+	_tcsxcpy(st_Forward.tszPlayUrl, lpszSMSPlay);
 
     st_Locker.lock();
     stl_MapClient.insert(make_pair(lpszPlay, st_Forward));
@@ -143,8 +143,8 @@ bool CModuleSession_Forward::ModuleSession_Forward_List(MODULESESSION_FORWARDINF
 	unordered_map<string, MODULESESSION_FORWARD>::const_iterator stl_MapIterator = stl_MapClient.begin();
 	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)
 	{
-		_tcscpy((*pppSt_Forward)[i]->tszToken, stl_MapIterator->first.c_str());
-		_tcscpy((*pppSt_Forward)[i]->tszAVUrl, stl_MapIterator->second.tszPlayUrl);
+		_tcsxcpy((*pppSt_Forward)[i]->tszToken, stl_MapIterator->first.c_str());
+		_tcsxcpy((*pppSt_Forward)[i]->tszAVUrl, stl_MapIterator->second.tszPlayUrl);
 	}
 	st_Locker.unlock_shared();
 	

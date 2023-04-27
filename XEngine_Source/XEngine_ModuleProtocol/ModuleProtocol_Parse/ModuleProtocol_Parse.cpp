@@ -44,7 +44,7 @@ CModuleProtocol_Parse::~CModuleProtocol_Parse()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl)
+bool CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR* ptszAVUrl)
 {
 	ModuleProtocol_IsErrorOccur = false;
 
@@ -67,7 +67,7 @@ bool CModuleProtocol_Parse::ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuff
 	}
 	if (!st_JsonRoot["tszAVUrl"].isNull() && (NULL != ptszAVUrl))
 	{
-		_tcscpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
+		_tcsxcpy(ptszAVUrl, st_JsonRoot["tszAVUrl"].asCString());
 	}
 	return true;
 }

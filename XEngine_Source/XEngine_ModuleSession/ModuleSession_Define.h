@@ -17,8 +17,8 @@ typedef struct
 }MODULESESSION_SDKCLIENT;
 typedef struct
 {
-	TCHAR tszAVUrl[MAX_PATH];
-	TCHAR tszToken[MAX_PATH];
+	XCHAR tszAVUrl[MAX_PATH];
+	XCHAR tszToken[MAX_PATH];
 }MODULESESSION_FORWARDINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
@@ -156,7 +156,7 @@ extern "C" bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDev
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
+extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient = NULL, XCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息

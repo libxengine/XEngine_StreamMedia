@@ -141,10 +141,10 @@ bool CModuleSession_Client::ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LP
         for (auto stl_ListIterator = stl_MapIterator->second->stl_ListClient.begin(); stl_ListIterator != stl_MapIterator->second->stl_ListClient.end(); stl_ListIterator++)
         {
             //如果找到设备就退出
-			if ((0 == _tcsncmp(lpszDeviceNumber, stl_ListIterator->tszDeviceNumber, _tcslen(lpszDeviceNumber))) && (nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
+			if ((0 == _tcsxncmp(lpszDeviceNumber, stl_ListIterator->tszDeviceNumber, _tcsxlen(lpszDeviceNumber))) && (nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
 			{
                 //如果设备的IP和保存的IP匹配
-                if (0 == _tcsncmp(lpszDeviceAddr, stl_ListIterator->tszDeviceAddr, _tcslen(lpszDeviceAddr)))
+                if (0 == _tcsxncmp(lpszDeviceAddr, stl_ListIterator->tszDeviceAddr, _tcsxlen(lpszDeviceAddr)))
                 {
                     bFound = true; //直接退出
                     *pxhClient = stl_MapIterator->first;
@@ -233,8 +233,8 @@ bool CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
 
     st_SessionClient.bLive = bLive;
     st_SessionClient.nChannel = nChannel;
-    _tcscpy(st_SessionClient.tszDeviceAddr, lpszDeviceAddr);
-    _tcscpy(st_SessionClient.tszDeviceNumber, lpszDeviceNumber);
+    _tcsxcpy(st_SessionClient.tszDeviceAddr, lpszDeviceAddr);
+    _tcsxcpy(st_SessionClient.tszDeviceNumber, lpszDeviceNumber);
     
     stl_MapIterator->second->st_Locker.lock();
     stl_MapIterator->second->stl_ListClient.push_back(st_SessionClient);
@@ -275,7 +275,7 @@ bool CModuleSession_Client::ModuleSession_Client_Insert(XNETHANDLE xhClient, LPC
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, TCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, bool* pbLive /* = NULL */)
+bool CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient /* = NULL */, XCHAR* ptszDeviceNumber /* = NULL */, int* pInt_Channel /* = NULL */, bool* pbLive /* = NULL */)
 {
     Session_IsErrorOccur = false;
 
@@ -287,7 +287,7 @@ bool CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAd
 		//循环查找
 		for (auto stl_ListIterator = stl_MapIterator->second->stl_ListClient.begin(); stl_ListIterator != stl_MapIterator->second->stl_ListClient.end(); stl_ListIterator++)
 		{
-			if (0 == _tcsncmp(lpszDeviceAddr, stl_ListIterator->tszDeviceAddr, _tcslen(lpszDeviceAddr)))
+			if (0 == _tcsxncmp(lpszDeviceAddr, stl_ListIterator->tszDeviceAddr, _tcsxlen(lpszDeviceAddr)))
 			{
                 //导出数据
                 if (NULL != pxhClient)
@@ -296,7 +296,7 @@ bool CModuleSession_Client::ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAd
                 }
 				if (NULL != ptszDeviceNumber)
 				{
-                    _tcscpy(ptszDeviceNumber, stl_ListIterator->tszDeviceNumber);
+                    _tcsxcpy(ptszDeviceNumber, stl_ListIterator->tszDeviceNumber);
 				}
                 if (NULL != pInt_Channel)
                 {
@@ -356,7 +356,7 @@ bool CModuleSession_Client::ModuleSession_Client_DeleteNumber(LPCXSTR lpszDevice
 		//循环查找
 		for (auto stl_ListIterator = stl_MapIterator->second->stl_ListClient.begin(); stl_ListIterator != stl_MapIterator->second->stl_ListClient.end(); stl_ListIterator++)
 		{
-			if ((0 == _tcsncmp(lpszDeviceNumber, stl_ListIterator->tszDeviceNumber, _tcslen(lpszDeviceNumber))) && (nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
+			if ((0 == _tcsxncmp(lpszDeviceNumber, stl_ListIterator->tszDeviceNumber, _tcsxlen(lpszDeviceNumber))) && (nChannel == stl_ListIterator->nChannel) && (bLive == stl_ListIterator->bLive))
 			{
 				//找到后退出
 				stl_MapIterator->second->stl_ListClient.erase(stl_ListIterator);

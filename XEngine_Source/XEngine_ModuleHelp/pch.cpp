@@ -29,11 +29,11 @@ extern "C" XLONG ModuleHelp_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的JT1078帮助函数                         */
 /************************************************************************/
-extern "C" bool ModuleHelp_JT1078_BCDToString(BYTE bySIMNumber[6], TCHAR * ptszMsgBuffer)
+extern "C" bool ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR * ptszMsgBuffer)
 {
 	return m_HelpJT1078.ModuleHelp_JT1078_BCDToString(bySIMNumber, ptszMsgBuffer);
 }
-extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, BYTE * pbySIMNumber)
+extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE * pbySIMNumber)
 {
 	return m_HelpJT1078.ModuleHelp_JT1078_StringToBCD(lpszMsgBuffer, pbySIMNumber);
 }

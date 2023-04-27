@@ -31,30 +31,30 @@ extern "C" XLONG ModuleProtocol_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的协议封装函数                           */
 /************************************************************************/
-extern "C" bool ModuleProtocol_Packet_Comm(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCXSTR lpszMsgBuffer, LPCXSTR lpszToken)
+extern "C" bool ModuleProtocol_Packet_Comm(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCXSTR lpszMsgBuffer, LPCXSTR lpszToken)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Comm(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer, lpszToken);
 }
-extern "C" bool ModuleProtocol_Packet_Create(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
+extern "C" bool ModuleProtocol_Packet_Create(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Create(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);
 }
-extern "C" bool ModuleProtocol_Packet_Push(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType)
+extern "C" bool ModuleProtocol_Packet_Push(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Push(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice, nMsgLen, nMsgType);
 }
-extern "C" bool ModuleProtocol_Packet_Destroy(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
+extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDev);
 }
-extern "C" bool ModuleProtocol_Packet_ForwardList(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount)
+extern "C" bool ModuleProtocol_Packet_ForwardList(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount)
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_ForwardList(ptszMsgBuffer, pInt_MsgLen, pppSt_Forward, nListCount);
 }
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/
-extern "C" bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl)
+extern "C" bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR * ptszAVUrl)
 {
 	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl);
 }

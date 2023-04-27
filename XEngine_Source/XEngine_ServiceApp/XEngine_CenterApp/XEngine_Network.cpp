@@ -17,7 +17,7 @@ bool CALLBACK Network_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 	SocketOpt_HeartBeat_InsertAddrEx(xhCenterHeart, lpszClientAddr);
 	//并且还要创建一个TCP包管理器对象,不然无法组包
 	HelpComponents_Datas_CreateEx(xhCenterPacket, lpszClientAddr, 0);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,连接到服务器"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,连接到服务器"), lpszClientAddr);
 	return true;
 }
 void CALLBACK Network_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
@@ -25,12 +25,12 @@ void CALLBACK Network_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	//接受到数据后直接投递给TCP包管理器,因为可能不是一个完整的包,所以我们的期望是通过此得到一个完整的包
 	if (!HelpComponents_Datas_PostEx(xhCenterPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
 		return;
 	}
 	//需要激活一次
 	SocketOpt_HeartBeat_ActiveAddrEx(xhCenterHeart, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("业务客户端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK Network_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
@@ -56,7 +56,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, bool bHeart)
 	}
 	//需要主动删除与客户端对应的组包器队列中的资源
 	HelpComponents_Datas_DeleteEx(xhCenterPacket, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 }
 //////////////////////////////////////////////////////////////////////////
 bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
@@ -64,7 +64,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 	//发送数据给指定客户端
 	if (!NetCore_TCPXCore_SendEx(xhCenterSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 		return false;
 	}
 	//发送成功激活一次心跳

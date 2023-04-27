@@ -14,10 +14,10 @@ void CALLBACK XEngine_Client_CBRecv(XHANDLE xhToken, XNETHANDLE xhClient, XSOCKE
 {
 	if (ENUM_XENGINE_XCLIENT_SOCKET_TCP_EVENT_RECV == enTCPClientEvents)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%d,接受到数据,大小:%d,内容:%s！"), hSocket, nLen, lpszMsgBuffer);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("客户端：%d,接受到数据,大小:%d,内容:%s！"), hSocket, nLen, lpszMsgBuffer);
 	}
 	else if (ENUM_XENGINE_XCLIENT_SOCKET_TCP_EVENT_CLOSE == enTCPClientEvents)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%d,断开了服务器的连接！"), hSocket);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("客户端：%d,断开了服务器的连接！"), hSocket);
 	}
 }

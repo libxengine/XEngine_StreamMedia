@@ -38,7 +38,7 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQ
 {
 	DBModule_IsErrorOccur = false;
 
-	_tcscpy(pSt_MySQLConnector->tszDBName, _T("StreamMedia_AVInfo"));
+	_tcsxcpy(pSt_MySQLConnector->tszDBName, _X("StreamMedia_AVInfo"));
 	//打开数据库
 	if (!DataBase_MySQL_Connect(&xhSQL, pSt_MySQLConnector))
 	{
@@ -86,7 +86,7 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
 		return false;
 	}
-	TCHAR tszSQLQuery[4096];
+	XCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
 	if (ModuleDB_AVInfo_InfoQuery(pSt_ProtocolStream))
@@ -94,7 +94,7 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_Pr
 		return true;
 	}
 
-	_stprintf_s(tszSQLQuery, _T("INSERT INTO `DeviceList_AVInfo`(tszDeviceNumber,bVideo,nVideoBit,enVCodec,nWidth,nHeight,nFrameRate,bAudio,nAudioBit,enACodec,nChannel,nSampleRate,nSampleFmt,nFrameSize,TimeUPdate,TimeCreate) VALUES('%s',%d,%lld,%d,%d,%d,%d,%d,%lld,%d,%d,%d,%d,%d,now(),now())"), pSt_ProtocolStream->tszDeviceNumber, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize);
+	_xstprintf(tszSQLQuery, _X("INSERT INTO `DeviceList_AVInfo`(tszDeviceNumber,bVideo,nVideoBit,enVCodec,nWidth,nHeight,nFrameRate,bAudio,nAudioBit,enACodec,nChannel,nSampleRate,nSampleFmt,nFrameSize,TimeUPdate,TimeCreate) VALUES('%s',%d,%lld,%d,%d,%d,%d,%d,%lld,%d,%d,%d,%d,%d,now(),now())"), pSt_ProtocolStream->tszDeviceNumber, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize);
 
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{
@@ -131,10 +131,10 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 	__int64u dwField = 0;
 	XNETHANDLE xhResult;
 
-	TCHAR tszSQLQuery[4096];
+	XCHAR tszSQLQuery[4096];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	_stprintf_s(tszSQLQuery, _T("SELECT * FROM `DeviceList_AVInfo` WHERE tszDeviceNumber = '%s'"), pSt_ProtocolStream->tszDeviceNumber);
+	_xstprintf(tszSQLQuery, _X("SELECT * FROM `DeviceList_AVInfo` WHERE tszDeviceNumber = '%s'"), pSt_ProtocolStream->tszDeviceNumber);
 	if (!DataBase_MySQL_ExecuteQuery(xhSQL, &xhResult, tszSQLQuery, &dwLine, &dwField))
 	{
 		DBModule_IsErrorOccur = true;
@@ -148,7 +148,7 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 		return false;
 	}
 
-	TCHAR** pptszResult = DataBase_MySQL_GetResult(xhSQL, xhResult);
+	XCHAR** pptszResult = DataBase_MySQL_GetResult(xhSQL, xhResult);
 	if (NULL == pptszResult[0])
 	{
 		DBModule_IsErrorOccur = true;
@@ -160,55 +160,55 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_Pro
 	{
 		if (NULL != pptszResult[2])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable = _ttoi(pptszResult[2]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable = _ttxoi(pptszResult[2]);
 		}
 		if (NULL != pptszResult[3])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate = _ttoi(pptszResult[3]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate = _ttxoi(pptszResult[3]);
 		}
 		if (NULL != pptszResult[4])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec = _ttoi(pptszResult[4]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec = _ttxoi(pptszResult[4]);
 		}
 		if (NULL != pptszResult[5])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth = _ttoi(pptszResult[5]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth = _ttxoi(pptszResult[5]);
 		}
 		if (NULL != pptszResult[6])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight = _ttoi(pptszResult[6]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight = _ttxoi(pptszResult[6]);
 		}
 		if (NULL != pptszResult[7])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate = _ttoi(pptszResult[7]);
+			pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate = _ttxoi(pptszResult[7]);
 		}
 		if (NULL != pptszResult[8])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable = _ttoi(pptszResult[8]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable = _ttxoi(pptszResult[8]);
 		}
 		if (NULL != pptszResult[9])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate = _ttoi(pptszResult[9]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate = _ttxoi(pptszResult[9]);
 		}
 		if (NULL != pptszResult[10])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec = _ttoi(pptszResult[10]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec = _ttxoi(pptszResult[10]);
 		}
 		if (NULL != pptszResult[11])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel = _ttoi(pptszResult[11]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel = _ttxoi(pptszResult[11]);
 		}
 		if (NULL != pptszResult[12])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate = _ttoi(pptszResult[12]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate = _ttxoi(pptszResult[12]);
 		}
 		if (NULL != pptszResult[13])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt = _ttoi(pptszResult[13]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt = _ttxoi(pptszResult[13]);
 		}
 		if (NULL != pptszResult[14])
 		{
-			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize = _ttoi(pptszResult[14]);
+			pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize = _ttxoi(pptszResult[14]);
 		}
 	}
 	DataBase_MySQL_FreeResult(xhSQL, xhResult);
@@ -237,13 +237,13 @@ bool CModuleDB_AVInfo::ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_Pr
 		DBModule_dwErrorCode = ERROR_MODULE_DATABASE_JT1078_PARAMENT;
 		return false;
 	}
-	TCHAR tszSQLQuery[4096];
-	TCHAR tszSQLTime[MAX_PATH];
+	XCHAR tszSQLQuery[4096];
+	XCHAR tszSQLTime[MAX_PATH];
 
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 	memset(tszSQLTime, '\0', MAX_PATH);
 
-	_stprintf_s(tszSQLQuery, _T("UPDATE DeviceList_AVInfo SET bVideo = %d,nVideoBit = %lld,enVCodec = %d,nWidth = %d,nHeight = %d,nFrameRate = %d,bAudio = %d,nAudioBit = %lld,enACodec = %d,nChannel = %d,nSampleRate = %d,nSampleFmt = %d,nFrameSize = %d,TimeUPdate = now() WHERE tszDeviceNumber = '%s'"), pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize, pSt_ProtocolStream->tszDeviceNumber);
+	_xstprintf(tszSQLQuery, _X("UPDATE DeviceList_AVInfo SET bVideo = %d,nVideoBit = %lld,enVCodec = %d,nWidth = %d,nHeight = %d,nFrameRate = %d,bAudio = %d,nAudioBit = %lld,enACodec = %d,nChannel = %d,nSampleRate = %d,nSampleFmt = %d,nFrameSize = %d,TimeUPdate = now() WHERE tszDeviceNumber = '%s'"), pSt_ProtocolStream->st_AVInfo.st_VideoInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nWidth, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nHeight, pSt_ProtocolStream->st_AVInfo.st_VideoInfo.nFrameRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.bEnable, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nBitRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.enAVCodec, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nChannel, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleRate, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nSampleFmt, pSt_ProtocolStream->st_AVInfo.st_AudioInfo.nFrameSize, pSt_ProtocolStream->tszDeviceNumber);
 
 	if (!DataBase_MySQL_Execute(xhSQL, tszSQLQuery))
 	{

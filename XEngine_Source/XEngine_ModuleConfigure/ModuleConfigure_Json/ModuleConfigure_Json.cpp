@@ -54,7 +54,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_JsonBuilder;
 	//读取配置文件所有内容到缓冲区
-	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
+	FILE* pSt_File = _xtfopen(lpszConfigFile, _X("rb"));
 	if (NULL == pSt_File)
 	{
 		Config_IsErrorOccur = true;
@@ -62,7 +62,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 		return false;
 	}
 	size_t nCount = 0;
-	TCHAR tszMsgBuffer[4096];
+	XCHAR tszMsgBuffer[4096];
 	while (1)
 	{
 		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
@@ -81,8 +81,8 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
 		return false;
 	}
-	_tcscpy(pSt_ServerConfig->tszSMSUrl, st_JsonRoot["tszSMSUrl"].asCString());
-	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->tszSMSUrl, st_JsonRoot["tszSMSUrl"].asCString());
+	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
 	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
 	//最大配置
@@ -117,9 +117,9 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	Json::Value st_JsonXSQL = st_JsonRoot["XSQL"];
 	pSt_ServerConfig->st_XSql.bEnable = st_JsonXSQL["bEnable"].asInt();
 	pSt_ServerConfig->st_XSql.nSQLPort = st_JsonXSQL["nSQLPort"].asInt();
-	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLAddr, st_JsonXSQL["tszSQLAddr"].asCString());
-	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSQL["tszSQLUser"].asCString());
-	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSQL["tszSQLPass"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLAddr, st_JsonXSQL["tszSQLAddr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSQL["tszSQLUser"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSQL["tszSQLPass"].asCString());
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{
@@ -184,7 +184,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, 
 	Json::Value st_JsonRoot;
 	Json::CharReaderBuilder st_JsonBuilder;
 
-	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
+	FILE* pSt_File = _xtfopen(lpszConfigFile, _X("rb"));
 	if (NULL == pSt_File)
 	{
 		Config_IsErrorOccur = true;
@@ -192,7 +192,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, 
 		return false;
 	}
 	int nCount = 0;
-	TCHAR tszMsgBuffer[4096];
+	XCHAR tszMsgBuffer[4096];
 	while (1)
 	{
 		int nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
@@ -210,7 +210,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, 
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
 		return false;
 	}
-	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
 	pSt_ServerConfig->nAudio = st_JsonRoot["nAudio"].asBool();
 	pSt_ServerConfig->nStreamPort = st_JsonRoot["nStreamPort"].asInt();
@@ -249,7 +249,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, 
 	Json::Value st_JsonXClient = st_JsonRoot["XClient"];
 	pSt_ServerConfig->st_XClient.nMaxConnect = st_JsonXClient["nMaxConnect"].asInt();
 	pSt_ServerConfig->st_XClient.nPort = st_JsonXClient["nPort"].asInt();
-	_tcscpy(pSt_ServerConfig->st_XClient.tszIPAddr, st_JsonXClient["tszIPAddr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XClient.tszIPAddr, st_JsonXClient["tszIPAddr"].asCString());
 
 	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
 	pSt_ServerConfig->st_XVer.pStl_ListVer = new list<string>;
@@ -297,7 +297,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile,
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_JsonBuilder;
 	//读取配置文件所有内容到缓冲区
-	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
+	FILE* pSt_File = _xtfopen(lpszConfigFile, _X("rb"));
 	if (NULL == pSt_File)
 	{
 		Config_IsErrorOccur = true;
@@ -305,7 +305,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile,
 		return false;
 	}
 	size_t nCount = 0;
-	TCHAR tszMsgBuffer[4096];
+	XCHAR tszMsgBuffer[4096];
 	while (1)
 	{
 		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
@@ -324,7 +324,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile,
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
 		return false;
 	}
-	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asBool();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
 

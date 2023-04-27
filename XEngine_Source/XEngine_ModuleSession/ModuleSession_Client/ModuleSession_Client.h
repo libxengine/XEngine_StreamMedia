@@ -12,8 +12,8 @@
 *********************************************************************/
 typedef struct
 {
-	TCHAR tszDeviceAddr[128];
-	TCHAR tszDeviceNumber[128];
+	XCHAR tszDeviceAddr[128];
+	XCHAR tszDeviceNumber[128];
 	int nChannel;
 	bool bLive;
 }MODULESESSION_CLIENT;
@@ -33,7 +33,7 @@ public:
 	bool ModuleSession_Client_Get(XNETHANDLE* pxhClient);
 	bool ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 	bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
-	bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
+	bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, XCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
 	bool ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 	bool ModuleSession_Client_Destory();
 protected:
