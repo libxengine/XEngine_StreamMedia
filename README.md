@@ -38,24 +38,31 @@ device -> XEngine_StreamMedia -> stream media service -> client
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine  
 
-#### 版本需求
-支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
+#### 快速部署
+git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git
+window执行XEngine_WINEnv.bat 脚本.
+Linux执行:sudo ./XEngine_LINEnv.sh -i 3
+macos执行:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用
 
 #### Linux
 Linux使用Makefile编译  
-UBUNTU20.04 x64或者CENTOS8 x64均可  
-
-#### MacOS
-使用makefile编译,控制台运行,需要mac 12以及以上版本
+UBUNTU22.04 或者 RockyLinux 9 x64均可  
 
 ###### 编译命令
 在XEngine_Source目录下执行命令  
 make 编译  
 make FLAGS=InstallAll 安装库程序  
 make FLAGS=CleanAll 清理编译  
+
+#### MacOS
+使用makefile编译,控制台运行,需要mac 13以及以上版本
+
+###### 编译命令
+参考Linux
+
 
 ## 使用说明
 
