@@ -17,6 +17,6 @@ public:
 	CModuleProtocol_Parse();
 	~CModuleProtocol_Parse();
 public:
-	BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszAVUrl);
+	bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR* ptszAVUrl);
 private:
 };

@@ -13,17 +13,17 @@
 typedef struct
 {
 	int nChannel;
-	BOOL bLive;
+	bool bLive;
 }MODULESESSION_SDKCLIENT;
 typedef struct
 {
-	TCHAR tszAVUrl[MAX_PATH];
-	TCHAR tszToken[MAX_PATH];
+	XCHAR tszAVUrl[MAX_PATH];
+	XCHAR tszToken[MAX_PATH];
 }MODULESESSION_FORWARDINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
+extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
 /*********************************************************************************
 *                          导出会话模块                                          *
 *********************************************************************************/
@@ -40,7 +40,7 @@ extern "C" DWORD ModuleSession_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient);
+extern "C" bool ModuleSession_Client_Create(XNETHANDLE xhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Get
 函数功能：获得一个可以使用的客户端句柄
@@ -54,7 +54,7 @@ extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient);
+extern "C" bool ModuleSession_Client_Get(XNETHANDLE * pxhClient);
 /********************************************************************
 函数名称：ModuleSession_Client_Exist
 函数功能：客户端是否存在
@@ -88,7 +88,7 @@ extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" bool ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_Insert
 函数功能：绑定插入一个客户端
@@ -122,7 +122,7 @@ extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDevi
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteAddr
 函数功能：通过IP地址删除绑定的设备
@@ -156,7 +156,7 @@ extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDevice
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
+extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient = NULL, XCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
 /********************************************************************
 函数名称：ModuleSession_Client_DeleteNumber
 函数功能：通过设备信息删除绑定信息
@@ -180,7 +180,7 @@ extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" bool ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /********************************************************************
 函数名称：ModuleSession_Client_Destory
 函数功能：销毁客户端会话管理器
@@ -189,7 +189,7 @@ extern "C" BOOL ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Client_Destory();
+extern "C" bool ModuleSession_Client_Destory();
 /********************************************************************
 函数名称：ModuleSession_Server_Create
 函数功能：创建一个服务器会话管理器
@@ -213,7 +213,7 @@ extern "C" BOOL ModuleSession_Client_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" bool ModuleSession_Server_Create(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /********************************************************************
 函数名称：ModuleSession_Server_Destroy
 函数功能：销毁一个管理器
@@ -237,7 +237,7 @@ extern "C" BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChann
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" bool ModuleSession_Server_Destroy(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /********************************************************************
 函数名称：ModuleSession_Server_SetPush
 函数功能：设置推送句柄
@@ -266,7 +266,7 @@ extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChan
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken);
+extern "C" bool ModuleSession_Server_SetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive, XHANDLE xhToken);
 /********************************************************************
 函数名称：ModuleSession_Server_GetPush
 函数功能：获取推送句柄
@@ -290,7 +290,7 @@ extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChan
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+extern "C" XHANDLE ModuleSession_Server_GetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
 *********************************************************************************/
@@ -317,7 +317,7 @@ extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay);
+extern "C" bool ModuleSession_Forward_Create(LPCXSTR lpszPlay, XHANDLE xhToken, LPCXSTR lpszSMSPlay);
 /********************************************************************
 函数名称：ModuleSession_Forward_Get
 函数功能：获取句柄绑定信息
@@ -331,7 +331,7 @@ extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, 
   意思：成功返回句柄,失败返回NULL
 备注：
 *********************************************************************/
-extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
+extern "C" XHANDLE ModuleSession_Forward_Get(LPCXSTR lpszPlay);
 /********************************************************************
 函数名称：ModuleSession_Forward_Delete
 函数功能：删除绑定句柄
@@ -345,7 +345,7 @@ extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
+extern "C" bool ModuleSession_Forward_Delete(LPCXSTR lpszPlay);
 /********************************************************************
 函数名称：ModuleSession_Forward_List
 函数功能：枚举当前播放列表
@@ -364,4 +364,4 @@ extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount);
+extern "C" bool ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount);

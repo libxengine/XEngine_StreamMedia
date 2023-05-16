@@ -12,10 +12,10 @@
 *********************************************************************/
 typedef struct
 {
-	TCHAR tszDeviceAddr[128];
-	TCHAR tszDeviceNumber[128];
+	XCHAR tszDeviceAddr[128];
+	XCHAR tszDeviceNumber[128];
 	int nChannel;
-	BOOL bLive;
+	bool bLive;
 }MODULESESSION_CLIENT;
 typedef struct
 {
@@ -29,16 +29,16 @@ public:
 	CModuleSession_Client();
 	~CModuleSession_Client();
 public:
-	BOOL ModuleSession_Client_Create(XHANDLE xhClient);
-	BOOL ModuleSession_Client_Get(XHANDLE* pxhClient);
-	BOOL ModuleSession_Client_Exist(XHANDLE* pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE* pxhClient = NULL, TCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, BOOL* pbLive = NULL);
-	BOOL ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Client_Destory();
+	bool ModuleSession_Client_Create(XNETHANDLE xhClient);
+	bool ModuleSession_Client_Get(XNETHANDLE* pxhClient);
+	bool ModuleSession_Client_Exist(XNETHANDLE* pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+	bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+	bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE* pxhClient = NULL, XCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
+	bool ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+	bool ModuleSession_Client_Destory();
 protected:
 private:
 	shared_mutex st_Locker;
 private:
-	unordered_map<XHANDLE, MODULESESSION_LIST*> stl_MapClient;
+	unordered_map<XNETHANDLE, MODULESESSION_LIST*> stl_MapClient;
 };

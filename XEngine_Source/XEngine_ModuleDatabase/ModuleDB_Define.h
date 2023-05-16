@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleDB_GetLastError(int *pInt_SysError = NULL);
+extern "C" XLONG ModuleDB_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
 /*                         导出的操作函数                               */
 /************************************************************************/
@@ -30,7 +30,7 @@ extern "C" DWORD ModuleDB_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
+extern "C" bool ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnector);
 /********************************************************************
 函数名称：ModuleDatabase_MySql_Destory
 函数功能：销毁MYSQL数据库资源链接
@@ -39,7 +39,7 @@ extern "C" BOOL ModuleDB_AVInfo_Init(DATABASE_MYSQL_CONNECTINFO* pSt_MySQLConnec
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_AVInfo_Destory();
+extern "C" bool ModuleDB_AVInfo_Destory();
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoInsert
 函数功能：音视频参数插入
@@ -53,7 +53,7 @@ extern "C" BOOL ModuleDB_AVInfo_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+extern "C" bool ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoQuery
 函数功能：音视频信息参数查询
@@ -67,7 +67,7 @@ extern "C" BOOL ModuleDB_AVInfo_InfoInsert(XENGINE_PROTOCOLSTREAM* pSt_ProtocolS
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
+extern "C" bool ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream = NULL);
 /********************************************************************
 函数名称：ModuleDB_AVInfo_InfoUPDate
 函数功能：更新音视频参数信息
@@ -81,4 +81,4 @@ extern "C" BOOL ModuleDB_AVInfo_InfoQuery(XENGINE_PROTOCOLSTREAM* pSt_ProtocolSt
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+extern "C" bool ModuleDB_AVInfo_InfoUPDate(XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);

@@ -54,15 +54,15 @@ CModuleProtocol_Packet::~CModuleProtocol_Packet()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCTSTR lpszMsgBuffer /* = NULL */, LPCTSTR lpszToken /* = NULL */)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCXSTR lpszMsgBuffer /* = NULL */, LPCXSTR lpszToken /* = NULL */)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonRoot;
 
@@ -81,8 +81,8 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, in
 		st_JsonRoot["token"] = lpszToken;
 	}
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
-	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
-	return TRUE;
+	_tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	return true;
 }
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Create
@@ -107,15 +107,15 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, in
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
 	memset(&st_ProcotolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
@@ -131,7 +131,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, 
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDEVICE);
 	memcpy(ptszMsgBuffer, &st_ProcotolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolDevice, sizeof(XENGINE_PROTOCOLDEVICE));
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Push
@@ -166,15 +166,15 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, int nMsgLen, int nMsgType)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, int nMsgLen, int nMsgType)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
 	memset(&st_ProcotolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
@@ -190,7 +190,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, in
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDEVICE);
 	memcpy(ptszMsgBuffer, &st_ProcotolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolDevice, sizeof(XENGINE_PROTOCOLDEVICE));
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Destroy
@@ -215,15 +215,15 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, in
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	XENGINE_PROTOCOLHDR st_ProcotolHdr;
 	memset(&st_ProcotolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
@@ -239,7 +239,7 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDEVICE);
 	memcpy(ptszMsgBuffer, &st_ProcotolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolDev, sizeof(XENGINE_PROTOCOLDEVICE));
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleProtocol_Packet_ForwardList
@@ -269,15 +269,15 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer,
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO*** pppSt_Forward, int nListCount)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO*** pppSt_Forward, int nListCount)
 {
-	ModuleProtocol_IsErrorOccur = FALSE;
+	ModuleProtocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		ModuleProtocol_IsErrorOccur = TRUE;
+		ModuleProtocol_IsErrorOccur = true;
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonArray;
@@ -296,6 +296,6 @@ BOOL CModuleProtocol_Packet::ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuf
 	st_JsonRoot["Array"] = st_JsonArray;
 	
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
-	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
-	return TRUE;
+	_tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	return true;
 }

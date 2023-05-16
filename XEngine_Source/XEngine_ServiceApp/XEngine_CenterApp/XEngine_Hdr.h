@@ -33,8 +33,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Define.h>
-#include <XEngine_Include/XEngine_StreamMedia/XClient_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/StreamClient_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/StreamClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
@@ -66,8 +66,8 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL bIsRun;
-extern XLOG xhLog;
+extern bool bIsRun;
+extern XHANDLE xhLog;
 //业务服务器
 extern XHANDLE xhCenterSocket;
 extern XHANDLE xhCenterHeart;
@@ -115,7 +115,7 @@ extern FILE* pSt_FileAudio;
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
-#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_XClient")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_StreamClient")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

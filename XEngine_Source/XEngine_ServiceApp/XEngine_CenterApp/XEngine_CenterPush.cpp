@@ -12,26 +12,26 @@
 *********************************************************************/
 XHTHREAD CALLBACK XEngine_CenterPush_CreateAVThread(XHANDLE xhToken, XENGINE_PROTOCOLDEVICE st_ProtocolDevice)
 {
-	TCHAR tszPushAddr[512];
+	XCHAR tszPushAddr[512];
 
 	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-	_stprintf(tszPushAddr, _T("%s/%s_%d_%d"), st_ServiceConfig.tszSMSUrl, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
+	_xstprintf(tszPushAddr, _X("%s/%s_%d_%d"), st_ServiceConfig.tszSMSUrl, st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive);
 
-	if (!XClient_FilePush_Input(xhToken))
+	if (!StreamClient_FilePush_Input(xhToken))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流创建事件,处理创建输入流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	if (!XClient_FilePush_Output(xhToken, tszPushAddr))
+	if (!StreamClient_FilePush_Output(xhToken, tszPushAddr))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建输出流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流创建事件,处理创建输出流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	if (!XClient_FilePush_Start(xhToken))
+	if (!StreamClient_FilePush_Start(xhToken))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("推流创建事件,处理创建启动流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流创建事件,处理创建启动流消息失败,设备ID：%s,设备通道：%d,流类型：%d,错误：%X"), st_ProtocolDevice.tszDeviceNumber, st_ProtocolDevice.nChannel, st_ProtocolDevice.bLive, StreamClient_GetLastError());
 		return 0;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("推流创建事件,处理完毕,推流地址:%s"), tszPushAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("推流创建事件,处理完毕,推流地址:%s"), tszPushAddr);
 	return 0;
 }

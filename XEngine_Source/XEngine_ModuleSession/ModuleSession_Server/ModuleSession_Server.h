@@ -21,12 +21,12 @@ public:
 	CModuleSession_Server();
 	~CModuleSession_Server();
 public:
-	BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
-	BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken);
-	XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive);
+	bool ModuleSession_Server_Create(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+	bool ModuleSession_Server_Destroy(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+	bool ModuleSession_Server_SetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive, XHANDLE xhToken);
+	XHANDLE ModuleSession_Server_GetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
 private:
 	shared_mutex st_Locker;
 private:
-	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>> stl_MapServer;
+	unordered_map<string, unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>> stl_MapServer;
 };

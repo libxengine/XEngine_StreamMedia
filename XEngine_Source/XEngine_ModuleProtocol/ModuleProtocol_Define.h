@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
+extern "C" XLONG ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
 /*                         导出的协议封装函数                           */
 /************************************************************************/
@@ -50,7 +50,7 @@ extern "C" DWORD ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL, LPCTSTR lpszToken = NULL);
+extern "C" bool ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMsgBuffer = NULL, LPCXSTR lpszToken = NULL);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Create
 函数功能：流媒体创建
@@ -74,7 +74,7 @@ extern "C" BOOL ModuleProtocol_Packet_Comm(TCHAR* ptszMsgBuffer, int* pInt_MsgLe
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
+extern "C" bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Push
 函数功能：推流协议
@@ -108,7 +108,7 @@ extern "C" BOOL ModuleProtocol_Packet_Create(TCHAR* ptszMsgBuffer, int* pInt_Msg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType);
+extern "C" bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Destroy
 函数功能：销毁流协议
@@ -132,7 +132,7 @@ extern "C" BOOL ModuleProtocol_Packet_Push(TCHAR* ptszMsgBuffer, int* pInt_MsgLe
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
+extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_ForwardList
 函数功能：转发流列表打包函数
@@ -161,7 +161,7 @@ extern "C" BOOL ModuleProtocol_Packet_Destroy(TCHAR* ptszMsgBuffer, int* pInt_Ms
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount);
+extern "C" bool ModuleProtocol_Packet_ForwardList(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount);
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/
@@ -188,4 +188,4 @@ extern "C" BOOL ModuleProtocol_Packet_ForwardList(TCHAR* ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ModuleProtocol_Parse_HTTPForward(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszAVUrl = NULL);
+extern "C" bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR * ptszAVUrl = NULL);

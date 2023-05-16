@@ -10,5 +10,5 @@
 //    Purpose:     配置文件
 //    History:
 *********************************************************************/
-BOOL JT1078App_Service_Parament(int argc, char** argv);
+bool JT1078App_Service_Parament(int argc, char** argv);
 void JT1078App_Service_ParamentHelp();

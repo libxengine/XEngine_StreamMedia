@@ -13,8 +13,8 @@
 //    Purpose:     导出实现
 //    History:
 *********************************************************************/
-BOOL Session_IsErrorOccur = FALSE;
-DWORD Session_dwErrorCode = 0;
+bool Session_IsErrorOccur = false;
+XLONG Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleSession_Client m_Client;
 CModuleSession_Server m_Server;
@@ -22,7 +22,7 @@ CModuleSession_Forward m_Forward;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD ModuleSession_GetLastError(int* pInt_SysError)
+extern "C" XLONG ModuleSession_GetLastError(int* pInt_SysError)
 {
 	if (NULL != pInt_SysError)
 	{
@@ -33,66 +33,66 @@ extern "C" DWORD ModuleSession_GetLastError(int* pInt_SysError)
 /*********************************************************************************
 *                          导出会话模块                                          *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_Client_Create(XHANDLE xhClient)
+extern "C" bool ModuleSession_Client_Create(XNETHANDLE xhClient)
 {
 	return m_Client.ModuleSession_Client_Create(xhClient);
 }
-extern "C" BOOL ModuleSession_Client_Get(XHANDLE * pxhClient)
+extern "C" bool ModuleSession_Client_Get(XNETHANDLE * pxhClient)
 {
 	return m_Client.ModuleSession_Client_Get(pxhClient);
 }
-extern "C" BOOL ModuleSession_Client_Exist(XHANDLE * pxhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" bool ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Client.ModuleSession_Client_Exist(pxhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_Insert(XHANDLE xhClient, LPCTSTR lpszDeviceAddr, LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Client.ModuleSession_Client_Insert(xhClient, lpszDeviceAddr, lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_DeleteAddr(LPCTSTR lpszDeviceAddr, XHANDLE * pxhClient, TCHAR * ptszDeviceNumber, int* pInt_Channel, BOOL * pbLive)
+extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient, XCHAR * ptszDeviceNumber, int* pInt_Channel, bool * pbLive)
 {
 	return m_Client.ModuleSession_Client_DeleteAddr(lpszDeviceAddr, pxhClient, ptszDeviceNumber, pInt_Channel, pbLive);
 }
-extern "C" BOOL ModuleSession_Client_DeleteNumber(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" bool ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Client.ModuleSession_Client_DeleteNumber(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Client_Destory()
+extern "C" bool ModuleSession_Client_Destory()
 {
 	return m_Client.ModuleSession_Client_Destory();
 }
-extern "C" BOOL ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" bool ModuleSession_Server_Create(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Server.ModuleSession_Server_Create(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" bool ModuleSession_Server_Destroy(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Server.ModuleSession_Server_Destroy(lpszDeviceNumber, nChannel, bLive);
 }
-extern "C" BOOL ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken)
+extern "C" bool ModuleSession_Server_SetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive, XHANDLE xhToken)
 {
 	return m_Server.ModuleSession_Server_SetPush(lpszDeviceNumber, nChannel, bLive, xhToken);
 }
-extern "C" XHANDLE ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+extern "C" XHANDLE ModuleSession_Server_GetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
 	return m_Server.ModuleSession_Server_GetPush(lpszDeviceNumber, nChannel, bLive);
 }
 /*********************************************************************************
 *                          流转发导出会话模块                                    *
 *********************************************************************************/
-extern "C" BOOL ModuleSession_Forward_Create(LPCTSTR lpszPlay, XHANDLE xhToken, LPCTSTR lpszSMSPlay)
+extern "C" bool ModuleSession_Forward_Create(LPCXSTR lpszPlay, XHANDLE xhToken, LPCXSTR lpszSMSPlay)
 {
 	return m_Forward.ModuleSession_Forward_Create(lpszPlay, xhToken, lpszSMSPlay);
 }
-extern "C" XHANDLE ModuleSession_Forward_Get(LPCTSTR lpszPlay)
+extern "C" XHANDLE ModuleSession_Forward_Get(LPCXSTR lpszPlay)
 {
 	return m_Forward.ModuleSession_Forward_Get(lpszPlay);
 }
-extern "C" BOOL ModuleSession_Forward_Delete(LPCTSTR lpszPlay)
+extern "C" bool ModuleSession_Forward_Delete(LPCXSTR lpszPlay)
 {
 	return m_Forward.ModuleSession_Forward_Delete(lpszPlay);
 }
-extern "C" BOOL ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount)
+extern "C" bool ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount)
 {
 	return m_Forward.ModuleSession_Forward_List(pppSt_Forward, pInt_ListCount);
 }

@@ -1,33 +1,23 @@
 CC = g++ -Wall -std=c++17 -fPIC
-SHAREFLAG = -shared
-SHAREDLL = so
+PLATFORM = linux
+PLATVER = 
+PLATDIR = 
+FILEEXT = 
+LIBFLAG = 
 RELEASE = 0
 UNICODE = 0
-INCLUDE = -I ./
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_Core
+LOADHDR = -I ./ 
+LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_Core
 LIB = -lXEngine_OPenSsl
-LIBEX = -ldl -lpthread
-LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = ModuleHelp_JT1078.o pch.o
-
-ifeq ($(OS),Windows_NT)
-else
-	ifeq ($(shell uname),Darwin)
-		SHAREDLL = dylib
-		SHAREFLAG = -dynamiclib
-		LOADSO = 
-	else
-		SHAREDLL = so
-		SHAREFLAG = -shared
-	endif
-endif
+LIBEX = 
+OBJECTS = ModuleHelp_JT1078.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c -O2 
+FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c
-DEBUG = -g
+FLAGS = -c -lc_p
+DEBUG = -g -pg 
 endif
 
 ifeq ($(UNICODE),1)
@@ -36,24 +26,46 @@ else
 UNICODE = 
 endif
 
+ifeq ($(PLATFORM),linux)
+	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
+		PLATVER = -D __CENTOS__
+		PLATDIR = XEngine_Linux/Centos
+	else
+		PLATVER = -D __UBUNTU__
+		PLATDIR = XEngine_Linux/Ubuntu
+	endif
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX = -lpthread -lrt -ldl
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+else ifeq ($(PLATFORM),mac)
+	CC += -Wno-deprecated-declarations
+	PLATVER = -D __MACOS__
+	PLATDIR = XEngine_Mac
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	LIBEX = -lpthread -ldl
+	LOADBIN = -Wl,-rpath,@loader_path/./
+endif
 
-all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libXEngine_ModuleHelp.$(SHAREDLL) $(SHAREFLAG) -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+
+all:$(OBJECTS)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModuleHelp.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 ModuleHelp_JT1078.o:./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp 
 
 pch.o:./pch.cpp                 		       	    
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModuleHelp.$(SHAREDLL)
-	cp ./libXEngine_ModuleHelp.$(SHAREDLL) ../../XEngine_Release/libXEngine_ModuleHelp.$(SHAREDLL)
+InstallSo:./libXEngine_ModuleHelp.$(FILEEXT)
+	cp ./libXEngine_ModuleHelp.$(FILEEXT) ../../XEngine_Release/libXEngine_ModuleHelp.$(FILEEXT)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:                                               
 	rm *.o
 CleanMk:                             
-	rm *.$(SHAREDLL)                        
+	rm *.$(FILEEXT)                        

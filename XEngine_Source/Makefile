@@ -1,8 +1,7 @@
 RELEASE = 0
 UNICODE = 0
-#编译的选项参数
-FLAGS = RELEASE=$(RELEASE)
-
+PLATFORM=linux
+FLAGS= 
 #要编译的模块
 THIRDPART_MODULE_JSONCPP = ./XEngine_ThirdPart/jsoncpp
 
@@ -24,30 +23,22 @@ XENGINE_MODULES = libjsoncpp.so                                   \
 MakeAll:$(XENGINE_MODULES)
 
 libjsoncpp.so:
-	make -C $(THIRDPART_MODULE_JSONCPP) $(FLAGS)
+	make -C $(THIRDPART_MODULE_JSONCPP) PLATFORM=$(PLATFORM) $(FLAGS)
 
 libXEngine_ModuleConfigure.so:
-	make -C $(MODULE_CONFIGURE_PATH) $(FLAGS)
+	make -C $(MODULE_CONFIGURE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleDatabase.so:
-	make -C $(MODULE_DATABASE_PATH) $(FLAGS)
+	make -C $(MODULE_DATABASE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleHelp.so:
-	make -C $(MODULE_HELP_PATH) $(FLAGS)
+	make -C $(MODULE_HELP_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleProtocol.so:
-	make -C $(MODULE_PROTOCOL_PATH) $(FLAGS)
+	make -C $(MODULE_PROTOCOL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleSession.so:
-	make -C $(MODULE_SESSION_PATH) $(FLAGS)
+	make -C $(MODULE_SESSION_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 
 XEngine_JT1078App.exe:
-	make -C $(APP_JT1078_PATH) $(FLAGS)
+	make -C $(APP_JT1078_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 XEngine_CenterApp.exe:
-	make -C $(APP_CENTER_PATH) $(FLAGS)
+	make -C $(APP_CENTER_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 XEngine_ForwardApp.exe:
-	make -C $(APP_FORWARD_PATH) $(FLAGS)
-
-SetFlags_Install:
-	export FLAGS=InstallAll
-InstallAll:SetFlags_Install $(NETENGINE_LIB) 
- 
-SetFlags_Clean:
-	export FLAGS=CleanAll
-CleanAll:SetFlags_Clean $(NETENGINE_LIB) 
+	make -C $(APP_FORWARD_PATH) PLATFORM=$(PLATFORM) $(FLAGS)

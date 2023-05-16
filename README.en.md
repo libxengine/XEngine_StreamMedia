@@ -36,24 +36,31 @@ you have to install xengine before complie,You can refer to its Readme document
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine  
 
-#### Version requirements
-Support WINDOWS 7SP1 and LINUX (UBUNT20.04, CENTOS8) above system  
+#### fast to deployment
+git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git
+window Exection XEngine_WINEnv.bat
+Linux Exection:sudo ./XEngine_LINEnv.sh -i 3
+Macos Exection:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 use vs open and complie  
 
 #### Linux
 Linux use Makefile complie  
-UBUNTU20.04 x64 or CENTOS8 x64  
-
-#### MacOS
-Linux use Makefile to complie,terminal exection,Requires mac 12 and above 
+UBUNTU22.04 x64 or RockyLinux 9 x64  
 
 ##### Compile Command
 execute command in XEngine_Source path   
 make complie  
 make FLAGS=InstallAll Install File  
 make FLAGS=CleanAll Clear Complie  
+
+#### MacOS
+Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
+
+##### Compile Command
+refer to linux
+
 
 ## Use
 

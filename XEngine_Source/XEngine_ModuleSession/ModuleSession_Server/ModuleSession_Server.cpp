@@ -43,32 +43,32 @@ CModuleSession_Server::~CModuleSession_Server()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+bool CModuleSession_Server::ModuleSession_Server_Create(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == lpszDeviceNumber)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	//申请内存
 	SESSION_RTPPACKET* pSt_RTPPacket = new SESSION_RTPPACKET;
 	if (NULL == pSt_RTPPacket)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
-		return FALSE;
+		return false;
 	}
 	//是否存在
 	st_Locker.lock();
-	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapIteratorDevice = stl_MapServer.find(lpszDeviceNumber);
+	unordered_map<string, unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>>::iterator stl_MapIteratorDevice = stl_MapServer.find(lpszDeviceNumber);
 	if (stl_MapIteratorDevice == stl_MapServer.end())
 	{
 		//不存在就创建
-		unordered_map<BOOL, SESSION_RTPPACKET*> stl_MapLive;
-		unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>> stl_MapChannel;
+		unordered_map<bool, SESSION_RTPPACKET*> stl_MapLive;
+		unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>> stl_MapChannel;
 
 		stl_MapLive.insert(make_pair(bLive, pSt_RTPPacket));
 		stl_MapChannel.insert(make_pair(nChannel, stl_MapLive));
@@ -77,32 +77,32 @@ BOOL CModuleSession_Server::ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber
 	else
 	{
 		//存在,需要判断
-		unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapIteratorChannel = stl_MapIteratorDevice->second.find(nChannel);
+		unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>::iterator stl_MapIteratorChannel = stl_MapIteratorDevice->second.find(nChannel);
 		if (stl_MapIteratorChannel == stl_MapIteratorDevice->second.end())
 		{
-			unordered_map<BOOL, SESSION_RTPPACKET*> stl_MapLive;
+			unordered_map<bool, SESSION_RTPPACKET*> stl_MapLive;
 			stl_MapLive.insert(make_pair(bLive, pSt_RTPPacket));
 
 			stl_MapIteratorDevice->second.insert(make_pair(nChannel, stl_MapLive));
 		}
 		else
 		{
-			unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapIteratorLive = stl_MapIteratorChannel->second.find(bLive);
+			unordered_map<bool, SESSION_RTPPACKET*>::iterator stl_MapIteratorLive = stl_MapIteratorChannel->second.find(bLive);
 			if (stl_MapIteratorLive == stl_MapIteratorChannel->second.end())
 			{
 				stl_MapIteratorChannel->second.insert(make_pair(bLive, pSt_RTPPacket));
 			}
 			else
 			{
-				Session_IsErrorOccur = TRUE;
+				Session_IsErrorOccur = true;
 				Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_EXIST;
 				st_Locker.unlock();
-				return FALSE;
+				return false;
 			}
 		}
 	}
 	st_Locker.unlock();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Server_Destroy
@@ -127,43 +127,43 @@ BOOL CModuleSession_Server::ModuleSession_Server_Create(LPCTSTR lpszDeviceNumber
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+bool CModuleSession_Server::ModuleSession_Server_Destroy(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == lpszDeviceNumber)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	//设备编号是否存在
 	st_Locker.lock();
-	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapIteratorDevice = stl_MapServer.find(lpszDeviceNumber);
+	unordered_map<string, unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>>::iterator stl_MapIteratorDevice = stl_MapServer.find(lpszDeviceNumber);
 	if (stl_MapIteratorDevice == stl_MapServer.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock();
-		return FALSE;
+		return false;
 	}
 	//通道是否存在
-	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapIteratorChannel = stl_MapIteratorDevice->second.find(nChannel);
+	unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>::iterator stl_MapIteratorChannel = stl_MapIteratorDevice->second.find(nChannel);
 	if (stl_MapIteratorChannel == stl_MapIteratorDevice->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock();
-		return FALSE;
+		return false;
 	}
 	//直播还是录像
-	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapIteratorLive = stl_MapIteratorChannel->second.find(bLive);
+	unordered_map<bool, SESSION_RTPPACKET*>::iterator stl_MapIteratorLive = stl_MapIteratorChannel->second.find(bLive);
 	if (stl_MapIteratorLive == stl_MapIteratorChannel->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock();
-		return FALSE;
+		return false;
 	}
 
 	delete stl_MapIteratorLive->second;
@@ -179,7 +179,7 @@ BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumbe
 		stl_MapServer.erase(stl_MapIteratorDevice);
 	}
 	st_Locker.unlock();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Server_SetPush
@@ -209,44 +209,44 @@ BOOL CModuleSession_Server::ModuleSession_Server_Destroy(LPCTSTR lpszDeviceNumbe
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive, XHANDLE xhToken)
+bool CModuleSession_Server::ModuleSession_Server_SetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive, XHANDLE xhToken)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == lpszDeviceNumber)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	st_Locker.lock_shared();
-	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
+	unordered_map<string, unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
 	if (stl_MapDeviceIterator == stl_MapServer.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
-	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
+	unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
 	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
-	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
+	unordered_map<bool, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
 	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	stl_MapLiveIterator->second->xhToken = xhToken;
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_Server_GetPush
@@ -276,37 +276,37 @@ BOOL CModuleSession_Server::ModuleSession_Server_SetPush(LPCTSTR lpszDeviceNumbe
   意思：返回获取的信息
 备注：
 *********************************************************************/
-XHANDLE CModuleSession_Server::ModuleSession_Server_GetPush(LPCTSTR lpszDeviceNumber, int nChannel, BOOL bLive)
+XHANDLE CModuleSession_Server::ModuleSession_Server_GetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == lpszDeviceNumber)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return NULL;
 	}
 	st_Locker.lock_shared();
-	unordered_map<string, unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
+	unordered_map<string, unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>>::iterator stl_MapDeviceIterator = stl_MapServer.find(lpszDeviceNumber);
 	if (stl_MapDeviceIterator == stl_MapServer.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTDEVICE;
 		st_Locker.unlock_shared();
 		return NULL;
 	}
-	unordered_map<int, unordered_map<BOOL, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
+	unordered_map<int, unordered_map<bool, SESSION_RTPPACKET*>>::iterator stl_MapChannelIterator = stl_MapDeviceIterator->second.find(nChannel);
 	if (stl_MapChannelIterator == stl_MapDeviceIterator->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTCHANNEL;
 		st_Locker.unlock_shared();
 		return NULL;
 	}
-	unordered_map<BOOL, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
+	unordered_map<bool, SESSION_RTPPACKET*>::iterator stl_MapLiveIterator = stl_MapChannelIterator->second.find(bLive);
 	if (stl_MapLiveIterator == stl_MapChannelIterator->second.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTLIVE;
 		st_Locker.unlock_shared();
 		return NULL;
