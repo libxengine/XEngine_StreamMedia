@@ -1,3 +1,17 @@
+XEngine_StreamMedia V1.4.1.1001
+
+更新:匹配XEngine V8.x版本
+优化:makefile   
+修改:会话客户端句柄类型
+修改:开源版权
+修正:jt1078服务退出没有释放客户端的问题
+
+update:match xengine v8.x
+improved:Makefile
+modify:session client handle type to XNETHANDLE from XHANDLE
+modify:change LICENSE
+fixed:not free client when exit for jt1078 app
+=======================================================
 XEngine_StreamMedia V1.4.0.1001
 
 删除:SDK服务程序,不在需要
