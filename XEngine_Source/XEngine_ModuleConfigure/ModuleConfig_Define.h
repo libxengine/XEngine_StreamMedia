@@ -19,18 +19,25 @@ typedef struct tag_XEngine_ServiceConfig
 	XCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
 	bool bDeamon;                             //是否以守护进程启动,LINUX有效
 	bool bDebug;                              //是否使用DEBUG
-	int nCenterPort;                          //业务端口
+	int nHttpPort;                            //API接口服务
+	int nStreamPort;                          //RTMP标准推流服务
+	int nCenterPort;                          //X协议推流服务
+	int nJT1078Port;                          //JT1078协议流支持
 	struct
 	{
 		int nMaxClient;                       //最大客户端个数
 		int nMaxQueue;                        //最大队列个数
 		int nIOThread;                        //网络IO线程数
+		int nHTTPThread;                      //API接口任务处理线程数
 		int nCenterThread;                    //业务任务处理线程数
+		int nJT1078Thread;
 	}st_XMax;
 	struct
 	{
 		int nTimeCheck;                       //检测次数
-		int nCenterTimeOut;                   //业务超时时间
+		int nHTTPTimeout;                     //HTTP超时时间
+		int nCenterTimeout;                   //业务超时时间
+		int nJT1078Timeout;
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
@@ -57,61 +64,6 @@ typedef struct tag_XEngine_ServiceConfig
 		list<string> *pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_SERVICECONFIG;
-//JT1078服务配置文件
-typedef struct 
-{
-	XCHAR tszIPAddr[64];                      //本机IP地址
-	bool bDeamon;                             //是否使用守护进程
-	int nAudio;                               //音频所适应通道,0不启用
-	int nStreamPort;                          //直播流端口
-	int nRecordPort;                          //录像流端口
-	struct
-	{
-		int nMaxClient;                       //最大客户端个数
-		int nMaxQueue;                        //队列最大个数
-		int nIOThread;                        //网络线程池个数
-		int nStreamThread;                    //直播流线程个数
-		int nRecordThread;                    //录像流线程个数
-	}st_XMax;
-	struct
-	{
-		int nTimeCheck;                       //检测次数
-		int nStreamTimeout;                   //直播超时时间
-		int nRecordTimeout;                   //录像超时时间
-	}st_XTime;
-	struct
-	{
-		XCHAR tszIPAddr[128];                 //服务器地址
-		int nPort;                            //服务器端口
-		int nMaxConnect;                      //最大连接个数
-	}st_XClient;
-	struct
-	{
-		list<string>* pStl_ListVer;           //版本列表
-	}st_XVer;
-}XENGINE_JT1078CONFIG;
-typedef struct
-{
-	XCHAR tszIPAddr[64];                      //本机IP地址
-	bool bDeamon;                             //是否使用守护进程
-	int nHttpPort;                            //HTTP服务端口
-	struct
-	{
-		int nMaxClient;                       //最大客户端个数
-		int nMaxQueue;                        //队列最大个数
-		int nIOThread;                        //网络线程池个数
-		int nHTTPThread;                      //HTTP任务处理线程数
-	}st_XMax;
-	struct
-	{
-		int nTimeCheck;                       //检测次数
-		int nHTTPTimeOut;                     //HTTP超时时间
-	}st_XTime;
-	struct
-	{
-		list<string>* pStl_ListVer;           //版本列表
-	}st_XVer;
-}XENGINE_FORWARDCONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -138,41 +90,3 @@ extern "C" XLONG ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
 备注：
 *********************************************************************/
 extern "C" bool ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
-/********************************************************************
-函数名称：ModuleConfigure_Json_JT1078
-函数功能：读取1078配置文件
- 参数.一：lpszConfigFile
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要读取的配置文件
- 参数.二：pSt_ServerConfig
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出服务配置信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
-/********************************************************************
-函数名称：ModuleConfigure_Json_Forward
-函数功能：读取JSON配置文件
- 参数.一：lpszConfigFile
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要读取的配置文件
- 参数.二：pSt_ServerConfig
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出SDK服务配置信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);

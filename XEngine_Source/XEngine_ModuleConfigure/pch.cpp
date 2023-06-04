@@ -33,11 +33,3 @@ extern "C" bool ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVIC
 {
 	return m_ConfigJson.ModuleConfigure_Json_File(lpszConfigFile, pSt_ServerConfig);
 }
-extern "C" bool ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, XENGINE_JT1078CONFIG * pSt_ServerConfig)
-{
-	return m_ConfigJson.ModuleConfigure_Json_JT1078(lpszConfigFile, pSt_ServerConfig);
-}
-extern "C" bool ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile, XENGINE_FORWARDCONFIG * pSt_ServerConfig)
-{
-	return m_ConfigJson.ModuleConfigure_Json_Forward(lpszConfigFile, pSt_ServerConfig);
-}
