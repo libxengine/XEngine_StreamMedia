@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\StreamMedia_PullStream">
+      <UniqueIdentifier>{a2bd9cae-c8d8-47a1-9fc2-21a48d2994f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\StreamMedia_PullStream">
+      <UniqueIdentifier>{a67dad06-a9d4-4c83-aad6-1263c4c2daeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\StreamMedia_PushStream">
+      <UniqueIdentifier>{2ca8b743-2362-40f0-8277-750db0664c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\StreamMedia_PushStream">
+      <UniqueIdentifier>{483f3dbf-574e-40d3-926c-7800af8128d4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="XEngine_StreamMediaApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XEngine_Configure.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XEngine_HttpTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XEngine_Network.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamMedia_PushStream\PushStream_CenterTask.cpp">
+      <Filter>源文件\StreamMedia_PushStream</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp">
+      <Filter>源文件\StreamMedia_PushStream</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="XEngine_Configure.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_Hdr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_HttpTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XEngine_Network.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_PushStream\PushStream_CenterTask.h">
+      <Filter>头文件\StreamMedia_PushStream</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h">
+      <Filter>头文件\StreamMedia_PushStream</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
