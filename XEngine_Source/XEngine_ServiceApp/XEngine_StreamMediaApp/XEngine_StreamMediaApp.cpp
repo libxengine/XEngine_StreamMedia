@@ -37,11 +37,22 @@ void ServiceApp_Stop(int signo)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("服务器退出..."));
 		bIsRun = false;
-		//销毁HTTP资源
+		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
+		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
+		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
+		HelpComponents_Packets_Destory(xhCenterPacket);
+		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
+		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
+		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
 	}
@@ -250,10 +261,10 @@ int main(int argc, char** argv)
 		xhJT1078Pkt = HelpComponents_PKTCustom_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nJT1078Thread);
 		if (NULL == xhJT1078Pkt)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，初始化实时端流包管理器失败，错误：%lX"), Packets_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化实时端流包管理器失败,错误：%lX"), Packets_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化实时端流包管理器成功,最大队列:%d,最大线程:%d"), st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nJT1078Thread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化实时端流包管理器成功,最大队列:%d,最大线程:%d"), st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nJT1078Thread);
 		//协议头大小.需要加上长度字段
 		HelpComponents_PKTCustom_SetHdrEx(xhJT1078Pkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XSHOT));
 		//如果packet == 4,透传,没有时间戳
@@ -268,24 +279,24 @@ int main(int argc, char** argv)
 			xhJT1078Heart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nJT1078Timeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_JT1078HBLeave);
 			if (NULL == xhJT1078Heart)
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，初始化实时端心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化实时端心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化实时端心跳管理服务成功，检测时间:%d"), st_ServiceConfig.st_XTime.nJT1078Timeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化实时端心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nJT1078Timeout);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，实时端心跳管理服务没有启用!"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,实时端心跳管理服务没有启用!"));
 		}
 		xhJT1078Socket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
 		if (NULL == xhJT1078Socket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务器中，启动实时端网络服务失败，错误：%lX"), NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务器中,启动实时端网络服务失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动实时端网络服务成功，端口：%d"), st_ServiceConfig.nStreamPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动实时端网络服务成功,端口：%d"), st_ServiceConfig.nStreamPort);
 		NetCore_TCPXCore_RegisterCallBackEx(xhJT1078Socket, Network_Callback_JT1078Login, Network_Callback_JT1078Recv, Network_Callback_JT1078Leave);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册实时端网络服务事件成功！"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册实时端网络服务事件成功！"));
 
 		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListJT1078Param, st_ServiceConfig.st_XMax.nJT1078Thread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nJT1078Thread; i++)
@@ -299,10 +310,10 @@ int main(int argc, char** argv)
 		xhJT1078Pool = ManagePool_Thread_NQCreate(&ppSt_ListJT1078Param, st_ServiceConfig.st_XMax.nJT1078Thread);
 		if (NULL == xhJT1078Pool)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动实时端处理线程池失败，错误：%d"), errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动实时端处理线程池失败,错误：%d"), errno);
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动实时端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动实时端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
@@ -317,11 +328,22 @@ XENGINE_SERVICEAPP_EXIT:
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("有服务启动失败,服务器退出..."));
 		bIsRun = false;
-		//销毁HTTP资源
+		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
+		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
+		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
+		HelpComponents_Packets_Destory(xhCenterPacket);
+		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
+		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
+		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
 	}

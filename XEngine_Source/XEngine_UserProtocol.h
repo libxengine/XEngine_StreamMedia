@@ -11,6 +11,17 @@
 //    History:
 *********************************************************************/
 /*********************************************************************
+					    客户端类型定义
+*********************************************************************/
+typedef enum
+{
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP = 0x00,
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_STREAM = 0x01,
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER = 0x02,
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 = 0x03,
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV = 0x04
+}ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE;
+/*********************************************************************
 						操作类型定义
 *********************************************************************/
 typedef enum
