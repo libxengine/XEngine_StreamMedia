@@ -35,21 +35,17 @@ extern "C" bool ModuleProtocol_Packet_Comm(XCHAR * ptszMsgBuffer, int* pInt_MsgL
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Comm(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer, lpszToken);
 }
-extern "C" bool ModuleProtocol_Packet_Create(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice)
+extern "C" bool ModuleProtocol_Packet_Create(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
 {
-	return m_ProtocolPacket.ModuleProtocol_Packet_Create(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice);
+	return m_ProtocolPacket.ModuleProtocol_Packet_Create(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolStream);
 }
-extern "C" bool ModuleProtocol_Packet_Push(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType)
+extern "C" bool ModuleProtocol_Packet_Push(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream, int nMsgLen, int nMsgType)
 {
-	return m_ProtocolPacket.ModuleProtocol_Packet_Push(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDevice, nMsgLen, nMsgType);
+	return m_ProtocolPacket.ModuleProtocol_Packet_Push(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolStream, nMsgLen, nMsgType);
 }
-extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDev)
+extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream)
 {
-	return m_ProtocolPacket.ModuleProtocol_Packet_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolDev);
-}
-extern "C" bool ModuleProtocol_Packet_ForwardList(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount)
-{
-	return m_ProtocolPacket.ModuleProtocol_Packet_ForwardList(ptszMsgBuffer, pInt_MsgLen, pppSt_Forward, nListCount);
+	return m_ProtocolPacket.ModuleProtocol_Packet_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolStream);
 }
 /************************************************************************/
 /*                         导出的协议解析函数                           */

@@ -18,9 +18,9 @@ public:
 	~CModuleProtocol_Packet();
 public:
 	bool ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMsgBuffer = NULL, LPCXSTR lpszToken = NULL);
-	bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
-	bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice, int nMsgLen, int nMsgType);
-	bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
-	bool ModuleProtocol_Packet_ForwardList(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO*** pppSt_Forward, int nListCount);
+public:
+	bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+	bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream, int nMsgLen, int nMsgType);
+	bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
 private:
 };
