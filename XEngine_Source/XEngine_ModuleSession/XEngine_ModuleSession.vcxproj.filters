@@ -31,6 +31,12 @@
     <Filter Include="源文件\ModuleSession_Forward">
       <UniqueIdentifier>{e8555e72-cbd4-4798-8bd2-1af9cb281616}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\ModuleSession_PushStream">
+      <UniqueIdentifier>{dbda243c-26fe-4c80-93bb-41a745162cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleSession_PushStream">
+      <UniqueIdentifier>{42c189e0-b5fc-4515-8424-ce62eb3d5d87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -54,6 +60,9 @@
     <ClInclude Include="ModuleSession_Forward\ModuleSession_Forward.h">
       <Filter>头文件\ModuleSession_Forward</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleSession_PushStream\ModuleSession_PushStream.h">
+      <Filter>头文件\ModuleSession_PushStream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -70,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="ModuleSession_Forward\ModuleSession_Forward.cpp">
       <Filter>源文件\ModuleSession_Forward</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleSession_PushStream\ModuleSession_PushStream.cpp">
+      <Filter>源文件\ModuleSession_PushStream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

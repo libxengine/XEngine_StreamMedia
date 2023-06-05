@@ -18,6 +18,9 @@
 #include <string.h>
 #include <errno.h>
 #include <list>
+#include <string>
+#include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <shared_mutex>
 using namespace std;
@@ -42,6 +45,12 @@ using namespace std;
 *********************************************************************/
 extern bool Session_IsErrorOccur;
 extern XLONG Session_dwErrorCode;
+
+#ifdef _UNICODE
+typedef wstring xstring;
+#else
+typedef string xstring;
+#endif
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")

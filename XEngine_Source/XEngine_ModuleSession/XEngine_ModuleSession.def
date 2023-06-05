@@ -20,3 +20,9 @@ EXPORTS
 	ModuleSession_Forward_Get
 	ModuleSession_Forward_Delete
 	ModuleSession_Forward_List
+
+	ModuleSession_PushStream_Create
+	ModuleSession_PushStream_Destroy
+	ModuleSession_PushStream_GetStreamForAddr
+	ModuleSession_PushStream_Send
+	ModuleSession_PushStream_Recv

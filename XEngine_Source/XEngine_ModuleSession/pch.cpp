@@ -2,6 +2,7 @@
 #include "ModuleSession_Server/ModuleSession_Server.h"
 #include "ModuleSession_Client/ModuleSession_Client.h"
 #include "ModuleSession_Forward/ModuleSession_Forward.h"
+#include "ModuleSession_PushStream/ModuleSession_PushStream.h"
 /********************************************************************
 //    Created:     2022/04/25  10:21:36
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\pch.cpp
@@ -19,6 +20,7 @@ XLONG Session_dwErrorCode = 0;
 CModuleSession_Client m_Client;
 CModuleSession_Server m_Server;
 CModuleSession_Forward m_Forward;
+CModuleSession_PushStream m_PushStream;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -95,4 +97,25 @@ extern "C" bool ModuleSession_Forward_Delete(LPCXSTR lpszPlay)
 extern "C" bool ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount)
 {
 	return m_Forward.ModuleSession_Forward_List(pppSt_Forward, pInt_ListCount);
+}
+
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream)
+{
+	return m_PushStream.ModuleSession_PushStream_Create(lpszSMSAddr, xhFLVStream);
+}
+extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszSMSAddr)
+{
+	return m_PushStream.ModuleSession_PushStream_Destroy(lpszSMSAddr);
+}
+extern "C" bool ModuleSession_PushStream_GetStreamForAddr(LPCXSTR lpszSMSAddr, XNETHANDLE * pxhFLVStream)
+{
+	return m_PushStream.ModuleSession_PushStream_GetStreamForAddr(lpszSMSAddr, pxhFLVStream);
+}
+extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszSMSAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType)
+{
+	return m_PushStream.ModuleSession_PushStream_Send(lpszSMSAddr, lpszMsgBuffer, nMsgLen, nAVType, nFrameType);
+}
+extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszSMSAddr, XCHAR * *pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType)
+{
+	return m_PushStream.ModuleSession_PushStream_Recv(lpszSMSAddr, pptszMsgBuffer, pInt_MsgLen, pInt_AVType, pInt_FrameType);
 }

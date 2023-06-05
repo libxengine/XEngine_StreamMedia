@@ -166,6 +166,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModuleSession_Client\ModuleSession_Client.h" />
     <ClInclude Include="ModuleSession_Forward\ModuleSession_Forward.h" />
+    <ClInclude Include="ModuleSession_PushStream\ModuleSession_PushStream.h" />
     <ClInclude Include="ModuleSession_Server\ModuleSession_Server.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ModuleSession_Define.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ModuleSession_Client\ModuleSession_Client.cpp" />
     <ClCompile Include="ModuleSession_Forward\ModuleSession_Forward.cpp" />
+    <ClCompile Include="ModuleSession_PushStream\ModuleSession_PushStream.cpp" />
     <ClCompile Include="ModuleSession_Server\ModuleSession_Server.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
