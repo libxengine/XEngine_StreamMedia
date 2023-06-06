@@ -75,12 +75,17 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Create
 函数功能：创建一个推流会话管理器
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入推流地址
- 参数.二：xhFLVStream
+  意思：输入客户端地址
+ 参数.二：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入流媒体ID
+ 参数.三：xhFLVStream
   In/Out：In
   类型：整数型
   可空：N
@@ -90,11 +95,11 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Destroy
 函数功能：销毁一个管理器
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -104,16 +109,35 @@ extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszSMSAddr, XNETHANDLE 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszSMSAddr);
+extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 /********************************************************************
-函数名称：ModuleSession_PushStream_GetStreamForAddr
-函数功能：通过地址获取流句柄
- 参数.一：lpszSMSAddr
+函数名称：ModuleSession_PushStream_GetAddrForAddr
+函数功能：通过地址获取流地址
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入地址
- 参数.二：pxhFLVStream
+  意思：输入客户端地址
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetTokenForAddr
+函数功能：通过地址获取流句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：pxhToken
   In/Out：Out
   类型：句柄
   可空：N
@@ -123,11 +147,59 @@ extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszSMSAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_GetStreamForAddr(LPCXSTR lpszSMSAddr, XNETHANDLE* pxhFLVStream);
+extern "C" bool ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
+/********************************************************************
+函数名称：ModuleSession_PushStream_SetHDRBuffer
+函数功能：设置流ID的缓存头
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要缓存的数据
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓存大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetHDRBuffer
+函数功能：获取流ID的缓存头
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszMsgBuffer
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出获取到的数据
+ 参数.三：pInt_MsgLen
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出数据大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Send
 函数功能：投递一段数据给会话管理器
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -157,11 +229,11 @@ extern "C" bool ModuleSession_PushStream_GetStreamForAddr(LPCXSTR lpszSMSAddr, X
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszSMSAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
+extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Recv
 函数功能：获取缓冲区队列数据
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -191,16 +263,16 @@ extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszSMSAddr, LPCXSTR lpszM
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszSMSAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
+extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_ClientInsert
 函数功能：客户端插入
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入要操作的流
- 参数.二：lpszClientAddr
+ 参数.二：lpszPullAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -210,16 +282,16 @@ extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszSMSAddr, XCHAR** pptsz
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr);
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
 /********************************************************************
 函数名称：ModuleSession_PushStream_ClientDelete
 函数功能：客户端删除
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入要操作的流
- 参数.二：lpszClientAddr
+ 参数.二：lpszPullAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -229,11 +301,11 @@ extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszSMSAddr, LPCXS
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr);
+extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
 /********************************************************************
 函数名称：ModuleSession_PushStream_ClientList
 函数功能：客户端获取
- 参数.一：lpszSMSAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -248,4 +320,4 @@ extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszSMSAddr, LPCXS
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszSMSAddr, list<xstring>* pStl_ListClient);
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>* pStl_ListClient);

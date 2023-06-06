@@ -20,8 +20,10 @@ typedef struct
 
 typedef struct
 {
+	XCHAR tszMsgBuffer[2048];              //缓存的头
 	XCHAR tszSMSAddr[MAX_PATH];
 	XNETHANDLE xhFLVStream;
+	int nMsgLen;                           //缓冲头大小
 
 	unique_ptr<mutex> st_MSGLocker;
 	unique_ptr<mutex> st_ClientLocker;
@@ -36,15 +38,18 @@ public:
 	CModuleSession_PushStream();
 	~CModuleSession_PushStream();
 public:
-	bool ModuleSession_PushStream_Create(LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
-	bool ModuleSession_PushStream_Destroy(LPCXSTR lpszSMSAddr);
-	bool ModuleSession_PushStream_GetStreamForAddr(LPCXSTR lpszSMSAddr, XNETHANDLE* pxhFLVStream);
-	bool ModuleSession_PushStream_Send(LPCXSTR lpszSMSAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
-	bool ModuleSession_PushStream_Recv(LPCXSTR lpszSMSAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
+	bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
+	bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
+	bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
+	bool ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
+	bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+	bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+	bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
+	bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
 public:
-	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr);
-	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr);
-	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszSMSAddr, list<xstring> *pStl_ListClient);
+	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring> *pStl_ListClient);
 private:
 	shared_mutex st_Locker;
 private:

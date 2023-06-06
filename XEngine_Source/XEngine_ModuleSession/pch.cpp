@@ -46,35 +46,47 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 /*********************************************************************************
 *                          推流导出会话模块                                      *
 *********************************************************************************/
-extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream)
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream)
 {
-	return m_PushStream.ModuleSession_PushStream_Create(lpszSMSAddr, xhFLVStream);
+	return m_PushStream.ModuleSession_PushStream_Create(lpszClientAddr, lpszSMSAddr, xhFLVStream);
 }
-extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszSMSAddr)
+extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr)
 {
-	return m_PushStream.ModuleSession_PushStream_Destroy(lpszSMSAddr);
+	return m_PushStream.ModuleSession_PushStream_Destroy(lpszClientAddr);
 }
-extern "C" bool ModuleSession_PushStream_GetStreamForAddr(LPCXSTR lpszSMSAddr, XNETHANDLE * pxhFLVStream)
+extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr)
 {
-	return m_PushStream.ModuleSession_PushStream_GetStreamForAddr(lpszSMSAddr, pxhFLVStream);
+	return m_PushStream.ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, ptszSMSAddr);
 }
-extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszSMSAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType)
+extern "C" bool ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE * pxhToken)
 {
-	return m_PushStream.ModuleSession_PushStream_Send(lpszSMSAddr, lpszMsgBuffer, nMsgLen, nAVType, nFrameType);
+	return m_PushStream.ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, pxhToken);
 }
-extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszSMSAddr, XCHAR * *pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType)
+extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
-	return m_PushStream.ModuleSession_PushStream_Recv(lpszSMSAddr, pptszMsgBuffer, pInt_MsgLen, pInt_AVType, pInt_FrameType);
+	return m_PushStream.ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 }
-extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr)
+extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_PushStream.ModuleSession_PushStream_ClientInsert(lpszSMSAddr, lpszClientAddr);
+	return m_PushStream.ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, ptszMsgBuffer, pInt_MsgLen);
 }
-extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszSMSAddr, LPCXSTR lpszClientAddr)
+extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType)
 {
-	return m_PushStream.ModuleSession_PushStream_ClientDelete(lpszSMSAddr, lpszClientAddr);
+	return m_PushStream.ModuleSession_PushStream_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen, nAVType, nFrameType);
 }
-extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszSMSAddr, list<xstring>*pStl_ListClient)
+extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR * *pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType)
 {
-	return m_PushStream.ModuleSession_PushStream_ClientList(lpszSMSAddr, pStl_ListClient);
+	return m_PushStream.ModuleSession_PushStream_Recv(lpszClientAddr, pptszMsgBuffer, pInt_MsgLen, pInt_AVType, pInt_FrameType);
+}
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr)
+{
+	return m_PushStream.ModuleSession_PushStream_ClientInsert(lpszClientAddr, lpszPullAddr);
+}
+extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr)
+{
+	return m_PushStream.ModuleSession_PushStream_ClientDelete(lpszClientAddr, lpszPullAddr);
+}
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>*pStl_ListClient)
+{
+	return m_PushStream.ModuleSession_PushStream_ClientList(lpszClientAddr, pStl_ListClient);
 }

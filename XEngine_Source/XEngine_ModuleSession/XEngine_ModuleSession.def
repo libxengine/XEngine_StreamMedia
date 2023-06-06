@@ -9,7 +9,10 @@ EXPORTS
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy
-	ModuleSession_PushStream_GetStreamForAddr
+	ModuleSession_PushStream_GetAddrForAddr
+	ModuleSession_PushStream_GetTokenForAddr
+	ModuleSession_PushStream_SetHDRBuffer
+	ModuleSession_PushStream_GetHDRBuffer
 	ModuleSession_PushStream_Send
 	ModuleSession_PushStream_Recv
 	ModuleSession_PushStream_ClientInsert
