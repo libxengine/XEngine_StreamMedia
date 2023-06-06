@@ -89,33 +89,20 @@ bool PushStream_JT1078Task_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 	int nSDLen = 0;
 	XNETHANDLE xhToken = 0;
 	XCHAR tszSDBuffer[2048];
-	XENGINE_PROTOCOLDEVICE st_ProtoDevice;
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszDeviceNumber[128];
+	XENGINE_PROTOCOLSTREAM st_ProtocolStream;
 	
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-	memset(&st_ProtoDevice, '\0', sizeof(XENGINE_PROTOCOLDEVICE));
+	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+	memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
+	memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
-	st_ProtoDevice.bLive = true;
-	st_ProtoDevice.nChannel = pSt_RTPHdr->byChannel;
-	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, st_ProtoDevice.tszDeviceNumber);
+	st_ProtocolStream.bLive = true;
+	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, tszDeviceNumber);
+	_xstprintf(tszSMSAddr, _X("%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
 	
-	if (!ModuleSession_Client_Exist(&xhToken, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, true))
-	{
-		//先移除老的,无论如何
-		ModuleSession_Client_DeleteNumber(st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, true);
-		ModuleSession_Client_Get(&xhToken);   //得到新的可用客户端
-		if (!ModuleSession_Client_Insert(xhToken, lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, true))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("实时端：%s,登录到服务,设备ID：%s,通道：%d,绑定客户端失败,错误：%lX"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, ModuleSession_GetLastError());
-			return false;
-		}
-		//创建流
-		ModuleProtocol_Packet_Create(tszSDBuffer, &nSDLen, &st_ProtoDevice);
-		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("实时端：%s,登录到服务,设备ID：%s,通道：%d,推流端客户端：%lld,设备版本：2016"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel);
-	}
-	ModuleProtocol_Packet_Push(tszSDBuffer, &nSDLen, &st_ProtoDevice, nMsgLen, 0);
-	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
-	XEngine_Network_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, st_ProtoDevice.tszDeviceNumber, pSt_RTPHdr->byChannel, nSDLen);
+
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nSDLen);
 	return true;
 }

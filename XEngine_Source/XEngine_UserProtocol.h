@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 /********************************************************************
 //    Created:     2021/12/03  14:16:27
 //    File Name:   D:\XEngine_ServiceApp\XEngine_Source\XEngine_UserProtocol.h
@@ -10,6 +11,7 @@
 //    Purpose:     用户自定义协议头
 //    History:
 *********************************************************************/
+typedef std::string xstring;
 /*********************************************************************
 					    客户端类型定义
 *********************************************************************/
@@ -24,14 +26,6 @@ typedef enum
 /*********************************************************************
 						操作类型定义
 *********************************************************************/
-typedef enum
-{
-	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_I = 0x00,
-	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_P = 0x01,
-	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_B = 0x02,
-	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_A = 0x03,
-	ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_T = 0x04
-}ENUM_XENGINE_STREAMMEDIA_JT1078_RTP_FRAME_TYPE;
 typedef enum
 {
 	ENUM_XENGINE_STREAMMEDIA_JT1078_DEVICE_TYPE_UNKNOW = 0,
@@ -68,15 +62,15 @@ typedef enum
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszDeviceNumber[64];
+	XCHAR tszSMSAddr[MAX_PATH];
+	bool bLive;
 }XENGINE_PROTOCOLSTREAM;
 typedef struct
 {
-	XCHAR tszDeviceNumber[64];
-	int nChannel;
-	bool bLive;
-	bool bAudio;
-}XENGINE_PROTOCOLDEVICE;
+	XBYTE byAVType;
+	XBYTE byFrameType;
+	int nTimeStamp;
+}XENGINE_PROTOCOLDATA;
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct
 {

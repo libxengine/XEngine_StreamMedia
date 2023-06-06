@@ -35,6 +35,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/StreamClient_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/StreamClient_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -116,5 +118,6 @@ extern XENGINE_SERVICECONFIG st_ServiceConfig;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_StreamClient.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif
