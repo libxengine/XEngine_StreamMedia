@@ -34,27 +34,27 @@ CModuleProtocol_Packet::~CModuleProtocol_Packet()
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：nCode
+ 参数.三：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入要打包的协议,如果需要的话
+ 参数.四：nCode
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入回复的CODE
- 参数.四：lpszMsgBuffer
+ 参数.五：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入要处理的缓冲区
- 参数.五：xhToken
-  In/Out：In
-  类型：句柄
-  可空：Y
-  意思：输入打包的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCXSTR lpszMsgBuffer /* = NULL */, LPCXSTR lpszToken /* = NULL */)
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLHDR* pSt_ProtocolHdr /* = NULL */, int nCode /* = 0 */, LPCXSTR lpszMsgBuffer /* = NULL */)
 {
 	ModuleProtocol_IsErrorOccur = false;
 
@@ -64,10 +64,10 @@ bool CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, in
 		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
 		return false;
 	}
+	int nPos = 0;
 	Json::Value st_JsonRoot;
 
 	st_JsonRoot["code"] = nCode;
-
 	if (NULL == lpszMsgBuffer)
 	{
 		st_JsonRoot["msg"] = "success";
@@ -76,12 +76,21 @@ bool CModuleProtocol_Packet::ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, in
 	{
 		st_JsonRoot["msg"] = lpszMsgBuffer;
 	}
-	if (NULL != lpszToken)
+
+	if (NULL != pSt_ProtocolHdr)
 	{
-		st_JsonRoot["token"] = lpszToken;
+		pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
+
+		memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+		nPos = sizeof(XENGINE_PROTOCOLHDR);
+
+		*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + pSt_ProtocolHdr->unPacketSize;
 	}
-	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
-	_tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	else
+	{
+		*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	}
+	memcpy(ptszMsgBuffer + nPos, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
 	return true;
 }
 /********************************************************************
