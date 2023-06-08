@@ -78,10 +78,8 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	XCHAR tszKey[128];
 	XCHAR tszValue[128];
 	LPCXSTR lpszFuncName = _X("api");
-	LPCXSTR lpszParamFuncKey = _X("function");
-	LPCXSTR lpszParamPlay = _X("play");
-	LPCXSTR lpszParamStop = _X("stop");
-	LPCXSTR lpszParamList = _X("list");
+	LPCXSTR lpszFunctionStr = _X("function");
+	LPCXSTR lpszStreamStr = _X("stream");
 
 	memset(tszKey, '\0', sizeof(tszKey));
 	memset(tszValue, '\0', sizeof(tszValue));
@@ -96,25 +94,30 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	}
 	//获得函数名
 	BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
-	if (0 != _tcsxnicmp(lpszParamFuncKey, tszKey, _tcsxlen(lpszParamFuncKey)))
+	if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
+	{
+		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
+		if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
+		{
+
+		}
+		else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
+		{
+
+
+		}
+	}
+	else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+	{
+		//如果是拉流请求
+		PullStream_ClientTask_Handle(lpszClientAddr, &pptszList, nListCount);
+	}
+	else
 	{
 		ModuleProtocol_Packet_Comm(tszMSGBuffer, &nMLen, NULL, 400, "Bad Request,parament is incorrent");
 		XEngine_Network_Send(lpszClientAddr, tszMSGBuffer, nMLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-		return false;
-	}
-
-	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
-	{
-	}
-	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
-	{
-		
-	}
-	else
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("HTTP客户端:%s,协议错误"), lpszClientAddr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;

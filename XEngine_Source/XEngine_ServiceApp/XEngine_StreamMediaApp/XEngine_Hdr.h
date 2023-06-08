@@ -53,6 +53,7 @@ using namespace std;
 #include "XEngine_HttpTask.h"
 #include "./StreamMedia_PushStream/PushStream_CenterTask.h"
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
+#include "./StreamMedia_PullStream/PullStream_ClientTask.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_Hdr.h
