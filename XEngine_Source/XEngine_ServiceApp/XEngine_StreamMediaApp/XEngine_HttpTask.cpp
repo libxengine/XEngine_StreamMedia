@@ -116,7 +116,6 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	{
 		ModuleProtocol_Packet_Comm(tszMSGBuffer, &nMLen, NULL, 400, "Bad Request,parament is incorrent");
 		XEngine_Network_Send(lpszClientAddr, tszMSGBuffer, nMLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);

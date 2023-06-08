@@ -48,6 +48,9 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		}
 		ModuleSession_PullStream_Insert(lpszClientAddr, tszVluBuffer, tszPushAddr);
 		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr);
+		//返回数据,为HTTP CHUNKED
+		ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, tszSDBuffer, &nSDLen);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据成功:%s"), lpszClientAddr, tszVluBuffer);
 	}
 	else if (0 == _tcsxnicmp(lpszStreamStop, tszVluBuffer, _tcsxlen(lpszStreamStop)))
