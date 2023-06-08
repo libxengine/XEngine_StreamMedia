@@ -4,7 +4,8 @@ EXPORTS
 	ModuleSession_GetLastError
 
 	ModuleSession_PullStream_Insert
-	ModuleSession_PullStream_Get
+	ModuleSession_PullStream_GetSMSAddr
+	ModuleSession_PullStream_GetPushAddr
 	ModuleSession_PullStream_Delete
 
 	ModuleSession_PushStream_Create
@@ -13,6 +14,7 @@ EXPORTS
 	ModuleSession_PushStream_GetTokenForAddr
 	ModuleSession_PushStream_SetHDRBuffer
 	ModuleSession_PushStream_GetHDRBuffer
+	ModuleSession_PushStream_FindStream
 	ModuleSession_PushStream_Send
 	ModuleSession_PushStream_Recv
 	ModuleSession_PushStream_ClientInsert

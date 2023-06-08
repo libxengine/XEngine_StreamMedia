@@ -31,13 +31,17 @@ extern "C" XLONG ModuleSession_GetLastError(int* pInt_SysError)
 /*********************************************************************************
 *                          拉流端导出会话模块                                    *
 *********************************************************************************/
-extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr)
+extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr)
 {
-	return m_PullStream.ModuleSession_PullStream_Insert(lpszClientAddr, lpszSMSAddr);
+	return m_PullStream.ModuleSession_PullStream_Insert(lpszClientAddr, lpszSMSAddr, lpszPushAddr);
 }
-extern "C" bool ModuleSession_PullStream_Get(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr)
+extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr)
 {
-	return m_PullStream.ModuleSession_PullStream_Get(lpszClientAddr, ptszSMSAddr);
+	return m_PullStream.ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, ptszSMSAddr);
+}
+extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR * ptszPushAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_GetPushAddr(lpszClientAddr, ptszPushAddr);
 }
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
@@ -69,6 +73,10 @@ extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LP
 extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
 	return m_PushStream.ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, ptszMsgBuffer, pInt_MsgLen);
+}
+extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR * ptszClientAddr)
+{
+	return m_PushStream.ModuleSession_PushStream_FindStream(lpszSMSAddr, ptszClientAddr);
 }
 extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType)
 {

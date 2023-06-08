@@ -30,28 +30,19 @@ extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
   类型：常量字符指针
   可空：N
   意思：输入要绑定的流媒体ID
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
-/********************************************************************
-函数名称：ModuleSession_PullStream_Delete
-函数功能：删除一个拉流端
- 参数.一：lpszClientAddr
+ 参数.三：lpszPushAddr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入要处理的客户端
+  意思：输入要绑定的推流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_Get(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
+extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr);
 /********************************************************************
-函数名称：ModuleSession_PullStream_Get
+函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
  参数.一：lpszClientAddr
   In/Out：In
@@ -63,6 +54,39 @@ extern "C" bool ModuleSession_PullStream_Get(LPCXSTR lpszClientAddr, XCHAR* ptsz
   类型：字符指针
   可空：N
   意思：输出流媒体ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetPushAddr
+函数功能：获取客户端绑定的推流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出推流地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除一个拉流端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
 返回值
   类型：逻辑型
   意思：是否成功
@@ -196,6 +220,25 @@ extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LP
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+/********************************************************************
+函数名称：ModuleSession_PushStream_FindStream
+函数功能：查找流对应地址
+ 参数.一：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要查找的流
+ 参数.二：ptszClientAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输入要查找的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Send
 函数功能：投递一段数据给会话管理器

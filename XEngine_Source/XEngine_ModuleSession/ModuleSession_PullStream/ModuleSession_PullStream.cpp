@@ -33,12 +33,17 @@ CModuleSession_PullStream::~CModuleSession_PullStream()
   类型：常量字符指针
   可空：N
   意思：输入要绑定的流媒体ID
+ 参数.三：lpszPushAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要绑定的推流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr)
+bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr)
 {
     Session_IsErrorOccur = false;
 
@@ -52,6 +57,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClie
     memset(pSt_PullStream, '\0', sizeof(PULLSTREAM_CLIENTINFO));
 
     _tcsxcpy(pSt_PullStream->tszSMSAddr, lpszSMSAddr);
+	_tcsxcpy(pSt_PullStream->tszPushAddr, lpszPushAddr);
 
     st_Locker.lock();
     stl_MapClient.insert(make_pair(lpszClientAddr, pSt_PullStream));
@@ -91,7 +97,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Delete(LPCXSTR lpszClie
 	return true;
 }
 /********************************************************************
-函数名称：ModuleSession_PullStream_Get
+函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
  参数.一：lpszClientAddr
   In/Out：In
@@ -108,7 +114,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Delete(LPCXSTR lpszClie
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_Get(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr)
+bool CModuleSession_PullStream::ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr)
 {
 	Session_IsErrorOccur = false;
 
@@ -129,6 +135,48 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Get(LPCXSTR lpszClientA
 		return false;
     }
     _tcsxcpy(ptszSMSAddr, stl_MapIterator->second->tszSMSAddr);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetPushAddr
+函数功能：获取客户端绑定的推流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出推流地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	//查找最小
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(ptszPushAddr, stl_MapIterator->second->tszPushAddr);
 	st_Locker.unlock_shared();
 	return true;
 }

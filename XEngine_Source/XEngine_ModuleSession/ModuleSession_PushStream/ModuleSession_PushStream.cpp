@@ -75,7 +75,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 		return false;
 	}
 	pSt_Packet->xhFLVStream = xhFLVStream;
-	_tcsxcpy(pSt_Packet->tszSMSAddr, lpszClientAddr);
+	_tcsxcpy(pSt_Packet->tszSMSAddr, lpszSMSAddr);
 	//是否存在
 	st_Locker.lock();
 	unordered_map<xstring, PUSHSTREAM_PACKET *>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
@@ -311,6 +311,57 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lp
 	}
 	*pInt_MsgLen = stl_MapIterator->second->nMsgLen;
 	memcpy(ptszMsgBuffer, stl_MapIterator->second->tszMsgBuffer, stl_MapIterator->second->nMsgLen);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_FindStream
+函数功能：查找流对应地址
+ 参数.一：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要查找的流
+ 参数.二：ptszClientAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输入要查找的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszSMSAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszSMSAddr, stl_MapIterator->second->tszSMSAddr, _tcsxlen(lpszSMSAddr)))
+		{
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(ptszClientAddr, stl_MapIterator->first.c_str());
 	st_Locker.unlock_shared();
 	return true;
 }
