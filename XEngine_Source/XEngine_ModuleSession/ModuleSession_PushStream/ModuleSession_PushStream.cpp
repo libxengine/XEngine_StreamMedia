@@ -261,8 +261,19 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lp
 		st_Locker.unlock_shared();
 		return false;
 	}
-	stl_MapIterator->second->nMsgLen = nMsgLen;
-	memcpy(stl_MapIterator->second->tszMsgBuffer, lpszMsgBuffer, nMsgLen);
+	//准备头
+	stl_MapIterator->second->nMsgLen = _xstprintf(stl_MapIterator->second->tszMsgBuffer, _X("HTTP/1.1 200 OK\r\n"
+		"Connection: Close\r\n"
+		"Content-Type: video/x-flv\r\n"
+		"Server: XEngine/8.13.0.1001\r\n"
+		"Transfer-Encoding: chunked\r\n\r\n"
+		"%d\r\n"), nMsgLen);
+	//拷贝数据
+	memcpy(stl_MapIterator->second->tszMsgBuffer + stl_MapIterator->second->nMsgLen, lpszMsgBuffer, nMsgLen);
+	stl_MapIterator->second->nMsgLen += nMsgLen;
+	//拷贝结尾
+	memcpy(stl_MapIterator->second->tszMsgBuffer + stl_MapIterator->second->nMsgLen, _X("\r\n"), 2);
+	stl_MapIterator->second->nMsgLen += 2;
 	st_Locker.unlock_shared();
 	return true;
 }
