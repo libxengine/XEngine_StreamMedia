@@ -30,14 +30,14 @@ typedef struct tag_XEngine_ServiceConfig
 		int nIOThread;                        //网络IO线程数
 		int nHTTPThread;                      //API接口任务处理线程数
 		int nCenterThread;                    //业务任务处理线程数
-		int nJT1078Thread;
+		int nJT1078Thread;                    //JT1078任务线程
 	}st_XMax;
 	struct
 	{
 		int nTimeCheck;                       //检测次数
 		int nHTTPTimeout;                     //HTTP超时时间
 		int nCenterTimeout;                   //业务超时时间
-		int nJT1078Timeout;
+		int nJT1078Timeout;                   //1078超时时间
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
