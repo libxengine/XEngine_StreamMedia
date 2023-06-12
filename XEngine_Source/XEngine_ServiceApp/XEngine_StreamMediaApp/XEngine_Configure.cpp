@@ -19,6 +19,7 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		printf("解析配置文件失败,ModuleConfigure_Json_File：%lX", ModuleConfigure_GetLastError());
 		return false;
 	}
+	st_ServiceConfig.bDebug = true;
 
 	for (int i = 0; i < argc; i++)
 	{
@@ -30,6 +31,10 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		else if (0 == _tcsxcmp("-d", argv[i]))
 		{
 			st_ServiceConfig.bDeamon = _ttxoi(argv[i + 1]);
+		}
+		else if (0 == _tcsxcmp("-b", argv[i]))
+		{
+			st_ServiceConfig.bDebug = true;
 		}
 	}
 

@@ -173,20 +173,8 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 {
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP == enClientType)
 	{
-		//发送给客户端的参数
-		int nSDLen = 0;
-		XCHAR tszSDBuffer[4096];
-		RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;    
-
-		memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-		memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
-
-		st_HDRParam.nHttpCode = 200; //HTTP CODE码
-		st_HDRParam.bIsClose = true; //收到回复后就关闭
-
-		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, lpszMsgBuffer, nMsgLen);
 		//发送数据给指定客户端
-		if (!NetCore_TCPXCore_SendEx(xhHttpSocket, lpszClientAddr, tszSDBuffer, nSDLen))
+		if (!NetCore_TCPXCore_SendEx(xhHttpSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return false;

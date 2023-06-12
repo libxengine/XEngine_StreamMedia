@@ -56,11 +56,6 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XLog;
 	struct  
 	{
-		bool bVideo;                          //启用视频调试记录
-		bool bAudio;                          //启用音频调试记录
-	}st_XDebug;
-	struct  
-	{
 		list<string> *pStl_ListVer;           //版本列表
 	}st_XVer;
 }XENGINE_SERVICECONFIG;

@@ -29,6 +29,9 @@ XHANDLE xhJT1078Pkt = NULL;
 XHANDLE xhJT1078Pool = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
+//调试
+FILE* pSt_VFile = NULL;
+FILE* pst_AFile = NULL;
 
 
 void ServiceApp_Stop(int signo)
@@ -55,6 +58,14 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
+		if (NULL != pst_AFile)
+		{
+			fclose(pst_AFile);
+		}
+		if (NULL != pSt_VFile)
+		{
+			fclose(pSt_VFile);
+		}
 	}
 #ifdef _MSC_BUILD
 	WSACleanup();
@@ -346,6 +357,14 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
+		if (NULL != pst_AFile)
+		{
+			fclose(pst_AFile);
+		}
+		if (NULL != pSt_VFile)
+		{
+			fclose(pSt_VFile);
+		}
 	}
 #ifdef _MSC_BUILD
 	WSACleanup();

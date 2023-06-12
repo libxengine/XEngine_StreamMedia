@@ -20,17 +20,22 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 	XCHAR tszVluBuffer[MAX_PATH];
 	LPCXSTR lpszStreamPlay = _X("play");
 	LPCXSTR lpszStreamStop = _X("stop");
+	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 	memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
+	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
+
+	st_HDRParam.nHttpCode = 200; //HTTP CODE码
+	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
 	BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
 	
 	if (0 == _tcsxnicmp(lpszStreamPlay, tszVluBuffer, _tcsxlen(lpszStreamPlay)))
 	{
-		//播放流:http://app.xyry.org:8888/api?stream=play&sms=live/qyt&type=flv
+		//播放流:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 		XCHAR tszPushAddr[MAX_PATH];
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
@@ -41,7 +46,8 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 
 		if (!ModuleSession_PushStream_FindStream(tszVluBuffer, tszPushAddr))
 		{
-			ModuleProtocol_Packet_Comm(tszSDBuffer, &nSDLen, NULL, 404, "not found");
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 			return false;
@@ -55,7 +61,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 	}
 	else if (0 == _tcsxnicmp(lpszStreamStop, tszVluBuffer, _tcsxlen(lpszStreamStop)))
 	{
-		//停止拉流,:http://app.xyry.org:8888/api?stream=stop
+		//停止拉流,:http://127.0.0.1:5600/api?stream=stop
 		XCHAR tszSMSAddr[MAX_PATH];
 		XCHAR tszPushAddr[MAX_PATH];
 
@@ -65,13 +71,16 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
 		if (!ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
 		{
-			ModuleProtocol_Packet_Comm(tszSDBuffer, &nSDLen, NULL, 404, "not found");
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求停止拉流失败,获取绑定推流地址失败,错误:%lX"), lpszClientAddr, ModuleSession_GetLastError());
 			return false;
 		}
 		ModuleSession_PullStream_Delete(lpszClientAddr);
 		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求停止拉流成功,停止的流:%s,绑定的推流地址:%s"), lpszClientAddr, tszSMSAddr, tszPushAddr);
 	}
 	return true;
