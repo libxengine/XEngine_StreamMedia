@@ -111,6 +111,19 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, bool bHeart, ENUM_XENGINE_STR
 		}
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HttpProtocol_Server_CloseClinetEx(xhHttpPacket, lpszClientAddr);
+		//停止拉流
+		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszPushAddr[MAX_PATH];
+
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+
+		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
+		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+		{
+			ModuleSession_PullStream_Delete(lpszClientAddr);
+			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,离开服务器"), lpszClientAddr);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER == enClientType)
@@ -126,6 +139,20 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, bool bHeart, ENUM_XENGINE_STR
 		}
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HelpComponents_Datas_DeleteEx(xhCenterPacket, lpszClientAddr);
+		//停止推流
+		XNETHANDLE xhToken = 0;
+		XCHAR tszSMSAddr[MAX_PATH];
+
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+
+		if (ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken))
+		{
+			FLVProtocol_Packet_Destory(xhToken);
+		}
+		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+		{
+			ModuleSession_PushStream_Destroy(tszSMSAddr);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 == enClientType)
