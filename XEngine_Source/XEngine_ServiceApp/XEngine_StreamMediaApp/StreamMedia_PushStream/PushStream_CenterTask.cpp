@@ -53,12 +53,12 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR tszRVBuffer[10240];
-	XCHAR tszSDBuffer[10240];
-	
-	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
-	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 
+	memset(ptszRVBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+	memset(ptszSDBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+	
 	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT == pSt_ProtocolHdr->unOperatorType)
 	{
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_HB_SYN == pSt_ProtocolHdr->unOperatorCode)
@@ -100,7 +100,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 				if (st_ServiceConfig.bDebug)
 				{
 					pSt_VFile = _xtfopen(_X("./XEngine_Debug/Video.flv"), _X("wb"));
-					fwrite(tszHDRBuffer, 1, nHLen, pSt_VFile);
+					//fwrite(tszHDRBuffer, 1, nHLen, pSt_VFile);
 				}
 			}
 			if (st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable)
@@ -110,7 +110,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 				if (st_ServiceConfig.bDebug)
 				{
 					pst_AFile = _xtfopen(_X("./XEngine_Debug/Audio.flv"), _X("wb"));
-					fwrite(tszHDRBuffer, 1, nHLen, pst_AFile);
+					//fwrite(tszHDRBuffer, 1, nHLen, pst_AFile);
 				}
 			}
 			//创建会话
@@ -118,8 +118,8 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszHDRBuffer, nHLen);
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPCREATE;
-			ModuleProtocol_Packet_Comm(tszSDBuffer, &nSDLen, pSt_ProtocolHdr);
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端：%s,创建流成功,推流地址：%s,视频：%d,音频：%d"), lpszClientAddr, st_ProtocolStream.tszSMSAddr, st_ProtocolStream.bLive, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
@@ -151,47 +151,54 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 				}
 			}
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPDESTROY;
-			ModuleProtocol_Packet_Comm(tszSDBuffer, &nSDLen, pSt_ProtocolHdr);
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端：%s,接受请求了销毁流消息,销毁地址：%s,"), lpszClientAddr, tszSMSAddr);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
+			static bool bSend = false;
 			XNETHANDLE xhToken = 0;
 			XENGINE_PROTOCOLDATA st_ProtocolAVInfo;
 
 			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOLDATA));
-
-			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDATA));
 
 			ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken);
+
 			if (0 == st_ProtocolAVInfo.byAVType)
 			{
-				FLVProtocol_Packet_FrameVideo(xhToken, tszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+				FLVProtocol_Packet_FrameVideo(xhToken, ptszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
 				if (NULL != pSt_VFile)
 				{
-					fwrite(tszRVBuffer, 1, nRVLen, pSt_VFile);
+					fwrite(ptszRVBuffer, 1, nRVLen, pSt_VFile);
 				}
 			}
 			else
 			{
-				FLVProtocol_Packet_FrameAudio(xhToken, tszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+				FLVProtocol_Packet_FrameAudio(xhToken, ptszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
 				if (NULL != pst_AFile)
 				{
-					fwrite(tszRVBuffer, 1, nRVLen, pst_AFile);
+					fwrite(ptszRVBuffer, 1, nRVLen, pst_AFile);
 				}
 			}
-			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+			memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
 			nSDLen += nRVLen;
 
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
 			nSDLen += 2;
 			//发送TAG
 			list<xstring> stl_ListClient;
 			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
 			for (auto stl_ListIterator = stl_ListClient.begin(); stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
 			{
-				XEngine_Network_Send(stl_ListIterator->c_str(), tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+				XEngine_Network_Send(stl_ListIterator->c_str(), ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+				if (0x01 == st_ProtocolAVInfo.byFrameType || bSend)
+				{
+					bSend = true;
+					
+				}
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端：%s,接受推流数据"), lpszClientAddr);
 		}
@@ -208,5 +215,9 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 		XEngine_Network_Send(lpszClientAddr, (LPCXSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XEngine推流端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
 	}
+	free(ptszRVBuffer);
+	free(ptszSDBuffer);
+	ptszRVBuffer = NULL;
+	ptszSDBuffer = NULL;
 	return true;
 }
