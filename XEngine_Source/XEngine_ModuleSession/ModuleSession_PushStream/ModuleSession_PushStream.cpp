@@ -267,7 +267,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lp
 		"Content-Type: video/x-flv\r\n"
 		"Server: XEngine/8.13.0.1001\r\n"
 		"Transfer-Encoding: chunked\r\n\r\n"
-		"%d\r\n"), nMsgLen);
+		"%x\r\n"), nMsgLen);
 	//拷贝数据
 	memcpy(stl_MapIterator->second->tszMsgBuffer + stl_MapIterator->second->nMsgLen, lpszMsgBuffer, nMsgLen);
 	stl_MapIterator->second->nMsgLen += nMsgLen;

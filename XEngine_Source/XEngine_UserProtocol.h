@@ -67,9 +67,9 @@ typedef struct
 }XENGINE_PROTOCOLSTREAM;
 typedef struct
 {
+	__int64u nTimeStamp;
 	XBYTE byAVType;
 	XBYTE byFrameType;
-	int nTimeStamp;
 }XENGINE_PROTOCOLDATA;
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct

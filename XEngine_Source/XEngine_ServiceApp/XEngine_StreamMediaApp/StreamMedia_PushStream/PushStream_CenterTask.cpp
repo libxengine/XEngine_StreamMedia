@@ -53,8 +53,8 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR tszRVBuffer[4096];
-	XCHAR tszSDBuffer[4096];
+	XCHAR tszRVBuffer[10240];
+	XCHAR tszSDBuffer[10240];
 	
 	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -118,12 +118,14 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-			ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken);
-			ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
-
-			FLVProtocol_Packet_Destory(xhToken);
-			ModuleSession_PushStream_Destroy(tszSMSAddr);
-
+			if (ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken))
+			{
+				FLVProtocol_Packet_Destory(xhToken);
+			}
+			if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+			{
+				ModuleSession_PushStream_Destroy(tszSMSAddr);
+			}
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPDESTROY;
 			ModuleProtocol_Packet_Comm(tszSDBuffer, &nSDLen, pSt_ProtocolHdr);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
@@ -136,7 +138,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 
 			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOLDATA));
 
-			nSDLen = _xstprintf(tszSDBuffer, _X("%d\r\n"), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
 			if (0 == st_ProtocolAVInfo.byAVType)
 			{
 				FLVProtocol_Packet_FrameVideo(xhToken, tszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
