@@ -134,6 +134,7 @@
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_CenterTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp" />
+    <ClCompile Include="StreamMedia_PushStream\PushStream_RTMPTask.cpp" />
     <ClCompile Include="XEngine_Configure.cpp" />
     <ClCompile Include="XEngine_HttpTask.cpp" />
     <ClCompile Include="XEngine_Network.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_CenterTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h" />
+    <ClInclude Include="StreamMedia_PushStream\PushStream_RTMPTask.h" />
     <ClInclude Include="XEngine_Configure.h" />
     <ClInclude Include="XEngine_Hdr.h" />
     <ClInclude Include="XEngine_HttpTask.h" />

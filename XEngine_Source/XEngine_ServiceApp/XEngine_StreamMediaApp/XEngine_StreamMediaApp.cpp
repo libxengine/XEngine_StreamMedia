@@ -22,6 +22,10 @@ XHANDLE xhCenterSocket = NULL;
 XHANDLE xhCenterHeart = NULL;
 XHANDLE xhCenterPacket = NULL;
 XHANDLE xhCenterPool = NULL;
+//RTMP推流
+XHANDLE xhRTMPSocket = NULL;
+XHANDLE xhRTMPHeart = NULL;
+XHANDLE xhRTMPPool = NULL;
 //JT1078推流
 XHANDLE xhJT1078Socket = NULL;
 XHANDLE xhJT1078Heart = NULL;
@@ -43,18 +47,22 @@ void ServiceApp_Stop(int signo)
 		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Packets_Destory(xhCenterPacket);
+		RTMPProtocol_Parse_Destory();
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);
@@ -116,6 +124,7 @@ int main(int argc, char** argv)
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListHTTPParam;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
+	THREADPOOL_PARAMENT** ppSt_ListRTMPParam;
 	THREADPOOL_PARAMENT** ppSt_ListJT1078Param;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
@@ -266,6 +275,57 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XEngine推流消息服务没有被启用"));
 	}
+	//启动RTMP流支持
+	if (st_ServiceConfig.nRTMPPort > 0)
+	{
+		if (!RTMPProtocol_Parse_Init(st_ServiceConfig.st_XMax.nRTMPThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTMP端流包管理器失败,错误：%lX"), Packets_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTMP端流包管理器成功,最大队列:%d,最大线程:%d"), st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nRTMPThread);
+		
+		if (st_ServiceConfig.st_XTime.nRTMPTimeout > 0)
+		{
+			xhRTMPHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTMPTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTMPHeart);
+			if (NULL == xhRTMPHeart)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTMP端心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTMP端心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTMPTimeout);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,实时RTMP端管理服务没有启用!"));
+		}
+		xhRTMPSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nRTMPPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
+		if (NULL == xhRTMPSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务器中,启动RTMP网络服务失败,错误：%lX"), NetCore_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTMP端网络服务成功,端口：%d"), st_ServiceConfig.nRTMPPort);
+		NetCore_TCPXCore_RegisterCallBackEx(xhRTMPSocket, Network_Callback_RTMPLogin, Network_Callback_RTMPRecv, Network_Callback_RTMPLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册RTMP端网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListRTMPParam, st_ServiceConfig.st_XMax.nRTMPThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceConfig.st_XMax.nRTMPThread; i++)
+		{
+			int* pInt_Pos = new int;
+
+			*pInt_Pos = i;
+			ppSt_ListRTMPParam[i]->lParam = pInt_Pos;
+			ppSt_ListRTMPParam[i]->fpCall_ThreadsTask = PushStream_RTMPTask_Thread;
+		}
+		xhRTMPPool = ManagePool_Thread_NQCreate(&ppSt_ListRTMPParam, st_ServiceConfig.st_XMax.nRTMPThread);
+		if (NULL == xhRTMPPool)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动RTMP端处理线程池失败,错误：%d"), errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTMP端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nRTMPThread);
+	}
 	//启动JT1078流支持
 	if (st_ServiceConfig.nJT1078Port > 0)
 	{
@@ -299,13 +359,13 @@ int main(int argc, char** argv)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,实时端心跳管理服务没有启用!"));
 		}
-		xhJT1078Socket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
+		xhJT1078Socket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nJT1078Port, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
 		if (NULL == xhJT1078Socket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务器中,启动实时端网络服务失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动实时端网络服务成功,端口：%d"), st_ServiceConfig.nStreamPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动实时端网络服务成功,端口：%d"), st_ServiceConfig.nJT1078Port);
 		NetCore_TCPXCore_RegisterCallBackEx(xhJT1078Socket, Network_Callback_JT1078Login, Network_Callback_JT1078Recv, Network_Callback_JT1078Leave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册实时端网络服务事件成功！"));
 
@@ -342,18 +402,22 @@ XENGINE_SERVICEAPP_EXIT:
 		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
 		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Packets_Destory(xhCenterPacket);
+		RTMPProtocol_Parse_Destory();
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		HelpComponents_XLog_Destroy(xhLog);

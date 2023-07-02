@@ -37,6 +37,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/StreamClient_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -53,6 +55,7 @@ using namespace std;
 #include "XEngine_HttpTask.h"
 #include "./StreamMedia_PushStream/PushStream_CenterTask.h"
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
+#include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientTask.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
@@ -77,6 +80,11 @@ extern XHANDLE xhCenterSocket;
 extern XHANDLE xhCenterHeart;
 extern XHANDLE xhCenterPacket;
 extern XHANDLE xhCenterPool;
+//RTMP推流
+extern XHANDLE xhRTMPSocket;
+extern XHANDLE xhRTMPHeart;
+extern XHANDLE xhRTMPPool;
+//配置文件
 //JT1078推流
 extern XHANDLE xhJT1078Socket;
 extern XHANDLE xhJT1078Heart;
@@ -123,5 +131,6 @@ extern FILE* pst_AFile;
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_StreamClient.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTMPProtocol.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

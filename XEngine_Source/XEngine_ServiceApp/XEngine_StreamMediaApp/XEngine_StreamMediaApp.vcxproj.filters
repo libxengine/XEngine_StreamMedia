@@ -48,6 +48,9 @@
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientTask.cpp">
       <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
+    <ClCompile Include="StreamMedia_PushStream\PushStream_RTMPTask.cpp">
+      <Filter>源文件\StreamMedia_PushStream</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XEngine_Configure.h">
@@ -70,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientTask.h">
       <Filter>头文件\StreamMedia_PullStream</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_PushStream\PushStream_RTMPTask.h">
+      <Filter>头文件\StreamMedia_PushStream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

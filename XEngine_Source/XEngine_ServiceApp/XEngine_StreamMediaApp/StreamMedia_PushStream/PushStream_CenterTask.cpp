@@ -23,7 +23,7 @@ XHTHREAD CALLBACK PushStream_CenterTask_Thread(XPVOID lParam)
 			continue;
 		}
 		int nListCount = 0;
-		HELPCOMPONENT_PACKET_CLIENT** ppSst_ListAddr;
+		XENGINE_MANAGEPOOL_TASKEVENT** ppSst_ListAddr;
 		//获得编号1的所有待处理任务的客户端列表(也就是客户端发送过来的数据已经组好了一个包,需要我们处理)
 		HelpComponents_Datas_GetPoolEx(xhCenterPacket, nThreadPos, &ppSst_ListAddr, &nListCount);
 		//先循环客户端

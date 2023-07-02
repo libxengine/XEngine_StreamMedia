@@ -22,7 +22,7 @@ XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 			continue;
 		}
 		int nListCount = 0;
-		HELPCOMPONENT_PACKET_CLIENT **ppSt_PacketClient;
+		XENGINE_MANAGEPOOL_TASKEVENT**ppSt_PacketClient;
 		HelpComponents_PKTCustom_GetPoolEx(xhJT1078Pkt, nThreadPos, &ppSt_PacketClient, &nListCount);
 		for (int i = 0; i < nListCount; i++)
 		{

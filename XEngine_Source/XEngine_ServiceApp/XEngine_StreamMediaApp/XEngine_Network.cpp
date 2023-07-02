@@ -30,11 +30,11 @@ void CALLBACK Network_Callback_HttpRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 }
 void CALLBACK Network_Callback_HttpLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
-	XEngine_Network_Close(lpszClientAddr, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 }
 void CALLBACK Network_Callback_HttpHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
-	XEngine_Network_Close(lpszClientAddr, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 }
 //////////////////////////////////////////////////////////////////////////下面是X推流网络IO相关代码处理函数
 bool CALLBACK Network_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
@@ -61,12 +61,41 @@ void CALLBACK Network_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 void CALLBACK Network_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	//交给指定函数来处理客户端离开消息
-	XEngine_Network_Close(lpszClientAddr, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
 }
 void CALLBACK Network_Callback_CenterHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	//同上
-	XEngine_Network_Close(lpszClientAddr, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+}
+//////////////////////////////////////////////////////////////////////////RTMP推流相关
+bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	XNETHANDLE xhToken = 0;
+	RTMPProtocol_Parse_Insert(hSocket);
+	RTMPProtocol_Parse_SetChunkSize(hSocket, 4096);
+	SocketOpt_HeartBeat_InsertSocketEx(xhRTMPHeart, hSocket);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s，进入了服务器"), lpszClientAddr);
+	return true;
+}
+void CALLBACK Network_Callback_RTMPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	if (!RTMPProtocol_Parse_Send(hSocket, lpszRecvMsg, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端：%s，投递包失败，大小：%d，错误：%lX"), lpszClientAddr, nMsgLen, Packets_GetLastError());
+		SocketOpt_HeartBeat_ForceOutAddrEx(xhJT1078Heart, lpszClientAddr);
+		return;
+	}
+	SocketOpt_HeartBeat_ActiveAddrEx(xhJT1078Heart, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK Network_Callback_RTMPLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+}
+void CALLBACK Network_Callback_RTMPHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 }
 //////////////////////////////////////////////////////////////////////////JT1078协议流
 bool CALLBACK Network_Callback_JT1078Login(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
@@ -89,14 +118,14 @@ void CALLBACK Network_Callback_JT1078Recv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 }
 void CALLBACK Network_Callback_JT1078Leave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
-	XEngine_Network_Close(lpszClientAddr, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
 }
 void CALLBACK Network_Callback_JT1078HBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
-	XEngine_Network_Close(lpszClientAddr, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
 }
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
-void XEngine_Network_Close(LPCXSTR lpszClientAddr, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
+void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP == enClientType)
 	{
@@ -168,6 +197,19 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, bool bHeart, ENUM_XENGINE_STR
 		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, 0);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
+	{
+		if (bHeart)
+		{
+			NetCore_TCPXCore_CloseForClientEx(xhRTMPSocket, lpszClientAddr);
+		}
+		else
+		{
+			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
+		}
+		RTMPProtocol_Parse_Delete(hSocket);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
+	}
 }
 bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
@@ -203,6 +245,17 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		}
 		//发送成功激活一次心跳
 		SocketOpt_HeartBeat_ActiveAddrEx(xhJT1078Heart, lpszClientAddr);
+	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
+	{
+		//发送数据给指定客户端
+		if (!NetCore_TCPXCore_SendEx(xhRTMPSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+			return false;
+		}
+		//发送成功激活一次心跳
+		SocketOpt_HeartBeat_ActiveAddrEx(xhRTMPHeart, lpszClientAddr);
 	}
 	return true;
 }
