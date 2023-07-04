@@ -157,7 +157,6 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
-			static bool bSend = false;
 			XNETHANDLE xhToken = 0;
 			XENGINE_PROTOCOLDATA st_ProtocolAVInfo;
 
@@ -165,10 +164,9 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDATA));
 
 			ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken);
-
 			if (0 == st_ProtocolAVInfo.byAVType)
 			{
-				FLVProtocol_Packet_FrameVideo(xhToken, ptszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+				FLVProtocol_Packet_FrameVideo(xhToken, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pSt_VFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pSt_VFile);
@@ -176,7 +174,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			}
 			else
 			{
-				FLVProtocol_Packet_FrameAudio(xhToken, ptszRVBuffer, &nRVLen, st_ProtocolAVInfo.nTimeStamp, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA));
+				FLVProtocol_Packet_FrameAudio(xhToken, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pst_AFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pst_AFile);
@@ -194,11 +192,6 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			for (auto stl_ListIterator = stl_ListClient.begin(); stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
 			{
 				XEngine_Network_Send(stl_ListIterator->c_str(), ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-				if (0x01 == st_ProtocolAVInfo.byFrameType || bSend)
-				{
-					bSend = true;
-					
-				}
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端：%s,接受推流数据"), lpszClientAddr);
 		}
