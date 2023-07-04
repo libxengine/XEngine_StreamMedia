@@ -72,15 +72,15 @@ void CALLBACK Network_Callback_CenterHeart(LPCXSTR lpszClientAddr, XSOCKET hSock
 bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XNETHANDLE xhToken = 0;
-	RTMPProtocol_Parse_Insert(hSocket);
-	RTMPProtocol_Parse_SetChunkSize(hSocket, 4096);
+	RTMPProtocol_Parse_Insert(lpszClientAddr);
+	RTMPProtocol_Parse_SetChunkSize(lpszClientAddr, 4096);
 	SocketOpt_HeartBeat_InsertSocketEx(xhRTMPHeart, hSocket);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s，进入了服务器"), lpszClientAddr);
 	return true;
 }
 void CALLBACK Network_Callback_RTMPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
-	if (!RTMPProtocol_Parse_Send(hSocket, lpszRecvMsg, nMsgLen))
+	if (!RTMPProtocol_Parse_Send(lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端：%s，投递包失败，大小：%d，错误：%lX"), lpszClientAddr, nMsgLen, Packets_GetLastError());
 		SocketOpt_HeartBeat_ForceOutAddrEx(xhJT1078Heart, lpszClientAddr);
@@ -207,7 +207,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
-		RTMPProtocol_Parse_Delete(hSocket);
+		RTMPProtocol_Parse_Delete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 }

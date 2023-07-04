@@ -39,6 +39,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -132,5 +134,6 @@ extern FILE* pst_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_StreamClient.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTMPProtocol.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

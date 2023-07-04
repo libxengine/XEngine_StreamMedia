@@ -17,6 +17,8 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <unordered_map>
+using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>

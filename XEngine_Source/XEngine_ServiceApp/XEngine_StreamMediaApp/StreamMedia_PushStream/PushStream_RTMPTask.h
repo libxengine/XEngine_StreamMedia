@@ -13,4 +13,4 @@
 //任务处理池,用来获取一个完整包
 XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam);
 //任务处理相关函数,处理包的内容
-bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, XENGINE_RTMPVIDEO* pSt_RTMPVideo, XENGINE_RTMPAUDIO* pSt_RTMPAudio, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);

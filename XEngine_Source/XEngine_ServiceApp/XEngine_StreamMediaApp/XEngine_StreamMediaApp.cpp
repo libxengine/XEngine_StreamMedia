@@ -56,9 +56,9 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
-		HelpComponents_Packets_Destory(xhCenterPacket);
-		RTMPProtocol_Parse_Destory();
+		HelpComponents_Datas_Destory(xhCenterPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
+		RTMPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhCenterPool);
@@ -411,8 +411,8 @@ XENGINE_SERVICEAPP_EXIT:
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
-		HelpComponents_Packets_Destory(xhCenterPacket);
 		RTMPProtocol_Parse_Destory();
+		HelpComponents_Datas_Destory(xhCenterPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
