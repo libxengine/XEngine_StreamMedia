@@ -98,3 +98,11 @@ extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list
 {
 	return m_PushStream.ModuleSession_PushStream_ClientList(lpszClientAddr, pStl_ListClient);
 }
+extern "C" bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO * pSt_AVInfo)
+{
+	return m_PushStream.ModuleSession_PushStream_SetAVInfo(lpszClientAddr, pSt_AVInfo);
+}
+extern "C" bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO * pSt_AVInfo)
+{
+	return m_PushStream.ModuleSession_PushStream_GetAVInfo(lpszClientAddr, pSt_AVInfo);
+}

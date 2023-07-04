@@ -321,7 +321,94 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lp
 		return false;
 	}
 	*pInt_MsgLen = stl_MapIterator->second->nMsgLen;
-	memcpy(ptszMsgBuffer, stl_MapIterator->second->tszMsgBuffer, stl_MapIterator->second->nMsgLen);
+	if (NULL != ptszMsgBuffer)
+	{
+		memcpy(ptszMsgBuffer, stl_MapIterator->second->tszMsgBuffer, stl_MapIterator->second->nMsgLen);
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_SetAVInfo
+函数功能：设置推流的音视频信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的推流端
+ 参数.二：pSt_AVInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要保存的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//设备编号是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_AVInfo = *pSt_AVInfo;
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetAVInfo
+函数功能：获取推流端音视频信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的推流端
+ 参数.二：pSt_AVInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出保存的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//设备编号是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*pSt_AVInfo = stl_MapIterator->second->st_AVInfo;
 	st_Locker.unlock_shared();
 	return true;
 }

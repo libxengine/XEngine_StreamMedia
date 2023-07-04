@@ -20,3 +20,5 @@ EXPORTS
 	ModuleSession_PushStream_ClientInsert
 	ModuleSession_PushStream_ClientDelete
 	ModuleSession_PushStream_ClientList
+	ModuleSession_PushStream_SetAVInfo
+	ModuleSession_PushStream_GetAVInfo
