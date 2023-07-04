@@ -20,7 +20,7 @@ typedef struct tag_XEngine_ServiceConfig
 	bool bDeamon;                             //是否以守护进程启动,LINUX有效
 	bool bDebug;                              //是否使用DEBUG
 	int nHttpPort;                            //API接口服务
-	int nStreamPort;                          //RTMP标准推流服务
+	int nRTMPPort;                            //RTMP流服务
 	int nCenterPort;                          //X协议推流服务
 	int nJT1078Port;                          //JT1078协议流支持
 	struct
@@ -30,6 +30,7 @@ typedef struct tag_XEngine_ServiceConfig
 		int nIOThread;                        //网络IO线程数
 		int nHTTPThread;                      //API接口任务处理线程数
 		int nCenterThread;                    //业务任务处理线程数
+		int nRTMPThread;                      //RTMP任务处理线程数
 		int nJT1078Thread;                    //JT1078任务线程
 	}st_XMax;
 	struct
@@ -37,6 +38,7 @@ typedef struct tag_XEngine_ServiceConfig
 		int nTimeCheck;                       //检测次数
 		int nHTTPTimeout;                     //HTTP超时时间
 		int nCenterTimeout;                   //业务超时时间
+		int nRTMPTimeout;                     //RTMP超时时间
 		int nJT1078Timeout;                   //1078超时时间
 	}st_XTime;                                //次数*时间=超时
 	struct
