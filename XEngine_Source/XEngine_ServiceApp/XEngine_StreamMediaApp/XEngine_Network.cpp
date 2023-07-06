@@ -169,15 +169,11 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HelpComponents_Datas_DeleteEx(xhCenterPacket, lpszClientAddr);
 		//停止推流
-		XNETHANDLE xhToken = 0;
 		XCHAR tszSMSAddr[MAX_PATH];
 
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-		if (ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken))
-		{
-			FLVProtocol_Packet_Destory(xhToken);
-		}
+		FLVProtocol_Packet_Delete(lpszClientAddr);
 		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 		{
 			ModuleSession_PushStream_Destroy(tszSMSAddr);
@@ -208,6 +204,8 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
 		RTMPProtocol_Parse_Delete(lpszClientAddr);
+		FLVProtocol_Packet_Delete(lpszClientAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 }

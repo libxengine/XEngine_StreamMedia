@@ -79,23 +79,22 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 
 			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
 			//创建流
-			XNETHANDLE xhToken = 0;
-			FLVProtocol_Packet_Create(&xhToken, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
+			FLVProtocol_Packet_Insert(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
 			int nPLen = 0;
 			int nHLen = 0;
 			XCHAR tszHDRBuffer[1024];
 			memset(tszHDRBuffer, '\0', sizeof(tszHDRBuffer));
 			//打包FLV
-			FLVProtocol_Packet_FrameHdr(xhToken, tszHDRBuffer, &nPLen);
+			FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszHDRBuffer, &nPLen);
 			nHLen += nPLen;
 			st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = 7;
 			_tcsxcpy(st_ProtocolStream.st_AVInfo.tszPktName, _X("Lavf58.76.100"));
 
-			FLVProtocol_Packet_FrameScript(xhToken, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+			FLVProtocol_Packet_FrameScript(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
 			nHLen += nPLen;
 			if (st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable)
 			{
-				FLVProtocol_Packet_FrameAVCConfigure(xhToken, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+				FLVProtocol_Packet_FrameAVCConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
 				nHLen += nPLen;
 				if (st_ServiceConfig.bDebug)
 				{
@@ -105,7 +104,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			}
 			if (st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable)
 			{
-				FLVProtocol_Packet_FrameAACConfigure(xhToken, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+				FLVProtocol_Packet_FrameAACConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
 				nHLen += nPLen;
 				if (st_ServiceConfig.bDebug)
 				{
@@ -114,7 +113,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 				}
 			}
 			//创建会话
-			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr, xhToken);
+			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr);
 			ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszHDRBuffer, nHLen);
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPCREATE;
@@ -124,15 +123,10 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XNETHANDLE xhToken = 0;
 			XCHAR tszSMSAddr[MAX_PATH];
-
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-			if (ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken))
-			{
-				FLVProtocol_Packet_Destory(xhToken);
-			}
+			FLVProtocol_Packet_Delete(lpszClientAddr);
 			if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 			{
 				ModuleSession_PushStream_Destroy(tszSMSAddr);
@@ -157,16 +151,14 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XNETHANDLE xhToken = 0;
 			XENGINE_PROTOCOLDATA st_ProtocolAVInfo;
 
 			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOLDATA));
 			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDATA));
 
-			ModuleSession_PushStream_GetTokenForAddr(lpszClientAddr, &xhToken);
 			if (0 == st_ProtocolAVInfo.byAVType)
 			{
-				FLVProtocol_Packet_FrameVideo(xhToken, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
+				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pSt_VFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pSt_VFile);
@@ -174,7 +166,7 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			}
 			else
 			{
-				FLVProtocol_Packet_FrameAudio(xhToken, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
+				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pst_AFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pst_AFile);
