@@ -33,17 +33,12 @@ CModuleSession_PushStream::~CModuleSession_PushStream()
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
- 参数.三：xhFLVStream
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入绑定的FLV打包句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream)
+bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr)
 {
 	Session_IsErrorOccur = false;
 
@@ -74,7 +69,6 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return false;
 	}
-	pSt_Packet->xhFLVStream = xhFLVStream;
 	_tcsxcpy(pSt_Packet->tszSMSAddr, lpszSMSAddr);
 	//是否存在
 	st_Locker.lock();
@@ -173,48 +167,6 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetAddrForAddr(LPCXSTR 
 		return false;
 	}
 	_tcsxcpy(ptszSMSAddr, stl_MapIterator->second->tszSMSAddr);
-	st_Locker.unlock_shared();
-	return true;
-}
-/********************************************************************
-函数名称：ModuleSession_PushStream_GetTokenForAddr
-函数功能：通过地址获取流句柄
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：pxhToken
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出获取到的信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken)
-{
-	Session_IsErrorOccur = false;
-
-	if (NULL == lpszClientAddr)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return false;
-	}
-	//设备编号是否存在
-	st_Locker.lock_shared();
-	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapPushStream.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	*pxhToken = stl_MapIterator->second->xhFLVStream;
 	st_Locker.unlock_shared();
 	return true;
 }

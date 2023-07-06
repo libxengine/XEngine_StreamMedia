@@ -23,7 +23,6 @@ typedef struct
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszMsgBuffer[2048];              //缓存的头
 	XCHAR tszSMSAddr[MAX_PATH];
-	XNETHANDLE xhFLVStream;
 	int nMsgLen;                           //缓冲头大小
 
 	unique_ptr<mutex> st_MSGLocker;
@@ -39,10 +38,9 @@ public:
 	CModuleSession_PushStream();
 	~CModuleSession_PushStream();
 public:
-	bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
+	bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
 	bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
-	bool ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
 	bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
 	bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 	bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo);

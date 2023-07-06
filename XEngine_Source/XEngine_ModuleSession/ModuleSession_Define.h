@@ -109,17 +109,12 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
- 参数.三：xhFLVStream
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入绑定的FLV打包句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, XNETHANDLE xhFLVStream);
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Destroy
 函数功能：销毁一个管理器
@@ -153,25 +148,6 @@ extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr);
-/********************************************************************
-函数名称：ModuleSession_PushStream_GetTokenForAddr
-函数功能：通过地址获取流句柄
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：pxhToken
-  In/Out：Out
-  类型：句柄
-  可空：N
-  意思：输出获取到的信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PushStream_GetTokenForAddr(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
 /********************************************************************
 函数名称：ModuleSession_PushStream_SetHDRBuffer
 函数功能：设置流ID的缓存头
