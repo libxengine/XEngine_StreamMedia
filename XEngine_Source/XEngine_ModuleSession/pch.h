@@ -48,4 +48,8 @@ extern XLONG Session_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#else
+#if __linux__ && !__ANDROID__
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
 #endif

@@ -44,6 +44,7 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 				}
 			}
 		}
+		break;
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	return 0;
@@ -108,7 +109,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	else if (ENUM_XENGINE_STREAMMEDIA_RTMP_PARSE_PKTTYPE_DATA == pSt_RTMPHdr->enPKTType)
 	{
 		double dlValue = 0;
-		XNETHANDLE xhToken = 0;
 		XENGINE_RTMPDATA st_RTMPData;
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
 
@@ -205,8 +205,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND_PUBLISH, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND_PUBLISH)))
 		{
 			//创建流
-			XCHAR tszSMSAddr[MAX_PATH];
-			memset(tszSMSAddr, '\0', MAX_PATH);
+			XCHAR tszSMSAddr[2048];
+			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
 			_xstprintf(tszSMSAddr, _X("%s/%s"), st_RTMPCommand.ppSt_CMDObject[1]->tszMsgBuffer, st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
 			FLVProtocol_Packet_Insert(lpszClientAddr, true, true);

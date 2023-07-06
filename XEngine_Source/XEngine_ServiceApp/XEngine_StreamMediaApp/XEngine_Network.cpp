@@ -71,7 +71,6 @@ void CALLBACK Network_Callback_CenterHeart(LPCXSTR lpszClientAddr, XSOCKET hSock
 //////////////////////////////////////////////////////////////////////////RTMP推流相关
 bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
-	XNETHANDLE xhToken = 0;
 	RTMPProtocol_Parse_Insert(lpszClientAddr);
 	RTMPProtocol_Parse_SetChunkSize(lpszClientAddr, 4096);
 	SocketOpt_HeartBeat_InsertSocketEx(xhRTMPHeart, hSocket);
@@ -80,13 +79,19 @@ bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket
 }
 void CALLBACK Network_Callback_RTMPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
-	if (!RTMPProtocol_Parse_Send(lpszClientAddr, lpszRecvMsg, nMsgLen))
+	bool bStat = false;
+	if (!bStat)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端：%s，投递包失败，大小：%d，错误：%lX"), lpszClientAddr, nMsgLen, Packets_GetLastError());
-		SocketOpt_HeartBeat_ForceOutAddrEx(xhJT1078Heart, lpszClientAddr);
-		return;
+		if (!RTMPProtocol_Parse_Send(lpszClientAddr, lpszRecvMsg, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端：%s，投递包失败，大小：%d，错误：%lX"), lpszClientAddr, nMsgLen, Packets_GetLastError());
+			SocketOpt_HeartBeat_ForceOutAddrEx(xhJT1078Heart, lpszClientAddr);
+			return;
+		}
+		SocketOpt_HeartBeat_ActiveAddrEx(xhJT1078Heart, lpszClientAddr);
+		bStat = true;
 	}
-	SocketOpt_HeartBeat_ActiveAddrEx(xhJT1078Heart, lpszClientAddr);
+	
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK Network_Callback_RTMPLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)

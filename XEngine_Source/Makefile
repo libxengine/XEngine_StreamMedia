@@ -6,18 +6,15 @@ FLAGS=
 THIRDPART_MODULE_JSONCPP = ./XEngine_ThirdPart/jsoncpp
 
 MODULE_CONFIGURE_PATH = ./XEngine_ModuleConfigure
-MODULE_DATABASE_PATH = ./XEngine_ModuleDatabase
 MODULE_HELP_PATH = ./XEngine_ModuleHelp
 MODULE_PROTOCOL_PATH = ./XEngine_ModuleProtocol
 MODULE_SESSION_PATH = ./XEngine_ModuleSession
 
-APP_JT1078_PATH = ./XEngine_ServiceApp/XEngine_JT1078App
-APP_CENTER_PATH = ./XEngine_ServiceApp/XEngine_CenterApp
-APP_FORWARD_PATH = ./XEngine_ServiceApp/XEngine_ForwardApp
+APP_STREAMMEDIA_PATH = ./XEngine_ServiceApp/XEngine_StreamMediaApp
 
 XENGINE_MODULES = libjsoncpp.so                                   \
-                  libXEngine_ModuleConfigure.so libXEngine_ModuleDatabase.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so        \
-				  XEngine_JT1078App.exe XEngine_CenterApp.exe XEngine_ForwardApp.exe
+                  libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so        \
+				  XEngine_StreamMediaApp.exe
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)
@@ -27,8 +24,6 @@ libjsoncpp.so:
 
 libXEngine_ModuleConfigure.so:
 	make -C $(MODULE_CONFIGURE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
-libXEngine_ModuleDatabase.so:
-	make -C $(MODULE_DATABASE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleHelp.so:
 	make -C $(MODULE_HELP_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleProtocol.so:
@@ -36,9 +31,5 @@ libXEngine_ModuleProtocol.so:
 libXEngine_ModuleSession.so:
 	make -C $(MODULE_SESSION_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 
-XEngine_JT1078App.exe:
-	make -C $(APP_JT1078_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
-XEngine_CenterApp.exe:
-	make -C $(APP_CENTER_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
-XEngine_ForwardApp.exe:
-	make -C $(APP_FORWARD_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+XEngine_StreamMediaApp.exe:
+	make -C $(APP_STREAMMEDIA_PATH) PLATFORM=$(PLATFORM) $(FLAGS)

@@ -87,7 +87,6 @@ bool PushStream_JT1078Task_Handle2014(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 bool PushStream_JT1078Task_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
 {
 	int nSDLen = 0;
-	XNETHANDLE xhToken = 0;
 	XCHAR tszSDBuffer[2048];
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszDeviceNumber[128];
@@ -102,7 +101,6 @@ bool PushStream_JT1078Task_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, tszDeviceNumber);
 	_xstprintf(tszSMSAddr, _X("%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
 	
-
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nSDLen);
 	return true;
 }

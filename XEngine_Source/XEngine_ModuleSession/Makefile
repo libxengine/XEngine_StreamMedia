@@ -10,7 +10,7 @@ LOADHDR = -I ./
 LOADSO = 
 LIB = 
 LIBEX = 
-OBJECTS = ModuleSession_Client.o ModuleSession_Server.o ModuleSession_Forward.o pch.o
+OBJECTS = ModuleSession_PullStream.o ModuleSession_PushStream.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
@@ -52,14 +52,10 @@ endif
 all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModuleSession.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
-ModuleSession_Client.o:./ModuleSession_Client/ModuleSession_Client.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_Client/ModuleSession_Client.cpp 
-ModuleSession_Server.o:./ModuleSession_Server/ModuleSession_Server.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_Server/ModuleSession_Server.cpp 
-ModuleSession_SDKDevice.o:./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_SDKDevice/ModuleSession_SDKDevice.cpp 
-ModuleSession_Forward.o:./ModuleSession_Forward/ModuleSession_Forward.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_Forward/ModuleSession_Forward.cpp 
+ModuleSession_PullStream.o:./ModuleSession_PullStream/ModuleSession_PullStream.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_PullStream/ModuleSession_PullStream.cpp 
+ModuleSession_PushStream.o:./ModuleSession_PushStream/ModuleSession_PushStream.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleSession_PushStream/ModuleSession_PushStream.cpp 
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
