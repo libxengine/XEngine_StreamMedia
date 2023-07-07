@@ -22,10 +22,10 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include <XEngine_Include/XEngine_Client/XClient_Define.h>
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
-#include <XEngine_Include/XEngine_AVCoder/AVCollect_Define.h>
-#include <XEngine_Include/XEngine_AVCoder/VideoCoder_Define.h>
-#include <XEngine_Include/XEngine_AVCoder/AVHelp_Define.h>
-#include <XEngine_Include/XEngine_AVCoder/AVHelp_Error.h>
+#include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
 
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
