@@ -44,7 +44,6 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 				}
 			}
 		}
-		break;
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	return 0;
@@ -70,7 +69,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 
 		RTMPProtocol_Help_ParseConnect(&byVersion, NULL, &st_RTMPClient, lpszMsgBuffer, nMsgLen);
 		RTMPProtocol_Help_PKTConnect(ptszSDBuffer, &nSDLen, &st_RTMPClient, byVersion, &st_RTMPServer);
-
 		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求连接成功,连接版本:%d,推流时间:%d,推流ID：%s"), lpszClientAddr, byVersion, st_RTMPClient.nTime, st_RTMPClient.tszRandomStr);
 	}
@@ -180,18 +178,25 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 				APIHelp_NetWork_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nChannel = (int)dlValue;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d,索引:%d,名称:%s"), lpszClientAddr, st_RTMPData.nCount, i, st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer);
+			//XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d,索引:%d,名称:%s"), lpszClientAddr, st_RTMPData.nCount, i, st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer);
 		}
 		_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 		FLVProtocol_Packet_SetTime(lpszClientAddr, st_AVInfo.st_VideoInfo.nFrameRate, st_AVInfo.st_AudioInfo.nSampleRate);
 		ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d"), lpszClientAddr, st_RTMPData.nCount);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_RTMP_PARSE_PKTTYPE_COMMAND == pSt_RTMPHdr->enPKTType)
 	{
+		XCHAR tszCMDBuffer[MAX_PATH];
 		XENGINE_RTMPCOMMAND st_RTMPCommand;
+
+		memset(tszCMDBuffer, '\0', MAX_PATH);
 		memset(&st_RTMPCommand, '\0', sizeof(XENGINE_RTMPCOMMAND));
 
 		RTMPProtocol_Help_ParseCommand(&st_RTMPCommand, lpszMsgBuffer, nMsgLen);
+		_tcsxcpy(tszCMDBuffer, st_RTMPCommand.tszCMDName);
+		/*
 		for (int i = 0; i < st_RTMPCommand.nProCount; i++)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求命令协议解析成功,属性个数:%d,索引:%d,命令:%s,Key:s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDProperty[i]->tszKeyBuffer, st_RTMPCommand.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer);
@@ -199,7 +204,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		for (int i = 0; i < st_RTMPCommand.nObCount; i++)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求命令协议解析成功,对象个数:%d,索引:%d,命令:%s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDObject[i]->tszMsgBuffer);
-		}
+		}*/
 		st_RTMPCommand.nProCount = 0;
 		st_RTMPCommand.nObCount = 0;
 		if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND_PUBLISH, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND_PUBLISH)))
@@ -255,7 +260,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求的命令:%s 协议解析处理完成"), lpszClientAddr, st_RTMPCommand.tszCMDName);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求的命令:%s 协议解析处理完成"), lpszClientAddr, tszCMDBuffer);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_RTMP_PARSE_PKTTYPE_AUDIO == pSt_RTMPHdr->enPKTType)
 	{
