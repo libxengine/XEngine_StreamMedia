@@ -19,14 +19,14 @@ Push stream Protocol:
 4. GB28181(planning)
 5. JT1078(planning)
 6. SRT(planning)
-Pull Stream Protocols:
+Pull Stream Protocols:  
 1. RTSP(planning)
 2. RTMP(planning)
 3. FLV
 4. HLS(TS)(planning)
 5. webrtc(planning)
-6. srt(planning)
-feature:  
+6. srt(planning)  
+feature  
 1. Support voice intercom
 2. Support video transcoding
 3. Support frame extraction
@@ -75,7 +75,7 @@ refer to linux
 7.  use vlc play
 
 ## example 
-Push Stream Address:rtmp://127.0.0.1/live/stream
+Push Stream Address:rtmp://127.0.0.1/live/stream  
 Pull Stream Address:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## Dir Struct

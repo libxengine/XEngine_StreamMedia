@@ -18,14 +18,14 @@ c c++ streammedia server
 3. WEBRTC(planning)
 4. GB28181(planning)
 5. JT1078(planning)
-6. SRT(planning)
+6. SRT(planning)  
 拉流支持:
 1. RTSP(planning)
 2. RTMP(planning)
 3. FLV
 4. HLS(TS)(planning)
 5. webrtc(planning)
-6. srt(planning)
+6. srt(planning)  
 特性:  
 1. 支持语音对讲
 2. 支持视频转码
@@ -76,7 +76,7 @@ make FLAGS=CleanAll 清理编译
 8.  使用VLC等工具播放
 
 ## 示例
-推流地址:rtmp://127.0.0.1/live/stream
+推流地址:rtmp://127.0.0.1/live/stream  
 播放地址:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## 目录结构
