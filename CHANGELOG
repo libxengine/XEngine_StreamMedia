@@ -1,3 +1,13 @@
+XEngine_StreamMedia V2.0.0.1001
+
+重构了整个流媒体服务程序,现在只有一个流媒体服务了
+支持:RTMP和XStream推流
+支持:HTTP-FLV拉流
+
+Refactored the streaming service program, now there is only one streaming service
+support:rtmp and xstream push stream
+support:http-flv pull stream
+=======================================================
 XEngine_StreamMedia V1.4.1.1001
 
 更新:匹配XEngine V8.x版本
