@@ -31,7 +31,7 @@ feature:
 2. Support video transcoding
 3. Support frame extraction
 4. Support Re-push stream 
-
+5. Support Transparent transmission
 ## install
 
 #### XEngine environment
@@ -74,6 +74,9 @@ refer to linux
 6.  use obs push stream
 7.  use vlc play
 
+## example 
+Push Stream Address:rtmp://127.0.0.1/live/stream
+Pull Stream Address:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct

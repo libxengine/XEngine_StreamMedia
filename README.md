@@ -31,6 +31,7 @@ c c++ streammedia server
 2. 支持视频转码
 3. 支持抽帧
 4. 支持转推流
+5. 支持透传数据
 
 ## 安装教程
 
@@ -73,6 +74,10 @@ make FLAGS=CleanAll 清理编译
 5.  运行XEngine_StreamMediaApp,linux可以使用 -d 1 命令在后台运行
 7.  使用obs推流
 8.  使用VLC等工具播放
+
+## 示例
+推流地址:rtmp://127.0.0.1/live/stream
+播放地址:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## 目录结构
 - XEngine_Docment 文档目录结构
