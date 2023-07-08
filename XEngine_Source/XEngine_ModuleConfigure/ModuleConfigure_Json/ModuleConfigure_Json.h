@@ -18,8 +18,6 @@ public:
 	~CModuleConfigure_Json();
 public:
 	bool ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
-	bool ModuleConfigure_Json_JT1078(LPCXSTR lpszConfigFile, XENGINE_JT1078CONFIG* pSt_ServerConfig);
-	bool ModuleConfigure_Json_Forward(LPCXSTR lpszConfigFile, XENGINE_FORWARDCONFIG* pSt_ServerConfig);
 protected:
 private:
 };

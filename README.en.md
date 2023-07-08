@@ -6,29 +6,32 @@ As long as the repository is not in suspended state, we will maintain and develo
 ## Introduction
 c c++ 流媒体服务器  
 c c++ streammedia server  
-This is not a simple streaming media server, but a protocol stream parsing push streaming service, need to be used with the streaming service, his main role is to parse the national standard protocol and other protocols of the streaming media protocol, and then packaged to push the stream to the specified streaming media server  
-This service is a supplementary service between streaming media services and devices. It is convenient for users to better manage streaming  
-can support JT1078, GB28181 and other protocol streams. Parsing these protocol streams, and then pushing them to a streaming server through RTMP protocol. Users can pull streams through the streaming server.  
-It is a streaming protocol parsing collection, which can access any protocol devices to our server, and then packaged into RTMP protocol by our server to push the stream to the specified server.  
-This is a cross-platform simple high-performance network licensing server, provides a complete demo code  
-
-## Design Patterns
-Control the device to stream to our server through XEngine_StreamMedia, push the stream to the third-party streaming service through our server, and the client to the third-party streaming service to pull the stream  
-This service mainly provides standard interfaces for users to conveniently manage push-pull streams  
-Support all standard streaming media servers, such as: nginx-rtmp AMS red5 etc  
-device -> XEngine_StreamMedia -> stream media service -> client  
+This is a streaming media server that supports multiple streaming protocols. It supports push and pull stream, and supports streaming media servers of various standards  
+It can also be used as a frame extraction service and transcoding service  
+This is a cross-platform server, provides a complete demo code  
 
 ## Software feature
 A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
+Push stream Protocol:
+1. RTMP
+2. XStream 
+3. WEBRTC(planning)
+4. GB28181(planning)
+5. JT1078(planning)
+6. SRT(planning)
+Pull Stream Protocols:
+1. RTSP(planning)
+2. RTMP(planning)
+3. FLV
+4. HLS(TS)(planning)
+5. webrtc(planning)
+6. srt(planning)
+feature:  
 1. Support voice intercom
-2. Support multiple audio format transcoding
-3. Support video recording
-4. Support JT1078 protocol parsing and streaming
-5. Support the parsing and streaming of the national standard GB28181 protocol
-6. Support international ONVIF protocol
-7. Support SIP streaming protocol
-8. support rtsp,rtmp,hls convert push stream
-
+2. Support video transcoding
+3. Support frame extraction
+4. Support Re-push stream 
+5. Support Transparent transmission
 ## install
 
 #### XEngine environment
@@ -61,24 +64,25 @@ Linux use Makefile to complie,terminal exection,Requires mac 13 and above
 ##### Compile Command
 refer to linux
 
-
 ## Use
 
 1.  Switch to the MASTER branch
 2.  download code
 3.  complie
 4.  install
-5.  run XEngine_CenterApp.exe,XEngine_JT1078App.exe,linux can be set parament -d 1 command
-6.  use APPClient push stream
+5.  run XEngine_StreamMediaApp,linux can be set parament -d 1 command
+6.  use obs push stream
 7.  use vlc play
 
+## example 
+Push Stream Address:rtmp://127.0.0.1/live/stream
+Pull Stream Address:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
 - XEngine_Release Install Dir Struct
 - XEngine_Source Source Dir
 - XEngine_APPClient Client Example Code
-- XEngine_SQLFile Sql File
 
 ## Participate in contribution
 

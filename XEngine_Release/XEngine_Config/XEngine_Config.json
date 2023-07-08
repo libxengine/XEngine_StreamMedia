@@ -2,16 +2,25 @@
     "tszSMSUrl":"rtmp://app.xyry.org/live",
     "tszIPAddr":"127.0.0.1",
     "bDeamon":0,
-    "nCenterPort":5600,
+    "nRTMPPort":1935,
+    "nHttpPort":5600,
+    "nCenterPort":5601,
+    "nJT1078Port":5602,
     "XMax":{
         "nMaxClient":10000,
         "nMaxQueue":10000,
-        "nIOThread":2,
-        "nCenterThread":2
+        "nIOThread":1,
+        "nHTTPThread":2,
+        "nCenterThread":2,
+        "nRTMPThread":2,
+        "nJT1078Thread":2
     },
     "XTime":{
         "nTimeCheck":3,
-        "nCenterTimeOut":5
+        "nHTTPTimeout":0,
+        "nCenterTimeout":0,
+        "nRTMPTimeout":0,
+        "nJT1078Timeout":0
     },
     "XSQL":{
         "bEnable":false,
@@ -26,6 +35,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V2.0.0.1001 Build20230708",
         "V1.4.1.1001 Build20230515",
         "V1.4.0.1001 Build20221202",
         "V1.3.0.1001 Build20221025",

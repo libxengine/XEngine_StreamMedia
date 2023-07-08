@@ -30,27 +30,27 @@ extern "C" XLONG ModuleProtocol_GetLastError(int *pInt_SysError = NULL);
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：nCode
+ 参数.三：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入要打包的协议,如果需要的话
+ 参数.四：nCode
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入回复的CODE
- 参数.四：lpszMsgBuffer
+ 参数.五：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入要处理的缓冲区
- 参数.五：lpszToken
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入打包的句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMsgBuffer = NULL, LPCXSTR lpszToken = NULL);
+extern "C" bool ModuleProtocol_Packet_Comm(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLHDR * pSt_ProtocolHdr = NULL, int nCode = 0, LPCXSTR lpszMsgBuffer = NULL);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Create
 函数功能：流媒体创建
@@ -64,17 +64,17 @@ extern "C" bool ModuleProtocol_Packet_Comm(XCHAR* ptszMsgBuffer, int* pInt_MsgLe
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：pSt_ProtocolDevice
+ 参数.三：pSt_ProtocolStream
   In/Out：In
   类型：数据结构指针
   可空：N
-  意思：输入设备信息
+  意思：输入音视频流信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDevice);
+extern "C" bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Push
 函数功能：推流协议
@@ -88,11 +88,11 @@ extern "C" bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_Msg
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：pSt_ProtocolDevice
+ 参数.三：pSt_ProtocolStream
   In/Out：In
   类型：数据结构指针
   可空：N
-  意思：输入设备信息
+  意思：输入音视频流信息
  参数.四：nMsgLen
   In/Out：In
   类型：整数型
@@ -108,7 +108,7 @@ extern "C" bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_Msg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE * pSt_ProtocolDevice, int nMsgLen, int nMsgType);
+extern "C" bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream, int nMsgLen, int nMsgType);
 /********************************************************************
 函数名称：ModuleProtocol_Packet_Destroy
 函数功能：销毁流协议
@@ -122,46 +122,17 @@ extern "C" bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLe
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：pSt_ProtocolDev
+ 参数.三：pSt_ProtocolStream
   In/Out：In
   类型：数据结构指针
   可空：N
-  意思：输入要销毁的流信息
+  意思：输入音视频流信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLDEVICE* pSt_ProtocolDev);
-/********************************************************************
-函数名称：ModuleProtocol_Packet_ForwardList
-函数功能：转发流列表打包函数
- 参数.一：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出协议缓冲区
- 参数.二：pInt_MsgLen
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出缓冲区大小
- 参数.三：ppptszForward
-  In/Out：In
-  类型：三级指针
-  可空：N
-  意思：输入要打包的列表
- 参数.四：nListCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入列表个数
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleProtocol_Packet_ForwardList(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, MODULESESSION_FORWARDINFO * **pppSt_Forward, int nListCount);
+extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream);
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/

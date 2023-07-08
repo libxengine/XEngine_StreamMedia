@@ -10,358 +10,371 @@
 //    Purpose:     导出会话模块定义
 //    History:
 *********************************************************************/
-typedef struct
-{
-	int nChannel;
-	bool bLive;
-}MODULESESSION_SDKCLIENT;
-typedef struct
-{
-	XCHAR tszAVUrl[MAX_PATH];
-	XCHAR tszToken[MAX_PATH];
-}MODULESESSION_FORWARDINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
 extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
 /*********************************************************************************
-*                          导出会话模块                                          *
+*                          拉流端导出会话模块                                    *
 *********************************************************************************/
 /********************************************************************
-函数名称：ModuleSession_Client_Create
-函数功能：创建一个客户端会话
- 参数.一：xhClient
+函数名称：ModuleSession_PullStream_Insert
+函数功能：插入一个拉流客户端到管理器
+ 参数.一：lpszClientAddr
   In/Out：In
-  类型：句柄
+  类型：常量字符指针
   可空：N
-  意思：输入客户端句柄
+  意思：输入要处理的客户端
+ 参数.二：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要绑定的流媒体ID
+ 参数.三：lpszPushAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要绑定的推流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Client_Create(XNETHANDLE xhClient);
+extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr);
 /********************************************************************
-函数名称：ModuleSession_Client_Get
-函数功能：获得一个可以使用的客户端句柄
- 参数.一：pxhClient
+函数名称：ModuleSession_PullStream_GetSMSAddr
+函数功能：获取客户端绑定的流ID
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSMSAddr
   In/Out：Out
-  类型：句柄指针
+  类型：字符指针
   可空：N
-  意思：输出获得的句柄
+  意思：输出流媒体ID
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Client_Get(XNETHANDLE * pxhClient);
+extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
 /********************************************************************
-函数名称：ModuleSession_Client_Exist
-函数功能：客户端是否存在
- 参数.一：pxhClient
+函数名称：ModuleSession_PullStream_GetPushAddr
+函数功能：获取客户端绑定的推流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSMSAddr
   In/Out：Out
-  类型：句柄
+  类型：字符指针
   可空：N
-  意思：输出客户端句柄
- 参数.二：lpszDeviceAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入绑定的设备地址
- 参数.三：lpszDeviceNumber
-  In/Out：Out
-  类型：常量字符指针
-  可空：N
-  意思：输入绑定的设备编号
- 参数.四：nChannel
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入绑定的通道
- 参数.五：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入是直播还是录像
+  意思：输出推流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Client_Exist(XNETHANDLE * pxhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
 /********************************************************************
-函数名称：ModuleSession_Client_Insert
-函数功能：绑定插入一个客户端
- 参数.一：xhClient
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入客户端句柄
- 参数.二：lpszDeviceAddr
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除一个拉流端
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入绑定的设备地址
- 参数.三：lpszDeviceNumber
-  In/Out：Out
-  类型：常量字符指针
-  可空：N
-  意思：输入绑定的设备编号
- 参数.四：nChannel
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入绑定的通道
- 参数.五：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入是直播还是录像
+  意思：输入要处理的客户端
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Client_Insert(XNETHANDLE xhClient, LPCXSTR lpszDeviceAddr, LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
-/********************************************************************
-函数名称：ModuleSession_Client_DeleteAddr
-函数功能：通过IP地址删除绑定的设备
- 参数.一：lpszDeviceAddr
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入设备IP地址
- 参数.二：pxhClient
-  In/Out：Out
-  类型：句柄指针
-  可空：Y
-  意思：输出绑定的句柄
- 参数.三：ptszDeviceNumber
-  In/Out：Out
-  类型：常量字符指针
-  可空：Y
-  意思：输出设备编号
- 参数.四：pInt_Channel
-  In/Out：Out
-  类型：整数型
-  可空：Y
-  意思：输出通道号
- 参数.五：pbLive
-  In/Out：Out
-  类型：逻辑型
-  可空：Y
-  意思：输出直播还是录像
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Client_DeleteAddr(LPCXSTR lpszDeviceAddr, XNETHANDLE * pxhClient = NULL, XCHAR* ptszDeviceNumber = NULL, int* pInt_Channel = NULL, bool* pbLive = NULL);
-/********************************************************************
-函数名称：ModuleSession_Client_DeleteNumber
-函数功能：通过设备信息删除绑定信息
- 参数.一：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.二：nChannel
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：通道号
- 参数.三：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：直播还是录像
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Client_DeleteNumber(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
-/********************************************************************
-函数名称：ModuleSession_Client_Destory
-函数功能：销毁客户端会话管理器
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Client_Destory();
-/********************************************************************
-函数名称：ModuleSession_Server_Create
-函数功能：创建一个服务器会话管理器
- 参数.一：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.二：nChannel
-  In/Out：In
-  类型：nChannel
-  可空：N
-  意思：输入设备通道
- 参数.三：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入直播还是录像
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Server_Create(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
-/********************************************************************
-函数名称：ModuleSession_Server_Destroy
-函数功能：销毁一个管理器
- 参数.一：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.二：nChannel
-  In/Out：In
-  类型：nChannel
-  可空：N
-  意思：输入设备通道
- 参数.三：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入直播还是录像
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Server_Destroy(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
-/********************************************************************
-函数名称：ModuleSession_Server_SetPush
-函数功能：设置推送句柄
- 参数.一：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.二：nChannel
-  In/Out：In
-  类型：nChannel
-  可空：N
-  意思：输入设备通道
- 参数.三：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入直播还是录像
- 参数.四：xhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要设置的推送句柄
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_Server_SetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive, XHANDLE xhToken);
-/********************************************************************
-函数名称：ModuleSession_Server_GetPush
-函数功能：获取推送句柄
- 参数.一：lpszDeviceNumber
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入设备编号
- 参数.二：nChannel
-  In/Out：In
-  类型：nChannel
-  可空：N
-  意思：输入设备通道
- 参数.三：bLive
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：输入直播还是录像
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" XHANDLE ModuleSession_Server_GetPush(LPCXSTR lpszDeviceNumber, int nChannel, bool bLive);
+extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 /*********************************************************************************
-*                          流转发导出会话模块                                    *
+*                         推流端导出会话模块                                     *
 *********************************************************************************/
 /********************************************************************
-函数名称：ModuleSession_Forward_Create
-函数功能：创建转发服务
- 参数.一：xhPlay
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要创建的句柄
- 参数.二：xhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入绑定的句柄
- 参数.三：lpszSMSPlay
+函数名称：ModuleSession_PushStream_Create
+函数功能：创建一个推流会话管理器
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入播放地址
+  意思：输入客户端地址
+ 参数.二：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入流媒体ID
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Forward_Create(LPCXSTR lpszPlay, XHANDLE xhToken, LPCXSTR lpszSMSPlay);
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
 /********************************************************************
-函数名称：ModuleSession_Forward_Get
-函数功能：获取句柄绑定信息
- 参数.一：xhPlay
+函数名称：ModuleSession_PushStream_Destroy
+函数功能：销毁一个管理器
+ 参数.一：lpszClientAddr
   In/Out：In
-  类型：句柄
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的句柄
-返回值
-  类型：句柄型
-  意思：成功返回句柄,失败返回NULL
-备注：
-*********************************************************************/
-extern "C" XHANDLE ModuleSession_Forward_Get(LPCXSTR lpszPlay);
-/********************************************************************
-函数名称：ModuleSession_Forward_Delete
-函数功能：删除绑定句柄
- 参数.一：xhPlay
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：输入要操作的句柄
+  意思：输入推流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Forward_Delete(LPCXSTR lpszPlay);
+extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 /********************************************************************
-函数名称：ModuleSession_Forward_List
-函数功能：枚举当前播放列表
- 参数.一：pppSt_Forward
-  In/Out：In/Out
-  类型：三级指针
+函数名称：ModuleSession_PushStream_GetAddrForAddr
+函数功能：通过地址获取流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
   可空：N
-  意思：输出播放列表
- 参数.二：pInt_ListCount
-  In/Out：In/Out
+  意思：输入客户端地址
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_SetHDRBuffer
+函数功能：设置流ID的缓存头
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要缓存的数据
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓存大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetHDRBuffer
+函数功能：获取流ID的缓存头
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszMsgBuffer
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出获取到的数据
+ 参数.三：pInt_MsgLen
+  In/Out：In
   类型：整数型指针
   可空：N
-  意思：输出列表个数
+  意思：输出数据大小
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_Forward_List(MODULESESSION_FORWARDINFO * **pppSt_Forward, int* pInt_ListCount);
+extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+/********************************************************************
+函数名称：ModuleSession_PushStream_FindStream
+函数功能：查找流对应地址
+ 参数.一：lpszSMSAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要查找的流
+ 参数.二：ptszClientAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输入要查找的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_Send
+函数功能：投递一段数据给会话管理器
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的流
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要投递的数据缓冲区
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+ 参数.四：nAVType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区类型.0视频1音频
+ 参数.五：nFrameType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入帧类型,视频的关键帧还是PB
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
+/********************************************************************
+函数名称：ModuleSession_PushStream_Recv
+函数功能：获取缓冲区队列数据
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的流
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要投递的数据缓冲区
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+ 参数.四：nAVType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区类型.0视频1音频
+ 参数.五：nFrameType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入帧类型,视频的关键帧还是PB
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
+/********************************************************************
+函数名称：ModuleSession_PushStream_ClientInsert
+函数功能：客户端插入
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的流
+ 参数.二：lpszPullAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入插入的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_ClientDelete
+函数功能：客户端删除
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的流
+ 参数.二：lpszPullAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入删除的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_ClientList
+函数功能：客户端获取
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的流
+ 参数.二：pStl_ListClient
+  In/Out：Out
+  类型：容器指针
+  可空：N
+  意思：输出获取到的列表
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>* pStl_ListClient);
+/********************************************************************
+函数名称：ModuleSession_PushStream_SetAVInfo
+函数功能：设置推流的音视频信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的推流端
+ 参数.二：pSt_AVInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要保存的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetAVInfo
+函数功能：获取推流端音视频信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的推流端
+ 参数.二：pSt_AVInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出保存的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);

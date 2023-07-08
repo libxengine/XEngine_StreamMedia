@@ -19,7 +19,6 @@
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include "../XEngine_UserProtocol.h"
-#include "../XEngine_ModuleSession/ModuleSession_Define.h"
 #include "ModuleProtocol_Define.h"
 #include "ModuleProtocol_Error.h"
 /********************************************************************

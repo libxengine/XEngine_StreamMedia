@@ -3,20 +3,21 @@ LIBRARY
 EXPORTS
 	ModuleSession_GetLastError
 
-	ModuleSession_Client_Create
-	ModuleSession_Client_Get
-	ModuleSession_Client_Exist
-	ModuleSession_Client_Insert
-	ModuleSession_Client_DeleteAddr
-	ModuleSession_Client_DeleteNumber
-	ModuleSession_Client_Destory
+	ModuleSession_PullStream_Insert
+	ModuleSession_PullStream_GetSMSAddr
+	ModuleSession_PullStream_GetPushAddr
+	ModuleSession_PullStream_Delete
 
-	ModuleSession_Server_Create
-	ModuleSession_Server_Destroy
-	ModuleSession_Server_SetPush
-	ModuleSession_Server_GetPush
-
-	ModuleSession_Forward_Create
-	ModuleSession_Forward_Get
-	ModuleSession_Forward_Delete
-	ModuleSession_Forward_List
+	ModuleSession_PushStream_Create
+	ModuleSession_PushStream_Destroy
+	ModuleSession_PushStream_GetAddrForAddr
+	ModuleSession_PushStream_SetHDRBuffer
+	ModuleSession_PushStream_GetHDRBuffer
+	ModuleSession_PushStream_FindStream
+	ModuleSession_PushStream_Send
+	ModuleSession_PushStream_Recv
+	ModuleSession_PushStream_ClientInsert
+	ModuleSession_PushStream_ClientDelete
+	ModuleSession_PushStream_ClientList
+	ModuleSession_PushStream_SetAVInfo
+	ModuleSession_PushStream_GetAVInfo

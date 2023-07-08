@@ -19,4 +19,3 @@
 #define ERROR_MODULE_CONFIGURE_JSON_XVER 0xA0007                     //读取版本列表失败
 #define ERROR_MODULE_CONFIGURE_JSON_MALLOC 0xA0008                   //申请内存失败
 #define ERROR_MODULE_CONFIGURE_JSON_XSQL 0xA0009                     //数据库配置错误
-#define ERROR_MODULE_CONFIGURE_JSON_XCLIENT 0xA000A                  //客户端配置错误

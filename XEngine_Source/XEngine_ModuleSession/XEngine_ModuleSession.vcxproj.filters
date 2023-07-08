@@ -9,27 +9,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\ModuleSession_Server">
-      <UniqueIdentifier>{3dbccfac-4a32-4c18-b304-b5b04876663f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\ModuleSession_Client">
-      <UniqueIdentifier>{983e96e1-cfed-4747-be7e-cd5059b23db1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="源文件\ModuleSession_Client">
-      <UniqueIdentifier>{d73a91bc-1a59-4b19-a004-30349496a6ff}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleSession_PushStream">
+      <UniqueIdentifier>{dbda243c-26fe-4c80-93bb-41a745162cb3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleSession_Server">
-      <UniqueIdentifier>{50e7df2d-8afa-43eb-b717-836c9ab20f48}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleSession_PushStream">
+      <UniqueIdentifier>{42c189e0-b5fc-4515-8424-ce62eb3d5d87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\ModuleSession_Forward">
-      <UniqueIdentifier>{afc2de33-8681-4dea-8d9d-58a200f2f474}</UniqueIdentifier>
+    <Filter Include="头文件\ModuleSession_PullStream">
+      <UniqueIdentifier>{8872ca14-c55c-415a-a93f-afa7ef001540}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\ModuleSession_Forward">
-      <UniqueIdentifier>{e8555e72-cbd4-4798-8bd2-1af9cb281616}</UniqueIdentifier>
+    <Filter Include="源文件\ModuleSession_PullStream">
+      <UniqueIdentifier>{9a82030f-4654-45f6-a6aa-196d193ebb8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,14 +39,11 @@
     <ClInclude Include="ModuleSession_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleSession_Server\ModuleSession_Server.h">
-      <Filter>头文件\ModuleSession_Server</Filter>
+    <ClInclude Include="ModuleSession_PushStream\ModuleSession_PushStream.h">
+      <Filter>头文件\ModuleSession_PushStream</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleSession_Client\ModuleSession_Client.h">
-      <Filter>头文件\ModuleSession_Client</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleSession_Forward\ModuleSession_Forward.h">
-      <Filter>头文件\ModuleSession_Forward</Filter>
+    <ClInclude Include="ModuleSession_PullStream\ModuleSession_PullStream.h">
+      <Filter>头文件\ModuleSession_PullStream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +53,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleSession_Server\ModuleSession_Server.cpp">
-      <Filter>源文件\ModuleSession_Server</Filter>
+    <ClCompile Include="ModuleSession_PushStream\ModuleSession_PushStream.cpp">
+      <Filter>源文件\ModuleSession_PushStream</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleSession_Client\ModuleSession_Client.cpp">
-      <Filter>源文件\ModuleSession_Client</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleSession_Forward\ModuleSession_Forward.cpp">
-      <Filter>源文件\ModuleSession_Forward</Filter>
+    <ClCompile Include="ModuleSession_PullStream\ModuleSession_PullStream.cpp">
+      <Filter>源文件\ModuleSession_PullStream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

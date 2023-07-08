@@ -6,30 +6,32 @@
 ## 介绍
 c c++ 流媒体服务器  
 c c++ streammedia server  
-这不是一个单纯的流媒体服务器,而是一个协议流解析推流服务,需要配合流媒体服务使用,他的主要作用是解析国标协议和其他协议的流媒体协议,然后打包推流到指定流媒体服务器上  
-这个服务是流媒体服务和设备之间的一个补充服务.方便用户更好的管理推流  
-可以支持JT1078,GB28181等协议流.解析这些协议流,然后通过RTMP协议推流到一个流媒体服务器上面.用户可以通过流媒体服务器拉流  
-他是一个流媒体协议解析集合,可以接入任何协议的设备到我们的服务器,然后通过我们服务器解析打包成RTMP协议推流到指定服务器上面
-这是一个跨平台简单高性能网络授权服务器,提供了完整的演示代码  
-
-## 设计模式
-通过XEngine_StreamMedia控制设备流到我们的服务器,然后通过我们服务器推流到第三方流媒体服务,客户端去第三方流媒体服务拉流  
-此服务主要提供标准接口给用户方便的管理推拉流  
-支持所有标准流媒体服务器,比如:nginx-rtmp AMS red5 等等  
-device -> XEngine_StreamMedia -> stream media service -> client  
+这是一个支持多种流协议的流媒体服务器,他支持推流和拉流,支持各种主流标准的流媒体服务器
+他还可以作为抽帧服务和转码服务使用.
+这是一个跨平台的流媒体服务器,提供了完整的演示代码   
 
 ## 软件架构
 基于libXEngine开发并实现的一套简洁高性能跨平台流媒体解析推流服务  
-软件特性:  
+推流支持:
+1. RTMP
+2. XStream 
+3. WEBRTC(planning)
+4. GB28181(planning)
+5. JT1078(planning)
+6. SRT(planning)
+拉流支持:
+1. RTSP(planning)
+2. RTMP(planning)
+3. FLV
+4. HLS(TS)(planning)
+5. webrtc(planning)
+6. srt(planning)
+特性:  
 1. 支持语音对讲
-2. 支持多种音频格式转码
-3. 支持录像
-4. 支持JT1078协议解析和推流
-5. 支持国标GB28181协议的解析和推流
-6. 支持国际ONVIF协议
-7. 支持SIP流协议
-8. 支持RTSP,RTMP,HLS等转推流
-
+2. 支持视频转码
+3. 支持抽帧
+4. 支持转推流
+5. 支持透传数据
 
 ## 安装教程
 
@@ -63,23 +65,25 @@ make FLAGS=CleanAll 清理编译
 ###### 编译命令
 参考Linux
 
-
 ## 使用说明
 
 1.  切换到MASTER分支
 2.  下载代码
 3.  编译
 4.  安装
-5.  运行XEngine_CenterApp.exe,XEngine_JT1078App.exe,linux可以使用 -d 1 命令在后台运行
-7.  使用APPClient中的推流例子推流
+5.  运行XEngine_StreamMediaApp,linux可以使用 -d 1 命令在后台运行
+7.  使用obs推流
 8.  使用VLC等工具播放
+
+## 示例
+推流地址:rtmp://127.0.0.1/live/stream
+播放地址:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 
 ## 目录结构
 - XEngine_Docment 文档目录结构
 - XEngine_Release 安装目录结构
 - XEngine_Source 源代目录结构
 - XEngine_APPClient 客户端演示代码
-- XEngine_SQLFile 数据库脚本文件
 
 ## 参与贡献
 
