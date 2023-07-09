@@ -39,7 +39,7 @@
     <ClCompile Include="XEngine_Network.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="StreamMedia_PushStream\PushStream_CenterTask.cpp">
+    <ClCompile Include="StreamMedia_PushStream\PushStream_XStreamTask.cpp">
       <Filter>源文件\StreamMedia_PushStream</Filter>
     </ClCompile>
     <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp">
@@ -65,7 +65,7 @@
     <ClInclude Include="XEngine_Network.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="StreamMedia_PushStream\PushStream_CenterTask.h">
+    <ClInclude Include="StreamMedia_PushStream\PushStream_XStreamTask.h">
       <Filter>头文件\StreamMedia_PushStream</Filter>
     </ClInclude>
     <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h">

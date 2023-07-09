@@ -217,7 +217,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HTTP消息服务没有被启用"));
 	}
 	//启动标准推流代码
-	if (st_ServiceConfig.nCenterPort > 0)
+	if (st_ServiceConfig.nXStreamPort > 0)
 	{
 		//组包器
 		xhCenterPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nCenterThread);
@@ -230,7 +230,7 @@ int main(int argc, char** argv)
 		//启动心跳
 		if (st_ServiceConfig.st_XTime.nCenterTimeout > 0)
 		{
-			xhCenterHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_CenterHeart);
+			xhCenterHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
 			if (NULL == xhCenterHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流心跳服务失败,错误：%lX"), NetCore_GetLastError());
@@ -243,15 +243,15 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XEngine推流心跳服务被设置为不启用"));
 		}
 		//启动网络
-		xhCenterSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nCenterPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
+		xhCenterSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
 		if (NULL == xhCenterSocket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流网络服务器失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流网络服务器成功,XEngine推流端口:%d,网络IO线程个数:%d"), st_ServiceConfig.nCenterPort, st_ServiceConfig.st_XMax.nIOThread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流网络服务器成功,XEngine推流端口:%d,网络IO线程个数:%d"), st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nIOThread);
 		//绑定网络事件
-		NetCore_TCPXCore_RegisterCallBackEx(xhCenterSocket, Network_Callback_CenterLogin, Network_Callback_CenterRecv, Network_Callback_CenterLeave);
+		NetCore_TCPXCore_RegisterCallBackEx(xhCenterSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XEngine推流网络事件成功"));
 		//启动任务池
 		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 
 			*pInt_Pos = i;
 			ppSt_ListCenterParam[i]->lParam = pInt_Pos;
-			ppSt_ListCenterParam[i]->fpCall_ThreadsTask = PushStream_CenterTask_Thread;
+			ppSt_ListCenterParam[i]->fpCall_ThreadsTask = PushStream_XStreamTask_Thread;
 		}
 		xhCenterPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread);
 		if (NULL == xhCenterPool)

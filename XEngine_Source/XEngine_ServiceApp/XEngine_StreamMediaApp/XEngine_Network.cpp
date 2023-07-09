@@ -37,7 +37,7 @@ void CALLBACK Network_Callback_HttpHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket
 	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 }
 //////////////////////////////////////////////////////////////////////////下面是X推流网络IO相关代码处理函数
-bool CALLBACK Network_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+bool CALLBACK Network_Callback_XStreamLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	//客户端连接后要把客户端插入心跳管理器中才有效
 	SocketOpt_HeartBeat_InsertAddrEx(xhCenterHeart, lpszClientAddr);
@@ -46,7 +46,7 @@ bool CALLBACK Network_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,连接到服务器"), lpszClientAddr);
 	return true;
 }
-void CALLBACK Network_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	//接受到数据后直接投递给TCP包管理器,因为可能不是一个完整的包,所以我们的期望是通过此得到一个完整的包
 	if (!HelpComponents_Datas_PostEx(xhCenterPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
@@ -58,15 +58,15 @@ void CALLBACK Network_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	SocketOpt_HeartBeat_ActiveAddrEx(xhCenterHeart, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
 }
-void CALLBACK Network_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void CALLBACK Network_Callback_XStreamLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	//交给指定函数来处理客户端离开消息
-	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
 }
-void CALLBACK Network_Callback_CenterHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void CALLBACK Network_Callback_XStreamHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	//同上
-	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
 }
 //////////////////////////////////////////////////////////////////////////RTMP推流相关
 bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
@@ -154,7 +154,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,离开服务器"), lpszClientAddr);
 	}
-	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER == enClientType)
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
 		//先关闭网络和心跳,他们主动回调的数据我们可以不用主动调用关闭
 		if (bHeart)
@@ -221,7 +221,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		//发送成功激活一次心跳
 		SocketOpt_HeartBeat_ActiveAddrEx(xhHttpHeart, lpszClientAddr);
 	}
-	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER == enClientType)
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
 		//发送数据给指定客户端
 		if (!NetCore_TCPXCore_SendEx(xhCenterSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))

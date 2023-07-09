@@ -1,16 +1,16 @@
 ﻿#include "../XEngine_Hdr.h"
 /********************************************************************
-//    Created:     2023/06/04  12:57:37
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PushStream\PushStream_CenterTask.cpp
+//    Created:     2023/07/09  15:30:53
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PushStream\PushStream_XStreamTask.cpp
 //    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PushStream
-//    File Base:   PushStream_CenterTask
+//    File Base:   PushStream_XStreamTask
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
 //    Purpose:     X推流任务处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK PushStream_CenterTask_Thread(XPVOID lParam)
+XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
@@ -39,7 +39,7 @@ XHTHREAD CALLBACK PushStream_CenterTask_Thread(XPVOID lParam)
 				if (HelpComponents_Datas_GetMemoryEx(xhCenterPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
 				{
 					//在另外一个函数里面处理数据
-					PushStream_CenterTask_Handle(&st_ProtocolHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
+					PushStream_XStreamTask_Handle(&st_ProtocolHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
 					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
 				}
@@ -49,7 +49,7 @@ XHTHREAD CALLBACK PushStream_CenterTask_Thread(XPVOID lParam)
 	}
 	return 0;
 }
-bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
@@ -63,11 +63,11 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 	{
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_HB_SYN == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端：%s,接受流媒体返回的心跳"), lpszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XStream推流端：%s,接受流媒体返回的心跳"), lpszClientAddr);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XEngine推流端：%s,接受返回了无法处理的心跳协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XStream推流端：%s,接受返回了无法处理的心跳协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
 		}
 	}
 	else if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_SMS == pSt_ProtocolHdr->unOperatorType)
@@ -118,8 +118,8 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPCREATE;
 			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端：%s,创建流成功,推流地址：%s,视频：%d,音频：%d"), lpszClientAddr, st_ProtocolStream.tszSMSAddr, st_ProtocolStream.bLive, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端：%s,创建流成功,推流地址：%s,视频：%d,音频：%d"), lpszClientAddr, st_ProtocolStream.tszSMSAddr, st_ProtocolStream.bLive, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
@@ -146,8 +146,8 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			}
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPDESTROY;
 			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端：%s,接受请求了销毁流消息,销毁地址：%s,"), lpszClientAddr, tszSMSAddr);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端：%s,接受请求了销毁流消息,销毁地址：%s,"), lpszClientAddr, tszSMSAddr);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
@@ -185,11 +185,11 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 			{
 				XEngine_Network_Send(stl_ListIterator->c_str(), ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端：%s,接受推流数据"), lpszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XStream推流端：%s,接受推流数据"), lpszClientAddr);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XEngine推流端：%s,接受返回了无法处理的推流协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XStream推流端：%s,接受返回了无法处理的推流协议类型"), lpszClientAddr, pSt_ProtocolHdr->unOperatorCode);
 		}
 	}
 	else
@@ -197,8 +197,8 @@ bool PushStream_CenterTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR 
 		//我们可以给客户端发送一条错误信息
 		pSt_ProtocolHdr->wReserve = 0xFF;        //表示不支持的协议
 		pSt_ProtocolHdr->unPacketSize = 0;       //设置没有后续数据包
-		XEngine_Network_Send(lpszClientAddr, (LPCXSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_CENTER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XEngine推流端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
+		XEngine_Network_Send(lpszClientAddr, (LPCXSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XStream推流端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
 	}
 	free(ptszRVBuffer);
 	free(ptszSDBuffer);

@@ -87,7 +87,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 
 	pSt_ServerConfig->nRTMPPort = st_JsonRoot["nRTMPPort"].asInt();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
-	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
+	pSt_ServerConfig->nXStreamPort = st_JsonRoot["nXStreamPort"].asInt();
 	pSt_ServerConfig->nJT1078Port = st_JsonRoot["nJT1078Port"].asInt();
 	//最大配置
 	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))

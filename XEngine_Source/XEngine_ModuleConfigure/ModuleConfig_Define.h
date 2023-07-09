@@ -21,7 +21,7 @@ typedef struct tag_XEngine_ServiceConfig
 	bool bDebug;                              //是否使用DEBUG
 	int nHttpPort;                            //API接口服务
 	int nRTMPPort;                            //RTMP流服务
-	int nCenterPort;                          //X协议推流服务
+	int nXStreamPort;                         //X流协议服务
 	int nJT1078Port;                          //JT1078协议流支持
 	struct
 	{
