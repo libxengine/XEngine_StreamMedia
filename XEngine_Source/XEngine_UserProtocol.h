@@ -63,14 +63,7 @@ typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszSMSAddr[MAX_PATH];
-	bool bLive;
 }XENGINE_PROTOCOLSTREAM;
-typedef struct
-{
-	__int64u nTimeStamp;
-	XBYTE byAVType;
-	XBYTE byFrameType;
-}XENGINE_PROTOCOLDATA;
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct
 {

@@ -54,9 +54,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	int nSDLen = 0;
 	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-
-	memset(ptszRVBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-	memset(ptszSDBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
 	
 	if (ENUM_XENGINE_STREAMMEDIA_RTMP_PARSE_PKTTYPE_CONNREQ == pSt_RTMPHdr->enPKTType)
 	{

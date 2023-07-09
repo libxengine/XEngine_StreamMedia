@@ -76,10 +76,10 @@ extern XHANDLE xhHttpHeart;
 extern XHANDLE xhHttpPacket;
 extern XHANDLE xhHttpPool;
 //XEngine协议推流服务
-extern XHANDLE xhCenterSocket;
-extern XHANDLE xhCenterHeart;
-extern XHANDLE xhCenterPacket;
-extern XHANDLE xhCenterPool;
+extern XHANDLE xhXStreamSocket;
+extern XHANDLE xhXStreamHeart;
+extern XHANDLE xhXStreamPacket;
+extern XHANDLE xhXStreamPool;
 //RTMP推流
 extern XHANDLE xhRTMPSocket;
 extern XHANDLE xhRTMPHeart;

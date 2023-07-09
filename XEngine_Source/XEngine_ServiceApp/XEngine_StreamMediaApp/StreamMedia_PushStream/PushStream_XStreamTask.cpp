@@ -18,14 +18,14 @@ XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 	while (bIsRun)
 	{
 		//等待编号1的任务池触发一个组完包的事件
-		if (!HelpComponents_Datas_WaitEventEx(xhCenterPacket, nThreadPos))
+		if (!HelpComponents_Datas_WaitEventEx(xhXStreamPacket, nThreadPos))
 		{
 			continue;
 		}
 		int nListCount = 0;
 		XENGINE_MANAGEPOOL_TASKEVENT** ppSst_ListAddr;
 		//获得编号1的所有待处理任务的客户端列表(也就是客户端发送过来的数据已经组好了一个包,需要我们处理)
-		HelpComponents_Datas_GetPoolEx(xhCenterPacket, nThreadPos, &ppSst_ListAddr, &nListCount);
+		HelpComponents_Datas_GetPoolEx(xhXStreamPacket, nThreadPos, &ppSst_ListAddr, &nListCount);
 		//先循环客户端
 		for (int i = 0; i < nListCount; i++)
 		{
@@ -36,7 +36,7 @@ XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 				XCHAR* ptszMsgBuffer = NULL;                 //客户端发送的数据
 				XENGINE_PROTOCOLHDR st_ProtocolHdr;          //客户端发送的数据的协议头
 				//得到一个指定客户端的完整数据包
-				if (HelpComponents_Datas_GetMemoryEx(xhCenterPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
+				if (HelpComponents_Datas_GetMemoryEx(xhXStreamPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
 				{
 					//在另外一个函数里面处理数据
 					PushStream_XStreamTask_Handle(&st_ProtocolHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
@@ -55,9 +55,6 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 	int nSDLen = 0;
 	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-
-	memset(ptszRVBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-	memset(ptszSDBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
 	
 	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT == pSt_ProtocolHdr->unOperatorType)
 	{
@@ -99,7 +96,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 				if (st_ServiceConfig.bDebug)
 				{
 					pSt_VFile = _xtfopen(_X("./XEngine_Debug/Video.flv"), _X("wb"));
-					//fwrite(tszHDRBuffer, 1, nHLen, pSt_VFile);
+					fwrite(tszHDRBuffer, 1, nHLen, pSt_VFile);
 				}
 			}
 			if (st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable)
@@ -109,7 +106,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 				if (st_ServiceConfig.bDebug)
 				{
 					pst_AFile = _xtfopen(_X("./XEngine_Debug/Audio.flv"), _X("wb"));
-					//fwrite(tszHDRBuffer, 1, nHLen, pst_AFile);
+					fwrite(tszHDRBuffer, 1, nHLen, pst_AFile);
 				}
 			}
 			//创建会话
@@ -119,7 +116,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPCREATE;
 			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端：%s,创建流成功,推流地址：%s,视频：%d,音频：%d"), lpszClientAddr, st_ProtocolStream.tszSMSAddr, st_ProtocolStream.bLive, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端：%s,创建流成功,推流地址：%s,视频：%d,音频：%d"), lpszClientAddr, st_ProtocolStream.tszSMSAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
@@ -151,14 +148,14 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XENGINE_PROTOCOLDATA st_ProtocolAVInfo;
+			XENGINE_PROTOCOL_AVDATA st_ProtocolAVInfo;
 
-			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOLDATA));
-			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLDATA));
+			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
+			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOL_AVDATA));
 
 			if (0 == st_ProtocolAVInfo.byAVType)
 			{
-				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
+				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pSt_VFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pSt_VFile);
@@ -166,7 +163,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			}
 			else
 			{
-				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOLDATA), nMsgLen - sizeof(XENGINE_PROTOCOLDATA), st_ProtocolAVInfo.nTimeStamp);
+				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), st_ProtocolAVInfo.nTimeStamp);
 				if (NULL != pst_AFile)
 				{
 					fwrite(ptszRVBuffer, 1, nRVLen, pst_AFile);

@@ -40,22 +40,22 @@ void CALLBACK Network_Callback_HttpHeart(LPCXSTR lpszClientAddr, XSOCKET hSocket
 bool CALLBACK Network_Callback_XStreamLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	//客户端连接后要把客户端插入心跳管理器中才有效
-	SocketOpt_HeartBeat_InsertAddrEx(xhCenterHeart, lpszClientAddr);
+	SocketOpt_HeartBeat_InsertAddrEx(xhXStreamHeart, lpszClientAddr);
 	//并且还要创建一个TCP包管理器对象,不然无法组包
-	HelpComponents_Datas_CreateEx(xhCenterPacket, lpszClientAddr, 0);
+	HelpComponents_Datas_CreateEx(xhXStreamPacket, lpszClientAddr, 0);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,连接到服务器"), lpszClientAddr);
 	return true;
 }
 void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	//接受到数据后直接投递给TCP包管理器,因为可能不是一个完整的包,所以我们的期望是通过此得到一个完整的包
-	if (!HelpComponents_Datas_PostEx(xhCenterPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	if (!HelpComponents_Datas_PostEx(xhXStreamPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
 		return;
 	}
 	//需要激活一次
-	SocketOpt_HeartBeat_ActiveAddrEx(xhCenterHeart, lpszClientAddr);
+	SocketOpt_HeartBeat_ActiveAddrEx(xhXStreamHeart, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK Network_Callback_XStreamLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
@@ -159,14 +159,14 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		//先关闭网络和心跳,他们主动回调的数据我们可以不用主动调用关闭
 		if (bHeart)
 		{
-			NetCore_TCPXCore_CloseForClientEx(xhCenterSocket, lpszClientAddr);
+			NetCore_TCPXCore_CloseForClientEx(xhXStreamSocket, lpszClientAddr);
 		}
 		else
 		{
-			SocketOpt_HeartBeat_DeleteAddrEx(xhCenterHeart, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhXStreamHeart, lpszClientAddr);
 		}
 		//需要主动删除与客户端对应的组包器队列中的资源
-		HelpComponents_Datas_DeleteEx(xhCenterPacket, lpszClientAddr);
+		HelpComponents_Datas_DeleteEx(xhXStreamPacket, lpszClientAddr);
 		//停止推流
 		XCHAR tszSMSAddr[MAX_PATH];
 
@@ -224,13 +224,13 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
 		//发送数据给指定客户端
-		if (!NetCore_TCPXCore_SendEx(xhCenterSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
+		if (!NetCore_TCPXCore_SendEx(xhXStreamSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return false;
 		}
 		//发送成功激活一次心跳
-		SocketOpt_HeartBeat_ActiveAddrEx(xhCenterHeart, lpszClientAddr);
+		SocketOpt_HeartBeat_ActiveAddrEx(xhXStreamHeart, lpszClientAddr);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 == enClientType)
 	{

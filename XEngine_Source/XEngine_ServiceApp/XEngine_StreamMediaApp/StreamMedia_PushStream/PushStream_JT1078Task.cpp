@@ -97,7 +97,6 @@ bool PushStream_JT1078Task_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 	memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
 	memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
-	st_ProtocolStream.bLive = true;
 	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, tszDeviceNumber);
 	_xstprintf(tszSMSAddr, _X("%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
 	

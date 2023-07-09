@@ -18,10 +18,10 @@ XHANDLE xhHttpHeart = NULL;
 XHANDLE xhHttpPacket = NULL;
 XHANDLE xhHttpPool = NULL;
 //XEngine推流服务
-XHANDLE xhCenterSocket = NULL;
-XHANDLE xhCenterHeart = NULL;
-XHANDLE xhCenterPacket = NULL;
-XHANDLE xhCenterPool = NULL;
+XHANDLE xhXStreamSocket = NULL;
+XHANDLE xhXStreamHeart = NULL;
+XHANDLE xhXStreamPacket = NULL;
+XHANDLE xhXStreamPool = NULL;
 //RTMP推流
 XHANDLE xhRTMPSocket = NULL;
 XHANDLE xhRTMPHeart = NULL;
@@ -46,22 +46,22 @@ void ServiceApp_Stop(int signo)
 		bIsRun = false;
 		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
-		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhXStreamSocket);
 		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
-		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
-		HelpComponents_Datas_Destory(xhCenterPacket);
+		HelpComponents_Datas_Destory(xhXStreamPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		RTMPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
-		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhXStreamPool);
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
@@ -220,8 +220,8 @@ int main(int argc, char** argv)
 	if (st_ServiceConfig.nXStreamPort > 0)
 	{
 		//组包器
-		xhCenterPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nCenterThread);
-		if (NULL == xhCenterPacket)
+		xhXStreamPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nCenterThread);
+		if (NULL == xhXStreamPacket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流组包器失败,错误：%lX"), Packets_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
@@ -230,8 +230,8 @@ int main(int argc, char** argv)
 		//启动心跳
 		if (st_ServiceConfig.st_XTime.nCenterTimeout > 0)
 		{
-			xhCenterHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
-			if (NULL == xhCenterHeart)
+			xhXStreamHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
+			if (NULL == xhXStreamHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流心跳服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
@@ -243,15 +243,15 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XEngine推流心跳服务被设置为不启用"));
 		}
 		//启动网络
-		xhCenterSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
-		if (NULL == xhCenterSocket)
+		xhXStreamSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
+		if (NULL == xhXStreamSocket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流网络服务器失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流网络服务器成功,XEngine推流端口:%d,网络IO线程个数:%d"), st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nIOThread);
 		//绑定网络事件
-		NetCore_TCPXCore_RegisterCallBackEx(xhCenterSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
+		NetCore_TCPXCore_RegisterCallBackEx(xhXStreamSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XEngine推流网络事件成功"));
 		//启动任务池
 		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
@@ -263,8 +263,8 @@ int main(int argc, char** argv)
 			ppSt_ListCenterParam[i]->lParam = pInt_Pos;
 			ppSt_ListCenterParam[i]->fpCall_ThreadsTask = PushStream_XStreamTask_Thread;
 		}
-		xhCenterPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread);
-		if (NULL == xhCenterPool)
+		xhXStreamPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread);
+		if (NULL == xhXStreamPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
@@ -401,22 +401,22 @@ XENGINE_SERVICEAPP_EXIT:
 		bIsRun = false;
 		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
-		NetCore_TCPXCore_DestroyEx(xhCenterSocket);
+		NetCore_TCPXCore_DestroyEx(xhXStreamSocket);
 		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
-		SocketOpt_HeartBeat_DestoryEx(xhCenterHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		RTMPProtocol_Parse_Destory();
-		HelpComponents_Datas_Destory(xhCenterPacket);
+		HelpComponents_Datas_Destory(xhXStreamPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
-		ManagePool_Thread_NQDestroy(xhCenterPool);
+		ManagePool_Thread_NQDestroy(xhXStreamPool);
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
