@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 	if (st_ServiceConfig.nXStreamPort > 0)
 	{
 		//组包器
-		xhXStreamPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nCenterThread);
+		xhXStreamPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nXStreamThread);
 		if (NULL == xhXStreamPacket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流组包器失败,错误：%lX"), Packets_GetLastError());
@@ -228,15 +228,15 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流组包器成功"));
 		//启动心跳
-		if (st_ServiceConfig.st_XTime.nCenterTimeout > 0)
+		if (st_ServiceConfig.st_XTime.nXStreamTimeout > 0)
 		{
-			xhXStreamHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
+			xhXStreamHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nXStreamTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
 			if (NULL == xhXStreamHeart)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流心跳服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化XEngine推流心跳服务成功,时间:%d,次数:%d"), st_ServiceConfig.st_XTime.nCenterTimeout, st_ServiceConfig.st_XTime.nTimeCheck);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化XEngine推流心跳服务成功,时间:%d,次数:%d"), st_ServiceConfig.st_XTime.nXStreamTimeout, st_ServiceConfig.st_XTime.nTimeCheck);
 		}
 		else
 		{
@@ -254,8 +254,8 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhXStreamSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XEngine推流网络事件成功"));
 		//启动任务池
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
-		for (int i = 0; i < st_ServiceConfig.st_XMax.nCenterThread; i++)
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceConfig.st_XMax.nXStreamThread; i++)
 		{
 			int* pInt_Pos = new int;
 
@@ -263,13 +263,13 @@ int main(int argc, char** argv)
 			ppSt_ListCenterParam[i]->lParam = pInt_Pos;
 			ppSt_ListCenterParam[i]->fpCall_ThreadsTask = PushStream_XStreamTask_Thread;
 		}
-		xhXStreamPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nCenterThread);
+		xhXStreamPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread);
 		if (NULL == xhXStreamPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流线程池服务成功,启动个数:%d"), st_ServiceConfig.st_XMax.nCenterThread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流线程池服务成功,启动个数:%d"), st_ServiceConfig.st_XMax.nXStreamThread);
 	}
 	else
 	{
