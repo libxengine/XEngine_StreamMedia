@@ -84,19 +84,27 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_SETCHUNK == pSt_RTMPHdr->byTypeID)
 	{
-		XENGINE_RTMPCONTROL st_RTMPControl;
-		memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPCONTROL));
+		XENGINE_RTMPPROTOCOLCONTROL st_RTMPControl;
+		memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPPROTOCOLCONTROL));
 
-		RTMPProtocol_Help_ParseControl(&st_RTMPControl, pSt_RTMPHdr->byTypeID, ptszRVBuffer, nRVLen);
-		RTMPProtocol_Help_PKTControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_WINDOWSIZE, 2500000);
+		RTMPProtocol_Help_ParseProtocolControl(&st_RTMPControl, pSt_RTMPHdr->byTypeID, lpszMsgBuffer, nMsgLen);
+		RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_WINDOWSIZE, 2500000);
 		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 
-		RTMPProtocol_Help_PKTControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_BANDWIDTH, 2500000, 0x02);
+		RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_BANDWIDTH, 2500000, 0x02);
 		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 
-		RTMPProtocol_Help_PKTControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_SETCHUNK, 60000);
+		RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_SETCHUNK, 60000);
 		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求控制命令设置完成"), lpszClientAddr);
+	}
+	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_WINDOWSIZE == pSt_RTMPHdr->byTypeID)
+	{
+		XENGINE_RTMPPROTOCOLCONTROL st_RTMPControl;
+		memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPPROTOCOLCONTROL));
+
+		RTMPProtocol_Help_ParseProtocolControl(&st_RTMPControl, pSt_RTMPHdr->byTypeID, lpszMsgBuffer, nMsgLen);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP客户端：%s,请求控制命令滑动窗口大小:%d 成功"), lpszClientAddr, st_RTMPControl.nValue32);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_DATA == pSt_RTMPHdr->byTypeID)
 	{
@@ -249,7 +257,13 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_CONNECT, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_CONNECT)))
 		{
 			//RTMP拉流端
-			RTMPProtocol_Help_PKTControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_WINDOWSIZE, 2500000);
+			RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_WINDOWSIZE, 2500000);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+
+			RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_BANDWIDTH, 2500000, 0x02);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+
+			RTMPProtocol_Help_PKTProtocolControl(ptszSDBuffer, &nSDLen, XENGINE_STREAMMEDIA_RTMP_MSGTYPE_SETCHUNK, 60000);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		}
 		else
