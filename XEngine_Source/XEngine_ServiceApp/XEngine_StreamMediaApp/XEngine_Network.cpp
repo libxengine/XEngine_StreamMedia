@@ -72,7 +72,6 @@ void CALLBACK Network_Callback_XStreamHeart(LPCXSTR lpszClientAddr, XSOCKET hSoc
 bool CALLBACK Network_Callback_RTMPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	RTMPProtocol_Parse_Insert(lpszClientAddr);
-	RTMPProtocol_Parse_SetChunkSize(lpszClientAddr, 4096);
 	SocketOpt_HeartBeat_InsertSocketEx(xhRTMPHeart, hSocket);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s，进入了服务器"), lpszClientAddr);
 	return true;
