@@ -355,6 +355,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_AUDIO == pSt_RTMPHdr->byTypeID)
 	{
+		list<AVPACKET_MSGFRAME> stl_ListFrame;
 		XENGINE_RTMPAUDIO st_RTMPAudio;
 		memset(&st_RTMPAudio, '\0', sizeof(XENGINE_RTMPAUDIO));
 
@@ -363,18 +364,61 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+		XEngine_AVPacket_AVFrame(&stl_ListFrame, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		//发送TAG
-		list<xstring> stl_ListClient;
+		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
-		for (auto stl_ListIterator = stl_ListClient.begin(); stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
+		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
 		{
-			XEngine_Network_Send(stl_ListIterator->c_str(), ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+			else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+			else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+		}
+
+		list<AVPACKET_MSGFRAME>::iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+		for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+		{
+			free(stl_ListIteratorFrame->ptszMsgBuffer);
+			stl_ListIteratorFrame->ptszMsgBuffer = NULL;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据"), lpszClientAddr);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_VIDEO == pSt_RTMPHdr->byTypeID)
 	{
+		list<AVPACKET_MSGFRAME> stl_ListFrame;
 		XENGINE_RTMPVIDEO st_RTMPVideo;
 		memset(&st_RTMPVideo, '\0', sizeof(XENGINE_RTMPVIDEO));
 
@@ -383,13 +427,55 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+		XEngine_AVPacket_AVFrame(&stl_ListFrame, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		//发送TAG
-		list<xstring> stl_ListClient;
+		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
-		for (auto stl_ListIterator = stl_ListClient.begin(); stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
+		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
 		{
-			XEngine_Network_Send(stl_ListIterator->c_str(), ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+			else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+			else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == stl_ListIteratorClient->enClientType)
+			{
+				list<AVPACKET_MSGFRAME>::const_iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+				for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+				{
+					if (stl_ListIteratorFrame->enMSGType == stl_ListIteratorClient->enClientType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, stl_ListIteratorFrame->ptszMsgBuffer, stl_ListIteratorFrame->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						break;
+					}
+				}
+			}
+		}
+
+		list<AVPACKET_MSGFRAME>::iterator stl_ListIteratorFrame = stl_ListFrame.begin();
+		for (; stl_ListIteratorFrame != stl_ListFrame.end(); ++stl_ListIteratorFrame)
+		{
+			free(stl_ListIteratorFrame->ptszMsgBuffer);
+			stl_ListIteratorFrame->ptszMsgBuffer = NULL;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}

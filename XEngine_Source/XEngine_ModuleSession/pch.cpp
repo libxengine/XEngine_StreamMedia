@@ -86,15 +86,15 @@ extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR * *p
 {
 	return m_PushStream.ModuleSession_PushStream_Recv(lpszClientAddr, pptszMsgBuffer, pInt_MsgLen, pInt_AVType, pInt_FrameType);
 }
-extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr)
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
-	return m_PushStream.ModuleSession_PushStream_ClientInsert(lpszClientAddr, lpszPullAddr);
+	return m_PushStream.ModuleSession_PushStream_ClientInsert(lpszClientAddr, lpszPullAddr, enStreamType);
 }
 extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr)
 {
 	return m_PushStream.ModuleSession_PushStream_ClientDelete(lpszClientAddr, lpszPullAddr);
 }
-extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>*pStl_ListClient)
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT>*pStl_ListClient)
 {
 	return m_PushStream.ModuleSession_PushStream_ClientList(lpszClientAddr, pStl_ListClient);
 }

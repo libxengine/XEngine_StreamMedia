@@ -228,10 +228,19 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	}
 	return true;
 }
-bool XEngine_AVPacket_AVFrame(XCHAR* ptszRVBuffer, int* pInt_RVLen, XCHAR* ptszSDBuffer, int* pInt_SDLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nTimeStamp, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
+bool XEngine_AVPacket_AVFrame(list<AVPACKET_MSGFRAME> *pStl_ListFrame, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nTimeStamp, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
+		AVPACKET_MSGFRAME st_MSGFrame;
+		memset(&st_MSGFrame, '\0', sizeof(AVPACKET_MSGFRAME));
+
+		st_MSGFrame.enMSGType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
+		st_MSGFrame.ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+		if (NULL == st_MSGFrame.ptszMsgBuffer);
+		{
+			return false;
+		}
 		if (0 == byAVType)
 		{
 			FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
@@ -240,60 +249,81 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszRVBuffer, int* pInt_RVLen, XCHAR* ptszS
 		{
 			FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
 		}
-		*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-		memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-		*pInt_SDLen += *pInt_RVLen;
+		st_MSGFrame.nMsgLen = _xstprintf(st_MSGFrame.ptszMsgBuffer, _X("%x\r\n"), *pInt_RVLen);
+		memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, ptszRVBuffer, *pInt_RVLen);
+		st_MSGFrame.nMsgLen += *pInt_RVLen;
 
-		memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-		*pInt_SDLen += 2;
+		memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, _X("\r\n"), 2);
+		st_MSGFrame.nMsgLen += 2;
+		pStl_ListFrame->push_back(st_MSGFrame);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
 	{
 		if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
 		{
+			AVPACKET_MSGFRAME st_MSGFrame;
+			memset(&st_MSGFrame, '\0', sizeof(AVPACKET_MSGFRAME));
+
+			st_MSGFrame.enMSGType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
+			st_MSGFrame.ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+			if (NULL == st_MSGFrame.ptszMsgBuffer);
+			{
+				return false;
+			}
 			if (0 == byAVType)
 			{
 				FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 9);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
+				st_MSGFrame.nMsgLen = _xstprintf(st_MSGFrame.ptszMsgBuffer, _X("%x\r\n"), *pInt_RVLen);
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, ptszRVBuffer, *pInt_RVLen);
+				st_MSGFrame.nMsgLen += *pInt_RVLen;
 
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, _X("\r\n"), 2);
+				st_MSGFrame.nMsgLen += 2;
 			}
 			else
 			{
 				FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 8);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
+				st_MSGFrame.nMsgLen = _xstprintf(st_MSGFrame.ptszMsgBuffer, _X("%x\r\n"), *pInt_RVLen);
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, ptszRVBuffer, *pInt_RVLen);
+				st_MSGFrame.nMsgLen += *pInt_RVLen;
 
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, _X("\r\n"), 2);
+				st_MSGFrame.nMsgLen += 2;
 			}
+			pStl_ListFrame->push_back(st_MSGFrame);
 		}
 		if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
 		{
+			AVPACKET_MSGFRAME st_MSGFrame;
+			memset(&st_MSGFrame, '\0', sizeof(AVPACKET_MSGFRAME));
+
+			st_MSGFrame.enMSGType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
+			st_MSGFrame.ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+			if (NULL == st_MSGFrame.ptszMsgBuffer);
+			{
+				return false;
+			}
 			if (0 == byAVType)
 			{
 				RTMPProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 9);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
+				st_MSGFrame.nMsgLen = _xstprintf(st_MSGFrame.ptszMsgBuffer, _X("%x\r\n"), *pInt_RVLen);
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, ptszRVBuffer, *pInt_RVLen);
+				st_MSGFrame.nMsgLen += *pInt_RVLen;
 
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, _X("\r\n"), 2);
+				st_MSGFrame.nMsgLen += 2;
 			}
 			else
 			{
 				RTMPProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 8);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
+				st_MSGFrame.nMsgLen = _xstprintf(st_MSGFrame.ptszMsgBuffer, _X("%x\r\n"), *pInt_RVLen);
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, ptszRVBuffer, *pInt_RVLen);
+				st_MSGFrame.nMsgLen += *pInt_RVLen;
 
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
+				memcpy(st_MSGFrame.ptszMsgBuffer + st_MSGFrame.nMsgLen, _X("\r\n"), 2);
+				st_MSGFrame.nMsgLen += 2;
 			}
+			pStl_ListFrame->push_back(st_MSGFrame);
 		}
 	}
 	return true;

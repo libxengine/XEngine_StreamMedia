@@ -73,7 +73,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			return false;
 		}
 		ModuleSession_PullStream_Insert(lpszClientAddr, tszVluBuffer, tszPushAddr, enStreamType);
-		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr);
+		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
 		//返回数据,为HTTP CHUNKED
 		ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, tszSDBuffer, &nSDLen, enStreamType);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);

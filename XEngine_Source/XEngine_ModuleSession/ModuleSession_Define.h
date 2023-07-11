@@ -10,6 +10,11 @@
 //    Purpose:     导出会话模块定义
 //    History:
 *********************************************************************/
+typedef struct  
+{
+	XCHAR tszClientID[128];
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType;
+}STREAMMEDIA_SESSIONCLIENT;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -330,12 +335,17 @@ extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pp
   类型：常量字符指针
   可空：N
   意思：输入插入的客户端
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入客户端拉流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_ClientDelete
 函数功能：客户端删除
@@ -373,7 +383,7 @@ extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LP
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>* pStl_ListClient);
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT>* pStl_ListClient);
 /********************************************************************
 函数名称：ModuleSession_PushStream_SetAVInfo
 函数功能：设置推流的音视频信息

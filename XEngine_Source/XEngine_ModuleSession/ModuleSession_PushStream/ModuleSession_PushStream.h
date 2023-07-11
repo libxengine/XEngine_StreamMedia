@@ -31,7 +31,7 @@ typedef struct
 	unique_ptr<mutex> st_MSGLocker;
 	unique_ptr<mutex> st_ClientLocker;
 
-	unique_ptr<list<xstring>> pStl_ListClient;
+	unique_ptr<list<STREAMMEDIA_SESSIONCLIENT>> pStl_ListClient;
 	unique_ptr<list<AVPACKET_MSGBUFFER>> pStl_ListPacket;
 	unique_ptr<unordered_map<int, AVPACKET_HDRBUFFER>> pStl_MapPushStream;
 }PUSHSTREAM_PACKET;
@@ -53,9 +53,9 @@ public:
 	bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
 	bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
 public:
-	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
-	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring> *pStl_ListClient);
+	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT> *pStl_ListClient);
 private:
 	shared_mutex st_Locker;
 private:
