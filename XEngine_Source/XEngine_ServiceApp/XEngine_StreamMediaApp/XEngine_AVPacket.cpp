@@ -46,77 +46,128 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 	}
 	return true;
 }
-bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
+bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
-	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
-
 	if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
 	{
-		if (0 == byAVType)
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 		{
-			//视频参数信息是否存在
-			if (0 == st_AVInfo.st_VideoInfo.nVLen)
-			{
-				st_AVInfo.st_VideoInfo.nVLen = nMsgLen;
-				memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nMsgLen);
-				ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
-			}
-			//是否全部设置完毕
-			if (st_AVInfo.st_AudioInfo.nALen > 0 && st_AVInfo.st_VideoInfo.nVLen > 0)
-			{
-				//配置头
-				int nHLen = 0;
-				int nPLen = 0;
-				XCHAR tszMsgBuffer[1024];
-				memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+			XENGINE_PROTOCOLSTREAM st_ProtocolStream;
+			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
-				FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszMsgBuffer, &nPLen);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameScript(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_VideoInfo.tszVInfo, st_AVInfo.st_VideoInfo.nVLen, 0, 9);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nALen, 0, 8);
-				nHLen += nPLen;
+			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
+			//创建流
+			FLVProtocol_Packet_Insert(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
+			int nPLen = 0;
+			int nHLen = 0;
+			XCHAR tszHDRBuffer[1024];
+			memset(tszHDRBuffer, '\0', sizeof(tszHDRBuffer));
+			//打包FLV
+			FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszHDRBuffer, &nPLen);
+			nHLen += nPLen;
+			st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = 7;
+			_tcsxcpy(st_ProtocolStream.st_AVInfo.tszPktName, _X("Lavf58.76.100"));
 
-				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen);
+			FLVProtocol_Packet_FrameScript(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+			nHLen += nPLen;
+			if (st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable)
+			{
+				FLVProtocol_Packet_FrameAVCConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+				nHLen += nPLen;
 			}
+			if (st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable)
+			{
+				FLVProtocol_Packet_FrameAACConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
+				nHLen += nPLen;
+			}
+			//创建会话
+			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr);
+			ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszHDRBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
 		}
-		else
+		else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
 		{
-			//音频参数信息是否存在
-			if (0 == st_AVInfo.st_AudioInfo.nALen)
+			int nHLen = 0;
+			ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, NULL, &nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
+			if (0 != nHLen)
 			{
-				st_AVInfo.st_AudioInfo.nALen = nMsgLen;
-				memcpy(st_AVInfo.st_AudioInfo.tszAInfo, lpszMsgBuffer, nMsgLen);
-				ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				return true;
 			}
-			//是否全部设置完毕
-			if (st_AVInfo.st_AudioInfo.nALen > 0 && st_AVInfo.st_VideoInfo.nVLen > 0)
+
+			XENGINE_PROTOCOL_AVINFO st_AVInfo;
+			ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
+			if (0 == byAVType)
 			{
-				//配置头
-				int nHLen = 0;
-				int nPLen = 0;
-				XCHAR tszMsgBuffer[1024];
+				//视频参数信息是否存在
+				if (0 == st_AVInfo.st_VideoInfo.nVLen)
+				{
+					st_AVInfo.st_VideoInfo.nVLen = nMsgLen;
+					memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nMsgLen);
+					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				}
+				//是否全部设置完毕
+				if (st_AVInfo.st_AudioInfo.nALen > 0 && st_AVInfo.st_VideoInfo.nVLen > 0)
+				{
+					//配置头
+					int nHLen = 0;
+					int nPLen = 0;
+					XCHAR tszMsgBuffer[1024];
+					memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-				memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+					FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszMsgBuffer, &nPLen);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameScript(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_VideoInfo.tszVInfo, st_AVInfo.st_VideoInfo.nVLen, 0, 9);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nALen, 0, 8);
+					nHLen += nPLen;
 
-				FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszMsgBuffer, &nPLen);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameScript(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_VideoInfo.tszVInfo, st_AVInfo.st_VideoInfo.nVLen, 0, 9);
-				nHLen += nPLen;
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nALen, 0, 8);
-				nHLen += nPLen;
+					ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
+				}
+			}
+			else
+			{
+				//音频参数信息是否存在
+				if (0 == st_AVInfo.st_AudioInfo.nALen)
+				{
+					st_AVInfo.st_AudioInfo.nALen = nMsgLen;
+					memcpy(st_AVInfo.st_AudioInfo.tszAInfo, lpszMsgBuffer, nMsgLen);
+					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				}
+				//是否全部设置完毕
+				if (st_AVInfo.st_AudioInfo.nALen > 0 && st_AVInfo.st_VideoInfo.nVLen > 0)
+				{
+					//配置头
+					int nHLen = 0;
+					int nPLen = 0;
+					XCHAR tszMsgBuffer[1024];
 
-				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen);
+					memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
+					FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszMsgBuffer, &nPLen);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameScript(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_VideoInfo.tszVInfo, st_AVInfo.st_VideoInfo.nVLen, 0, 9);
+					nHLen += nPLen;
+					FLVProtocol_Packet_FrameCustom(lpszClientAddr, tszMsgBuffer + nHLen, &nPLen, st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nALen, 0, 8);
+					nHLen += nPLen;
+
+					ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
+				}
 			}
 		}
 	}
 	if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
 	{
+		int nHLen = 0;
+		ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, NULL, &nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
+		if (0 != nHLen)
+		{
+			return true;
+		}
+		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
 			//视频参数信息是否存在
@@ -142,7 +193,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 				RTMPProtocol_Packet_FrameAACConfigure(tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
 				nHLen += nPLen;
 
-				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen);
+				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 			}
 		}
 		else
@@ -171,7 +222,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 				RTMPProtocol_Packet_FrameAACConfigure(tszMsgBuffer + nHLen, &nPLen, &st_AVInfo);
 				nHLen += nPLen;
 
-				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen);
+				ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszMsgBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 			}
 		}
 	}

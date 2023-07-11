@@ -62,6 +62,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 	pSt_Packet->st_MSGLocker = make_unique<mutex>();
 	pSt_Packet->pStl_ListClient = make_unique<list<xstring>>();
 	pSt_Packet->pStl_ListPacket = make_unique<list<AVPACKET_MSGBUFFER>>();
+	pSt_Packet->pStl_MapPushStream = make_unique<unordered_map<int, AVPACKET_HDRBUFFER>>();
 	
 	if ((NULL == pSt_Packet->pStl_ListPacket) || (NULL == pSt_Packet->pStl_ListClient))
 	{
@@ -188,12 +189,17 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetAddrForAddr(LPCXSTR 
   类型：整数型
   可空：N
   意思：输入缓存大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：设置的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
 	Session_IsErrorOccur = false;
 
@@ -213,19 +219,41 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lp
 		st_Locker.unlock_shared();
 		return false;
 	}
-	//准备头
-	stl_MapIterator->second->nMsgLen = _xstprintf(stl_MapIterator->second->tszMsgBuffer, _X("HTTP/1.1 200 OK\r\n"
-		"Connection: Close\r\n"
-		"Content-Type: video/x-flv\r\n"
-		"Server: XEngine/8.13.0.1001\r\n"
-		"Transfer-Encoding: chunked\r\n\r\n"
-		"%x\r\n"), nMsgLen);
-	//拷贝数据
-	memcpy(stl_MapIterator->second->tszMsgBuffer + stl_MapIterator->second->nMsgLen, lpszMsgBuffer, nMsgLen);
-	stl_MapIterator->second->nMsgLen += nMsgLen;
-	//拷贝结尾
-	memcpy(stl_MapIterator->second->tszMsgBuffer + stl_MapIterator->second->nMsgLen, _X("\r\n"), 2);
-	stl_MapIterator->second->nMsgLen += 2;
+	AVPACKET_HDRBUFFER st_HDRBuffer;
+	memset(&st_HDRBuffer, '\0', sizeof(AVPACKET_HDRBUFFER));
+
+	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == enStreamType)
+	{
+		//准备头
+		st_HDRBuffer.nMsgLen = _xstprintf(st_HDRBuffer.tszMsgBuffer, _X("HTTP/1.1 200 OK\r\n"
+			"Connection: Close\r\n"
+			"Content-Type: video/x-flv\r\n"
+			"Server: XEngine/%s\r\n"
+			"Transfer-Encoding: chunked\r\n\r\n"
+			"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nMsgLen);
+		//拷贝数据
+		memcpy(st_HDRBuffer.tszMsgBuffer + st_HDRBuffer.nMsgLen, lpszMsgBuffer, nMsgLen);
+		st_HDRBuffer.nMsgLen += nMsgLen;
+		//拷贝结尾
+		memcpy(st_HDRBuffer.tszMsgBuffer + st_HDRBuffer.nMsgLen, _X("\r\n"), 2);
+		st_HDRBuffer.nMsgLen += 2;
+	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == enStreamType)
+	{
+		st_HDRBuffer.nMsgLen = nMsgLen;
+		memcpy(st_HDRBuffer.tszMsgBuffer, lpszMsgBuffer, nMsgLen);
+	}
+
+	unordered_map<int, AVPACKET_HDRBUFFER>::iterator stl_MapIteratorStream = stl_MapIterator->second->pStl_MapPushStream->find(enStreamType);
+	if (stl_MapIteratorStream == stl_MapIterator->second->pStl_MapPushStream->end())
+	{
+		stl_MapIterator->second->pStl_MapPushStream->insert(make_pair(enStreamType, st_HDRBuffer));
+	}
+	else
+	{
+		stl_MapIteratorStream->second = st_HDRBuffer;
+	}
+	
 	st_Locker.unlock_shared();
 	return true;
 }
@@ -247,12 +275,17 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lp
   类型：整数型指针
   可空：N
   意思：输出数据大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：获取的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
 	Session_IsErrorOccur = false;
 
@@ -272,10 +305,18 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lp
 		st_Locker.unlock_shared();
 		return false;
 	}
-	*pInt_MsgLen = stl_MapIterator->second->nMsgLen;
+	auto stl_MapIteratorStream = stl_MapIterator->second->pStl_MapPushStream->find(enStreamType);
+	if (stl_MapIteratorStream == stl_MapIterator->second->pStl_MapPushStream->end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*pInt_MsgLen = stl_MapIteratorStream->second.nMsgLen;
 	if (NULL != ptszMsgBuffer)
 	{
-		memcpy(ptszMsgBuffer, stl_MapIterator->second->tszMsgBuffer, stl_MapIterator->second->nMsgLen);
+		memcpy(ptszMsgBuffer, stl_MapIteratorStream->second.tszMsgBuffer, stl_MapIteratorStream->second.nMsgLen);
 	}
 	st_Locker.unlock_shared();
 	return true;

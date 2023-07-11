@@ -13,5 +13,5 @@
 bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr);
 bool XEngine_AVPacket_AVDelete(LPCXSTR lpszClientAddr);
 bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int nAudioParament);
-bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType);
+bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType);
 bool XEngine_AVPacket_AVFrame(XCHAR* ptszRVBuffer, int* pInt_RVLen, XCHAR* ptszSDBuffer, int* pInt_SDLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType);

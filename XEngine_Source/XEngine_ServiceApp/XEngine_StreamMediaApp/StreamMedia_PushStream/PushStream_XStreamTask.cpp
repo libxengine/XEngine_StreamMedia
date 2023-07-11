@@ -75,43 +75,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
 			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
-			//创建流
-			FLVProtocol_Packet_Insert(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
-			int nPLen = 0;
-			int nHLen = 0;
-			XCHAR tszHDRBuffer[1024];
-			memset(tszHDRBuffer, '\0', sizeof(tszHDRBuffer));
-			//打包FLV
-			FLVProtocol_Packet_FrameHdr(lpszClientAddr, tszHDRBuffer, &nPLen);
-			nHLen += nPLen;
-			st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = 7;
-			_tcsxcpy(st_ProtocolStream.st_AVInfo.tszPktName, _X("Lavf58.76.100"));
-
-			FLVProtocol_Packet_FrameScript(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
-			nHLen += nPLen;
-			if (st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable)
-			{
-				FLVProtocol_Packet_FrameAVCConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
-				nHLen += nPLen;
-				if (st_ServiceConfig.bDebug)
-				{
-					pSt_VFile = _xtfopen(_X("./XEngine_Debug/Video.flv"), _X("wb"));
-					fwrite(tszHDRBuffer, 1, nHLen, pSt_VFile);
-				}
-			}
-			if (st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable)
-			{
-				FLVProtocol_Packet_FrameAACConfigure(lpszClientAddr, tszHDRBuffer + nHLen, &nPLen, &st_ProtocolStream.st_AVInfo);
-				nHLen += nPLen;
-				if (st_ServiceConfig.bDebug)
-				{
-					pst_AFile = _xtfopen(_X("./XEngine_Debug/Audio.flv"), _X("wb"));
-					fwrite(tszHDRBuffer, 1, nHLen, pst_AFile);
-				}
-			}
-			//创建会话
-			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr);
-			ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, tszHDRBuffer, nHLen);
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPCREATE;
 			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);

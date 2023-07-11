@@ -355,15 +355,13 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_AUDIO == pSt_RTMPHdr->byTypeID)
 	{
-		int nHLen = 0;
 		XENGINE_RTMPAUDIO st_RTMPAudio;
 		memset(&st_RTMPAudio, '\0', sizeof(XENGINE_RTMPAUDIO));
 
 		RTMPProtocol_Help_ParseAudio(&st_RTMPAudio, ptszRVBuffer, &nRVLen, lpszMsgBuffer, nMsgLen);
-		ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, NULL, &nHLen);
-		if (0 == nHLen && 0 == st_RTMPAudio.byPKTType)
+		if (0 == st_RTMPAudio.byPKTType)
 		{
-			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1);
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
 		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 1);
 		//发送TAG
@@ -377,15 +375,13 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_VIDEO == pSt_RTMPHdr->byTypeID)
 	{
-		int nHLen = 0;
 		XENGINE_RTMPVIDEO st_RTMPVideo;
 		memset(&st_RTMPVideo, '\0', sizeof(XENGINE_RTMPVIDEO));
 
 		RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer, &nRVLen, lpszMsgBuffer, nMsgLen);
-		ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, NULL, &nHLen);
-		if (0 == nHLen && 0 == st_RTMPVideo.byAVCType)
+		if (0 == st_RTMPVideo.byAVCType)
 		{
-			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0);
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
 		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0);
 		//发送TAG

@@ -190,12 +190,17 @@ extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, 
   类型：整数型
   可空：N
   意思：输入缓存大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：设置的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_GetHDRBuffer
 函数功能：获取流ID的缓存头
@@ -214,12 +219,17 @@ extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LP
   类型：整数型指针
   可空：N
   意思：输出数据大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：获取的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_FindStream
 函数功能：查找流对应地址
