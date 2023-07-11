@@ -363,7 +363,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 1);
+		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		//发送TAG
 		list<xstring> stl_ListClient;
 		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
@@ -383,7 +383,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0);
+		XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		//发送TAG
 		list<xstring> stl_ListClient;
 		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);

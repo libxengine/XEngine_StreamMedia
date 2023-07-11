@@ -117,28 +117,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
 			memcpy(&st_ProtocolAVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOL_AVDATA));
 
-			if (0 == st_ProtocolAVInfo.byAVType)
-			{
-				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), st_ProtocolAVInfo.nTimeStamp);
-				if (NULL != pSt_VFile)
-				{
-					fwrite(ptszRVBuffer, 1, nRVLen, pSt_VFile);
-				}
-			}
-			else
-			{
-				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, &nRVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), st_ProtocolAVInfo.nTimeStamp);
-				if (NULL != pst_AFile)
-				{
-					fwrite(ptszRVBuffer, 1, nRVLen, pst_AFile);
-				}
-			}
-			nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
-			memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
-			nSDLen += nRVLen;
-
-			memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
+			XEngine_AVPacket_AVFrame(ptszRVBuffer, &nRVLen, ptszSDBuffer, &nSDLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, st_ProtocolAVInfo.nTimeStamp, st_ProtocolAVInfo.byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
 			//发送TAG
 			list<xstring> stl_ListClient;
 			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
