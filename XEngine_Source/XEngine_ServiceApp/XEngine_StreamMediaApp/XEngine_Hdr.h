@@ -53,6 +53,7 @@ using namespace std;
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
 #include "XEngine_HttpTask.h"
+#include "XEngine_AVPacket.h"
 #include "./StreamMedia_PushStream/PushStream_XStreamTask.h"
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"

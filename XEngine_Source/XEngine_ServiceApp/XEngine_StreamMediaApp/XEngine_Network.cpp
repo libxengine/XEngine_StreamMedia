@@ -171,7 +171,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-		FLVProtocol_Packet_Delete(lpszClientAddr);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 		{
 			ModuleSession_PushStream_Destroy(tszSMSAddr);
@@ -202,7 +202,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
 		RTMPProtocol_Parse_Delete(lpszClientAddr);
-		FLVProtocol_Packet_Delete(lpszClientAddr);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}

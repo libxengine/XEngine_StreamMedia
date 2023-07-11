@@ -1,0 +1,17 @@
+﻿#pragma once
+/********************************************************************
+//    Created:     2023/07/10  16:58:04
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_AVPacket.h
+//    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp
+//    File Base:   XEngine_AVPacket
+//    File Ext:    h
+//    Project:     XEngine(网络通信引擎)
+//    Author:      qyt
+//    Purpose:     AV数据包打包
+//    History:
+*********************************************************************/
+bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr);
+bool XEngine_AVPacket_AVDelete(LPCXSTR lpszClientAddr);
+bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int nAudioParament);
+bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType);
+bool XEngine_AVPacket_AVFrame(XCHAR* ptszRVBuffer, int* pInt_RVLen, XCHAR* ptszSDBuffer, int* pInt_SDLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType);
