@@ -35,12 +35,17 @@ extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
   类型：常量字符指针
   可空：N
   意思：输入要绑定的推流地址
+ 参数.四：lpszPushAddr
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入客户端的拉流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr);
+extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
@@ -79,6 +84,25 @@ extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHA
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetStreamType
+函数功能：获取客户端流属性
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：penStreamType
+  In/Out：Out
+  类型：枚举型
+  可空：N
+  意思：输出流类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 /********************************************************************
 函数名称：ModuleSession_PullStream_Delete
 函数功能：删除一个拉流端

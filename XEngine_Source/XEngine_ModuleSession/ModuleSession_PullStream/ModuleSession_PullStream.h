@@ -14,6 +14,8 @@ typedef struct
 {
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszPushAddr[MAX_PATH];
+
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 }PULLSTREAM_CLIENTINFO;
 
 class CModuleSession_PullStream
@@ -22,9 +24,10 @@ public:
 	CModuleSession_PullStream();
 	~CModuleSession_PullStream();
 public:
-	bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr);
+	bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
 	bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
+	bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 private:
 	shared_mutex st_Locker;

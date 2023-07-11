@@ -6,6 +6,7 @@ EXPORTS
 	ModuleSession_PullStream_Insert
 	ModuleSession_PullStream_GetSMSAddr
 	ModuleSession_PullStream_GetPushAddr
+	ModuleSession_PullStream_GetStreamType
 	ModuleSession_PullStream_Delete
 
 	ModuleSession_PushStream_Create

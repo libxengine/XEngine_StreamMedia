@@ -52,7 +52,27 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 			return false;
 		}
-		ModuleSession_PullStream_Insert(lpszClientAddr, tszVluBuffer, tszPushAddr);
+		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
+		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[2], "=", tszKeyBuffer, tszVluBuffer);
+
+		ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
+		if (0 == _tcsxnicmp(tszVluBuffer, "flv", 3))
+		{
+			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
+		}
+		else if (0 == _tcsxnicmp(tszVluBuffer, "rtmp", 4))
+		{
+			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP;
+		}
+		else
+		{
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 500, "not support");
+			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的数据类型不支持:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
+			return false;
+		}
+		ModuleSession_PullStream_Insert(lpszClientAddr, tszVluBuffer, tszPushAddr, enStreamType);
 		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr);
 		//返回数据,为HTTP CHUNKED
 		ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, tszSDBuffer, &nSDLen);
