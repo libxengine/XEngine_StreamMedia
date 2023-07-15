@@ -181,7 +181,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			else if (0 == _tcsxnicmp("audiosamplesize", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
 				APIHelp_NetWork_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
-				st_AVInfo.st_AudioInfo.nFrameSize = (int)dlValue;
+				st_AVInfo.st_AudioInfo.nSampleFmt = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiochannels", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
@@ -297,9 +297,12 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY)))
 		{
 			XCHAR tszSMSAddr[MAX_PATH];
-			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+			XCHAR tszPushAddr[MAX_PATH];
 
-			_xstprintf(tszSMSAddr, _X("%s"), st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
+			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+			memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+
+			_xstprintf(tszSMSAddr, _X("live/%s"), st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
 
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
@@ -335,9 +338,20 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
 			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = 10;
 			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, "Start live");
-
 			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+			//发送RTMP包头
+			if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+				return false;
+			}
+			//返回数据,为HTTP CHUNKED
+			ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, ptszSDBuffer, &nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+
+			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
+			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 		}
 		else
 		{
