@@ -245,36 +245,75 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			}
 		}
 	}
+	if (st_ServiceConfig.st_XPull.st_PullXStream.bEnable)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
+		{
+			XENGINE_PROTOCOLSTREAM st_ProtocolStream;
+			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
+
+			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
+			//创建会话
+			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr);
+			ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, (LPCXSTR)&st_ProtocolStream.st_AVInfo, sizeof(XENGINE_PROTOCOL_AVINFO), ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM);
+		}
+	}
 	return true;
 }
 bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nTimeStamp, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
-		if (0 == byAVType)
+		if (st_ServiceConfig.st_XPull.st_PullXStream.bEnable)
 		{
-			FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
-		}
-		else
-		{
-			FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
-		}
-		*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-		memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-		*pInt_SDLen += *pInt_RVLen;
+			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nMsgLen);
+			memcpy(ptszSDBuffer + *pInt_SDLen, lpszMsgBuffer, nMsgLen);
+			*pInt_SDLen += nMsgLen;
 
-		memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-		*pInt_SDLen += 2;
-		//是否有客户端需要发送XStream流
-		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
-		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
-		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
-		{
-			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+			memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
+			*pInt_SDLen += 2;
+			//是否有客户端需要发送XStream流
+			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+			for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
 			{
-				XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-				break;
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+				{
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					break;
+				}
 			}
+		}
+		if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
+		{
+			if (0 == byAVType)
+			{
+				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+			}
+			else
+			{
+				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+			}
+			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
+			memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
+			*pInt_SDLen += *pInt_RVLen;
+
+			memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
+			*pInt_SDLen += 2;
+			//是否有客户端需要发送XStream流
+			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+			for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+			{
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+				{
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					break;
+				}
+			}
+		}
+		if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
+		{
 		}
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)

@@ -87,7 +87,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			XCHAR tszSMSAddr[MAX_PATH];
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-			FLVProtocol_Packet_Delete(lpszClientAddr);
+			XEngine_AVPacket_AVDelete(lpszClientAddr);
 			if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 			{
 				ModuleSession_PushStream_Destroy(tszSMSAddr);

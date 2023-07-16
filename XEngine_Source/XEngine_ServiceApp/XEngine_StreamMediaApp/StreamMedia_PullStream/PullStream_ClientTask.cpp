@@ -60,9 +60,9 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		{
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
 		}
-		else if (0 == _tcsxnicmp(tszVluBuffer, "rtmp", 4))
+		else if (0 == _tcsxnicmp(tszVluBuffer, "xstream", 7))
 		{
-			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP;
+			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM;
 		}
 		else
 		{
