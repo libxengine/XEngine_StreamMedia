@@ -167,15 +167,8 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HelpComponents_Datas_DeleteEx(xhXStreamPacket, lpszClientAddr);
 		//停止推流
-		XCHAR tszSMSAddr[MAX_PATH];
-
-		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
-		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
-		{
-			ModuleSession_PushStream_Destroy(tszSMSAddr);
-		}
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 == enClientType)
