@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{76411555-d794-4ea8-a2fb-07d089058144}</ProjectGuid>
-    <RootNamespace>APPClientXCenter</RootNamespace>
+    <ProjectGuid>{706eeb19-180b-405f-bdad-c114af2b8952}</ProjectGuid>
+    <RootNamespace>APPClientXStream</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="APPClient_XCenter.cpp" />
+    <ClCompile Include="APPClient_XStream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -28,8 +28,8 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_XCenter.cpp -o APPClient_XCenter.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_XCenter.cpp -o APPClient_XCenter.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//linux::g++ -std=c++17 -Wall -g APPClient_XStream.cpp -o APPClient_XStream.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//macos::g++ -std=c++17 -Wall -g APPClient_XStream.cpp -o APPClient_XStream.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
 XSOCKET hSocket = 0;
 XNETHANDLE xhVideo = 0;
 __int64u nTimeVideo = 0;
@@ -38,17 +38,17 @@ void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* punStringY, int nYLen, uint8_t*
 {
 	XCHAR* ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	XENGINE_PROTOCOLHDR st_ProtocolHdr;
-	XENGINE_PROTOCOLDATA st_ProtocolData;
+	XENGINE_PROTOCOL_AVDATA st_ProtocolData;
 
 	memset(ptszMsgBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
 	memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
-	memset(&st_ProtocolData, '\0', sizeof(XENGINE_PROTOCOLDATA));
+	memset(&st_ProtocolData, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
 
 	st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
 	st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_SMS;
 	st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQPUSH;
 	st_ProtocolHdr.byVersion = 1;
-	st_ProtocolHdr.byIsReply = false;   
+	st_ProtocolHdr.byIsReply = false;
 	st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
 
 	int nListCount = 0;
@@ -60,12 +60,12 @@ void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* punStringY, int nYLen, uint8_t*
 		st_ProtocolData.byAVType = 0;
 		st_ProtocolData.nTimeStamp = nTimeVideo;
 		st_ProtocolData.byFrameType = ppSt_MSGBuffer[i]->st_VideoInfo.nFrameType;
-		st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOLDATA) + ppSt_MSGBuffer[i]->nYLen;
+		st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nYLen;
 
 		memcpy(ptszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_ProtocolData, sizeof(XENGINE_PROTOCOLDATA));
-		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDATA), ppSt_MSGBuffer[i]->ptszYBuffer, ppSt_MSGBuffer[i]->nYLen);
-		XClient_TCPSelect_SendMsg(hSocket, ptszMsgBuffer, sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLDATA) + ppSt_MSGBuffer[i]->nYLen);
+		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_ProtocolData, sizeof(XENGINE_PROTOCOL_AVDATA));
+		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA), ppSt_MSGBuffer[i]->ptszYBuffer, ppSt_MSGBuffer[i]->nYLen);
+		XClient_TCPSelect_SendMsg(hSocket, ptszMsgBuffer, sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nYLen);
 		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_MSGBuffer[i]->ptszYBuffer);
 
 		printf("Time:%llu Size:%d Type:%d\n", nTimeVideo, ppSt_MSGBuffer[i]->nYLen, ppSt_MSGBuffer[i]->st_VideoInfo.nFrameType);
@@ -85,7 +85,7 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	LPCXSTR lpszServiceAddr = _X("127.0.0.1");
- 	if (!XClient_TCPSelect_Create(&hSocket, lpszServiceAddr, 5601))
+	if (!XClient_TCPSelect_Create(&hSocket, lpszServiceAddr, 5601))
 	{
 		_xtprintf("连接失败！%ld\n", XClient_GetLastError());
 		return 0;
@@ -95,7 +95,7 @@ int main()
 	XCHAR tszMsgBuffer[2048];
 	XENGINE_PROTOCOLHDR st_ProtocolHdr;
 	XENGINE_PROTOCOLSTREAM st_ProtocolStream;
-	
+
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 	memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
 	memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
@@ -117,6 +117,10 @@ int main()
 	XHANDLE xhScreen = AVCollect_Video_Init("gdigrab", "desktop", &st_ScreenInfo, XEngine_AVCollect_CBVideo);
 	AVCollect_Video_GetInfo(xhScreen, &st_ProtocolStream.st_AVInfo);
 	printf("AVCollect_Screen_GetInfo:%d %d %lld\n", st_ProtocolStream.st_AVInfo.st_VideoInfo.nWidth, st_ProtocolStream.st_AVInfo.st_VideoInfo.nHeight, st_ProtocolStream.st_AVInfo.st_VideoInfo.nBitRate);
+
+	XHANDLE xhAudio = AVCollect_Audio_Init("dshow", "audio=麦克风 (USB microphone)", XEngine_AVCollect_CBAudio);
+	AVCollect_Audio_GetInfo(xhAudio, &st_ProtocolStream.st_AVInfo);
+	printf("AVCollect_Audio_GetInfo:%d %d %d\n", st_ProtocolStream.st_AVInfo.st_AudioInfo.enAVCodec, st_ProtocolStream.st_AVInfo.st_AudioInfo.nChannel, st_ProtocolStream.st_AVInfo.st_AudioInfo.nSampleRate);
 
 	st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264;
 	if (!VideoCodec_Stream_EnInit(&xhVideo, &st_ProtocolStream.st_AVInfo.st_VideoInfo))
@@ -148,7 +152,6 @@ int main()
 		memcpy(st_ProtocolStream.st_AVInfo.st_VideoInfo.tszVInfo, ppSt_MSGBuffer[i]->ptszYBuffer, st_ProtocolStream.st_AVInfo.st_VideoInfo.nVLen);
 		//fwrite(ppSt_MSGBuffer[i]->ptszYBuffer, 1, ppSt_MSGBuffer[i]->nYLen, pSt_File);
 
-		st_ProtocolStream.bLive = true;
 		_tcsxcpy(st_ProtocolStream.tszSMSAddr, _X("live/qyt"));
 
 		nLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProtocolHdr.unPacketSize;
@@ -184,7 +187,7 @@ int main()
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	
+
 #ifdef _MSC_BUILD
 	WSACleanup();
 #endif
