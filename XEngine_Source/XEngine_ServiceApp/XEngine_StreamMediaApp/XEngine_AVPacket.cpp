@@ -105,6 +105,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 
 					memset(&st_RTMPVideo, '\0', sizeof(XENGINE_RTMPVIDEO));
 					memset(&st_RTMPVParam, '\0', sizeof(XENGINE_RTMPVIDEOPARAM));
+					memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 
 					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer, nMsgLen, &st_RTMPVParam);
 					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
@@ -187,6 +188,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 
 					memset(&st_RTMPVideo, '\0', sizeof(XENGINE_RTMPVIDEO));
 					memset(&st_RTMPVParam, '\0', sizeof(XENGINE_RTMPVIDEOPARAM));
+					memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 
 					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer, nMsgLen, &st_RTMPVParam);
 					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
