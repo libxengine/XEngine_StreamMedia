@@ -4,30 +4,37 @@
     "bDeamon":0,
     "nRTMPPort":1935,
     "nHttpPort":5600,
-    "nCenterPort":5601,
+    "nXStreamPort":5601,
     "nJT1078Port":5602,
     "XMax":{
         "nMaxClient":10000,
         "nMaxQueue":10000,
         "nIOThread":1,
-        "nHTTPThread":2,
-        "nCenterThread":2,
+        "nHTTPThread":1,
+        "nXStreamThread":2,
         "nRTMPThread":2,
         "nJT1078Thread":2
     },
     "XTime":{
         "nTimeCheck":3,
         "nHTTPTimeout":0,
-        "nCenterTimeout":0,
+        "nXStreamTimeout":0,
         "nRTMPTimeout":0,
         "nJT1078Timeout":0
     },
-    "XSQL":{
-        "bEnable":false,
-        "tszSQLAddr":"127.0.0.1",
-        "nSQLPort":3306,
-        "tszSQLUser":"ruiyue",
-        "tszSQLPass":"123123Ruiyue"
+    "XPull":{
+        "XStream":{
+            "bEnable":true
+        },
+        "RTMP":{
+            "bEnable":true
+        },
+        "FLV":{
+            "bEnable":true
+        },
+        "RTSP":{
+            "bEnable":true
+        }
     },
     "XLog":{
         "MaxSize":1024000,
@@ -35,7 +42,8 @@
         "LogLeave":32
     },
     "XVer":[
-        "V2.0.0.1001 Build20230708",
+        "V2.1.0.1001 Build20230726",
+        "V2.0.0.1001 Build20230615",
         "V1.4.1.1001 Build20230515",
         "V1.4.0.1001 Build20221202",
         "V1.3.0.1001 Build20221025",

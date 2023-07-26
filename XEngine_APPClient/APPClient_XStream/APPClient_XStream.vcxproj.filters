@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="APPClient_XCenter.cpp">
+    <ClCompile Include="APPClient_XStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

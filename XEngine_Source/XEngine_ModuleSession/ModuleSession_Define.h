@@ -10,6 +10,11 @@
 //    Purpose:     导出会话模块定义
 //    History:
 *********************************************************************/
+typedef struct  
+{
+	XCHAR tszClientID[128];
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType;
+}STREAMMEDIA_SESSIONCLIENT;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -35,12 +40,17 @@ extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
   类型：常量字符指针
   可空：N
   意思：输入要绑定的推流地址
+ 参数.四：lpszPushAddr
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入客户端的拉流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr);
+extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
@@ -79,6 +89,25 @@ extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHA
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetStreamType
+函数功能：获取客户端流属性
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：penStreamType
+  In/Out：Out
+  类型：枚举型
+  可空：N
+  意思：输出流类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 /********************************************************************
 函数名称：ModuleSession_PullStream_Delete
 函数功能：删除一个拉流端
@@ -166,12 +195,17 @@ extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, 
   类型：整数型
   可空：N
   意思：输入缓存大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：设置的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_GetHDRBuffer
 函数功能：获取流ID的缓存头
@@ -190,12 +224,17 @@ extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LP
   类型：整数型指针
   可空：N
   意思：输出数据大小
+ 参数.四：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：获取的缓冲区类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_FindStream
 函数功能：查找流对应地址
@@ -296,12 +335,17 @@ extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pp
   类型：常量字符指针
   可空：N
   意思：输入插入的客户端
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入客户端拉流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+extern "C" bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_ClientDelete
 函数功能：客户端删除
@@ -339,7 +383,7 @@ extern "C" bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LP
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring>* pStl_ListClient);
+extern "C" bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT>* pStl_ListClient);
 /********************************************************************
 函数名称：ModuleSession_PushStream_SetAVInfo
 函数功能：设置推流的音视频信息

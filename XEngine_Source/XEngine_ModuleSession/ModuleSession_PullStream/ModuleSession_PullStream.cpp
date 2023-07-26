@@ -38,12 +38,17 @@ CModuleSession_PullStream::~CModuleSession_PullStream()
   类型：常量字符指针
   可空：N
   意思：输入要绑定的推流地址
+ 参数.四：lpszPushAddr
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入客户端的拉流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr)
+bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
     Session_IsErrorOccur = false;
 
@@ -56,6 +61,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClie
 	}
     memset(pSt_PullStream, '\0', sizeof(PULLSTREAM_CLIENTINFO));
 
+	pSt_PullStream->enStreamType = enStreamType;
     _tcsxcpy(pSt_PullStream->tszSMSAddr, lpszSMSAddr);
 	_tcsxcpy(pSt_PullStream->tszPushAddr, lpszPushAddr);
 
@@ -177,6 +183,48 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetPushAddr(LPCXSTR lps
 		return false;
 	}
 	_tcsxcpy(ptszPushAddr, stl_MapIterator->second->tszPushAddr);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetStreamType
+函数功能：获取客户端流属性
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：penStreamType
+  In/Out：Out
+  类型：枚举型
+  可空：N
+  意思：输出流类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	//查找最小
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*penStreamType = stl_MapIterator->second->enStreamType;
 	st_Locker.unlock_shared();
 	return true;
 }

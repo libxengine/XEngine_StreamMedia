@@ -17,19 +17,23 @@ typedef struct
 	int nMsgLen;                //大小
 	XCHAR* ptszMsgBuffer;
 }AVPACKET_MSGBUFFER;
+typedef struct
+{
+	XCHAR tszMsgBuffer[2048];              //缓存的头
+	int nMsgLen;                           //缓冲头大小
+}AVPACKET_HDRBUFFER;
 
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszMsgBuffer[2048];              //缓存的头
 	XCHAR tszSMSAddr[MAX_PATH];
-	int nMsgLen;                           //缓冲头大小
-
+	
 	unique_ptr<mutex> st_MSGLocker;
 	unique_ptr<mutex> st_ClientLocker;
 
-	unique_ptr<list<xstring>> pStl_ListClient;
+	unique_ptr<list<STREAMMEDIA_SESSIONCLIENT>> pStl_ListClient;
 	unique_ptr<list<AVPACKET_MSGBUFFER>> pStl_ListPacket;
+	unique_ptr<unordered_map<int, AVPACKET_HDRBUFFER>> pStl_MapPushStream;
 }PUSHSTREAM_PACKET;
 
 class CModuleSession_PushStream
@@ -41,17 +45,17 @@ public:
 	bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
 	bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
-	bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
-	bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+	bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
+	bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo);
 	bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
 	bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);
 	bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
 	bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
 public:
-	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
+	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
-	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<xstring> *pStl_ListClient);
+	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT> *pStl_ListClient);
 private:
 	shared_mutex st_Locker;
 private:

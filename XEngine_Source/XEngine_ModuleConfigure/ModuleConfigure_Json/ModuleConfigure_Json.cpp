@@ -87,7 +87,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 
 	pSt_ServerConfig->nRTMPPort = st_JsonRoot["nRTMPPort"].asInt();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
-	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
+	pSt_ServerConfig->nXStreamPort = st_JsonRoot["nXStreamPort"].asInt();
 	pSt_ServerConfig->nJT1078Port = st_JsonRoot["nJT1078Port"].asInt();
 	//最大配置
 	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
@@ -101,7 +101,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XMax.nMaxQueue = st_JsonXMax["nMaxQueue"].asInt();
 	pSt_ServerConfig->st_XMax.nIOThread = st_JsonXMax["nIOThread"].asInt();
 	pSt_ServerConfig->st_XMax.nHTTPThread = st_JsonXMax["nHTTPThread"].asInt();
-	pSt_ServerConfig->st_XMax.nCenterThread = st_JsonXMax["nCenterThread"].asInt();
+	pSt_ServerConfig->st_XMax.nXStreamThread = st_JsonXMax["nXStreamThread"].asInt();
 	pSt_ServerConfig->st_XMax.nRTMPThread = st_JsonXMax["nRTMPThread"].asInt();
 	pSt_ServerConfig->st_XMax.nJT1078Thread = st_JsonXMax["nJT1078Thread"].asInt();
 	//时间配置
@@ -114,22 +114,26 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	Json::Value st_JsonXTime = st_JsonRoot["XTime"];
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nHTTPTimeout = st_JsonXTime["nHTTPTimeout"].asInt();
-	pSt_ServerConfig->st_XTime.nCenterTimeout = st_JsonXTime["nCenterTimeout"].asInt();
+	pSt_ServerConfig->st_XTime.nXStreamTimeout = st_JsonXTime["nXStreamTimeout"].asInt();
 	pSt_ServerConfig->st_XTime.nRTMPTimeout = st_JsonXTime["nRTMPTimeout"].asInt();
 	pSt_ServerConfig->st_XTime.nJT1078Timeout = st_JsonXTime["nJT1078Timeout"].asInt();
-	//数据库配置
-	if (st_JsonRoot["XSQL"].empty() || (5 != st_JsonRoot["XSQL"].size()))
+	//时间配置
+	if (st_JsonRoot["XPull"].empty() || (4 != st_JsonRoot["XPull"].size()))
 	{
 		Config_IsErrorOccur = true;
-		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XSQL;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XPULL;
 		return false;
 	}
-	Json::Value st_JsonXSQL = st_JsonRoot["XSQL"];
-	pSt_ServerConfig->st_XSql.bEnable = st_JsonXSQL["bEnable"].asInt();
-	pSt_ServerConfig->st_XSql.nSQLPort = st_JsonXSQL["nSQLPort"].asInt();
-	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLAddr, st_JsonXSQL["tszSQLAddr"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSQL["tszSQLUser"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSQL["tszSQLPass"].asCString());
+	Json::Value st_Pull = st_JsonRoot["XPull"];
+	Json::Value st_PullXStream = st_Pull["XStream"];
+	Json::Value st_PullRtmp = st_Pull["RTMP"];
+	Json::Value st_PullFlv = st_Pull["FLV"];
+	Json::Value st_PullRtsp = st_Pull["RTSP"];
+
+	pSt_ServerConfig->st_XPull.st_PullXStream.bEnable = st_PullXStream["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullRtmp.bEnable = st_PullRtmp["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullFlv.bEnable = st_PullFlv["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.bEnable = st_PullRtsp["bEnable"].asBool();
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{
