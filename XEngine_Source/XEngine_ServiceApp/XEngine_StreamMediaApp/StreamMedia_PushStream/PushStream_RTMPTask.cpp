@@ -328,7 +328,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY)))
 		{
-			XCHAR tszSMSAddr[MAX_PATH];
+			XCHAR tszSMSAddr[2048];
 			XCHAR tszPushAddr[MAX_PATH];
 
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));

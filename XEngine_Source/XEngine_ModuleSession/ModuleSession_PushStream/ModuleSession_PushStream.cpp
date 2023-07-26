@@ -661,7 +661,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_ClientInsert(LPCXSTR lp
 	memset(&st_Client, '\0', sizeof(STREAMMEDIA_SESSIONCLIENT));
 
 	st_Client.enClientType = enStreamType;
-	_tcscpy(st_Client.tszClientID, lpszPullAddr);
+	_tcsxcpy(st_Client.tszClientID, lpszPullAddr);
 
 	stl_MapIterator->second->st_ClientLocker->lock();
 	stl_MapIterator->second->pStl_ListClient->push_back(st_Client);
