@@ -194,9 +194,24 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
-		RTMPProtocol_Parse_Delete(lpszClientAddr);
-		XEngine_AVPacket_AVDelete(lpszClientAddr);
-		ModuleSession_PushStream_Destroy(lpszClientAddr);
+		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszPushAddr[MAX_PATH];
+
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+		//可能是推流也可能是拉流
+		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
+		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+		{
+			ModuleSession_PullStream_Delete(lpszClientAddr);
+			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+		}
+		else
+		{
+			RTMPProtocol_Parse_Delete(lpszClientAddr);
+			XEngine_AVPacket_AVDelete(lpszClientAddr);
+			ModuleSession_PushStream_Destroy(lpszClientAddr);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 }
