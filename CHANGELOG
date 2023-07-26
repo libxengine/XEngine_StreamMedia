@@ -1,3 +1,33 @@
+XEngine_StreamMedia V2.1.0.1001
+
+增加:RTMP拉流支持
+增加:拉流客户端类型
+增加:推流协议模块多流类型支持
+增加:XStream Over HTTP拉流支持
+优化:流协议字段
+优化:内存初始化
+优化:配置文件
+优化:发送帧代码
+修改:center stream 名称修改为xstream
+修正:RTMP协议用户解析错误
+修正:没有设置chunk大小的问题
+修正:流关闭的一些问题
+修正:使用FFMPEG推RTMP流的问题
+
+added:rtmp pull stream supported
+added:type of pull stream client
+added:multi stream for protocol of push stream support
+added:Pull Stream for XSteram Over HTTP Supported
+improved:stream protocol field
+improved:memroy init
+improved:configure file
+improved:send frame data code
+modity:center stream name to XStream
+fixed:rtmp protocol user parse is incorrent
+fixed:chunk size does not incorrent
+fixed:stream close bug
+fixed:the problem that ffmpeg push stream error
+=======================================================
 XEngine_StreamMedia V2.0.0.1001
 
 重构了整个流媒体服务程序,现在只有一个流媒体服务了

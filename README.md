@@ -13,16 +13,16 @@ c c++ streammedia server
 ## 软件架构
 基于libXEngine开发并实现的一套简洁高性能跨平台流媒体解析推流服务  
 推流支持:
-1. RTMP
-2. XStream 
+1. RTMP(H264,H265)
+2. XStream(H264,H265) 
 3. WEBRTC(planning)
 4. GB28181(planning)
 5. JT1078(planning)
 6. SRT(planning)  
 拉流支持:
 1. RTSP(planning)
-2. RTMP(planning)
-3. FLV
+2. RTMP(H264,H265)
+3. FLV(H264,H265)
 4. HLS(TS)(planning)
 5. webrtc(planning)
 6. srt(planning)  
@@ -76,9 +76,9 @@ make FLAGS=CleanAll 清理编译
 8.  使用VLC等工具播放
 
 ## 示例
-推流地址:rtmp://127.0.0.1/live/stream  
-播放地址:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
-
+推流地址:rtmp://127.0.0.1/live/qyt  
+播放地址:HTTP-FLV http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
+播放地址:RTMP     rtmp://127.0.0.1/live/qyt  
 ## 目录结构
 - XEngine_Docment 文档目录结构
 - XEngine_Release 安装目录结构

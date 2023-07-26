@@ -14,15 +14,15 @@ This is a cross-platform server, provides a complete demo code
 A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
 Push stream Protocol:
 1. RTMP
-2. XStream 
+2. XStream(H264,H265)
 3. WEBRTC(planning)
 4. GB28181(planning)
 5. JT1078(planning)
 6. SRT(planning)
 Pull Stream Protocols:  
 1. RTSP(planning)
-2. RTMP(planning)
-3. FLV
+2. RTMP(H264,H265)
+3. FLV(H264,H265)
 4. HLS(TS)(planning)
 5. webrtc(planning)
 6. srt(planning)  
@@ -75,9 +75,9 @@ refer to linux
 7.  use vlc play
 
 ## example 
-Push Stream Address:rtmp://127.0.0.1/live/stream  
-Pull Stream Address:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
-
+Publish Stream Address:rtmp://127.0.0.1/live/stream  
+Pull Stream Address-HTTPFLV: http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
+Pull Stream Address-RTMP:    rtmp://127.0.0.1/live/qyt  
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
 - XEngine_Release Install Dir Struct
