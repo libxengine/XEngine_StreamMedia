@@ -107,7 +107,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 					memset(&st_RTMPVParam, '\0', sizeof(XENGINE_RTMPVIDEOPARAM));
 					memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 
-					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer, nMsgLen, &st_RTMPVParam);
+					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO), &st_RTMPVParam);
 					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 				}
 				//是否全部设置完毕
@@ -166,7 +166,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	}
 	if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
 	{
-		//rtmp可用
 		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
 		{
 			//推流端类型是rtmp
@@ -190,7 +189,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 					memset(&st_RTMPVParam, '\0', sizeof(XENGINE_RTMPVIDEOPARAM));
 					memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 
-					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer, nMsgLen, &st_RTMPVParam);
+					RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, st_AVInfo.st_VideoInfo.tszVInfo, &st_AVInfo.st_VideoInfo.nVLen, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO), &st_RTMPVParam);
 					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 				}
 				//是否全部设置完毕
@@ -303,7 +302,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
 			for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
 			{
-				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == stl_ListIteratorClient->enClientType)
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == stl_ListIteratorClient->enClientType)
 				{
 					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 					break;
@@ -312,7 +311,25 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
 		{
-
+			if (0 == byAVType)
+			{
+				RTMPProtocol_Packet_FrameVideo(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+			}
+			else
+			{
+				RTMPProtocol_Packet_FrameAudio(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+			}
+			//是否有客户端需要发送XStream流
+			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+			for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+			{
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == stl_ListIteratorClient->enClientType)
+				{
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+					break;
+				}
+			}
 		}
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
@@ -327,13 +344,13 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			memset(&st_RTMPVideoParam, '\0', sizeof(XENGINE_RTMPVIDEOPARAM));
 			memset(&st_ProtocolAVData, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
 
-			memcpy(&st_RTMPVideo, lpszClientAddr, sizeof(XENGINE_RTMPVIDEO));
+			memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 
 			st_ProtocolAVData.byAVType = 0;
 			st_ProtocolAVData.byFrameType = st_RTMPVideo.byFrameType;
 			
 			memcpy(ptszRVBuffer, &st_ProtocolAVData, sizeof(XENGINE_PROTOCOL_AVDATA));
-			RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), pInt_RVLen, lpszMsgBuffer, nMsgLen, &st_RTMPVideoParam);
+			RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO), &st_RTMPVideoParam);
 			*pInt_RVLen += sizeof(XENGINE_PROTOCOL_AVDATA);
 
 			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
