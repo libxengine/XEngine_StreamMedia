@@ -46,9 +46,17 @@ extern "C" bool ModuleHelp_SrtCore_Start(int nPort)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Start(nPort);
 }
+extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
+{
+	return m_SrtCore.ModuleHelp_SrtCore_Close(lpszClientAddr, hSocket);
+}
 extern "C" bool ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET_NETEVENT_LOGIN fpCallePoll_Login, CALLBACK_NETCORE_SOCKET_NETEVENT_RECV fpCallePoll_Recv, CALLBACK_NETCORE_SOCKET_NETEVENT_LEAVE fpCallePoll_Leave, XPVOID lPLogin, XPVOID lPRecv, XPVOID lPLeave)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_SetCallback(fpCallePoll_Login, fpCallePoll_Recv, fpCallePoll_Leave, lPLogin, lPRecv, lPLeave);
+}
+extern "C" bool ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish)
+{
+	return m_SrtCore.ModuleHelp_SrtCore_GetStreamID(hSocket, ptszSMSAddr, pbPublish);
 }
 extern "C" bool ModuleHelp_SrtCore_Destory()
 {

@@ -26,6 +26,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_Core/NetCore_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
@@ -47,6 +49,7 @@ extern bool ModuleHelp_IsErrorOccur;
 extern XLONG ModuleHelp_dwErrorCode;
 
 #ifdef _MSC_BUILD
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"srt")

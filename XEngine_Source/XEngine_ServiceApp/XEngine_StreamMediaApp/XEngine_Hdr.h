@@ -63,6 +63,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_XStreamTask.h"
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
+#include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientTask.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46

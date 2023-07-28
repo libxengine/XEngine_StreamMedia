@@ -118,8 +118,6 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	srt_startup();
-
 	bIsRun = true;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
@@ -146,6 +144,7 @@ int main(int argc, char** argv)
 	{
 		ServiceApp_Deamon();
 	}
+	pSt_VFile = fopen("D:\\srt.ts", "wb");
 	//初始日志
 	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_STD | HELPCOMPONENTS_XLOG_OUTTYPE_FILE, &st_XLogConfig);
 	if (NULL == xhLog)

@@ -94,6 +94,43 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Start(int nPort)
 	return true;
 }
 /********************************************************************
+函数名称：ModuleHelp_SrtCore_Close
+函数功能：关闭一个指定的客户端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入关闭的客户端低脂
+ 参数.二：hSocket
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：或者输入客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, SRTSOCKET hSocket /* = 0 */)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	if (0 != hSocket)
+	{
+		st_Locker.lock();
+		auto stl_MapIterator = stl_MapClients.begin();
+		if (stl_MapIterator != stl_MapClients.end())
+		{
+			srt_epoll_remove_usock(hSRTEPoll, stl_MapIterator->second.hSocket);
+			srt_close(stl_MapIterator->second.hSocket);
+			
+			stl_MapClients.erase(stl_MapIterator);
+		}
+		st_Locker.unlock();
+	}
+	return true;
+}
+/********************************************************************
 函数名称：ModuleHelp_SrtCore_SetCallback
 函数功能：设置数据回调函数
 返回值
@@ -114,6 +151,72 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET
 	return true;
 }
 /********************************************************************
+函数名称：ModuleHelp_SrtCore_GetStreamID
+函数功能：获取流信息
+ 参数.一：hSocket
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的推流地址
+ 参数.三：pbPublish
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出这个地址是推流还是拉流
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClients.begin();
+	if (stl_MapIterator == stl_MapClients.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_GETID;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	if (0 == stl_MapIterator->second.nIDLen)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_GETID;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	//#!::h=live/livestream,m=publish
+	XCHAR tszTmpStr[MAX_PATH];
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSMode[MAX_PATH];
+
+	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+	memset(tszSMSMode, '\0', sizeof(tszSMSMode));
+
+	BaseLib_OperatorString_GetKeyValue(stl_MapIterator->second.tszStreamBuffer + 4, _X(","), tszSMSAddr, tszSMSMode);
+	BaseLib_OperatorString_GetKeyValue(tszSMSAddr, _X("="), tszTmpStr, ptszSMSAddr);
+	
+	if (NULL != _tcsxstr(tszSMSMode, _X("publish")))
+	{
+		*pbPublish = true;
+	}
+	else 
+	{
+		*pbPublish = false;
+	}
+	st_Locker.unlock_shared();
+
+	return true;
+}
+/********************************************************************
 函数名称：ModuleHelp_SrtCore_Destory
 函数功能：销毁SRT服务
 返回值
@@ -127,6 +230,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
 
 	bRun = false;
 	srt_close(hSRTSocket);
+	srt_epoll_release(hSRTEPoll);
 
 	if (NULL != pSDTThread)
 	{
@@ -160,6 +264,14 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket)
 	memset(tszAddrBuffer, '\0', sizeof(tszAddrBuffer));
 	memset(tszPortBuffer, '\0', sizeof(tszPortBuffer));
 	
+	st_SRTClient.nIDLen = 512;
+	int nRet = srt_getsockflag(st_SRTClient.hSocket, SRTO_STREAMID, st_SRTClient.tszStreamBuffer, &st_SRTClient.nIDLen);
+	if (SRT_ERROR == nRet)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_GETID;
+		return false;
+	}
 	getnameinfo((sockaddr*)&st_ClientAddr, nADDRLen, tszAddrBuffer, sizeof(tszAddrBuffer), tszPortBuffer, sizeof(tszPortBuffer), NI_NUMERICHOST | NI_NUMERICSERV);
 
 	int nEPollEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
