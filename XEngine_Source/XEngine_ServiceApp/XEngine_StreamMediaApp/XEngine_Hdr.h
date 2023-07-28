@@ -8,6 +8,7 @@
 #include <thread>
 #include <list>
 #include <string>
+#include <srt/srt.h>
 #ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>

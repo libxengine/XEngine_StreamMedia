@@ -50,3 +50,38 @@ extern "C" bool ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR* ptszM
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbySIMNumber);
+/************************************************************************/
+/*                         导出的SRT函数                                */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Start
+函数功能：启动SRT
+ 参数.一：nPort
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要绑定的端口
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Start(int nPort);
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_SetCallback
+函数功能：设置数据回调函数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET_NETEVENT_LOGIN fpCallePoll_Login, CALLBACK_NETCORE_SOCKET_NETEVENT_RECV fpCallePoll_Recv, CALLBACK_NETCORE_SOCKET_NETEVENT_LEAVE fpCallePoll_Leave, XPVOID lPLogin = NULL, XPVOID lPRecv = NULL, XPVOID lPLeave = NULL);
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Destory
+函数功能：销毁SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Destory();
