@@ -25,6 +25,12 @@
     <Filter Include="源文件\StreamMedia_PushStream">
       <UniqueIdentifier>{483f3dbf-574e-40d3-926c-7800af8128d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\StreamMedia_HTTPApi">
+      <UniqueIdentifier>{ce9678cb-e92a-466c-8b48-a5799850482a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\StreamMedia_HTTPApi">
+      <UniqueIdentifier>{0f6d4989-e2ae-4f8f-9dc9-359762306774}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XEngine_StreamMediaApp.cpp">
@@ -57,6 +63,9 @@
     <ClCompile Include="StreamMedia_PushStream\PushStream_SrtTask.cpp">
       <Filter>源文件\StreamMedia_PushStream</Filter>
     </ClCompile>
+    <ClCompile Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.cpp">
+      <Filter>源文件\StreamMedia_HTTPApi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XEngine_Configure.h">
@@ -88,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="StreamMedia_PushStream\PushStream_SrtTask.h">
       <Filter>头文件\StreamMedia_PushStream</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.h">
+      <Filter>头文件\StreamMedia_HTTPApi</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

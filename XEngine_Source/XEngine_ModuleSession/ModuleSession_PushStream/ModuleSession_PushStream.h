@@ -10,13 +10,6 @@
 //    Purpose:     推流全局会话
 //    History:
 *********************************************************************/
-typedef struct  
-{
-	int nAVType;                //包类型
-	int nFrameType;             //帧类型
-	int nMsgLen;                //大小
-	XCHAR* ptszMsgBuffer;
-}AVPACKET_MSGBUFFER;
 typedef struct
 {
 	XCHAR tszMsgBuffer[2048];              //缓存的头
@@ -32,7 +25,6 @@ typedef struct
 	unique_ptr<mutex> st_ClientLocker;
 
 	unique_ptr<list<STREAMMEDIA_SESSIONCLIENT>> pStl_ListClient;
-	unique_ptr<list<AVPACKET_MSGBUFFER>> pStl_ListPacket;
 	unique_ptr<unordered_map<int, AVPACKET_HDRBUFFER>> pStl_MapPushStream;
 }PUSHSTREAM_PACKET;
 
@@ -50,8 +42,6 @@ public:
 	bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo);
 	bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
 	bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);
-	bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
-	bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
 public:
 	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
