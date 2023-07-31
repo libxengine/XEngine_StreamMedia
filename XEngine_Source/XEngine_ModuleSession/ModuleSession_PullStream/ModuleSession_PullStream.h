@@ -29,6 +29,7 @@ public:
 	bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
 	bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
+	bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 private:
 	shared_mutex st_Locker;
 private:

@@ -103,6 +103,44 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Delete(LPCXSTR lpszClie
 	return true;
 }
 /********************************************************************
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除整个推流端关联的拉流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); )
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->tszSMSAddr, _tcsxlen(lpszClientAddr)))
+		{
+			stl_MapIterator = stl_MapClient.erase(stl_MapIterator);
+		}
+		else
+		{
+			stl_MapIterator++;
+		}
+	}
+	st_Locker.unlock();
+	return true;
+}
+/********************************************************************
 函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
  参数.一：lpszClientAddr

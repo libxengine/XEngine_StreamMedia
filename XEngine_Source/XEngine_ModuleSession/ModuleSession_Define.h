@@ -122,6 +122,20 @@ extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, E
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除整个推流端关联的拉流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/

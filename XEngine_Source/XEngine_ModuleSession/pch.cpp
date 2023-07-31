@@ -51,6 +51,10 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
 	return m_PullStream.ModuleSession_PullStream_Delete(lpszClientAddr);
 }
+extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_PublishDelete(lpszClientAddr);
+}
 /*********************************************************************************
 *                          推流导出会话模块                                      *
 *********************************************************************************/

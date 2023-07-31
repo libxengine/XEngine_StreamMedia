@@ -142,6 +142,23 @@ void CALLBACK Network_Callback_SRTLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszPushAddr[MAX_PATH];
+
+	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+	//可能是推流也可能是拉流
+	if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+	{
+		ModuleSession_PullStream_Delete(lpszClientAddr);
+		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+	}
+	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+	{
+		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
+	}
+
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP == enClientType)
 	{
 		//先关闭网络和心跳,他们主动回调的数据我们可以不用主动调用关闭
@@ -155,19 +172,6 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		}
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HttpProtocol_Server_CloseClinetEx(xhHttpPacket, lpszClientAddr);
-		//停止拉流
-		XCHAR tszSMSAddr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-
-		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-
-		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
-		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
-		{
-			ModuleSession_PullStream_Delete(lpszClientAddr);
-			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
-		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,离开服务器"), lpszClientAddr);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
@@ -185,7 +189,6 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		HelpComponents_Datas_DeleteEx(xhXStreamPacket, lpszClientAddr);
 		//停止推流
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
-		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 == enClientType)
@@ -211,43 +214,12 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
-		XCHAR tszSMSAddr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-
-		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-		//可能是推流也可能是拉流
-		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
-		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
-		{
-			ModuleSession_PullStream_Delete(lpszClientAddr);
-			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
-		}
-		else
-		{
-			RTMPProtocol_Parse_Delete(lpszClientAddr);
-			XEngine_AVPacket_AVDelete(lpszClientAddr);
-			ModuleSession_PushStream_Destroy(lpszClientAddr);
-		}
+		RTMPProtocol_Parse_Delete(lpszClientAddr);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
-		XCHAR tszSMSAddr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-
-		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-		//可能是推流也可能是拉流
-		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
-		{
-			ModuleSession_PullStream_Delete(lpszClientAddr);
-			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
-		}
-		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
-		{
-			ModuleSession_PushStream_Destroy(lpszClientAddr);
-		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 }
