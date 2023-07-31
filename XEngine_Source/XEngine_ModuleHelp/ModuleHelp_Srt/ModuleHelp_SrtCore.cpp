@@ -396,6 +396,32 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket)
 	}
 	return true;
 }
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(SRTSOCKET hSocket)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	if (0 != hSocket)
+	{
+		XCHAR tszClientAddr[128];
+		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
+
+		st_Locker.lock();
+		auto stl_MapIterator = stl_MapClients.find(hSocket);
+		if (stl_MapIterator != stl_MapClients.end())
+		{
+			_tcsxcpy(tszClientAddr, stl_MapIterator->second.tszClientAddr);
+			srt_epoll_remove_usock(hSRTEPoll, stl_MapIterator->second.hSocket);
+			srt_close(stl_MapIterator->second.hSocket);
+
+			stl_MapClients.erase(stl_MapIterator);
+		}
+		st_Locker.unlock();
+
+		lpCall_Leave(tszClientAddr, hSocket, m_lLeave);
+	}
+
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 //                             线程函数
 //////////////////////////////////////////////////////////////////////////
@@ -408,13 +434,13 @@ XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 		int nSRTCount = 100;
 		SRTSOCKET hSRTClient[100];
 
-		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, &hSRTClient[0], &nSRTCount, 0, 0, 100, 0, 0, 0, 0);
+		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, hSRTClient, &nSRTCount, 0, 0, 100, 0, 0, 0, 0);
 		for (int i = 0; i < nSRTIndex; i++)
 		{
 			SRT_SOCKSTATUS nSRTStatus = srt_getsockstate(hSRTClient[i]);
 			if ((nSRTStatus == SRTS_BROKEN) || (nSRTStatus == SRTS_NONEXIST) || (nSRTStatus == SRTS_CLOSED))
 			{
-				srt_close(hSRTClient[i]);
+				pClass_This->ModuleHelp_SrtCore_Leave(hSRTClient[i]);
 				continue;
 			}
 			else if (hSRTClient[i] == pClass_This->hSRTSocket)

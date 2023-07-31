@@ -233,17 +233,18 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+		XCHAR tszSMSAddr[MAX_PATH];
 		XCHAR tszPushAddr[MAX_PATH];
-		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 
-		ModuleHelp_SrtCore_Close(NULL, hSocket);
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 		//可能是推流也可能是拉流
 		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
 		{
 			ModuleSession_PullStream_Delete(lpszClientAddr);
 			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
 		}
-		else
+		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 		{
 			ModuleSession_PushStream_Destroy(lpszClientAddr);
 		}

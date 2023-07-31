@@ -34,6 +34,7 @@ public:
 protected:
 	bool ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket);
 	bool ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket);
+	bool ModuleHelp_SrtCore_Leave(SRTSOCKET hSocket);
 protected:
 	static XHTHREAD CALLBACK ModuleHelp_SrtCore_Thread(XPVOID lParam);
 private:
