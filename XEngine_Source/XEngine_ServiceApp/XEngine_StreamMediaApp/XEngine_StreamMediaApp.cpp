@@ -65,6 +65,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
+		ModuleHelp_SrtCore_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{
@@ -430,6 +431,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
+		ModuleHelp_SrtCore_Destory();
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{
