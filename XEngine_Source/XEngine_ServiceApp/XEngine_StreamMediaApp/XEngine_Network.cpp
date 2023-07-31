@@ -296,7 +296,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		//发送成功激活一次心跳
 		SocketOpt_HeartBeat_ActiveAddrEx(xhRTMPHeart, lpszClientAddr);
 	}
-	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
 		if (!ModuleHelp_SrtCore_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{

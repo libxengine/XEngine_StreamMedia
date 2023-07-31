@@ -166,9 +166,8 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 		st_Locker.unlock_shared();
 		return false;
 	}
-	int nSRTEvent = SRT_EPOLL_OUT | SRT_EPOLL_ERR;
+	//int nSRTEvent = SRT_EPOLL_OUT | SRT_EPOLL_ERR;
 	//srt_epoll_add_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
-
 	SRTSOCKET hSocket = stl_MapIterator->second.hSocket;
 	st_Locker.unlock_shared();
 	while (true)
@@ -178,12 +177,15 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 		{
 			break;
 		}
-		if (SRT_EASYNCSND != srt_getlasterror(NULL))
+		nRet = srt_getlasterror(NULL);
+		if (SRT_EASYNCSND != nRet)
 		{
+			ModuleHelp_IsErrorOccur = true;
+			ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_NOTFOUND;
 			return false;
 		}
 	}
-	nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
+	//nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
 	//srt_epoll_update_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
 
 	return true;
