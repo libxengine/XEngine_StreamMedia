@@ -68,25 +68,6 @@ extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbyS
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_Start(int nPort);
 /********************************************************************
-函数名称：ModuleHelp_SrtCore_Close
-函数功能：关闭一个指定的客户端
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入关闭的客户端低脂
- 参数.二：hSocket
-  In/Out：In
-  类型：句柄
-  可空：Y
-  意思：或者输入客户端句柄
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, SRTSOCKET hSocket = 0);
-/********************************************************************
 函数名称：ModuleHelp_SrtCore_SetCallback
 函数功能：设置数据回调函数
 返回值
@@ -95,6 +76,30 @@ extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, SRTSOCKE
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET_NETEVENT_LOGIN fpCallePoll_Login, CALLBACK_NETCORE_SOCKET_NETEVENT_RECV fpCallePoll_Recv, CALLBACK_NETCORE_SOCKET_NETEVENT_LEAVE fpCallePoll_Leave, XPVOID lPLogin = NULL, XPVOID lPRecv = NULL, XPVOID lPLeave = NULL);
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Send
+函数功能：发送指定数据给客户端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的客户端
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：发送的数据
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：发送的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
 /********************************************************************
 函数名称：ModuleHelp_SrtCore_GetStreamID
 函数功能：获取流信息
@@ -119,6 +124,25 @@ extern "C" bool ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET_NETEVENT_
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish);
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Close
+函数功能：关闭一个指定的客户端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入关闭的客户端低脂
+ 参数.二：hSocket
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：或者输入客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, SRTSOCKET hSocket = 0);
 /********************************************************************
 函数名称：ModuleHelp_SrtCore_Destory
 函数功能：销毁SRT服务

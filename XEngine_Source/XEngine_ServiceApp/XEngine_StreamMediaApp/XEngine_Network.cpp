@@ -233,7 +233,20 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+		XCHAR tszPushAddr[MAX_PATH];
+		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+
 		ModuleHelp_SrtCore_Close(NULL, hSocket);
+		//可能是推流也可能是拉流
+		if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+		{
+			ModuleSession_PullStream_Delete(lpszClientAddr);
+			ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+		}
+		else
+		{
+			ModuleSession_PushStream_Destroy(lpszClientAddr);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 }
@@ -282,6 +295,14 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		}
 		//发送成功激活一次心跳
 		SocketOpt_HeartBeat_ActiveAddrEx(xhRTMPHeart, lpszClientAddr);
+	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
+	{
+		if (!ModuleHelp_SrtCore_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT服务端:%s,发送数据失败，错误:%lX"), lpszClientAddr, ModuleHelp_GetLastError());
+			return false;
+		}
 	}
 	return true;
 }

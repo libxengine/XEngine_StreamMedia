@@ -48,7 +48,16 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
-
+	list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+	ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+	for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == stl_ListIteratorClient->enClientType)
+		{
+			XEngine_Network_Send(stl_ListIteratorClient->tszClientID, lpszMsgBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+			break;
+		}
+	}
 
 	return true;
 }

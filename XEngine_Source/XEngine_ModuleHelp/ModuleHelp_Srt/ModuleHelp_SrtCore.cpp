@@ -48,6 +48,8 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Start(int nPort)
 		return false;
 	}
 	bool bFlag = false;
+	SRT_TRANSTYPE nType = SRTT_LIVE;
+	srt_setsockopt(hSRTSocket, 0, SRTO_TRANSTYPE, &nType, sizeof(nType));
 	srt_setsockopt(hSRTSocket, 0, SRTO_SNDSYN, (const void*)&bFlag, sizeof(bool));
 	srt_setsockopt(hSRTSocket, 0, SRTO_RCVSYN, (const void*)&bFlag, sizeof(bool));
 
@@ -94,43 +96,6 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Start(int nPort)
 	return true;
 }
 /********************************************************************
-函数名称：ModuleHelp_SrtCore_Close
-函数功能：关闭一个指定的客户端
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入关闭的客户端低脂
- 参数.二：hSocket
-  In/Out：In
-  类型：句柄
-  可空：Y
-  意思：或者输入客户端句柄
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, SRTSOCKET hSocket /* = 0 */)
-{
-	ModuleHelp_IsErrorOccur = false;
-
-	if (0 != hSocket)
-	{
-		st_Locker.lock();
-		auto stl_MapIterator = stl_MapClients.begin();
-		if (stl_MapIterator != stl_MapClients.end())
-		{
-			srt_epoll_remove_usock(hSRTEPoll, stl_MapIterator->second.hSocket);
-			srt_close(stl_MapIterator->second.hSocket);
-			
-			stl_MapClients.erase(stl_MapIterator);
-		}
-		st_Locker.unlock();
-	}
-	return true;
-}
-/********************************************************************
 函数名称：ModuleHelp_SrtCore_SetCallback
 函数功能：设置数据回调函数
 返回值
@@ -148,6 +113,79 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET
 	lpCall_Login = fpCallePoll_Login;
 	lpCall_Recv = fpCallePoll_Recv;
 	lpCall_Leave = fpCallePoll_Leave;
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Send
+函数功能：发送指定数据给客户端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的客户端
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：发送的数据
+ 参数.三：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：发送的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClients.begin();
+	for (; stl_MapIterator != stl_MapClients.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	int nSRTEvent = SRT_EPOLL_OUT | SRT_EPOLL_ERR;
+	//srt_epoll_add_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
+
+	SRTSOCKET hSocket = stl_MapIterator->second.hSocket;
+	st_Locker.unlock_shared();
+	while (true)
+	{
+		int nRet = srt_sendmsg(hSocket, lpszMsgBuffer, nMsgLen, -1, 1);
+		if (nRet >= 0) 
+		{
+			break;
+		}
+		if (SRT_EASYNCSND != srt_getlasterror(NULL))
+		{
+			return false;
+		}
+	}
+	nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
+	//srt_epoll_update_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
+
 	return true;
 }
 /********************************************************************
@@ -178,11 +216,11 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHA
 	ModuleHelp_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
-	auto stl_MapIterator = stl_MapClients.begin();
+	auto stl_MapIterator = stl_MapClients.find(hSocket);
 	if (stl_MapIterator == stl_MapClients.end())
 	{
 		ModuleHelp_IsErrorOccur = true;
-		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_GETID;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_NOTFOUND;
 		st_Locker.unlock_shared();
 		return false;
 	}
@@ -214,6 +252,43 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHA
 	}
 	st_Locker.unlock_shared();
 
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Close
+函数功能：关闭一个指定的客户端
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入关闭的客户端低脂
+ 参数.二：hSocket
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：或者输入客户端句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, SRTSOCKET hSocket /* = 0 */)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	if (0 != hSocket)
+	{
+		st_Locker.lock();
+		auto stl_MapIterator = stl_MapClients.find(hSocket);
+		if (stl_MapIterator != stl_MapClients.end())
+		{
+			srt_epoll_remove_usock(hSRTEPoll, stl_MapIterator->second.hSocket);
+			srt_close(stl_MapIterator->second.hSocket);
+
+			stl_MapClients.erase(stl_MapIterator);
+		}
+		st_Locker.unlock();
+	}
 	return true;
 }
 /********************************************************************

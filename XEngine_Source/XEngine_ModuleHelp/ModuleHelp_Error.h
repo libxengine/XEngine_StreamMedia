@@ -26,3 +26,4 @@
 #define ERROR_MODULE_HELP_SRT_THREAD 0xD1007                              //创建线程失败
 #define ERROR_MODULE_HELP_SRT_ACCEPT 0xD1008                              //接受失败
 #define ERROR_MODULE_HELP_SRT_GETID 0xD1009                               //获取STREAMID
+#define ERROR_MODULE_HELP_SRT_NOTFOUND 0xD100A                            //没有找到
