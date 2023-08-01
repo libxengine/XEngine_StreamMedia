@@ -15,6 +15,20 @@ typedef struct
 	XCHAR tszClientID[128];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType;
 }STREAMMEDIA_SESSIONCLIENT;
+typedef struct
+{
+	XENGINE_PROTOCOL_AVINFO st_AVInfo;
+	XCHAR tszSMSAddr[MAX_PATH];
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
+	int nClientCount;
+}STREAMMEDIA_PUBLISHINFO;
+typedef struct
+{
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszPushAddr[MAX_PATH];
+
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
+}STREAMMEDIA_PULLLISTINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -136,6 +150,25 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetList
+函数功能：获取用户列表
+ 参数.一：pppSt_PullList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出用户列表数据
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/
@@ -152,12 +185,17 @@ extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入推流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Destroy
 函数功能：销毁一个管理器
@@ -368,3 +406,22 @@ extern "C" bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGI
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetInfo
+函数功能：获取推流信息
+ 参数.一：pppSt_ProtocolStream
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出推流统计信息
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppSt_ProtocolStream, int* pInt_ListCount);

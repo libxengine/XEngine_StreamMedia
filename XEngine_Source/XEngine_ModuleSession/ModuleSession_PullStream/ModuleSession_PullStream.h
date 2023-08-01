@@ -10,14 +10,6 @@
 //    Purpose:     拉流端会话管理器
 //    History:
 *********************************************************************/
-typedef struct
-{
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszPushAddr[MAX_PATH];
-
-	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
-}PULLSTREAM_CLIENTINFO;
-
 class CModuleSession_PullStream
 {
 public:
@@ -30,8 +22,9 @@ public:
 	bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
+	bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
 private:
 	shared_mutex st_Locker;
 private:
-	unordered_map<xstring, PULLSTREAM_CLIENTINFO*> stl_MapClient;
+	unordered_map<xstring, STREAMMEDIA_PULLLISTINFO*> stl_MapClient;
 };

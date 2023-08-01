@@ -133,6 +133,64 @@ extern "C" bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLe
 备注：
 *********************************************************************/
 extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM * pSt_ProtocolStream);
+/********************************************************************
+函数名称：ModuleProtocol_Packet_HTTPPublishGet
+函数功能：获取发布流的信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_PublishInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入发布流信息列表数据
+ 参数.四：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleProtocol_Packet_HTTPPublishGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PUBLISHINFO*** pppSt_PublishInfo, int nListCount);
+/********************************************************************
+函数名称：ModuleProtocol_Packet_HTTPPullGet
+函数功能：获取拉流的信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_PublishInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入拉流客户端数据
+ 参数.四：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleProtocol_Packet_HTTPPullGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PULLLISTINFO*** pppSt_PullInfo, int nListCount);
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/

@@ -33,12 +33,17 @@ CModuleSession_PushStream::~CModuleSession_PushStream()
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入推流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr)
+bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
 	Session_IsErrorOccur = false;
 
@@ -69,6 +74,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return false;
 	}
+	pSt_Packet->enStreamType = enStreamType;
 	_tcsxcpy(pSt_Packet->tszSMSAddr, lpszSMSAddr);
 	//是否存在
 	st_Locker.lock();
@@ -452,6 +458,44 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_FindStream(LPCXSTR lpsz
 		return false;
 	}
 	_tcsxcpy(ptszClientAddr, stl_MapIterator->first.c_str());
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetInfo
+函数功能：获取推流信息
+ 参数.一：pppSt_ProtocolStream
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出推流统计信息
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppSt_ProtocolStream, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+
+	*pInt_ListCount = stl_MapPushStream.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ProtocolStream, stl_MapPushStream.size(), sizeof(STREAMMEDIA_PUBLISHINFO));
+
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (int i = 0; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++, i++)
+	{
+		(*pppSt_ProtocolStream)[i]->nClientCount = stl_MapIterator->second->pStl_ListClient->size();
+		(*pppSt_ProtocolStream)[i]->enStreamType = stl_MapIterator->second->enStreamType;
+		(*pppSt_ProtocolStream)[i]->st_AVInfo = stl_MapIterator->second->st_AVInfo;
+		_tcsxcpy((*pppSt_ProtocolStream)[i]->tszSMSAddr, stl_MapIterator->second->tszSMSAddr);
+	}
 	st_Locker.unlock_shared();
 	return true;
 }

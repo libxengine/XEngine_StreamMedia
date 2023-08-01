@@ -9,6 +9,7 @@ EXPORTS
 	ModuleSession_PullStream_GetStreamType
 	ModuleSession_PullStream_Delete
 	ModuleSession_PullStream_PublishDelete
+	ModuleSession_PullStream_GetList
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy
@@ -21,3 +22,4 @@ EXPORTS
 	ModuleSession_PushStream_ClientList
 	ModuleSession_PushStream_SetAVInfo
 	ModuleSession_PushStream_GetAVInfo
+	ModuleSession_PushStream_GetInfo

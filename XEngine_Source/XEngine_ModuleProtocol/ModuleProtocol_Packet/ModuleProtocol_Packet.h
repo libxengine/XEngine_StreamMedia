@@ -22,5 +22,8 @@ public:
 	bool ModuleProtocol_Packet_Create(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
 	bool ModuleProtocol_Packet_Push(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream, int nMsgLen, int nMsgType);
 	bool ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_PROTOCOLSTREAM* pSt_ProtocolStream);
+public:
+	bool ModuleProtocol_Packet_HTTPPublishGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PUBLISHINFO*** pppSt_PublishInfo, int nListCount);
+	bool ModuleProtocol_Packet_HTTPPullGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PULLLISTINFO*** pppSt_PullInfo, int nListCount);
 private:
 };
