@@ -37,14 +37,16 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 	{
 		//播放流:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
 		XCHAR tszPushAddr[MAX_PATH];
+		XCHAR tszSMSAddr[MAX_PATH];
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
+		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszSMSAddr);
 
-		if (!ModuleSession_PushStream_FindStream(tszVluBuffer, tszPushAddr))
+		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -76,7 +78,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, tszSDBuffer, &nSDLen, enStreamType);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
-		ModuleSession_PullStream_Insert(lpszClientAddr, tszVluBuffer, tszPushAddr, enStreamType);
+		ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
 		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据成功:%s"), lpszClientAddr, tszVluBuffer);
 	}
