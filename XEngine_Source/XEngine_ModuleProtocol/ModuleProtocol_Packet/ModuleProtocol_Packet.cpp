@@ -307,7 +307,7 @@ bool CModuleProtocol_Packet::ModuleProtocol_Packet_HTTPPublishGet(XCHAR* ptszMsg
 		st_JsonVideo["bEnable"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.bEnable;
 		if ((*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.bEnable)
 		{
-			st_JsonVideo["nBitRate"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nBitRate;
+			st_JsonVideo["nBitRate"] = (Json::Value::UInt64)(*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nBitRate;
 			st_JsonVideo["enAVCodec"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.enAVCodec;
 			st_JsonVideo["nWidth"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nWidth;
 			st_JsonVideo["nHeight"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nHeight;
@@ -316,7 +316,7 @@ bool CModuleProtocol_Packet::ModuleProtocol_Packet_HTTPPublishGet(XCHAR* ptszMsg
 		st_JsonAudio["bEnable"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.bEnable;
 		if ((*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.bEnable)
 		{
-			st_JsonAudio["nBitRate"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nBitRate;
+			st_JsonAudio["nBitRate"] = (Json::Value::UInt64)(*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nBitRate;
 			st_JsonAudio["enAVCodec"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.enAVCodec;
 			st_JsonAudio["nChannel"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nChannel;
 			st_JsonAudio["nSampleRate"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nSampleRate;

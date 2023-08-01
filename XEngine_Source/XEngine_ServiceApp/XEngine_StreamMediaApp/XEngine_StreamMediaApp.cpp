@@ -144,7 +144,6 @@ int main(int argc, char** argv)
 	{
 		ServiceApp_Deamon();
 	}
-	pSt_VFile = fopen("D:\\srt.ts", "wb");
 	//初始日志
 	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_STD | HELPCOMPONENTS_XLOG_OUTTYPE_FILE, &st_XLogConfig);
 	if (NULL == xhLog)

@@ -297,11 +297,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
-
-			XEngine_AVPacket_AVDelete(lpszClientAddr);
-			RTMPProtocol_Parse_Delete(lpszClientAddr);
-			ModuleSession_PushStream_Destroy(lpszClientAddr);
-
 			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		}

@@ -13,7 +13,7 @@
 typedef struct  
 {
 	XCHAR tszStreamBuffer[512];
-	XCHAR tszClientAddr[128];
+	XCHAR tszClientAddr[MAX_PATH];
 
 	int nIDLen;
 	SRTSOCKET hSocket;

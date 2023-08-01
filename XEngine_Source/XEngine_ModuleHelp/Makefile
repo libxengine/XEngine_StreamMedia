@@ -10,7 +10,7 @@ LOADHDR = -I ./
 LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_Core
 LIB = -lXEngine_OPenSsl
 LIBEX = -lsrt
-OBJECTS = ModuleHelp_JT1078.o ModuleHelp_Srt.o pch.o
+OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
@@ -54,7 +54,7 @@ all:$(OBJECTS)
 
 ModuleHelp_JT1078.o:./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp 
-ModuleHelp_Srt.o:./ModuleHelp_Srt/ModuleHelp_SrtCore.cpp             
+ModuleHelp_SrtCore.o:./ModuleHelp_Srt/ModuleHelp_SrtCore.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_Srt/ModuleHelp_SrtCore.cpp 
 
 pch.o:./pch.cpp                 		       	    
