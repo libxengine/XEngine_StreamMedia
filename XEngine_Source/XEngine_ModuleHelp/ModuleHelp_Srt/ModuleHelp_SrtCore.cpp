@@ -13,12 +13,9 @@
 *********************************************************************/
 CModuleHelp_SrtCore::CModuleHelp_SrtCore()
 {
-	srt_startup();
-	srt_setloglevel(srt_logging::LogLevel::fatal);
 }
 CModuleHelp_SrtCore::~CModuleHelp_SrtCore()
 {
-	srt_cleanup();
 }
 //////////////////////////////////////////////////////////////////////////
 //                             公有函数

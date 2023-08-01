@@ -37,7 +37,6 @@ XENGINE_SERVICECONFIG st_ServiceConfig;
 FILE* pSt_VFile = NULL;
 FILE* pst_AFile = NULL;
 
-
 void ServiceApp_Stop(int signo)
 {
 	if (bIsRun)
@@ -66,6 +65,8 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		srt_cleanup();
+
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{
@@ -114,6 +115,8 @@ static int ServiceApp_Deamon()
 
 int main(int argc, char** argv)
 {
+	srt_startup();
+	srt_setloglevel(srt_logging::LogLevel::fatal);
 #ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
@@ -431,6 +434,8 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		srt_cleanup();
+
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{
