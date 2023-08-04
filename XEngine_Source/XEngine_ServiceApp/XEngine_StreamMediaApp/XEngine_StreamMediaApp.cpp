@@ -37,7 +37,6 @@ XENGINE_SERVICECONFIG st_ServiceConfig;
 FILE* pSt_VFile = NULL;
 FILE* pst_AFile = NULL;
 
-
 void ServiceApp_Stop(int signo)
 {
 	if (bIsRun)
@@ -65,6 +64,9 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
+		ModuleHelp_SrtCore_Destory();
+		srt_cleanup();
+
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{
@@ -113,6 +115,8 @@ static int ServiceApp_Deamon()
 
 int main(int argc, char** argv)
 {
+	srt_startup();
+	srt_setloglevel(srt_logging::LogLevel::fatal);
 #ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
@@ -129,6 +133,8 @@ int main(int argc, char** argv)
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
+
+	//pSt_VFile = fopen("./1.ts", "wb");
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
@@ -386,7 +392,16 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动实时端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
-
+	if (st_ServiceConfig.nSrtPort > 0)
+	{
+		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT服务失败,错误：%s"), srt_getlasterror_str());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		ModuleHelp_SrtCore_SetCallback(Network_Callback_SRTLogin, Network_Callback_SRTRecv, Network_Callback_SRTLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT服务成功,绑定的端口:%d"), st_ServiceConfig.nSrtPort);
+	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
 	while (true)
@@ -420,6 +435,9 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhRTMPPool);
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
+		ModuleHelp_SrtCore_Destory();
+		srt_cleanup();
+
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pst_AFile)
 		{

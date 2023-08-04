@@ -8,6 +8,7 @@
 #include <thread>
 #include <list>
 #include <string>
+#include <srt/srt.h>
 #ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>
@@ -59,9 +60,11 @@ using namespace std;
 #include "XEngine_Network.h"
 #include "XEngine_HttpTask.h"
 #include "XEngine_AVPacket.h"
+#include "./StreamMedia_HTTPApi/StreamMedia_HTTPApi.h"
 #include "./StreamMedia_PushStream/PushStream_XStreamTask.h"
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
+#include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientTask.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46

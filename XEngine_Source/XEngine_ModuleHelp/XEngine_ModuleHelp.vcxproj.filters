@@ -19,6 +19,12 @@
     <Filter Include="源文件\ModuleHelp_JT1078">
       <UniqueIdentifier>{944d79f0-5bb6-4f2d-a4ea-d3f7a864a3ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\ModuleHelp_Srt">
+      <UniqueIdentifier>{ea2ab8f4-de01-4f72-b26b-8492e6f6fa1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleHelp_Srt">
+      <UniqueIdentifier>{ee56b71a-ffa5-43b1-83e4-60b522a2c79d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,6 +42,9 @@
     <ClInclude Include="ModuleHelp_JT1078\ModuleHelp_JT1078.h">
       <Filter>头文件\ModuleHelp_JT1078</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleHelp_Srt\ModuleHelp_SrtCore.h">
+      <Filter>头文件\ModuleHelp_Srt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -46,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="ModuleHelp_JT1078\ModuleHelp_JT1078.cpp">
       <Filter>源文件\ModuleHelp_JT1078</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHelp_Srt\ModuleHelp_SrtCore.cpp">
+      <Filter>源文件\ModuleHelp_Srt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

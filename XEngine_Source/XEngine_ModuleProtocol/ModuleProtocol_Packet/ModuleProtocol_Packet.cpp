@@ -250,3 +250,144 @@ bool CModuleProtocol_Packet::ModuleProtocol_Packet_Destroy(XCHAR* ptszMsgBuffer,
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_ProtocolStream, sizeof(XENGINE_PROTOCOLSTREAM));
 	return true;
 }
+/********************************************************************
+函数名称：ModuleProtocol_Packet_HTTPPublishGet
+函数功能：获取发布流的信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_PublishInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入发布流信息列表数据
+ 参数.四：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_HTTPPublishGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PUBLISHINFO*** pppSt_PublishInfo, int nListCount)
+{
+	ModuleProtocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		ModuleProtocol_IsErrorOccur = true;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonArray;
+
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = "success";
+
+	for (int i = 0; i < nListCount; i++)
+	{
+		Json::Value st_JsonObject;
+		Json::Value st_JsonVideo;
+		Json::Value st_JsonAudio;
+
+		st_JsonObject["nClientCount"] = (*pppSt_PublishInfo)[i]->nClientCount;
+		st_JsonObject["tszSMSAddr"] = (*pppSt_PublishInfo)[i]->tszSMSAddr;
+		st_JsonObject["enStreamType"] = (*pppSt_PublishInfo)[i]->enStreamType;
+
+		st_JsonVideo["bEnable"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.bEnable;
+		if ((*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.bEnable)
+		{
+			st_JsonVideo["nBitRate"] = (Json::Value::UInt64)(*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nBitRate;
+			st_JsonVideo["enAVCodec"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.enAVCodec;
+			st_JsonVideo["nWidth"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nWidth;
+			st_JsonVideo["nHeight"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nHeight;
+			st_JsonVideo["nFrameRate"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_VideoInfo.nFrameRate;
+		}
+		st_JsonAudio["bEnable"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.bEnable;
+		if ((*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.bEnable)
+		{
+			st_JsonAudio["nBitRate"] = (Json::Value::UInt64)(*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nBitRate;
+			st_JsonAudio["enAVCodec"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.enAVCodec;
+			st_JsonAudio["nChannel"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nChannel;
+			st_JsonAudio["nSampleRate"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nSampleRate;
+			st_JsonAudio["nSampleFmt"] = (*pppSt_PublishInfo)[i]->st_AVInfo.st_AudioInfo.nSampleFmt;
+		}
+		st_JsonObject["st_VideoInfo"] = st_JsonVideo;
+		st_JsonObject["st_AudioInfo"] = st_JsonAudio;
+		st_JsonArray.append(st_JsonObject);
+	}
+	st_JsonRoot["Array"] = st_JsonArray;
+
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
+	return true;
+}
+/********************************************************************
+函数名称：ModuleProtocol_Packet_HTTPPullGet
+函数功能：获取拉流的信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出协议缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_PublishInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入拉流客户端数据
+ 参数.四：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入数据个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleProtocol_Packet::ModuleProtocol_Packet_HTTPPullGet(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PULLLISTINFO*** pppSt_PullInfo, int nListCount)
+{
+	ModuleProtocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		ModuleProtocol_IsErrorOccur = true;
+		ModuleProtocol_dwErrorCode = ERROR_MODULE_PROTOCOL_PACKET_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonArray;
+
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = "success";
+
+	for (int i = 0; i < nListCount; i++)
+	{
+		Json::Value st_JsonObject;
+
+		st_JsonObject["tszPushAddr"] = (*pppSt_PullInfo)[i]->tszPushAddr;
+		st_JsonObject["tszSMSAddr"] = (*pppSt_PullInfo)[i]->tszSMSAddr;
+		st_JsonObject["enStreamType"] = (*pppSt_PullInfo)[i]->enStreamType;
+		st_JsonArray.append(st_JsonObject);
+	}
+	st_JsonRoot["Array"] = st_JsonArray;
+
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
+	return true;
+}

@@ -1,3 +1,21 @@
+XEngine_StreamMedia V2.2.0.1001
+
+添加:SRT推拉流支持
+添加:为HTTP管理接口增加推拉流信息获取的支持
+修改:RTMPProtocol_Help_ParseVideo 的使用方法
+修复:xstream流转换的一些问题
+修复:当客户端关闭的时候清理客户端资源不正确的问题
+修复:拉流客户端的流地址不正确的问题
+删除:没有使用的会话代码
+
+added:srt publish and pull stream supported
+added:get publish and pull stream information for http api
+modify:RTMPProtocol_Help_ParseVideo method of use
+fixed:some problem with xstream convert
+fixed:clean client resource is incorrent when client close
+fixed:pull client smsaddr is incorrent
+delete:unused code for session module
+=======================================================
 XEngine_StreamMedia V2.1.0.1001
 
 增加:RTMP拉流支持

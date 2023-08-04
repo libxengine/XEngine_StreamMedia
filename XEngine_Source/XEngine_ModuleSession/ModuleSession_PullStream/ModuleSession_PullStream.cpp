@@ -52,14 +52,14 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClie
 {
     Session_IsErrorOccur = false;
 
-	PULLSTREAM_CLIENTINFO* pSt_PullStream = new PULLSTREAM_CLIENTINFO;
+	STREAMMEDIA_PULLLISTINFO* pSt_PullStream = new STREAMMEDIA_PULLLISTINFO;
 	if (NULL == pSt_PullStream)
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return false;
 	}
-    memset(pSt_PullStream, '\0', sizeof(PULLSTREAM_CLIENTINFO));
+    memset(pSt_PullStream, '\0', sizeof(STREAMMEDIA_PULLLISTINFO));
 
 	pSt_PullStream->enStreamType = enStreamType;
     _tcsxcpy(pSt_PullStream->tszSMSAddr, lpszSMSAddr);
@@ -98,6 +98,44 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Delete(LPCXSTR lpszClie
 	if (stl_MapIterator != stl_MapClient.end())
 	{
 		stl_MapClient.erase(stl_MapIterator);
+	}
+	st_Locker.unlock();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除整个推流端关联的拉流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); )
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->tszSMSAddr, _tcsxlen(lpszClientAddr)))
+		{
+			stl_MapIterator = stl_MapClient.erase(stl_MapIterator);
+		}
+		else
+		{
+			stl_MapIterator++;
+		}
 	}
 	st_Locker.unlock();
 	return true;
@@ -225,6 +263,41 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetStreamType(LPCXSTR l
 		return false;
 	}
 	*penStreamType = stl_MapIterator->second->enStreamType;
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetList
+函数功能：获取用户列表
+ 参数.一：pppSt_PullList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出用户列表数据
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+
+	*pInt_ListCount = stl_MapClient.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_PullList, stl_MapClient.size(), sizeof(STREAMMEDIA_PULLLISTINFO));
+
+	auto stl_MapIterator = stl_MapClient.begin();
+	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)
+	{
+		(*pppSt_PullList)[i] = stl_MapIterator->second;
+	}
 	st_Locker.unlock_shared();
 	return true;
 }

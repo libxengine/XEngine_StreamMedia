@@ -10,10 +10,11 @@ LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEn
 		 -L ../../XEngine_ThirdPart/jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lRfcComponents_HttpProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol \
       -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp \
-	  -ljsoncpp
+	  -ljsoncpp -lsrt
 LIBEX = 
 OBJECTS = PullStream_ClientTask.o \
-          PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o \
+          PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o \
+		  StreamMedia_HTTPApi.o \
           XEngine_AVPacket.o XEngine_Configure.o XEngine_HttpTask.o XEngine_Network.o XEngine_StreamMediaApp.o
 
 ifeq ($(RELEASE),1)
@@ -60,6 +61,11 @@ PushStream_JT1078Task.o:./StreamMedia_PushStream/PushStream_JT1078Task.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_JT1078Task.cpp
 PushStream_RTMPTask.o:./StreamMedia_PushStream/PushStream_RTMPTask.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_RTMPTask.cpp
+PushStream_SrtTask.o:./StreamMedia_PushStream/PushStream_SrtTask.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_SrtTask.cpp
+
+StreamMedia_HTTPApi.o:./StreamMedia_HTTPApi/StreamMedia_HTTPApi.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_HTTPApi/StreamMedia_HTTPApi.cpp
 
 XEngine_AVPacket.o:./XEngine_AVPacket.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./XEngine_AVPacket.cpp 

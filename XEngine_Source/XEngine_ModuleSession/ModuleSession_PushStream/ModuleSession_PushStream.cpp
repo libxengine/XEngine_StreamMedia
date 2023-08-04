@@ -33,12 +33,17 @@ CModuleSession_PushStream::~CModuleSession_PushStream()
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入推流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr)
+bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
 {
 	Session_IsErrorOccur = false;
 
@@ -61,15 +66,15 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 	pSt_Packet->st_ClientLocker = make_unique<mutex>();
 	pSt_Packet->st_MSGLocker = make_unique<mutex>();
 	pSt_Packet->pStl_ListClient = make_unique<list<STREAMMEDIA_SESSIONCLIENT>>();
-	pSt_Packet->pStl_ListPacket = make_unique<list<AVPACKET_MSGBUFFER>>();
 	pSt_Packet->pStl_MapPushStream = make_unique<unordered_map<int, AVPACKET_HDRBUFFER>>();
 	
-	if ((NULL == pSt_Packet->pStl_ListPacket) || (NULL == pSt_Packet->pStl_ListClient))
+	if ((NULL == pSt_Packet->pStl_MapPushStream) || (NULL == pSt_Packet->pStl_ListClient))
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
 		return false;
 	}
+	pSt_Packet->enStreamType = enStreamType;
 	_tcsxcpy(pSt_Packet->tszSMSAddr, lpszSMSAddr);
 	//是否存在
 	st_Locker.lock();
@@ -457,160 +462,40 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_FindStream(LPCXSTR lpsz
 	return true;
 }
 /********************************************************************
-函数名称：ModuleSession_PushStream_Send
-函数功能：投递一段数据给会话管理器
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
+函数名称：ModuleSession_PushStream_GetInfo
+函数功能：获取推流信息
+ 参数.一：pppSt_ProtocolStream
+  In/Out：In/Out
+  类型：三级指针
   可空：N
-  意思：输入客户端地址
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
+  意思：输出推流统计信息
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
   可空：N
-  意思：输入要投递的数据缓冲区
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.四：nAVType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区类型.0视频1音频
- 参数.五：nFrameType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入帧类型,视频的关键帧还是PB
+  意思：输出获取到的个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType)
+bool CModuleSession_PushStream::ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppSt_ProtocolStream, int* pInt_ListCount)
 {
 	Session_IsErrorOccur = false;
 
-	if (NULL == lpszClientAddr)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return false;
-	}
-	//是否存在
 	st_Locker.lock_shared();
-	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapPushStream.end())
+
+	*pInt_ListCount = stl_MapPushStream.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ProtocolStream, stl_MapPushStream.size(), sizeof(STREAMMEDIA_PUBLISHINFO));
+
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (int i = 0; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++, i++)
 	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
+		(*pppSt_ProtocolStream)[i]->nClientCount = stl_MapIterator->second->pStl_ListClient->size();
+		(*pppSt_ProtocolStream)[i]->enStreamType = stl_MapIterator->second->enStreamType;
+		(*pppSt_ProtocolStream)[i]->st_AVInfo = stl_MapIterator->second->st_AVInfo;
+		_tcsxcpy((*pppSt_ProtocolStream)[i]->tszSMSAddr, stl_MapIterator->second->tszSMSAddr);
 	}
-
-	AVPACKET_MSGBUFFER st_MSGBuffer;
-	memset(&st_MSGBuffer, '\0', sizeof(AVPACKET_MSGBUFFER));
-
-	st_MSGBuffer.nAVType = nAVType;
-	st_MSGBuffer.nFrameType = nFrameType;
-	st_MSGBuffer.nMsgLen = nMsgLen;
-	st_MSGBuffer.ptszMsgBuffer = (XCHAR*)malloc(nMsgLen);
-	if (NULL == st_MSGBuffer.ptszMsgBuffer)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	memcpy(st_MSGBuffer.ptszMsgBuffer, lpszMsgBuffer, nMsgLen);
-
-	stl_MapIterator->second->st_MSGLocker->lock();
-	//视频?
-	if (0 == nAVType)
-	{
-		//遇到关键帧
-		if (1 == nFrameType)
-		{
-			//释放所有包
-			for (auto stl_ListIterator = stl_MapIterator->second->pStl_ListPacket->begin(); stl_ListIterator != stl_MapIterator->second->pStl_ListPacket->end(); stl_ListIterator++)
-			{
-				free(stl_ListIterator->ptszMsgBuffer);
-			}
-			stl_MapIterator->second->pStl_ListPacket->clear();
-		}
-	}
-	stl_MapIterator->second->pStl_ListPacket->push_back(st_MSGBuffer);
-	stl_MapIterator->second->st_MSGLocker->unlock();
-
-	st_Locker.unlock_shared();
-	return true;
-}
-/********************************************************************
-函数名称：ModuleSession_PushStream_Recv
-函数功能：获取缓冲区队列数据
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要投递的数据缓冲区
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.四：nAVType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区类型.0视频1音频
- 参数.五：nFrameType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入帧类型,视频的关键帧还是PB
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType)
-{
-	Session_IsErrorOccur = false;
-
-	if (NULL == lpszClientAddr)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return false;
-	}
-	//是否存在
-	st_Locker.lock_shared();
-	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapPushStream.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	//输出内容
-	stl_MapIterator->second->st_MSGLocker->lock();
-	AVPACKET_MSGBUFFER st_MSGBuffer = stl_MapIterator->second->pStl_ListPacket->front();
-	stl_MapIterator->second->pStl_ListPacket->pop_front();
-
-	*pInt_AVType = st_MSGBuffer.nAVType;
-	*pInt_FrameType = st_MSGBuffer.nFrameType;
-	*pInt_MsgLen = st_MSGBuffer.nMsgLen;
-	*pptszMsgBuffer = st_MSGBuffer.ptszMsgBuffer;
-	stl_MapIterator->second->st_MSGLocker->unlock();
-
 	st_Locker.unlock_shared();
 	return true;
 }

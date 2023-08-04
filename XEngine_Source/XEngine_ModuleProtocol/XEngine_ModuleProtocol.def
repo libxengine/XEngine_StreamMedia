@@ -7,5 +7,7 @@ EXPORTS
 	ModuleProtocol_Packet_Create
 	ModuleProtocol_Packet_Push
 	ModuleProtocol_Packet_Destroy
+	ModuleProtocol_Packet_HTTPPublishGet
+	ModuleProtocol_Packet_HTTPPullGet
 
 	ModuleProtocol_Parse_HTTPForward

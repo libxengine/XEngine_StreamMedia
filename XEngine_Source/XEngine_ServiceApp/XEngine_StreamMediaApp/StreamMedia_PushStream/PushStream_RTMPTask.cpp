@@ -237,7 +237,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			//////////////////////////////////////////////////////////////////////////
 			//创建流
 			XEngine_AVPacket_AVCreate(lpszClientAddr);
-			ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr);
+			ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 			//释放内存
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
@@ -297,11 +297,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
-
-			XEngine_AVPacket_AVDelete(lpszClientAddr);
-			RTMPProtocol_Parse_Delete(lpszClientAddr);
-			ModuleSession_PushStream_Destroy(lpszClientAddr);
-
 			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		}
@@ -404,7 +399,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XENGINE_RTMPAUDIO st_RTMPAudio;
 		memset(&st_RTMPAudio, '\0', sizeof(XENGINE_RTMPAUDIO));
 
-		RTMPProtocol_Help_ParseAudio(&st_RTMPAudio, ptszRVBuffer, &nRVLen, lpszMsgBuffer, nMsgLen);
+		memcpy(&st_RTMPAudio, lpszMsgBuffer, sizeof(XENGINE_RTMPAUDIO));
 		if (0 == st_RTMPAudio.byPKTType)
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
@@ -417,7 +412,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XENGINE_RTMPVIDEO st_RTMPVideo;
 		memset(&st_RTMPVideo, '\0', sizeof(XENGINE_RTMPVIDEO));
 
-		RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer, &nRVLen, lpszMsgBuffer, nMsgLen);
+		memcpy(&st_RTMPVideo, lpszMsgBuffer, sizeof(XENGINE_RTMPVIDEO));
 		if (0 == st_RTMPVideo.byAVCType)
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);

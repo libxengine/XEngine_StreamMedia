@@ -8,6 +8,8 @@ EXPORTS
 	ModuleSession_PullStream_GetPushAddr
 	ModuleSession_PullStream_GetStreamType
 	ModuleSession_PullStream_Delete
+	ModuleSession_PullStream_PublishDelete
+	ModuleSession_PullStream_GetList
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy
@@ -15,10 +17,9 @@ EXPORTS
 	ModuleSession_PushStream_SetHDRBuffer
 	ModuleSession_PushStream_GetHDRBuffer
 	ModuleSession_PushStream_FindStream
-	ModuleSession_PushStream_Send
-	ModuleSession_PushStream_Recv
 	ModuleSession_PushStream_ClientInsert
 	ModuleSession_PushStream_ClientDelete
 	ModuleSession_PushStream_ClientList
 	ModuleSession_PushStream_SetAVInfo
 	ModuleSession_PushStream_GetAVInfo
+	ModuleSession_PushStream_GetInfo

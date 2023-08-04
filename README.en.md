@@ -6,32 +6,39 @@ As long as the repository is not in suspended state, we will maintain and develo
 ## Introduction
 c c++ 流媒体服务器  
 c c++ streammedia server  
-This is a streaming media server that supports multiple streaming protocols. It supports push and pull stream, and supports streaming media servers of various standards  
+This is a streaming media server that supports multiple streaming protocols. It supports push and pull stream, and supports streaming media servers of various standards protocols
 It can also be used as a frame extraction service and transcoding service  
 This is a cross-platform server, provides a complete demo code  
 
 ## Software feature
 A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
+
 Push stream Protocol:
-1. RTMP
-2. XStream(H264,H265)
-3. WEBRTC(planning)
-4. GB28181(planning)
-5. JT1078(planning)
-6. SRT(planning)
+1. RTMP(H264,H265,AAC)
+2. XStream
+3. SRT
+4. JT1078(planning)
+5. GB28181(planning)
+6. WEBRTC(planning)
+
 Pull Stream Protocols:  
-1. RTSP(planning)
-2. RTMP(H264,H265)
-3. FLV(H264,H265)
+1. srt
+2. RTMP(H264,H265,AAC)
+3. FLV(H264,H265,AAC)
+4. XStream
 4. HLS(TS)(planning)
 5. webrtc(planning)
-6. srt(planning)  
-feature  
-1. Support voice intercom
-2. Support video transcoding
-3. Support frame extraction
+6. RTSP(planning)
+
+feature:  
+1. Support voice intercom(planning)
+2. Support video transcoding(planning)
+3. Support frame extraction(planning)
 4. Support Re-push stream 
-5. Support Transparent transmission
+5. Support Transparent transmission(planning)
+6. Support HTTP API Management interface
+7. Support HTTP HOOK(planning)
+
 ## install
 
 #### XEngine environment
@@ -40,15 +47,19 @@ GITEE:https://gitee.com/xyry/libxengine
 GITHUB:https://github.com/libxengine/xengine  
 
 #### fast to deployment
-git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git
-window Exection XEngine_WINEnv.bat
-Linux Exection:sudo ./XEngine_LINEnv.sh -i 3
-Macos Exection:./XEngine_LINEnv.sh -i 3
+git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+window Exection XEngine_WINEnv.bat  
+Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
+Macos Exection:./XEngine_LINEnv.sh -i 3  
 
 #### Windows
 use vs open and complie  
 
 #### Linux
+install srt library after Configure Xengine to Completed  
+ubuntu:sudo apt install libsrt-openssl-dev  
+Rockylinux:sudo dnf install srt-devel  
+
 Linux use Makefile complie  
 UBUNTU22.04 x64 or RockyLinux 9 x64  
 
@@ -59,6 +70,8 @@ make FLAGS=InstallAll Install File
 make FLAGS=CleanAll Clear Complie  
 
 #### MacOS
+install srt library after Configure Xengine to Completed  
+ubuntu:sudo brew install libsrt  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command
@@ -75,9 +88,20 @@ refer to linux
 7.  use vlc play
 
 ## example 
-Publish Stream Address:rtmp://127.0.0.1/live/stream  
-Pull Stream Address-HTTPFLV: http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
-Pull Stream Address-RTMP:    rtmp://127.0.0.1/live/qyt  
+#### publish Stream
+rtmp://127.0.0.1/live/qyt  
+srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish  
+xstream://127.0.0.1:5601(refer example)  
+#### Pull Stream
+http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
+rtmp://127.0.0.1/live/qyt  
+srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
+xstream://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)  
+
+#### Management HTTP API
+http://127.0.0.1:5600/api?function=publish&method=get  
+http://127.0.0.1:5600/api?function=pull&method=get
+
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
 - XEngine_Release Install Dir Struct

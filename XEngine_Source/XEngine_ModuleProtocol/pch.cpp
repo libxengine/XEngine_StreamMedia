@@ -47,6 +47,14 @@ extern "C" bool ModuleProtocol_Packet_Destroy(XCHAR * ptszMsgBuffer, int* pInt_M
 {
 	return m_ProtocolPacket.ModuleProtocol_Packet_Destroy(ptszMsgBuffer, pInt_MsgLen, pSt_ProtocolStream);
 }
+extern "C" bool ModuleProtocol_Packet_HTTPPublishGet(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PUBLISHINFO * **pppSt_PublishInfo, int nListCount)
+{
+	return m_ProtocolPacket.ModuleProtocol_Packet_HTTPPublishGet(ptszMsgBuffer, pInt_MsgLen, pppSt_PublishInfo, nListCount);
+}
+extern "C" bool ModuleProtocol_Packet_HTTPPullGet(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, STREAMMEDIA_PULLLISTINFO * **pppSt_PullInfo, int nListCount)
+{
+	return m_ProtocolPacket.ModuleProtocol_Packet_HTTPPullGet(ptszMsgBuffer, pInt_MsgLen, pppSt_PullInfo, nListCount);
+}
 /************************************************************************/
 /*                         导出的协议解析函数                           */
 /************************************************************************/

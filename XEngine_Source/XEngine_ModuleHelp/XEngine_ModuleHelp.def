@@ -5,3 +5,10 @@ EXPORTS
 
 	ModuleHelp_JT1078_BCDToString
 	ModuleHelp_JT1078_StringToBCD
+
+	ModuleHelp_SrtCore_Start
+	ModuleHelp_SrtCore_SetCallback
+	ModuleHelp_SrtCore_Send
+	ModuleHelp_SrtCore_GetStreamID
+	ModuleHelp_SrtCore_Close
+	ModuleHelp_SrtCore_Destory

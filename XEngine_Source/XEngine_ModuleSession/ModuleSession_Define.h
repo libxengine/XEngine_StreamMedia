@@ -15,6 +15,20 @@ typedef struct
 	XCHAR tszClientID[128];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType;
 }STREAMMEDIA_SESSIONCLIENT;
+typedef struct
+{
+	XENGINE_PROTOCOL_AVINFO st_AVInfo;
+	XCHAR tszSMSAddr[MAX_PATH];
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
+	int nClientCount;
+}STREAMMEDIA_PUBLISHINFO;
+typedef struct
+{
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszPushAddr[MAX_PATH];
+
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
+}STREAMMEDIA_PULLLISTINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -122,6 +136,39 @@ extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, E
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_Delete
+函数功能：删除整个推流端关联的拉流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_GetList
+函数功能：获取用户列表
+ 参数.一：pppSt_PullList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出用户列表数据
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/
@@ -138,12 +185,17 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
   类型：常量字符指针
   可空：N
   意思：输入流媒体ID
+ 参数.三：enStreamType
+  In/Out：In
+  类型：枚举型
+  可空：N
+  意思：输入推流类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr);
+extern "C" bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 /********************************************************************
 函数名称：ModuleSession_PushStream_Destroy
 函数功能：销毁一个管理器
@@ -255,74 +307,6 @@ extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XC
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);
 /********************************************************************
-函数名称：ModuleSession_PushStream_Send
-函数功能：投递一段数据给会话管理器
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要操作的流
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要投递的数据缓冲区
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.四：nAVType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区类型.0视频1音频
- 参数.五：nFrameType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入帧类型,视频的关键帧还是PB
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PushStream_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nAVType, int nFrameType);
-/********************************************************************
-函数名称：ModuleSession_PushStream_Recv
-函数功能：获取缓冲区队列数据
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要操作的流
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要投递的数据缓冲区
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.四：nAVType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区类型.0视频1音频
- 参数.五：nFrameType
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入帧类型,视频的关键帧还是PB
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PushStream_Recv(LPCXSTR lpszClientAddr, XCHAR** pptszMsgBuffer, int* pInt_MsgLen, int* pInt_AVType, int* pInt_FrameType);
-/********************************************************************
 函数名称：ModuleSession_PushStream_ClientInsert
 函数功能：客户端插入
  参数.一：lpszClientAddr
@@ -422,3 +406,22 @@ extern "C" bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGI
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
+/********************************************************************
+函数名称：ModuleSession_PushStream_GetInfo
+函数功能：获取推流信息
+ 参数.一：pppSt_ProtocolStream
+  In/Out：In/Out
+  类型：三级指针
+  可空：N
+  意思：输出推流统计信息
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppSt_ProtocolStream, int* pInt_ListCount);

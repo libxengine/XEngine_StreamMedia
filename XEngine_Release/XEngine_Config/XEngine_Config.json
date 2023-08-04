@@ -6,6 +6,7 @@
     "nHttpPort":5600,
     "nXStreamPort":5601,
     "nJT1078Port":5602,
+    "nSrtPort":5603,
     "XMax":{
         "nMaxClient":10000,
         "nMaxQueue":10000,
@@ -24,7 +25,7 @@
     },
     "XPull":{
         "XStream":{
-            "bEnable":true
+            "bEnable":false
         },
         "RTMP":{
             "bEnable":true
@@ -33,7 +34,7 @@
             "bEnable":true
         },
         "RTSP":{
-            "bEnable":true
+            "bEnable":false
         }
     },
     "XLog":{
@@ -42,6 +43,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V2.2.0.1001 Build20230804",
         "V2.1.0.1001 Build20230726",
         "V2.0.0.1001 Build20230615",
         "V1.4.1.1001 Build20230515",
