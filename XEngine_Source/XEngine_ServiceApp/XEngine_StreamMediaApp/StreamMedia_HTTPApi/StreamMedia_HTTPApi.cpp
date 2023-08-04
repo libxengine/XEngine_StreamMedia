@@ -55,7 +55,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 	}
 	else if (0 == _tcsxnicmp(lpszAPIPull, tszVluBuffer, _tcsxlen(lpszAPIPull)))
 	{
-		//获取订阅流:http://127.0.0.1:5600?api?function=pull&method=get
+		//获取订阅流:http://127.0.0.1:5600/api?function=pull&method=get
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 

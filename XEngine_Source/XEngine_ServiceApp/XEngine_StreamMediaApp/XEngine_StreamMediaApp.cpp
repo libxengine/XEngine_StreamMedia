@@ -134,6 +134,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
+	//pSt_VFile = fopen("./1.ts", "wb");
+
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
 	_tcsxcpy(st_XLogConfig.tszFileName, lpszLogFile);
