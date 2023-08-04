@@ -47,10 +47,10 @@ GITEE:https://gitee.com/xyry/libxengine
 GITHUB:https://github.com/libxengine/xengine  
 
 #### fast to deployment
-git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git
-window Exection XEngine_WINEnv.bat
-Linux Exection:sudo ./XEngine_LINEnv.sh -i 3
-Macos Exection:./XEngine_LINEnv.sh -i 3
+git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+window Exection XEngine_WINEnv.bat  
+Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
+Macos Exection:./XEngine_LINEnv.sh -i 3  
 
 #### Windows
 use vs open and complie  

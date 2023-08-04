@@ -40,7 +40,7 @@ c c++ streammedia server  
 4. 支持转推流
 5. 支持透传数据(planning)
 6. 支持HTTP API管理接口
-7 .支持HTTP HOOK(planning)
+7. 支持HTTP HOOK(planning)
 
 ## 安装教程
 
@@ -52,10 +52,10 @@ GITHUB:https://github.com/libxengine/xengine  
 
 #### 快速部署
 
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git
-window执行XEngine_WINEnv.bat 脚本.
-Linux执行:sudo ./XEngine_LINEnv.sh -i 3
-macos执行:./XEngine_LINEnv.sh -i 3
+git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
+window执行XEngine_WINEnv.bat 脚本.  
+Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
+macos执行:./XEngine_LINEnv.sh -i 3  
 
 #### Windows
 
