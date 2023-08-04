@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APPClient_FLVPull", "APPCli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APPClient_XStream", "APPClient_XStream\APPClient_XStream.vcxproj", "{706EEB19-180B-405F-BDAD-C114AF2B8952}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APPClient_SRTPull", "APPClient_SRTPull\APPClient_SRTPull.vcxproj", "{CB0FA700-6BC1-45CC-8090-74B498E37A4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{706EEB19-180B-405F-BDAD-C114AF2B8952}.Release|x64.Build.0 = Release|x64
 		{706EEB19-180B-405F-BDAD-C114AF2B8952}.Release|x86.ActiveCfg = Release|Win32
 		{706EEB19-180B-405F-BDAD-C114AF2B8952}.Release|x86.Build.0 = Release|Win32
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Debug|x64.ActiveCfg = Debug|x64
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Debug|x64.Build.0 = Debug|x64
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Debug|x86.ActiveCfg = Debug|Win32
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Debug|x86.Build.0 = Debug|Win32
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Release|x64.ActiveCfg = Release|x64
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Release|x64.Build.0 = Release|x64
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Release|x86.ActiveCfg = Release|Win32
+		{CB0FA700-6BC1-45CC-8090-74B498E37A4B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
