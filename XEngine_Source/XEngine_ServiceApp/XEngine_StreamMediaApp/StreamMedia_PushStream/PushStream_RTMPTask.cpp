@@ -373,9 +373,22 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
 				return false;
 			}
-			//返回数据,为HTTP CHUNKED
-			ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, ptszSDBuffer, &nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+			//配置头
+			int nHLen = 0;
+			int nPLen = 0;
+			XENGINE_PROTOCOL_AVINFO st_AVInfo;
+			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+
+			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
+
+			RTMPProtocol_Packet_FrameAVScript(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+			nHLen += nPLen;
+			RTMPProtocol_Packet_FrameAVCConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+			nHLen += nPLen;
+			RTMPProtocol_Packet_FrameAACConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+			nHLen += nPLen;
+			//返回数据,
+			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
