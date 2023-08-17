@@ -61,6 +61,53 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		if (0 == _tcsxnicmp(tszVluBuffer, "flv", 3))
 		{
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
+			//拷贝数据
+			FLVProtocol_Packet_FrameHdr(tszPushAddr, tszRVBuffer, &nRVLen);
+			//返回数据,为HTTP CHUNKED
+			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
+				"Connection: Close\r\n"
+				"Content-Type: video/x-flv\r\n"
+				"Server: XEngine/%s\r\n"
+				"Access-Control-Allow-Origin: *\r\n"
+				"Access-Control-Allow-Credentials: true\r\n"
+				"Transfer-Encoding: chunked\r\n\r\n"
+				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			//发送脚本信息
+			XENGINE_PROTOCOL_AVINFO st_AVInfo;
+
+			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+			memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
+			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+			
+			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
+			FLVProtocol_Packet_FrameScript(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			//发送音视频信息
+			FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+
+			FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		}
 		else if (0 == _tcsxnicmp(tszVluBuffer, "xstream", 7))
 		{
@@ -74,10 +121,6 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的数据类型不支持:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 			return false;
 		}
-		//返回数据,为HTTP CHUNKED
-		ModuleSession_PushStream_GetHDRBuffer(tszPushAddr, tszSDBuffer, &nSDLen, enStreamType);
-		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-
 		ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
 		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据成功:%s"), lpszClientAddr, tszVluBuffer);
