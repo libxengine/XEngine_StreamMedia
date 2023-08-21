@@ -9,7 +9,7 @@ UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_Core
 LIB = -lXEngine_OPenSsl
-LIBEX = -lsrt
+LIBEX = -lsrt-gnutls
 OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o pch.o
 
 ifeq ($(RELEASE),1)
