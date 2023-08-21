@@ -64,11 +64,9 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 	memset(pSt_Packet, '\0', sizeof(PUSHSTREAM_PACKET));
 
 	pSt_Packet->st_ClientLocker = make_unique<mutex>();
-	pSt_Packet->st_MSGLocker = make_unique<mutex>();
 	pSt_Packet->pStl_ListClient = make_unique<list<STREAMMEDIA_SESSIONCLIENT>>();
-	pSt_Packet->pStl_MapPushStream = make_unique<unordered_map<int, AVPACKET_HDRBUFFER>>();
 	
-	if ((NULL == pSt_Packet->pStl_MapPushStream) || (NULL == pSt_Packet->pStl_ListClient))
+	if ((NULL == pSt_Packet->pStl_ListClient))
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_MALLOC;
@@ -173,156 +171,6 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetAddrForAddr(LPCXSTR 
 		return false;
 	}
 	_tcsxcpy(ptszSMSAddr, stl_MapIterator->second->tszSMSAddr);
-	st_Locker.unlock_shared();
-	return true;
-}
-/********************************************************************
-函数名称：ModuleSession_PushStream_SetHDRBuffer
-函数功能：设置流ID的缓存头
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：要缓存的数据
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓存大小
- 参数.四：enStreamType
-  In/Out：In
-  类型：枚举型
-  可空：N
-  意思：设置的缓冲区类型
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	Session_IsErrorOccur = false;
-
-	if (NULL == lpszClientAddr)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return false;
-	}
-	//设备编号是否存在
-	st_Locker.lock_shared();
-	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapPushStream.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	AVPACKET_HDRBUFFER st_HDRBuffer;
-	memset(&st_HDRBuffer, '\0', sizeof(AVPACKET_HDRBUFFER));
-
-	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == enStreamType)
-	{
-		//准备头
-		st_HDRBuffer.nMsgLen = _xstprintf(st_HDRBuffer.tszMsgBuffer, _X("HTTP/1.1 200 OK\r\n"
-			"Connection: Close\r\n"
-			"Content-Type: video/x-flv\r\n"
-			"Server: XEngine/%s\r\n"
-			"Transfer-Encoding: chunked\r\n\r\n"
-			"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nMsgLen);
-		//拷贝数据
-		memcpy(st_HDRBuffer.tszMsgBuffer + st_HDRBuffer.nMsgLen, lpszMsgBuffer, nMsgLen);
-		st_HDRBuffer.nMsgLen += nMsgLen;
-		//拷贝结尾
-		memcpy(st_HDRBuffer.tszMsgBuffer + st_HDRBuffer.nMsgLen, _X("\r\n"), 2);
-		st_HDRBuffer.nMsgLen += 2;
-	}
-	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == enStreamType)
-	{
-		st_HDRBuffer.nMsgLen = nMsgLen;
-		memcpy(st_HDRBuffer.tszMsgBuffer, lpszMsgBuffer, nMsgLen);
-	}
-
-	unordered_map<int, AVPACKET_HDRBUFFER>::iterator stl_MapIteratorStream = stl_MapIterator->second->pStl_MapPushStream->find(enStreamType);
-	if (stl_MapIteratorStream == stl_MapIterator->second->pStl_MapPushStream->end())
-	{
-		stl_MapIterator->second->pStl_MapPushStream->insert(make_pair(enStreamType, st_HDRBuffer));
-	}
-	else
-	{
-		stl_MapIteratorStream->second = st_HDRBuffer;
-	}
-	
-	st_Locker.unlock_shared();
-	return true;
-}
-/********************************************************************
-函数名称：ModuleSession_PushStream_GetHDRBuffer
-函数功能：获取流ID的缓存头
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：ptszMsgBuffer
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出获取到的数据
- 参数.三：pInt_MsgLen
-  In/Out：In
-  类型：整数型指针
-  可空：N
-  意思：输出数据大小
- 参数.四：enStreamType
-  In/Out：In
-  类型：枚举型
-  可空：N
-  意思：获取的缓冲区类型
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	Session_IsErrorOccur = false;
-
-	if (NULL == lpszClientAddr)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
-		return false;
-	}
-	//设备编号是否存在
-	st_Locker.lock_shared();
-	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapPushStream.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	auto stl_MapIteratorStream = stl_MapIterator->second->pStl_MapPushStream->find(enStreamType);
-	if (stl_MapIteratorStream == stl_MapIterator->second->pStl_MapPushStream->end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	*pInt_MsgLen = stl_MapIteratorStream->second.nMsgLen;
-	if (NULL != ptszMsgBuffer)
-	{
-		memcpy(ptszMsgBuffer, stl_MapIteratorStream->second.tszMsgBuffer, stl_MapIteratorStream->second.nMsgLen);
-	}
 	st_Locker.unlock_shared();
 	return true;
 }

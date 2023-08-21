@@ -74,14 +74,6 @@ extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, 
 {
 	return m_PushStream.ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, ptszSMSAddr);
 }
-extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	return m_PushStream.ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, lpszMsgBuffer, nMsgLen, enStreamType);
-}
-extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	return m_PushStream.ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, ptszMsgBuffer, pInt_MsgLen, enStreamType);
-}
 extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR * ptszClientAddr)
 {
 	return m_PushStream.ModuleSession_PushStream_FindStream(lpszSMSAddr, ptszClientAddr);

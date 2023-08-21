@@ -230,64 +230,6 @@ extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr);
 /********************************************************************
-函数名称：ModuleSession_PushStream_SetHDRBuffer
-函数功能：设置流ID的缓存头
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：要缓存的数据
- 参数.三：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓存大小
- 参数.四：enStreamType
-  In/Out：In
-  类型：枚举型
-  可空：N
-  意思：设置的缓冲区类型
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
-/********************************************************************
-函数名称：ModuleSession_PushStream_GetHDRBuffer
-函数功能：获取流ID的缓存头
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入客户端地址
- 参数.二：ptszMsgBuffer
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出获取到的数据
- 参数.三：pInt_MsgLen
-  In/Out：In
-  类型：整数型指针
-  可空：N
-  意思：输出数据大小
- 参数.四：enStreamType
-  In/Out：In
-  类型：枚举型
-  可空：N
-  意思：获取的缓冲区类型
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
-/********************************************************************
 函数名称：ModuleSession_PushStream_FindStream
 函数功能：查找流对应地址
  参数.一：lpszSMSAddr

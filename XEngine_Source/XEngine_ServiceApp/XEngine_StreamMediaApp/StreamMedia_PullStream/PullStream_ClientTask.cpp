@@ -60,6 +60,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 		if (0 == _tcsxnicmp(tszVluBuffer, "flv", 3))
 		{
+			int nTagSize = 0;
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
 			//拷贝数据
 			FLVProtocol_Packet_FrameHdr(tszPushAddr, tszRVBuffer, &nRVLen);
@@ -85,7 +86,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 			
 			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
-			FLVProtocol_Packet_FrameScript(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			FLVProtocol_Packet_FrameScript(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
 			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
 			nSDLen += nRVLen;
@@ -93,7 +94,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			nSDLen += 2;
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			//发送音视频信息
-			FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
 			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
 			nSDLen += nRVLen;
@@ -101,7 +102,7 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			nSDLen += 2;
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
-			FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo);
+			FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
 			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
 			nSDLen += nRVLen;
