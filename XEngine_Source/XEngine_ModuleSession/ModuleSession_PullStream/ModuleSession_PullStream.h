@@ -23,6 +23,9 @@ public:
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
+public:
+	bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize);
+	bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize);
 private:
 	shared_mutex st_Locker;
 private:

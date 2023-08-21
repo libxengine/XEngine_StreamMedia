@@ -26,6 +26,7 @@ typedef struct
 {
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszPushAddr[MAX_PATH];
+	int nFLVTag;
 
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 }STREAMMEDIA_PULLLISTINFO;
@@ -169,6 +170,9 @@ extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
+
+extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize);
+extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/

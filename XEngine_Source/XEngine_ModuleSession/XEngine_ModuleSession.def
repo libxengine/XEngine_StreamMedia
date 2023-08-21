@@ -10,6 +10,8 @@ EXPORTS
 	ModuleSession_PullStream_Delete
 	ModuleSession_PullStream_PublishDelete
 	ModuleSession_PullStream_GetList
+	ModuleSession_PullStream_FLVTagSet
+	ModuleSession_PullStream_FLVTagGet
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy

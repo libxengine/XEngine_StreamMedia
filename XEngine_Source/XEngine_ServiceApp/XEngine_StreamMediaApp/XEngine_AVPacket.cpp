@@ -190,20 +190,6 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
 		{
-			if (0 == byAVType)
-			{
-				FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
-			}
-			else
-			{
-				FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
-			}
-			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-			memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-			*pInt_SDLen += *pInt_RVLen;
-
-			memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-			*pInt_SDLen += 2;
 			//是否有客户端需要发送XStream流
 			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
@@ -211,7 +197,26 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			{
 				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == stl_ListIteratorClient->enClientType)
 				{
+					int nTagSize = 0;
+					ModuleSession_PullStream_FLVTagGet(stl_ListIteratorClient->tszClientID, &nTagSize);
+
+					if (0 == byAVType)
+					{
+						FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+					}
+					else
+					{
+						FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), nTimeStamp);
+					}
+					*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
+					memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
+					*pInt_SDLen += *pInt_RVLen;
+
+					memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
+					*pInt_SDLen += 2;
+
 					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					ModuleSession_PullStream_FLVTagSet(stl_ListIteratorClient->tszClientID, nTagSize);
 					break;
 				}
 			}
@@ -282,26 +287,6 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
 		{
-			if (0 == byAVType)
-			{
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 9);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
-
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
-			}
-			else
-			{
-				FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 8);
-				*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-				memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
-				*pInt_SDLen += *pInt_RVLen;
-
-				memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
-				*pInt_SDLen += 2;
-			}
 			//是否有客户端需要发送FLV流
 			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
@@ -309,7 +294,31 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			{
 				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == stl_ListIteratorClient->enClientType)
 				{
+					int nTagSize = 0;
+					ModuleSession_PullStream_FLVTagGet(stl_ListIteratorClient->tszClientID, &nTagSize);
+
+					if (0 == byAVType)
+					{
+						FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 9, &nTagSize);
+						*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
+						memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
+						*pInt_SDLen += *pInt_RVLen;
+
+						memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
+						*pInt_SDLen += 2;
+					}
+					else
+					{
+						FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 8, &nTagSize);
+						*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
+						memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
+						*pInt_SDLen += *pInt_RVLen;
+
+						memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);
+						*pInt_SDLen += 2;
+					}
 					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					ModuleSession_PullStream_FLVTagSet(stl_ListIteratorClient->tszClientID, nTagSize);
 					break;
 				}
 			}

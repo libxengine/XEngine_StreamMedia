@@ -59,6 +59,14 @@ extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO * **pp
 {
 	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount);
 }
+extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+}
+extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagGet(lpszClientAddr, pInt_TagSize);
+}
 /*********************************************************************************
 *                          推流导出会话模块                                      *
 *********************************************************************************/
