@@ -69,8 +69,6 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 				"Connection: Close\r\n"
 				"Content-Type: video/x-flv\r\n"
 				"Server: XEngine/%s\r\n"
-				"Access-Control-Allow-Origin: *\r\n"
-				"Access-Control-Allow-Credentials: true\r\n"
 				"Transfer-Encoding: chunked\r\n\r\n"
 				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
@@ -117,6 +115,9 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		else if (0 == _tcsxnicmp(tszVluBuffer, "xstream", 7))
 		{
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM;
+
+			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
+			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
 		}
 		else
 		{
@@ -137,7 +138,6 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 
-		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
 		if (!ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
 		{
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
@@ -146,6 +146,8 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求停止拉流失败,获取绑定推流地址失败,错误:%lX"), lpszClientAddr, ModuleSession_GetLastError());
 			return false;
 		}
+		ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, tszSMSAddr);
+
 		ModuleSession_PullStream_Delete(lpszClientAddr);
 		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam);
