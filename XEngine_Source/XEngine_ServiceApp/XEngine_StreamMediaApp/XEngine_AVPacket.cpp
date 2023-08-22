@@ -228,8 +228,8 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 
 				st_ProtocolAVData.byFrameType = st_RTMPVideo.byFrameType;
 
-				RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer + nPos, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO));
-				*pInt_RVLen += nPos;
+				RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszRVBuffer + nPos, &st_ProtocolAVData.nFrameSize, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO));
+				nPos += st_ProtocolAVData.nFrameSize;
 			}
 			else
 			{
@@ -239,13 +239,13 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 
 				st_ProtocolAVData.byFrameType = st_RTMPAudio.byPKTType;
 
-				RTMPProtocol_Help_ParseAudio(&st_RTMPAudio, ptszRVBuffer + nPos, pInt_RVLen, lpszMsgBuffer + sizeof(XENGINE_RTMPAUDIO), nMsgLen - sizeof(XENGINE_RTMPAUDIO));
-				*pInt_RVLen += nPos;
+				RTMPProtocol_Help_ParseAudio(&st_RTMPAudio, ptszRVBuffer + nPos, &st_ProtocolAVData.nFrameSize, lpszMsgBuffer + sizeof(XENGINE_RTMPAUDIO), nMsgLen - sizeof(XENGINE_RTMPAUDIO));
+				nPos += st_ProtocolAVData.nFrameSize;
 			}
 			memcpy(ptszRVBuffer, &st_ProtocolAVData, sizeof(XENGINE_PROTOCOL_AVDATA));
 			
-			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
-			memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
+			*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nPos);
+			memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, nPos);
 			*pInt_SDLen += *pInt_RVLen;
 
 			memcpy(ptszSDBuffer + *pInt_SDLen, _X("\r\n"), 2);

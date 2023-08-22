@@ -26,6 +26,7 @@ XHANDLE xhXStreamPool = NULL;
 XHANDLE xhRTMPSocket = NULL;
 XHANDLE xhRTMPHeart = NULL;
 XHANDLE xhRTMPPool = NULL;
+XHANDLE xhSRTPool = NULL;
 //JT1078推流
 XHANDLE xhJT1078Socket = NULL;
 XHANDLE xhJT1078Heart = NULL;
@@ -58,6 +59,8 @@ void ServiceApp_Stop(int signo)
 		HelpComponents_Datas_Destory(xhXStreamPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
 		RTMPProtocol_Parse_Destory();
+		FLVProtocol_Parse_Destory();
+		HLSProtocol_TSParse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);
@@ -130,6 +133,7 @@ int main(int argc, char** argv)
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 	THREADPOOL_PARAMENT** ppSt_ListRTMPParam;
 	THREADPOOL_PARAMENT** ppSt_ListJT1078Param;
+	THREADPOOL_PARAMENT** ppSt_ListSRTParam;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
@@ -401,6 +405,30 @@ int main(int argc, char** argv)
 		}
 		ModuleHelp_SrtCore_SetCallback(Network_Callback_SRTLogin, Network_Callback_SRTRecv, Network_Callback_SRTLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT服务成功,绑定的端口:%d"), st_ServiceConfig.nSrtPort);
+
+		if (!HLSProtocol_TSParse_Init(st_ServiceConfig.st_XMax.nSRTThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTMP端流包管理器失败,错误：%lX"), RTMPProtocol_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化SRT端流包管理器成功,最大线程:%d"), st_ServiceConfig.st_XMax.nSRTThread);
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListSRTParam, st_ServiceConfig.st_XMax.nSRTThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceConfig.st_XMax.nSRTThread; i++)
+		{
+			int* pInt_Pos = new int;
+
+			*pInt_Pos = i;
+			ppSt_ListSRTParam[i]->lParam = pInt_Pos;
+			ppSt_ListSRTParam[i]->fpCall_ThreadsTask = PushStream_SRTTask_Thread;
+		}
+		xhSRTPool = ManagePool_Thread_NQCreate(&ppSt_ListSRTParam, st_ServiceConfig.st_XMax.nSRTThread);
+		if (NULL == xhSRTPool)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT端处理线程池失败,错误：%d"), errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nSRTThread);
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
@@ -426,9 +454,11 @@ XENGINE_SERVICEAPP_EXIT:
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
-		RTMPProtocol_Parse_Destory();
 		HelpComponents_Datas_Destory(xhXStreamPacket);
 		HelpComponents_PKTCustom_Destory(xhJT1078Pkt);
+		RTMPProtocol_Parse_Destory();
+		FLVProtocol_Parse_Destory();
+		HLSProtocol_TSParse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);

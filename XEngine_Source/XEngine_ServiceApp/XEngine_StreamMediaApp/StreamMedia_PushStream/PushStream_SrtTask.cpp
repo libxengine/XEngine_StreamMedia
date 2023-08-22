@@ -27,6 +27,7 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 		//创建会话
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		//need to parse ts stream
+		HLSProtocol_TSParse_Insert(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,创建流成功,推流地址：%s,类型:推流端"), lpszClientAddr, tszSMSAddr);
 	}
 	else
@@ -48,6 +49,8 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
+	HLSProtocol_TSParse_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+	//SRT客户端就直接转发
 	list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 	ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
 	for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
@@ -59,5 +62,49 @@ bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXST
 		}
 	}
 
+	return true;
+}
+
+XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
+{
+	//任务池是编号1开始的.
+	int nThreadPos = *(int*)lParam;
+	nThreadPos++;
+	while (bIsRun)
+	{
+		//等待编号1的任务池触发一个组完包的事件
+		if (!HLSProtocol_TSParse_WaitEvent(nThreadPos))
+		{
+			continue;
+		}
+		int nListCount = 0;
+		XENGINE_MANAGEPOOL_TASKEVENT** ppSst_ListAddr;
+		//获得编号1的所有待处理任务的客户端列表(也就是客户端发送过来的数据已经组好了一个包,需要我们处理)
+		HLSProtocol_TSParse_GetPool(nThreadPos, &ppSst_ListAddr, &nListCount);
+		for (int i = 0; i < nListCount; i++)
+		{
+			//再循环客户端拥有的任务个数
+			for (int j = 0; j < ppSst_ListAddr[i]->nPktCount; j++)
+			{
+				int nMsgLen = 0;                             //客户端发送的数据大小,不包括头
+				XBYTE byAVType = 0;
+				XCHAR* ptszMsgBuffer = NULL;                 //客户端发送的数据
+				//得到一个指定客户端的完整数据包
+				if (HLSProtocol_TSParse_Recv(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, &nMsgLen, &byAVType))
+				{
+					//在另外一个函数里面处理数据
+					PushStream_SrtTask_ThreadProcess(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
+					//释放内存
+					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
+				}
+			}
+		}
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+	}
+	return 0;
+}
+bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+{
+	
 	return true;
 }

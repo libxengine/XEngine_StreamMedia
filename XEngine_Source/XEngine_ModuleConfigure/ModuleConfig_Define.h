@@ -33,6 +33,7 @@ typedef struct tag_XEngine_ServiceConfig
 		int nXStreamThread;                   //业务任务处理线程数
 		int nRTMPThread;                      //RTMP任务处理线程数
 		int nJT1078Thread;                    //JT1078任务线程
+		int nSRTThread;
 	}st_XMax;
 	struct
 	{

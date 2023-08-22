@@ -91,7 +91,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->nJT1078Port = st_JsonRoot["nJT1078Port"].asInt();
 	pSt_ServerConfig->nSrtPort = st_JsonRoot["nSrtPort"].asInt();
 	//最大配置
-	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
+	if (st_JsonRoot["XMax"].empty() || (8 != st_JsonRoot["XMax"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XMAX;
@@ -105,6 +105,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XMax.nXStreamThread = st_JsonXMax["nXStreamThread"].asInt();
 	pSt_ServerConfig->st_XMax.nRTMPThread = st_JsonXMax["nRTMPThread"].asInt();
 	pSt_ServerConfig->st_XMax.nJT1078Thread = st_JsonXMax["nJT1078Thread"].asInt();
+	pSt_ServerConfig->st_XMax.nSRTThread = st_JsonXMax["nSRTThread"].asInt();
 	//时间配置
 	if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
 	{
