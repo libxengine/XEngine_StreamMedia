@@ -115,6 +115,27 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 		else if (0 == _tcsxnicmp(tszVluBuffer, "xstream", 7))
 		{
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM;
+			XENGINE_PROTOCOL_AVINFO st_AVInfo;
+
+			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+
+			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
+
+			nRVLen = sizeof(XENGINE_PROTOCOL_AVINFO);
+			//返回数据,为HTTP CHUNKED
+			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
+				"Connection: Close\r\n"
+				"Content-Type: video/x-stream\r\n"
+				"Server: XEngine/%s\r\n"
+				"Transfer-Encoding: chunked\r\n\r\n"
+				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, &st_AVInfo, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
 			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
