@@ -49,7 +49,11 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
-	HLSProtocol_TSParse_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+	if (!HLSProtocol_TSParse_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求数据推流,错误:%lX"), lpszClientAddr, HLSProtocol_GetLastError());
+		return false;
+	}
 	//SRT客户端就直接转发
 	list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 	ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
@@ -70,6 +74,8 @@ XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
+
+	XCHAR* ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	while (bIsRun)
 	{
 		//等待编号1的任务池触发一个组完包的事件
@@ -88,12 +94,11 @@ XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 			{
 				int nMsgLen = 0;                             //客户端发送的数据大小,不包括头
 				XBYTE byAVType = 0;
-				XCHAR* ptszMsgBuffer = NULL;                 //客户端发送的数据
 				//得到一个指定客户端的完整数据包
 				if (HLSProtocol_TSParse_Recv(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, &nMsgLen, &byAVType))
 				{
 					//在另外一个函数里面处理数据
-					PushStream_SrtTask_ThreadProcess(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
+					PushStream_SrtTask_ThreadProcess(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, byAVType);
 					//释放内存
 					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
 				}
@@ -101,10 +106,37 @@ XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
+	free(ptszMsgBuffer);
+	ptszMsgBuffer = NULL;
 	return 0;
 }
-bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
 {
-	
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+
+	if (0x1b == byAVType)
+	{
+		//H264
+		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		//如果是关键帧
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType)
+		{
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		}
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
+	}
+	else if (0x24 == byAVType)
+	{
+		//H265
+	}
+	else if (0x0f == byAVType)
+	{
+		//AAC
+	}
 	return true;
 }

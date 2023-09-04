@@ -114,4 +114,11 @@ typedef struct
 	XSHOT wLastIFrame;
 	XSHOT wLastPBFrame;
 }XENGINE_RTPPACKETTAIL;
+typedef struct
+{
+	__int64u nTimeStamp;                                          //时间戳 
+	int nFrameSize;                                               //帧大小
+	XBYTE byAVType;                                               //音视频类型,0视频,1音频
+	XBYTE byFrameType;                                            //帧类型,1关键帧,否则为其他
+}XENGINE_PROTOCOL_AVDATA;
 #pragma pack(pop)
