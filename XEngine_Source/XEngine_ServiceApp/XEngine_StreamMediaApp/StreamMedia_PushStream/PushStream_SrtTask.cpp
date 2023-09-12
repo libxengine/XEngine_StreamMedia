@@ -99,8 +99,6 @@ XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 				{
 					//在另外一个函数里面处理数据
 					PushStream_SrtTask_ThreadProcess(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, byAVType);
-					//释放内存
-					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
 				}
 			}
 		}

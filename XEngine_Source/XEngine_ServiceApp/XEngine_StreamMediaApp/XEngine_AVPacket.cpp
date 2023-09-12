@@ -139,7 +139,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			int nSEILen = 0;
 			XBYTE uszSPSBuffer[512];
 			XBYTE uszPPSBuffer[512];
-			XBYTE uszSEIBuffer[512];
+			XBYTE uszSEIBuffer[1024];
 
 			memset(uszSPSBuffer, '\0', sizeof(uszSPSBuffer));
 			memset(uszPPSBuffer, '\0', sizeof(uszPPSBuffer));
