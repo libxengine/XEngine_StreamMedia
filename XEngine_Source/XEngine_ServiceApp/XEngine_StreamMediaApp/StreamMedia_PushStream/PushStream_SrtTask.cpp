@@ -123,7 +123,7 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
 		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
 		//如果是关键帧
-		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType)
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		}
