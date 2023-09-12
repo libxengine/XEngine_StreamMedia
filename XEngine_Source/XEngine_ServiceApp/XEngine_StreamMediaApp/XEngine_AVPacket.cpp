@@ -151,7 +151,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			AFHELP_FRAMESPS st_SPSFrame;
 			memset(&st_SPSFrame, '\0', sizeof(AFHELP_FRAMESPS));
 
-			AVHelp_Parse_SPSInfo((LPCXSTR)uszSPSBuffer, nSPSLen, &st_SPSFrame);
+			AVHelp_Parse_SPSInfo((LPCXSTR)uszSPSBuffer + 1, nSPSLen - 1, &st_SPSFrame);
 
 			_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 			st_AVInfo.st_VideoInfo.bEnable = true;
