@@ -152,7 +152,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			memset(&st_SPSFrame, '\0', sizeof(AFHELP_FRAMESPS));
 
 			AVHelp_Parse_SPSInfo((LPCXSTR)uszSPSBuffer + 1, nSPSLen - 1, &st_SPSFrame);
-
+			XEngine_AVPacket_AVSetTime(lpszClientAddr, st_SPSFrame.nFrameFPS, 0);
 			_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 			st_AVInfo.st_VideoInfo.bEnable = true;
 			st_AVInfo.st_VideoInfo.enAVCodec = 7;
@@ -161,6 +161,8 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			st_AVInfo.st_VideoInfo.nVLen = nPos;
 			memset(st_AVInfo.st_VideoInfo.tszVInfo, '\0', sizeof(st_AVInfo.st_VideoInfo.tszVInfo));
 			memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nPos);
+
+			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		}
 		else
 		{

@@ -24,6 +24,7 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 	if (bPublish)
 	{
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//创建会话
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		//need to parse ts stream
