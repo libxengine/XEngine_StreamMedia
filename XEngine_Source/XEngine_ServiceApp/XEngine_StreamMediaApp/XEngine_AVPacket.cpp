@@ -97,6 +97,8 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	{
 		//RTMP推流的所有开关选项都是一样的代码
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -130,6 +132,8 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	{
 		//SRT推流
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -158,6 +162,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			st_AVInfo.st_VideoInfo.enAVCodec = 7;
 			st_AVInfo.st_VideoInfo.nWidth = st_SPSFrame.nFrameWidth;
 			st_AVInfo.st_VideoInfo.nHeight = st_SPSFrame.nFrameHeigth;
+			st_AVInfo.st_VideoInfo.nFrameRate = st_SPSFrame.nFrameFPS;
 			st_AVInfo.st_VideoInfo.nVLen = nPos;
 			memset(st_AVInfo.st_VideoInfo.tszVInfo, '\0', sizeof(st_AVInfo.st_VideoInfo.tszVInfo));
 			memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nPos);
@@ -440,7 +445,17 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 
 					if (0 == byAVType)
 					{
-						FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 9, &nTagSize);
+						XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+						AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+						//如果是关键帧
+						if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+						{
+							FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 1, &nTagSize);
+						}
+						else
+						{
+							FLVProtocol_Packet_FrameVideo(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 0, &nTagSize);
+						}
 						*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
 						memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
 						*pInt_SDLen += *pInt_RVLen;
@@ -450,7 +465,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					}
 					else
 					{
-						FLVProtocol_Packet_FrameCustom(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, 8, &nTagSize);
+						FLVProtocol_Packet_FrameAudio(lpszClientAddr, ptszRVBuffer, pInt_RVLen, lpszMsgBuffer, nMsgLen, -1, &nTagSize);
 						*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), *pInt_RVLen);
 						memcpy(ptszSDBuffer + *pInt_SDLen, ptszRVBuffer, *pInt_RVLen);
 						*pInt_SDLen += *pInt_RVLen;
@@ -468,11 +483,21 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		{
 			if (0 == byAVType)
 			{
-				RTMPProtocol_Packet_FrameCustom(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer, nMsgLen, -1, 9);
+				XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+				AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+				//如果是关键帧
+				if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+				{
+					RTMPProtocol_Packet_FrameVideo(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer, nMsgLen, -1, 1);
+				}
+				else
+				{
+					RTMPProtocol_Packet_FrameVideo(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer, nMsgLen, -1, 0);
+				}
 			}
 			else
 			{
-				RTMPProtocol_Packet_FrameCustom(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer, nMsgLen, -1, 8);
+				RTMPProtocol_Packet_FrameAudio(lpszClientAddr, ptszSDBuffer, pInt_SDLen, lpszMsgBuffer, nMsgLen, -1);
 			}
 			//是否有客户端需要发送RTMP流
 			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;

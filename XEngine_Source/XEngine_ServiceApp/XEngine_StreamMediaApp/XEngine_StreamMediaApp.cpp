@@ -36,7 +36,7 @@ XHANDLE xhJT1078Pool = NULL;
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
 FILE* pSt_VFile = NULL;
-FILE* pst_AFile = NULL;
+FILE* pSt_AFile = NULL;
 
 void ServiceApp_Stop(int signo)
 {
@@ -71,9 +71,9 @@ void ServiceApp_Stop(int signo)
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
-		if (NULL != pst_AFile)
+		if (NULL != pSt_AFile)
 		{
-			fclose(pst_AFile);
+			fclose(pSt_AFile);
 		}
 		if (NULL != pSt_VFile)
 		{
@@ -138,7 +138,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	//pSt_VFile = fopen("./1.ts", "wb");
+	//pSt_VFile = _xtfopen("./1.ts", "wb");
+	//pSt_AFile = _xtfopen("./1.h264", "wb");
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;
@@ -469,9 +470,9 @@ XENGINE_SERVICEAPP_EXIT:
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
-		if (NULL != pst_AFile)
+		if (NULL != pSt_AFile)
 		{
-			fclose(pst_AFile);
+			fclose(pSt_AFile);
 		}
 		if (NULL != pSt_VFile)
 		{

@@ -106,7 +106,7 @@ extern XHANDLE xhJT1078Pool;
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
 extern FILE* pSt_VFile;
-extern FILE* pst_AFile;
+extern FILE* pSt_AFile;
 
 //连接库
 #ifdef _MSC_BUILD

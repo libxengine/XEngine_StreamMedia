@@ -92,19 +92,6 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 			{
 				ModuleSession_PushStream_Destroy(tszSMSAddr);
 			}
-			if (st_ServiceConfig.bDebug)
-			{
-				if (NULL != pSt_VFile)
-				{
-					fclose(pSt_VFile);
-					pSt_VFile = NULL;
-				}
-				if (NULL != pst_AFile)
-				{
-					fclose(pst_AFile);
-					pst_AFile = NULL;
-				}
-			}
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPDESTROY;
 			ModuleProtocol_Packet_Comm(ptszSDBuffer, &nSDLen, pSt_ProtocolHdr);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);

@@ -92,21 +92,27 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 			nSDLen += 2;
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			//发送音视频信息
-			FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
-			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			if (st_AVInfo.st_VideoInfo.bEnable)
+			{
+				FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
+				nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
+				memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+				nSDLen += nRVLen;
+				memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+				nSDLen += 2;
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			}
 
-			FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
-			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			if (st_AVInfo.st_AudioInfo.bEnable)
+			{
+				FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
+				nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
+				memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+				nSDLen += nRVLen;
+				memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+				nSDLen += 2;
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			}
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
 			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
