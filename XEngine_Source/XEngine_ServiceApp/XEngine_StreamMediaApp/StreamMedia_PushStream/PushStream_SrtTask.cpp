@@ -63,7 +63,6 @@ bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXST
 		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == stl_ListIteratorClient->enClientType)
 		{
 			XEngine_Network_Send(stl_ListIteratorClient->tszClientID, lpszMsgBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-			break;
 		}
 	}
 
