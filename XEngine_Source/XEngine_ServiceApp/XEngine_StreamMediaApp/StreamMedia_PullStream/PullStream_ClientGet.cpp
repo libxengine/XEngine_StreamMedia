@@ -10,7 +10,7 @@
 //    Purpose:     拉流任务处理函数
 //    History:
 *********************************************************************/
-bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount)
+bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;

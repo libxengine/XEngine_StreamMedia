@@ -11,4 +11,4 @@
 //    History:
 *********************************************************************/
 //任务处理相关函数,处理包的内容
-bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount);
+bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount);

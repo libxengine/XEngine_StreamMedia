@@ -103,22 +103,26 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	}
 	//获得函数名
 	BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
-	if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
+	//获得方法
+	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
-		if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
-		{
-
-		}
-		else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
+		if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
 		{
 			HTTPApi_Management_Task(lpszClientAddr, &pptszList, nListCount);
 		}
+		else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+		{
+			PullStream_ClientPost_Handle(lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount);
+		}
 	}
-	else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
-		//如果是拉流请求
-		PullStream_ClientTask_Handle(lpszClientAddr, &pptszList, nListCount);
+		if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+		{
+			//如果是拉流请求
+			PullStream_ClientGet_Handle(lpszClientAddr, &pptszList, nListCount);
+		}
 	}
 	else
 	{
