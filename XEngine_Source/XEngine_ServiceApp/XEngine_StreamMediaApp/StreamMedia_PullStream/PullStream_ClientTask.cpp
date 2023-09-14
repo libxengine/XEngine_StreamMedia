@@ -69,6 +69,8 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 				"Connection: Close\r\n"
 				"Content-Type: video/x-flv\r\n"
 				"Server: XEngine/%s\r\n"
+				"Access-Control-Allow-Origin: *\r\n"
+				"Access-Control-Allow-Credentials: true\r\n"
 				"Transfer-Encoding: chunked\r\n\r\n"
 				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
@@ -134,6 +136,8 @@ bool PullStream_ClientTask_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr
 				"Connection: Close\r\n"
 				"Content-Type: video/x-stream\r\n"
 				"Server: XEngine/%s\r\n"
+				"Access-Control-Allow-Origin: *\r\n"
+				"Access-Control-Allow-Credentials: true\r\n"
 				"Transfer-Encoding: chunked\r\n\r\n"
 				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, &st_AVInfo, nRVLen);
