@@ -148,8 +148,9 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			memset(uszSPSBuffer, '\0', sizeof(uszSPSBuffer));
 			memset(uszPPSBuffer, '\0', sizeof(uszPPSBuffer));
 			memset(uszSEIBuffer, '\0', sizeof(uszSEIBuffer));
-			if (!AVHelp_Parse_VideoHdr(lpszMsgBuffer, nMsgLen, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, NULL, uszSPSBuffer, uszPPSBuffer, uszSEIBuffer, NULL, &nSPSLen, &nPPSLen, &nSEILen, &nPos))
+			if (!AVHelp_Parse_VideoHdr(lpszMsgBuffer, nMsgLen, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, NULL, uszSPSBuffer, uszPPSBuffer, NULL, NULL, &nSPSLen, &nPPSLen, NULL, &nPos))
 			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT推流端:%s,解析SPS,PPS,VPS失败,错误:%lX"), lpszClientAddr, AVHelp_GetLastError());
 				return false;
 			}
 			AFHELP_FRAMESPS st_SPSFrame;
@@ -174,9 +175,19 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			//音频参数信息是否存在
 			if (0 == st_AVInfo.st_AudioInfo.nALen)
 			{
-				st_AVInfo.st_AudioInfo.nALen = 7;
-				AVHelp_Packet_AACHdr((XBYTE*)st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, 0);
-				ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				int nProfile = 0;
+				int nConfig = 0;
+				if (AVHelp_Parse_AACInfo((const XBYTE*)lpszMsgBuffer, nMsgLen, &st_AVInfo.st_AudioInfo.nChannel, &st_AVInfo.st_AudioInfo.nSampleRate, &nProfile, &nConfig))
+				{
+					st_AVInfo.st_AudioInfo.bEnable = true;
+					st_AVInfo.st_AudioInfo.nALen = 7;
+					st_AVInfo.st_AudioInfo.enAVCodec = 10;
+					st_AVInfo.st_AudioInfo.nSampleFmt = 16;
+					st_AVInfo.st_AudioInfo.nChannel = 1;
+					XEngine_AVPacket_AVSetTime(lpszClientAddr, st_AVInfo.st_VideoInfo.nFrameRate, st_AVInfo.st_AudioInfo.nSampleRate);
+					AVHelp_Packet_AACHdr((XBYTE*)st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, 0);
+					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				}
 			}
 		}
 	}

@@ -118,16 +118,28 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 
 	if (0x1b == byAVType)
 	{
-		//H264
+		fwrite(lpszMsgBuffer, 1, nMsgLen, pSt_AFile);
+		int nPos = 0;
+		int nNALLen = 0;
+		int nFIXLen = 0;
 		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
-		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		
+		AVHelp_Parse_NaluHdr(lpszMsgBuffer, nMsgLen, &nNALLen, &nFIXLen);
+		AVHelp_Parse_NaluType(lpszMsgBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		//如果是AUD单元,跳过AUD
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_AUD == enFrameType)
+		{
+			nPos = nNALLen;
+			//重新获取
+			AVHelp_Parse_NaluType(lpszMsgBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		}
 		//如果是关键帧
 		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
 		{
-			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer + nPos, nMsgLen - nPos, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		}
-		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT推流端：%s,接受视频推流数据,数据大小:%d,帧类型:%d"), lpszClientAddr, nMsgLen, enFrameType);
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer + nPos, nMsgLen - nPos, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受视频推流数据,数据大小:%d,帧类型:%d,跳过AUD:%d"), lpszClientAddr, nMsgLen, enFrameType, nPos);
 		
 	}
 	else if (0x24 == byAVType)
@@ -137,6 +149,8 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 	else if (0x0f == byAVType)
 	{
 		//AAC
+		XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 
