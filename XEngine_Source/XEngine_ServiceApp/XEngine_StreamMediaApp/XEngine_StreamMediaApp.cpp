@@ -234,36 +234,36 @@ int main(int argc, char** argv)
 		xhXStreamPacket = HelpComponents_Datas_Init(st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nXStreamThread);
 		if (NULL == xhXStreamPacket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流组包器失败,错误：%lX"), Packets_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XStream推流组包器失败,错误：%lX"), Packets_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流组包器成功"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XStream推流组包器成功"));
 		//启动心跳
 		if (st_ServiceConfig.st_XTime.nXStreamTimeout > 0)
 		{
 			xhXStreamHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nXStreamTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_XStreamHeart);
 			if (NULL == xhXStreamHeart)
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XEngine推流心跳服务失败,错误：%lX"), NetCore_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化XStream推流心跳服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化XEngine推流心跳服务成功,时间:%d,次数:%d"), st_ServiceConfig.st_XTime.nXStreamTimeout, st_ServiceConfig.st_XTime.nTimeCheck);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化XStream推流心跳服务成功,时间:%d,次数:%d"), st_ServiceConfig.st_XTime.nXStreamTimeout, st_ServiceConfig.st_XTime.nTimeCheck);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XEngine推流心跳服务被设置为不启用"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XStream推流心跳服务被设置为不启用"));
 		}
 		//启动网络
 		xhXStreamSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
 		if (NULL == xhXStreamSocket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流网络服务器失败,错误：%lX"), NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XStream推流网络服务器失败,错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流网络服务器成功,XEngine推流端口:%d,网络IO线程个数:%d"), st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nIOThread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XStream推流网络服务器成功,XStream推流端口:%d,网络IO线程个数:%d"), st_ServiceConfig.nXStreamPort, st_ServiceConfig.st_XMax.nIOThread);
 		//绑定网络事件
 		NetCore_TCPXCore_RegisterCallBackEx(xhXStreamSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XEngine推流网络事件成功"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XStream推流网络事件成功"));
 		//启动任务池
 		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nXStreamThread; i++)
@@ -277,14 +277,14 @@ int main(int argc, char** argv)
 		xhXStreamPool = ManagePool_Thread_NQCreate(&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread);
 		if (NULL == xhXStreamPool)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XEngine推流线程池服务失败,错误：%lX"), ManagePool_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动XStream推流线程池服务失败,错误：%lX"), ManagePool_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XEngine推流线程池服务成功,启动个数:%d"), st_ServiceConfig.st_XMax.nXStreamThread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动XStream推流线程池服务成功,启动个数:%d"), st_ServiceConfig.st_XMax.nXStreamThread);
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XEngine推流消息服务没有被启用"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,XStream推流消息服务没有被启用"));
 	}
 	//启动RTMP流支持
 	if (st_ServiceConfig.nRTMPPort > 0)

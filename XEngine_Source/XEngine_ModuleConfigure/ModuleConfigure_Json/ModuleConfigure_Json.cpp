@@ -120,7 +120,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XTime.nRTMPTimeout = st_JsonXTime["nRTMPTimeout"].asInt();
 	pSt_ServerConfig->st_XTime.nJT1078Timeout = st_JsonXTime["nJT1078Timeout"].asInt();
 	//时间配置
-	if (st_JsonRoot["XPull"].empty() || (4 != st_JsonRoot["XPull"].size()))
+	if (st_JsonRoot["XPull"].empty() || (5 != st_JsonRoot["XPull"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_XPULL;
@@ -131,11 +131,13 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	Json::Value st_PullRtmp = st_Pull["RTMP"];
 	Json::Value st_PullFlv = st_Pull["FLV"];
 	Json::Value st_PullRtsp = st_Pull["RTSP"];
+	Json::Value st_PullHls = st_Pull["HLS"];
 
 	pSt_ServerConfig->st_XPull.st_PullXStream.bEnable = st_PullXStream["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullRtmp.bEnable = st_PullRtmp["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullFlv.bEnable = st_PullFlv["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.bEnable = st_PullRtsp["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullHls.bEnable = st_PullHls["bEnable"].asBool();
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{

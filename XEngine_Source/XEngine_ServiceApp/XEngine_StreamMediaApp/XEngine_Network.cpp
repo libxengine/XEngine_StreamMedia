@@ -220,6 +220,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+		ModuleHelp_SrtCore_Close(lpszClientAddr);
 		HLSProtocol_TSParse_delete(lpszClientAddr);
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
