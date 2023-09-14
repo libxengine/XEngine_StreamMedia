@@ -50,47 +50,52 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 {
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
-		if (st_ServiceConfig.st_XPull.st_PullXStream.bEnable)
-		{
-			XENGINE_PROTOCOLSTREAM st_ProtocolStream;
-			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
+		//XSTREAM推流
+		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
 
-			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
-			//创建会话
-			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
-			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_ProtocolStream.st_AVInfo);
+		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
+		if (0 == byAVType)
+		{
+			int nPos = 0;
+			int nSPSLen = 0;
+			int nPPSLen = 0;
+			XBYTE uszSPSBuffer[512];
+			XBYTE uszPPSBuffer[512];
+
+			memset(uszSPSBuffer, '\0', sizeof(uszSPSBuffer));
+			memset(uszPPSBuffer, '\0', sizeof(uszPPSBuffer));
+			if (!AVHelp_Parse_VideoHdr(lpszMsgBuffer, nMsgLen, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, NULL, uszSPSBuffer, uszPPSBuffer, NULL, NULL, &nSPSLen, &nPPSLen, NULL, &nPos))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XStream推流端:%s,解析SPS,PPS,VPS失败,错误:%lX"), lpszClientAddr, AVHelp_GetLastError());
+				return false;
+			}
+			_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
+			st_AVInfo.st_VideoInfo.enAVCodec = 7;
+			st_AVInfo.st_VideoInfo.nVLen = nPos;
+			memset(st_AVInfo.st_VideoInfo.tszVInfo, '\0', sizeof(st_AVInfo.st_VideoInfo.tszVInfo));
+			memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nPos);
+
+			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		}
-		if (st_ServiceConfig.st_XPull.st_PullFlv.bEnable)
+		else
 		{
-			XENGINE_PROTOCOLSTREAM st_ProtocolStream;
-			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
-
-			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
-			//创建流
-			FLVProtocol_Packet_Insert(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.bEnable, st_ProtocolStream.st_AVInfo.st_AudioInfo.bEnable);
-			FLVProtocol_Packet_SetTime(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.nFrameRate, st_ProtocolStream.st_AVInfo.st_AudioInfo.nSampleRate);
-
-			st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = 7;
-			_tcsxcpy(st_ProtocolStream.st_AVInfo.tszPktName, _X("Lavf58.76.100"));
-			//创建会话
-			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_ProtocolStream.st_AVInfo);
-			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
-		}
-		if (st_ServiceConfig.st_XPull.st_PullRtmp.bEnable)
-		{
-			XENGINE_PROTOCOLSTREAM st_ProtocolStream;
-			memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
-
-			memcpy(&st_ProtocolStream, lpszMsgBuffer, sizeof(XENGINE_PROTOCOLSTREAM));
-			//创建流
-			RTMPProtocol_Packet_Insert(lpszClientAddr);
-			RTMPProtocol_Packet_SetTime(lpszClientAddr, st_ProtocolStream.st_AVInfo.st_VideoInfo.nFrameRate, st_ProtocolStream.st_AVInfo.st_AudioInfo.nSampleRate);
-			//打包FLV
-			st_ProtocolStream.st_AVInfo.st_VideoInfo.enAVCodec = 7;
-			_tcsxcpy(st_ProtocolStream.st_AVInfo.tszPktName, _X("Lavf58.76.100"));
-			//创建会话
-			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_ProtocolStream.st_AVInfo);
-			ModuleSession_PushStream_Create(lpszClientAddr, st_ProtocolStream.tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
+			//音频参数信息是否存在
+			if (0 == st_AVInfo.st_AudioInfo.nALen)
+			{
+				int nProfile = 0;
+				int nConfig = 0;
+				if (AVHelp_Parse_AACInfo((const XBYTE*)lpszMsgBuffer, nMsgLen, &st_AVInfo.st_AudioInfo.nChannel, &st_AVInfo.st_AudioInfo.nSampleRate, &nProfile, &nConfig))
+				{
+					st_AVInfo.st_AudioInfo.bEnable = true;
+					st_AVInfo.st_AudioInfo.nALen = 7;
+					st_AVInfo.st_AudioInfo.enAVCodec = 10;
+					st_AVInfo.st_AudioInfo.nSampleFmt = 16;
+					st_AVInfo.st_AudioInfo.nChannel = 1;
+					AVHelp_Packet_AACHdr((XBYTE*)st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, 0);
+					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
+				}
+			}
 		}
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
@@ -157,7 +162,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			memset(&st_SPSFrame, '\0', sizeof(AFHELP_FRAMESPS));
 
 			AVHelp_Parse_SPSInfo((LPCXSTR)uszSPSBuffer + 1, nSPSLen - 1, &st_SPSFrame);
-			XEngine_AVPacket_AVSetTime(lpszClientAddr, st_SPSFrame.nFrameFPS, 0);
 			_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 			st_AVInfo.st_VideoInfo.bEnable = true;
 			st_AVInfo.st_VideoInfo.enAVCodec = 7;

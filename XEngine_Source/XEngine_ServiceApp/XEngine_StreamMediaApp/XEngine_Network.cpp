@@ -43,7 +43,7 @@ bool CALLBACK Network_Callback_XStreamLogin(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	SocketOpt_HeartBeat_InsertAddrEx(xhXStreamHeart, lpszClientAddr);
 	//并且还要创建一个TCP包管理器对象,不然无法组包
 	HelpComponents_Datas_CreateEx(xhXStreamPacket, lpszClientAddr, 0);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,连接到服务器"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端:%s,连接到服务器"), lpszClientAddr);
 	return true;
 }
 void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
@@ -51,12 +51,12 @@ void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	//接受到数据后直接投递给TCP包管理器,因为可能不是一个完整的包,所以我们的期望是通过此得到一个完整的包
 	if (!HelpComponents_Datas_PostEx(xhXStreamPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XStream推流端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
 		return;
 	}
 	//需要激活一次
 	SocketOpt_HeartBeat_ActiveAddrEx(xhXStreamHeart, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XStream推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK Network_Callback_XStreamLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
@@ -243,7 +243,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		//发送数据给指定客户端
 		if (!NetCore_TCPXCore_SendEx(xhXStreamSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XStream推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return false;
 		}
 		//发送成功激活一次心跳
