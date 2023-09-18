@@ -52,39 +52,27 @@ bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nM
 	XCHAR tszClientAddr[128];
 	memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
-	if (nHDRLen == sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XENGINE_RTPPACKETTAIL) + sizeof(XSHOT))
+	if (nHDRLen == sizeof(XENGINE_RTPPACKETHDR) + sizeof(XENGINE_RTPPACKETTAIL) + sizeof(XSHOT))
 	{
-		XENGINE_RTPPACKETHDR2016 st_RTPHdr;
+		XENGINE_RTPPACKETHDR st_RTPHdr;
 		XENGINE_RTPPACKETTAIL st_RTPTail;
 
-		memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR2016));
+		memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR));
 		memset(&st_RTPTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
 
-		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR2016) - sizeof(XSHOT));
-		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR2016) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
+		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT));
+		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
 
-		PushStream_JT1078Task_Handle2016(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
+		PushStream_JT1078Task_Handle(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
 	}
 	else
 	{
-		XENGINE_RTPPACKETHDR2014 st_RTPHdr;
-		XENGINE_RTPPACKETTAIL st_RTPTail;
-
-		memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR2014));
-		memset(&st_RTPTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
-
-		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR2014) - sizeof(XSHOT));
-		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR2014) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
-
-		PushStream_JT1078Task_Handle2014(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
+		
 	}
 	return true;
 }
-bool PushStream_JT1078Task_Handle2014(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2014* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
-{
-	return true;
-}
-bool PushStream_JT1078Task_Handle2016(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR2016* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
+
+bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
 {
 	int nSDLen = 0;
 	XCHAR tszSDBuffer[2048];

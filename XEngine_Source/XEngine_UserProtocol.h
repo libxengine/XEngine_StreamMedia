@@ -89,27 +89,7 @@ typedef struct
 	XBYTE byPacket : 4;
 	XBYTE byType : 4;
 	__int64u ullTimestamp;
-}XENGINE_RTPPACKETHDR2016;
-typedef struct
-{
-	XBYTE byV : 2;
-	XBYTE byP : 1;
-	XBYTE byX : 1;
-	XBYTE byCC : 4;
-
-	XBYTE byM : 1;
-	XBYTE byPT : 7;
-
-	XSHOT wSerial;
-	XBYTE bySIMNumber[6];
-	XBYTE byChannel;
-
-	XBYTE byType : 4;
-	XBYTE byPacket : 4;
-	__int64u ullTimestamp;
-	XSHOT wLen;
-}XENGINE_RTPPACKETHDR2014;
-
+}XENGINE_RTPPACKETHDR;
 typedef struct
 {
 	XSHOT wLastIFrame;

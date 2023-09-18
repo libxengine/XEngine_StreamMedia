@@ -348,7 +348,7 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化实时端流包管理器成功,最大队列:%d,最大线程:%d"), st_ServiceConfig.st_XMax.nMaxQueue, st_ServiceConfig.st_XMax.nJT1078Thread);
 		//协议头大小.需要加上长度字段
-		HelpComponents_PKTCustom_SetHdrEx(xhJT1078Pkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR2016) + sizeof(XSHOT));
+		HelpComponents_PKTCustom_SetHdrEx(xhJT1078Pkt, 24, 26, sizeof(XENGINE_RTPPACKETHDR) + sizeof(XSHOT));
 		//如果packet == 4,透传,没有时间戳
 		HelpComponents_PKTCustom_SetConditionsEx(xhJT1078Pkt, 15, 4, 4, -8, true, true);
 		//如果packet == 0,1,2 I帧P帧B帧,需要添加视频帧间隔时间,两个XSHOT大小
