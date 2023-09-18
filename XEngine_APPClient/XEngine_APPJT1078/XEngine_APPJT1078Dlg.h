@@ -44,7 +44,6 @@ private:
 	unordered_map<SOCKET, XENGINE_DEVICEINFO*> stl_MapDevice;
 
 	void XEngine_Device_StrtoBCD(LPCTSTR lpszPhoneCode, BYTE* ptszBCD);
-	static DWORD WINAPI XEngine_Device_Thread2014(LPVOID lParam);
 	static DWORD WINAPI XEngine_Device_Thread2016(LPVOID lParam);
 public:
 	CIPAddressCtrl m_EditIPAddr;

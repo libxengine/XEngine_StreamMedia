@@ -5,7 +5,7 @@
 #pragma comment(lib,"XEngine_Client/XClient_Socket")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVCollect")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_VideoCodec")
-#pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"Ws2_32")
 #endif
 #include <list>
@@ -21,8 +21,8 @@
 #include <XEngine_Include/XEngine_AVCodec/AVCollect_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Error.h>
-#include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
-#include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
 using namespace std;
 
@@ -33,6 +33,7 @@ using namespace std;
 XSOCKET hSocket = 0;
 XNETHANDLE xhVideo = 0;
 __int64u nTimeVideo = 0;
+FILE* pSt_File = NULL;
 
 void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* punStringY, int nYLen, uint8_t* punStringU, int nULen, uint8_t* punStringV, int nVLen, XPVOID lParam)
 {
@@ -78,12 +79,9 @@ void CALLBACK XEngine_AVCollect_CBAudio(uint8_t* punStringAudio, int nVLen, XPVO
 {
 
 }
-int main()
+
+int XStream_Push()
 {
-#ifdef _MSC_BUILD
-	WSADATA st_WSAData;
-	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
-#endif
 	LPCXSTR lpszServiceAddr = _X("127.0.0.1");
 	if (!XClient_TCPSelect_Create(&hSocket, lpszServiceAddr, 5601))
 	{
@@ -128,58 +126,29 @@ int main()
 		printf(_X("初始化编码器失败"));
 		return -1;
 	}
+	_tcsxcpy(st_ProtocolStream.tszSMSAddr, _X("live/h265"));
 
-	int nYLen = 0;
-	int nULen = 0;
-	int nVLen = 0;
-	int nFLen = 0;
-	XBYTE* ptszYBuffer = (XBYTE*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XBYTE* ptszUBuffer = (XBYTE*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XBYTE* ptszVBuffer = (XBYTE*)malloc(XENGINE_MEMORY_SIZE_MAX);
-
-	memset(ptszYBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-	memset(ptszUBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-	memset(ptszVBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-
-	AVCollect_Video_Read(xhScreen, ptszYBuffer, &nYLen, ptszUBuffer, &nULen, ptszVBuffer, &nVLen);
-
-	int nListCount = 0;
-	AVCODEC_VIDEO_MSGBUFFER** ppSt_MSGBuffer;
-	VideoCodec_Stream_EnCodec(xhVideo, ptszYBuffer, ptszUBuffer, ptszVBuffer, nYLen, nULen, nVLen, &ppSt_MSGBuffer, &nListCount);
-	for (int i = 0; i < nListCount; i++)
+	nLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProtocolHdr.unPacketSize;
+	memcpy(tszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+	memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_ProtocolStream, sizeof(XENGINE_PROTOCOLSTREAM));
+	if (!XClient_TCPSelect_SendMsg(hSocket, tszMsgBuffer, nLen))
 	{
-		AVHelp_Parse_264Hdr((LPCXSTR)ppSt_MSGBuffer[i]->ptszYBuffer, ppSt_MSGBuffer[i]->nYLen, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &st_ProtocolStream.st_AVInfo.st_VideoInfo.nVLen);
-		memcpy(st_ProtocolStream.st_AVInfo.st_VideoInfo.tszVInfo, ppSt_MSGBuffer[i]->ptszYBuffer, st_ProtocolStream.st_AVInfo.st_VideoInfo.nVLen);
-		//fwrite(ppSt_MSGBuffer[i]->ptszYBuffer, 1, ppSt_MSGBuffer[i]->nYLen, pSt_File);
-
-		_tcsxcpy(st_ProtocolStream.tszSMSAddr, _X("live/qyt"));
-
-		nLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProtocolHdr.unPacketSize;
-		memcpy(tszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-		memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_ProtocolStream, sizeof(XENGINE_PROTOCOLSTREAM));
-
-		if (!XClient_TCPSelect_SendMsg(hSocket, tszMsgBuffer, nLen))
-		{
-			_xtprintf("发送投递失败！\n");
-			return 0;
-		}
-		nLen = 0;
-		XCHAR* ptszMsgBuffer;
-		memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
-		if (!XClient_TCPSelect_RecvPkt(hSocket, &ptszMsgBuffer, &nLen, &st_ProtocolHdr))
-		{
-			_xtprintf("接受数据失败！\n");
-			return 0;
-		}
-		_xtprintf("%d\n", st_ProtocolHdr.wReserve);
-		if (nLen > 0)
-		{
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-		}
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_MSGBuffer[i]->ptszYBuffer);
-		break;
+		_xtprintf("发送投递失败！\n");
+		return 0;
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_MSGBuffer, nListCount);
+	nLen = 0;
+	XCHAR* ptszMsgBuffer;
+	memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
+	if (!XClient_TCPSelect_RecvPkt(hSocket, &ptszMsgBuffer, &nLen, &st_ProtocolHdr, 10))
+	{
+		_xtprintf("接受数据失败！\n");
+		return 0;
+	}
+	_xtprintf("%d\n", st_ProtocolHdr.wReserve);
+	if (nLen > 0)
+	{
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	}
 
 	AVCollect_Video_Start(xhScreen);
 
@@ -187,6 +156,62 @@ int main()
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+}
+
+
+static void CALLBACK APPClient_XStreamPull_Callback(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, int nMsgLen, XPVOID lParam)
+{
+	static bool bFirst = true;
+
+	if (bFirst)
+	{
+		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+
+		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+		memcpy(&st_AVInfo, lpszMsgBuffer, sizeof(XENGINE_PROTOCOL_AVINFO));
+
+		printf("%d,bEnable:%d,bEnable:%d\n", nMsgLen, st_AVInfo.st_VideoInfo.bEnable, st_AVInfo.st_AudioInfo.bEnable);
+		bFirst = false;
+	}
+	else
+	{
+		XENGINE_PROTOCOL_AVDATA st_ProtocolAVData;
+		memset(&st_ProtocolAVData, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
+
+		memcpy(&st_ProtocolAVData, lpszMsgBuffer, sizeof(XENGINE_PROTOCOL_AVDATA));
+		printf("%d,byAVType:%d,byFrameType:%d,nTimeStamp:%llu\n", nMsgLen, st_ProtocolAVData.byAVType, st_ProtocolAVData.byFrameType, st_ProtocolAVData.nTimeStamp);
+		
+		if (0 == st_ProtocolAVData.byAVType)
+		{
+			fwrite((LPCXSTR)lpszMsgBuffer + sizeof(XENGINE_PROTOCOL_AVDATA), 1, nMsgLen - sizeof(XENGINE_PROTOCOL_AVDATA), pSt_File);
+		}
+	}
+}
+void XStream_Pull()
+{
+	XNETHANDLE xhToken = 0;
+	LPCXSTR lpszFLVUrl = _X("http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=xstream");
+
+	pSt_File = _xtfopen("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\1.h264", "wb");
+
+	APIClient_Http_Create(&xhToken, APPClient_XStreamPull_Callback);
+	APIClient_Http_SetUrl(xhToken, lpszFLVUrl, _X("GET"));
+	APIClient_Http_Excute(xhToken);
+
+	std::this_thread::sleep_for(std::chrono::seconds(20));
+
+	APIClient_Http_Close(xhToken);
+	fclose(pSt_File);
+}
+int main()
+{
+#ifdef _MSC_BUILD
+	WSADATA st_WSAData;
+	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+#endif
+
+	XStream_Push();
+	//XStream_Pull();
 
 #ifdef _MSC_BUILD
 	WSACleanup();
