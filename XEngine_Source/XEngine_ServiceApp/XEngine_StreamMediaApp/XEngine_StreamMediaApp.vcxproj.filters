@@ -63,10 +63,10 @@
     <ClCompile Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.cpp">
       <Filter>源文件\StreamMedia_HTTPApi</Filter>
     </ClCompile>
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientPost.cpp">
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp">
       <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp">
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientMethod.cpp">
       <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,10 +101,10 @@
     <ClInclude Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.h">
       <Filter>头文件\StreamMedia_HTTPApi</Filter>
     </ClInclude>
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientPost.h">
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h">
       <Filter>头文件\StreamMedia_PullStream</Filter>
     </ClInclude>
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h">
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientMethod.h">
       <Filter>头文件\StreamMedia_PullStream</Filter>
     </ClInclude>
   </ItemGroup>

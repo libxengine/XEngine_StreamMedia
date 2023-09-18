@@ -101,23 +101,22 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
-	//获得函数名
-	BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
 	//获得方法
 	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
+		//获得函数名
+		BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
 		if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
 		{
 			HTTPApi_Management_Task(lpszClientAddr, &pptszList, nListCount);
 		}
-		else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
-		{
-			PullStream_ClientPost_Handle(lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount);
-		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
+		//获得函数名
+		BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
+
 		if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
 		{
 			//如果是拉流请求
@@ -126,10 +125,8 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	}
 	else
 	{
-		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
-		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-		XEngine_Network_Send(lpszClientAddr, tszRVBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		//可能是RTSP
+		PullStream_ClientMethod_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;

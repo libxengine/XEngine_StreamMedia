@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClCompile Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.cpp" />
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp" />
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientPost.cpp" />
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientMethod.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_SrtTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_XStreamTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp" />
@@ -159,7 +159,7 @@
   <ItemGroup>
     <ClInclude Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.h" />
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h" />
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientPost.h" />
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientMethod.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_SrtTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_XStreamTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h" />
