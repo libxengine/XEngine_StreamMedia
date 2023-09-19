@@ -55,6 +55,7 @@ bool CModuleQueue_JT1078::ModuleQueue_JT1078_Create(LPCXSTR lpszClientAddr)
 		Queue_dwErrorCode = ERROR_STREAMMEDIA_MODULE_QUEUE_MALLOC;
 		return false;
 	}
+	memset(st_Packet.ptszMsgBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
 	//是否存在
 	st_Locker.lock();
 	unordered_map<xstring, MODULEQUEUE_PACKET>::iterator stl_MapIterator = stl_MapQueue.find(lpszClientAddr);
@@ -202,7 +203,8 @@ bool CModuleQueue_JT1078::ModuleQueue_JT1078_Get(LPCXSTR lpszClientAddr, XCHAR**
 	}
 	*pInt_MsgLen = stl_MapIterator->second.nMsgLen;
 	*pptszMsgBuffer = stl_MapIterator->second.ptszMsgBuffer;
-
+	//重置
+	stl_MapIterator->second.nMsgLen = 0;
 	st_Locker.unlock_shared();
 	return true;
 }
