@@ -34,13 +34,11 @@ XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 				XCHAR tszHdrBuffer[MAX_PATH];
 				memset(tszHdrBuffer, '\0', MAX_PATH);
 
-				if (!HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
+				if (HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("实时端,获取一个随机包失败,错误：%lX"), Packets_GetLastError());
-					break;
+					PushStream_JT1078Task_Handle(ppSt_PacketClient[i]->hSocket, ptszMsgBuffer, nMsgLen, tszHdrBuffer, nHDRLen);
+					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 				}
-				PushStream_JT1078Task_Handle(ppSt_PacketClient[i]->hSocket, ptszMsgBuffer, nMsgLen, tszHdrBuffer, nHDRLen);
-				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 			}
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PacketClient, nListCount);
@@ -63,6 +61,7 @@ bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nM
 		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT));
 		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
 
+		NetXApi_Socket_GetAddress(hSocket, tszClientAddr, false);
 		PushStream_JT1078Task_Handle(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
 	}
 	else
@@ -74,20 +73,73 @@ bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nM
 
 bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail)
 {
+	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR tszSDBuffer[2048];
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszDeviceNumber[128];
-	XENGINE_PROTOCOLSTREAM st_ProtocolStream;
-	
-	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 	memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
-	memset(&st_ProtocolStream, '\0', sizeof(XENGINE_PROTOCOLSTREAM));
 
 	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, tszDeviceNumber);
-	_xstprintf(tszSMSAddr, _X("%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
-	
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("实时端：%s,开始推送数据,设备ID：%s,通道：%d,推送客户端：%lld,大小：%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nSDLen);
+	_xstprintf(tszSMSAddr, _X("live/%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
+
+	XCHAR tszPushAddr[128];
+	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+	if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+	{
+		//没有就创建
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
+		ModuleQueue_JT1078_Create(lpszClientAddr);
+		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078:%s,流媒体服务创建,设备ID：%s,通道:%d,创建地址:%s"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, tszSMSAddr);
+	}
+	//H264
+	if (3 == pSt_RTPHdr->byType)
+	{
+		//音频
+		ModuleQueue_JT1078_Insert(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (pSt_RTPHdr->byM)
+		{
+			int nMLen = 0;
+			XCHAR* ptszMsgBuffer = NULL;
+			ModuleQueue_JT1078_Get(lpszClientAddr, &ptszMsgBuffer, &nMLen);
+			if (nMLen > 0)
+			{
+				XEngine_AVPacket_AVHdr(lpszClientAddr, ptszMsgBuffer, nMLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+			}
+		}
+	}
+	else if (4 == pSt_RTPHdr->byType)
+	{
+		//透传
+	}
+	else
+	{
+		//视频
+		ModuleQueue_JT1078_Insert(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (pSt_RTPHdr->byM)
+		{
+			int nMLen = 0;
+			XCHAR* ptszMsgBuffer = NULL;
+			ModuleQueue_JT1078_Get(lpszClientAddr, &ptszMsgBuffer, &nMLen);
+			if (nMLen > 0)
+			{
+				if (0 == pSt_RTPHdr->byType)
+				{
+					XEngine_AVPacket_AVHdr(lpszClientAddr, ptszMsgBuffer, nMLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+				}
+				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, ptszMsgBuffer, nMLen, -1, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+			}
+		}
+	}
+	free(ptszSDBuffer);
+	free(ptszRVBuffer);
+	ptszRVBuffer = NULL;
+	ptszSDBuffer = NULL;
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("JT1078:%s,开始推送数据,设备ID：%s,通道:%d,大小:%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nMsgLen);
 	return true;
 }

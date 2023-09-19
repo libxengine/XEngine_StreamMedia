@@ -202,6 +202,9 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 			SocketOpt_HeartBeat_DeleteAddrEx(xhJT1078Heart, lpszClientAddr);
 		}
 		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, 0);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
+		ModuleQueue_JT1078_Destroy(lpszClientAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
