@@ -140,6 +140,6 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 	free(ptszRVBuffer);
 	ptszRVBuffer = NULL;
 	ptszSDBuffer = NULL;
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("JT1078:%s,开始推送数据,设备ID：%s,通道:%d,大小:%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078:%s,开始推送数据,设备ID：%s,通道:%d,大小:%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nMsgLen);
 	return true;
 }
