@@ -142,23 +142,6 @@ void CALLBACK Network_Callback_SRTLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszPushAddr[MAX_PATH];
-
-	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-	//可能是推流也可能是拉流
-	if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
-	{
-		ModuleSession_PullStream_Delete(lpszClientAddr);
-		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
-	}
-	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
-	{
-		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
-		ModuleSession_PushStream_Destroy(lpszClientAddr);
-	}
-
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP == enClientType)
 	{
 		//先关闭网络和心跳,他们主动回调的数据我们可以不用主动调用关闭
@@ -201,7 +184,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhJT1078Heart, lpszClientAddr);
 		}
-		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, 0);
+		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, hSocket);
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		ModuleQueue_JT1078_Destroy(lpszClientAddr);
 		ModuleSession_PushStream_Destroy(lpszClientAddr);
@@ -227,6 +210,22 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		HLSProtocol_TSParse_delete(lpszClientAddr);
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
+	}
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszPushAddr[MAX_PATH];
+
+	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+	//可能是推流也可能是拉流
+	if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+	{
+		ModuleSession_PullStream_Delete(lpszClientAddr);
+		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+	}
+	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+	{
+		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 	}
 }
 bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
