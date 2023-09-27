@@ -26,8 +26,8 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_XStream.cpp -o APPClient_XStream.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_XStream.cpp -o APPClient_XStream.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//linux::g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//macos::g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
 
 void XEngine_Device_StrtoBCD(LPCXSTR lpszPhoneCode, XBYTE* ptszBCD)
 {
@@ -68,7 +68,7 @@ int main()
 
 	while (true)
 	{
-		XCHAR tszRVBuffer[2048];
+		XCHAR tszRVBuffer[8192];
 		memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 
 		int nRet = fread(tszRVBuffer, 1, sizeof(tszRVBuffer), pSt_File);
@@ -172,7 +172,7 @@ int main()
 			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_Frame[i]->ptszMsgBuffer);
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Frame, nListCount);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}
 	AVHelp_Parse_FrameClose(xhToken);
 
