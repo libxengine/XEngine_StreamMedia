@@ -20,7 +20,7 @@ c c++ streammedia server  
 1. RTMP(H264,H265,AAC)
 2. XStream
 3. SRT
-4. JT1078(planning)
+4. JT1078
 5. GB28181(planning)
 6. WEBRTC(planning)
 

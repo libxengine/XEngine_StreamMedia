@@ -1,3 +1,51 @@
+XEngine_StreamMedia V2.3.0.1001
+
+增加:队列模块
+增加:HLS配置项目
+增加:srt解析转换程序线程
+优化:av头包函数
+修改:h264的sei会被解析为头的问题
+修改:始终更新avc视频参数配置信息在rtmp推流的时候
+修改:xstream http支持
+修改:xstream http 帧大小字段
+修改:http任务区分post和get
+修改:为拉流修改提交名称方法名字
+修改:jt1078 推流支持
+修正:当程序退出的时候崩溃的问题
+修正:FLV TAG大小不正确导致某些网页播放器无法播放的问题
+修正:srt任务程序释放内存错误
+修正:没有hTTP跨域控制字段的问题
+修正:播放客户端只支持一个的问题
+修正:xstream h264nalu头的解析问题
+修正:SRT客户端退出没有关闭资源的问题
+修正:如果没有音频,设置时间戳不被设置的问题
+修正:发布流退出的时候创建流的问题
+删除:会话模块的获取和设置音视频缓冲区
+删除:JT1078 2014解析代码
+
+added:queue module
+added:hls configure
+added:srt parse process thread
+improved:avhdr packet function
+modify:The sei of h264 is also parsed as a header.
+modify:always update avc configure at the rtmp push
+modify:xstream http supported
+modify:xstream http chunked has frame size
+modify:http tasks are divided into post and get
+modify:post name to method name for pull stream
+modify:jt1078 push stream supported
+fixed:crashed when app exit
+fixed:flv.js does not play because tagsize is not right
+fixed:the problem free memory error that srt task
+fixed:http Access-Control-Allow-Origin not set
+fixed:just play once client
+fixed:the problem that not support parse nalu header of h264
+fixed:does not close srt client
+fixed:if not audio,then video time will not set
+fixed:create stream when publish stream exit
+delete:get and set av buffer for push of session module
+delete:jt1078 2014 was deleted
+=======================================================
 XEngine_StreamMedia V2.2.0.1001
 
 添加:SRT推拉流支持
@@ -115,7 +163,6 @@ XEngine_StreamMedia V1.2.0.1001
 修正:关闭通知没有释放通道内存的问题
 修正:停止锁不正确的问题
 修正:Center没有正确释放内存的问题
-删除:插件池支持
 
 added:http request return to json payload
 added:comm packet for protocol module
