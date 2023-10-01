@@ -6,10 +6,10 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents -L /usr/local/lib/XEngine_Release/XEngine_AVCodec -L /usr/local/lib/XEngine_Release/XEngine_StreamMedia  \
-         -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  \
+         -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
 		 -L ../../XEngine_ThirdPart/jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lRfcComponents_HttpProtocol -lRfcComponents_SDPProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol \
-      -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_NetXApi -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lRfcComponents_HttpProtocol -lRfcComponents_SDPProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol \
+      -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp -lXEngine_ModuleQueue \
 	  -ljsoncpp -lsrt-gnutls
 LIBEX = 
 OBJECTS = PullStream_ClientGet.o PullStream_ClientMethod.o \

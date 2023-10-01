@@ -50,7 +50,7 @@ endif
 
 
 all:$(OBJECTS)
-	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModulQueue.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModuleQueue.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 ModuleQueue_JT1078.o:./ModuleQueue_JT1078/ModuleQueue_JT1078.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleQueue_JT1078/ModuleQueue_JT1078.cpp 
@@ -60,8 +60,8 @@ pch.o:./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModulQueue.$(FILEEXT)
-	cp ./libXEngine_ModulQueue.$(FILEEXT) ../../XEngine_Release/libXEngine_ModulQueue.$(FILEEXT)
+InstallSo:./libXEngine_ModuleQueue.$(FILEEXT)
+	cp ./libXEngine_ModuleQueue.$(FILEEXT) ../../XEngine_Release/libXEngine_ModuleQueue.$(FILEEXT)
 
 
 CleanAll:CleanObj CleanMk

@@ -9,11 +9,12 @@ MODULE_CONFIGURE_PATH = ./XEngine_ModuleConfigure
 MODULE_HELP_PATH = ./XEngine_ModuleHelp
 MODULE_PROTOCOL_PATH = ./XEngine_ModuleProtocol
 MODULE_SESSION_PATH = ./XEngine_ModuleSession
+MODULE_QUEUE_PATH = ./XEngine_ModuleQueue
 
 APP_STREAMMEDIA_PATH = ./XEngine_ServiceApp/XEngine_StreamMediaApp
 
 XENGINE_MODULES = libjsoncpp.so                                   \
-                  libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so        \
+                  libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
 				  XEngine_StreamMediaApp.exe
 
 .PHONY:MakeAll 
@@ -30,6 +31,8 @@ libXEngine_ModuleProtocol.so:
 	make -C $(MODULE_PROTOCOL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libXEngine_ModuleSession.so:
 	make -C $(MODULE_SESSION_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+libXEngine_ModuleQueue.so:
+	make -C $(MODULE_QUEUE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 
 XEngine_StreamMediaApp.exe:
 	make -C $(APP_STREAMMEDIA_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
