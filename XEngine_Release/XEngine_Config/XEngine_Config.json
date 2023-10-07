@@ -14,6 +14,7 @@
         "nHTTPThread":1,
         "nXStreamThread":2,
         "nRTMPThread":2,
+        "nSRTThread":2,
         "nJT1078Thread":2
     },
     "XTime":{
@@ -35,6 +36,9 @@
         },
         "RTSP":{
             "bEnable":false
+        },
+        "HLS":{
+            "bEnable":false
         }
     },
     "XLog":{
@@ -43,6 +47,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V2.3.0.1001 Build20231007",
         "V2.2.0.1001 Build20230804",
         "V2.1.0.1001 Build20230726",
         "V2.0.0.1001 Build20230615",
