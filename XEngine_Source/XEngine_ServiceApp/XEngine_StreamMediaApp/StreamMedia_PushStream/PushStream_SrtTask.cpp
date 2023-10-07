@@ -24,10 +24,11 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 	if (bPublish)
 	{
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//创建会话
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 		//need to parse ts stream
-		ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, NULL, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+		HLSProtocol_TSParse_Insert(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,创建流成功,推流地址：%s,类型:推流端"), lpszClientAddr, tszSMSAddr);
 	}
 	else
@@ -49,6 +50,12 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
+	if (!HLSProtocol_TSParse_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求数据推流,错误:%lX"), lpszClientAddr, HLSProtocol_GetLastError());
+		return false;
+	}
+	//SRT客户端就直接转发
 	list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 	ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
 	for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
@@ -56,9 +63,99 @@ bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXST
 		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == stl_ListIteratorClient->enClientType)
 		{
 			XEngine_Network_Send(stl_ListIteratorClient->tszClientID, lpszMsgBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-			break;
 		}
 	}
 
+	return true;
+}
+
+XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
+{
+	//任务池是编号1开始的.
+	int nThreadPos = *(int*)lParam;
+	nThreadPos++;
+
+	XCHAR* ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	while (bIsRun)
+	{
+		//等待编号1的任务池触发一个组完包的事件
+		if (!HLSProtocol_TSParse_WaitEvent(nThreadPos))
+		{
+			continue;
+		}
+		int nListCount = 0;
+		XENGINE_MANAGEPOOL_TASKEVENT** ppSst_ListAddr;
+		//获得编号1的所有待处理任务的客户端列表(也就是客户端发送过来的数据已经组好了一个包,需要我们处理)
+		HLSProtocol_TSParse_GetPool(nThreadPos, &ppSst_ListAddr, &nListCount);
+		for (int i = 0; i < nListCount; i++)
+		{
+			//再循环客户端拥有的任务个数
+			for (int j = 0; j < ppSst_ListAddr[i]->nPktCount; j++)
+			{
+				int nMsgLen = 0;                             //客户端发送的数据大小,不包括头
+				XBYTE byAVType = 0;
+				//得到一个指定客户端的完整数据包
+				if (HLSProtocol_TSParse_Recv(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, &nMsgLen, &byAVType))
+				{
+					//在另外一个函数里面处理数据
+					PushStream_SrtTask_ThreadProcess(ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, byAVType);
+				}
+			}
+		}
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+	}
+	free(ptszMsgBuffer);
+	ptszMsgBuffer = NULL;
+	return 0;
+}
+bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
+{
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+
+	if (0x1b == byAVType)
+	{
+		fwrite(lpszMsgBuffer, 1, nMsgLen, pSt_AFile);
+		int nPos = 0;
+		int nNALLen = 0;
+		int nFIXLen = 0;
+		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+		
+		AVHelp_Parse_NaluHdr(lpszMsgBuffer, nMsgLen, &nNALLen, &nFIXLen);
+		AVHelp_Parse_NaluType(lpszMsgBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		//如果是AUD单元,跳过AUD
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_AUD == enFrameType)
+		{
+			nPos = nNALLen;
+			//重新获取
+			AVHelp_Parse_NaluType(lpszMsgBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		}
+		//如果是关键帧
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+		{
+			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer + nPos, nMsgLen - nPos, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		}
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer + nPos, nMsgLen - nPos, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受视频推流数据,数据大小:%d,帧类型:%d,跳过AUD:%d"), lpszClientAddr, nMsgLen, enFrameType, nPos);
+		
+	}
+	else if (0x24 == byAVType)
+	{
+		//H265
+	}
+	else if (0x0f == byAVType)
+	{
+		//AAC
+		XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
+	}
+
+	free(ptszRVBuffer);
+	free(ptszSDBuffer);
+	ptszRVBuffer = NULL;
+	ptszSDBuffer = NULL;
 	return true;
 }

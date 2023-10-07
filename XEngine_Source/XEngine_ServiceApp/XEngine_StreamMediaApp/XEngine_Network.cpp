@@ -43,7 +43,7 @@ bool CALLBACK Network_Callback_XStreamLogin(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	SocketOpt_HeartBeat_InsertAddrEx(xhXStreamHeart, lpszClientAddr);
 	//并且还要创建一个TCP包管理器对象,不然无法组包
 	HelpComponents_Datas_CreateEx(xhXStreamPacket, lpszClientAddr, 0);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XEngine推流端:%s,连接到服务器"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("XStream推流端:%s,连接到服务器"), lpszClientAddr);
 	return true;
 }
 void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
@@ -51,12 +51,12 @@ void CALLBACK Network_Callback_XStreamRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	//接受到数据后直接投递给TCP包管理器,因为可能不是一个完整的包,所以我们的期望是通过此得到一个完整的包
 	if (!HelpComponents_Datas_PostEx(xhXStreamPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XStream推流端:%s,投递数据包到组包队列失败，错误:%lX"), lpszClientAddr, Packets_GetLastError());
 		return;
 	}
 	//需要激活一次
 	SocketOpt_HeartBeat_ActiveAddrEx(xhXStreamHeart, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XEngine推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("XStream推流端:%s,投递数据包到组包队列成功,大小:%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK Network_Callback_XStreamLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
@@ -142,23 +142,6 @@ void CALLBACK Network_Callback_SRTLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszPushAddr[MAX_PATH];
-
-	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
-	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-	//可能是推流也可能是拉流
-	if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
-	{
-		ModuleSession_PullStream_Delete(lpszClientAddr);
-		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
-	}
-	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
-	{
-		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
-		ModuleSession_PushStream_Destroy(lpszClientAddr);
-	}
-
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP == enClientType)
 	{
 		//先关闭网络和心跳,他们主动回调的数据我们可以不用主动调用关闭
@@ -201,7 +184,10 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhJT1078Heart, lpszClientAddr);
 		}
-		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, 0);
+		HelpComponents_PKTCustom_DeleteEx(xhJT1078Pkt, hSocket);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
+		ModuleQueue_JT1078_Destroy(lpszClientAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
@@ -220,7 +206,26 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+		ModuleHelp_SrtCore_Close(lpszClientAddr);
+		HLSProtocol_TSParse_delete(lpszClientAddr);
+		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);
+	}
+	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszPushAddr[MAX_PATH];
+
+	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+	memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+	//可能是推流也可能是拉流
+	if (ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
+	{
+		ModuleSession_PullStream_Delete(lpszClientAddr);
+		ModuleSession_PushStream_ClientDelete(tszPushAddr, lpszClientAddr);
+	}
+	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+	{
+		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
+		ModuleSession_PushStream_Destroy(lpszClientAddr);
 	}
 }
 bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
@@ -241,7 +246,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		//发送数据给指定客户端
 		if (!NetCore_TCPXCore_SendEx(xhXStreamSocket, lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XEngine推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("XStream推流端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return false;
 		}
 		//发送成功激活一次心跳

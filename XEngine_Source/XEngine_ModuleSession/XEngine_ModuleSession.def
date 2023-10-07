@@ -10,12 +10,12 @@ EXPORTS
 	ModuleSession_PullStream_Delete
 	ModuleSession_PullStream_PublishDelete
 	ModuleSession_PullStream_GetList
+	ModuleSession_PullStream_FLVTagSet
+	ModuleSession_PullStream_FLVTagGet
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy
 	ModuleSession_PushStream_GetAddrForAddr
-	ModuleSession_PushStream_SetHDRBuffer
-	ModuleSession_PushStream_GetHDRBuffer
 	ModuleSession_PushStream_FindStream
 	ModuleSession_PushStream_ClientInsert
 	ModuleSession_PushStream_ClientDelete

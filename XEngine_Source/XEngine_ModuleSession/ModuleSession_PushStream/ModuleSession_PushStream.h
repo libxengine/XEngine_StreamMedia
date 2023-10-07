@@ -12,21 +12,12 @@
 *********************************************************************/
 typedef struct
 {
-	XCHAR tszMsgBuffer[2048];              //缓存的头
-	int nMsgLen;                           //缓冲头大小
-}AVPACKET_HDRBUFFER;
-
-typedef struct
-{
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszSMSAddr[MAX_PATH];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 	
-	unique_ptr<mutex> st_MSGLocker;
 	unique_ptr<mutex> st_ClientLocker;
-
 	unique_ptr<list<STREAMMEDIA_SESSIONCLIENT>> pStl_ListClient;
-	unique_ptr<unordered_map<int, AVPACKET_HDRBUFFER>> pStl_MapPushStream;
 }PUSHSTREAM_PACKET;
 
 class CModuleSession_PushStream
@@ -38,8 +29,6 @@ public:
 	bool ModuleSession_PushStream_Create(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
-	bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
-	bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_SetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo);
 	bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo);
 	bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR* ptszClientAddr);

@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2e55d676-e9f5-48b8-b65e-fe0e7c3d2aeb}</ProjectGuid>
-    <RootNamespace>XEngineStreamMediaApp</RootNamespace>
+    <ProjectGuid>{1ab7ff20-7bf7-4e42-ac1b-f8922271ab82}</ProjectGuid>
+    <RootNamespace>APPClientJT1078</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -74,18 +74,6 @@
     <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
-    <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
-    <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
-    <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -104,7 +92,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -118,7 +106,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -132,7 +120,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -143,32 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.cpp" />
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp" />
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientMethod.cpp" />
-    <ClCompile Include="StreamMedia_PushStream\PushStream_SrtTask.cpp" />
-    <ClCompile Include="StreamMedia_PushStream\PushStream_XStreamTask.cpp" />
-    <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp" />
-    <ClCompile Include="StreamMedia_PushStream\PushStream_RTMPTask.cpp" />
-    <ClCompile Include="XEngine_AVPacket.cpp" />
-    <ClCompile Include="XEngine_Configure.cpp" />
-    <ClCompile Include="XEngine_HttpTask.cpp" />
-    <ClCompile Include="XEngine_Network.cpp" />
-    <ClCompile Include="XEngine_StreamMediaApp.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.h" />
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h" />
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientMethod.h" />
-    <ClInclude Include="StreamMedia_PushStream\PushStream_SrtTask.h" />
-    <ClInclude Include="StreamMedia_PushStream\PushStream_XStreamTask.h" />
-    <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h" />
-    <ClInclude Include="StreamMedia_PushStream\PushStream_RTMPTask.h" />
-    <ClInclude Include="XEngine_AVPacket.h" />
-    <ClInclude Include="XEngine_Configure.h" />
-    <ClInclude Include="XEngine_Hdr.h" />
-    <ClInclude Include="XEngine_HttpTask.h" />
-    <ClInclude Include="XEngine_Network.h" />
+    <ClCompile Include="APPClient_JT1078.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

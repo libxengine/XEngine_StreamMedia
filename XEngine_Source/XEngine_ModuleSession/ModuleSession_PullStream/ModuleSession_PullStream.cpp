@@ -301,3 +301,51 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetList(STREAMMEDIA_PUL
 	st_Locker.unlock_shared();
 	return true;
 }
+bool CModuleSession_PullStream::ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	//查找最小
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->nFLVTag = nTagSize;
+	st_Locker.unlock_shared();
+	return true;
+}
+bool CModuleSession_PullStream::ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	//查找最小
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*pInt_TagSize = stl_MapIterator->second->nFLVTag;
+	st_Locker.unlock_shared();
+	return true;
+}

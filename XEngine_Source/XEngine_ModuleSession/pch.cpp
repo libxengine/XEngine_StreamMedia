@@ -59,6 +59,14 @@ extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO * **pp
 {
 	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount);
 }
+extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+}
+extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagGet(lpszClientAddr, pInt_TagSize);
+}
 /*********************************************************************************
 *                          推流导出会话模块                                      *
 *********************************************************************************/
@@ -73,14 +81,6 @@ extern "C" bool ModuleSession_PushStream_Destroy(LPCXSTR lpszClientAddr)
 extern "C" bool ModuleSession_PushStream_GetAddrForAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr)
 {
 	return m_PushStream.ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, ptszSMSAddr);
-}
-extern "C" bool ModuleSession_PushStream_SetHDRBuffer(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	return m_PushStream.ModuleSession_PushStream_SetHDRBuffer(lpszClientAddr, lpszMsgBuffer, nMsgLen, enStreamType);
-}
-extern "C" bool ModuleSession_PushStream_GetHDRBuffer(LPCXSTR lpszClientAddr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType)
-{
-	return m_PushStream.ModuleSession_PushStream_GetHDRBuffer(lpszClientAddr, ptszMsgBuffer, pInt_MsgLen, enStreamType);
 }
 extern "C" bool ModuleSession_PushStream_FindStream(LPCXSTR lpszSMSAddr, XCHAR * ptszClientAddr)
 {

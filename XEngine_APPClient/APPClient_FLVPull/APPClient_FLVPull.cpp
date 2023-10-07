@@ -36,7 +36,7 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	XNETHANDLE xhToken = 0;
-	LPCXSTR lpszFLVUrl = _X("http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv");
+	LPCXSTR lpszFLVUrl = _X("http://127.0.0.1:5600/api?stream=play&sms=live/013699435573_1&type=flv");
 
 	pSt_File = _xtfopen("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\1.flv", "wb");
 
@@ -44,7 +44,7 @@ int main()
 	APIClient_Http_SetUrl(xhToken, lpszFLVUrl, _X("GET"));
 	APIClient_Http_Excute(xhToken);
 	
-	std::this_thread::sleep_for(std::chrono::seconds(10));
+	std::this_thread::sleep_for(std::chrono::seconds(20));
 
 	APIClient_Http_Close(xhToken);
 	fclose(pSt_File);

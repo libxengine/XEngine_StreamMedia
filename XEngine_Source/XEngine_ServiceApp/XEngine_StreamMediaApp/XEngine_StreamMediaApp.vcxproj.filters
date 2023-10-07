@@ -51,9 +51,6 @@
     <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp">
       <Filter>源文件\StreamMedia_PushStream</Filter>
     </ClCompile>
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientTask.cpp">
-      <Filter>源文件\StreamMedia_PullStream</Filter>
-    </ClCompile>
     <ClCompile Include="StreamMedia_PushStream\PushStream_RTMPTask.cpp">
       <Filter>源文件\StreamMedia_PushStream</Filter>
     </ClCompile>
@@ -65,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.cpp">
       <Filter>源文件\StreamMedia_HTTPApi</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp">
+      <Filter>源文件\StreamMedia_PullStream</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientMethod.cpp">
+      <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,9 +89,6 @@
     <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h">
       <Filter>头文件\StreamMedia_PushStream</Filter>
     </ClInclude>
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientTask.h">
-      <Filter>头文件\StreamMedia_PullStream</Filter>
-    </ClInclude>
     <ClInclude Include="StreamMedia_PushStream\PushStream_RTMPTask.h">
       <Filter>头文件\StreamMedia_PushStream</Filter>
     </ClInclude>
@@ -100,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="StreamMedia_HTTPApi\StreamMedia_HTTPApi.h">
       <Filter>头文件\StreamMedia_HTTPApi</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h">
+      <Filter>头文件\StreamMedia_PullStream</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientMethod.h">
+      <Filter>头文件\StreamMedia_PullStream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

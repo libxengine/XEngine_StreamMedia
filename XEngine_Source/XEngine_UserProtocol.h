@@ -25,7 +25,8 @@ typedef enum
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM = 0x10,
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV = 0x11,
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP = 0x12,
-	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT = 0x13
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT = 0x13,
+	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTSP = 0x14
 }ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE;
 /*********************************************************************
 						操作类型定义
@@ -71,47 +72,34 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct
 {
-	XBYTE byFlags[4];
+	XBYTE byFlags[4];                //标识符
+	//固定位
+	XBYTE byCC : 4;                  //1
+	XBYTE byX : 1;                   //0
+	XBYTE byP : 1;                   //0
+	XBYTE byV : 2;                   //2
 
-	XBYTE byCC : 4;
-	XBYTE byX : 1;
-	XBYTE byP : 1;
-	XBYTE byV : 2;
-
-	XBYTE byPT : 7;
-	XBYTE byM : 1;
-
-	XSHOT wSerial;
-	XBYTE bySIMNumber[6];
-	XBYTE byChannel;
-
-	XBYTE byPacket : 4;
-	XBYTE byType : 4;
-	__int64u ullTimestamp;
-}XENGINE_RTPPACKETHDR2016;
-typedef struct
-{
-	XBYTE byV : 2;
-	XBYTE byP : 1;
-	XBYTE byX : 1;
-	XBYTE byCC : 4;
-
-	XBYTE byM : 1;
-	XBYTE byPT : 7;
+	XBYTE byPT : 7;                  //负载类型.98为视频
+	XBYTE byM : 1;                   //为1表示完整数据标识
 
 	XSHOT wSerial;
 	XBYTE bySIMNumber[6];
 	XBYTE byChannel;
 
-	XBYTE byType : 4;
-	XBYTE byPacket : 4;
+	XBYTE byPacket : 4;              //分包处理标识,0完整,1开始,2最后,3中间
+	XBYTE byType : 4;                //数据类型,0I帧,1P帧,2B帧,3音频,4透传
 	__int64u ullTimestamp;
-	XSHOT wLen;
-}XENGINE_RTPPACKETHDR2014;
-
+}XENGINE_RTPPACKETHDR;
 typedef struct
 {
 	XSHOT wLastIFrame;
 	XSHOT wLastPBFrame;
 }XENGINE_RTPPACKETTAIL;
+typedef struct
+{
+	__int64u nTimeStamp;                                          //时间戳 
+	int nFrameSize;                                               //帧大小
+	XBYTE byAVType;                                               //音视频类型,0视频,1音频
+	XBYTE byFrameType;                                            //帧类型,1关键帧,否则为其他
+}XENGINE_PROTOCOL_AVDATA;
 #pragma pack(pop)

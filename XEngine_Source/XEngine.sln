@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleSession", "XE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_StreamMediaApp", "XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_StreamMediaApp.vcxproj", "{2E55D676-E9F5-48B8-B65E-FE0E7C3D2AEB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleQueue", "XEngine_ModuleQueue\XEngine_ModuleQueue.vcxproj", "{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -80,6 +82,14 @@ Global
 		{2E55D676-E9F5-48B8-B65E-FE0E7C3D2AEB}.Release|x64.Build.0 = Release|x64
 		{2E55D676-E9F5-48B8-B65E-FE0E7C3D2AEB}.Release|x86.ActiveCfg = Release|Win32
 		{2E55D676-E9F5-48B8-B65E-FE0E7C3D2AEB}.Release|x86.Build.0 = Release|Win32
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Debug|x64.ActiveCfg = Debug|x64
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Debug|x64.Build.0 = Debug|x64
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Debug|x86.ActiveCfg = Debug|Win32
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Debug|x86.Build.0 = Debug|Win32
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Release|x64.ActiveCfg = Release|x64
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Release|x64.Build.0 = Release|x64
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Release|x86.ActiveCfg = Release|Win32
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

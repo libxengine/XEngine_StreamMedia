@@ -13,51 +13,44 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\ModuleQueue_JT1078">
+      <UniqueIdentifier>{5c1c5c82-04b6-4a4a-b4d3-c1bdfdf14045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleQueue_JT1078">
+      <UniqueIdentifier>{948bffea-c649-4e90-b9c8-164446c068ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="XEngine_APPJT1078.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="XEngine_APPJT1078Dlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleQueue_JT1078\ModuleQueue_JT1078.h">
+      <Filter>头文件\ModuleQueue_JT1078</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleQueue_Define.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleQueue_Error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="XEngine_APPJT1078.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="XEngine_APPJT1078Dlg.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleQueue_JT1078\ModuleQueue_JT1078.cpp">
+      <Filter>源文件\ModuleQueue_JT1078</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="XEngineAPPJT1078.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\XEngineAPPJT1078.rc2">
-      <Filter>资源文件</Filter>
+    <None Include="XEngine_ModuleQueue.def">
+      <Filter>源文件</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\XEngine_APPJT1078.ico">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
 </Project>

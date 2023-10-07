@@ -13,3 +13,6 @@
 bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket);
 //任务处理相关函数,处理包的内容
 bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen);
+
+XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam);
+bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType);

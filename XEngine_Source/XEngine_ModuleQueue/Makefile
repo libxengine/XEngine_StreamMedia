@@ -7,10 +7,10 @@ LIBFLAG =
 RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
-LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_Core
-LIB = -lXEngine_OPenSsl
-LIBEX = -lsrt-gnutls
-OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o pch.o
+LOADSO = 
+LIB = 
+LIBEX = 
+OBJECTS = ModuleQueue_JT1078.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
@@ -50,20 +50,18 @@ endif
 
 
 all:$(OBJECTS)
-	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModuleHelp.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModuleQueue.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
-ModuleHelp_JT1078.o:./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_JT1078/ModuleHelp_JT1078.cpp 
-ModuleHelp_SrtCore.o:./ModuleHelp_Srt/ModuleHelp_SrtCore.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_Srt/ModuleHelp_SrtCore.cpp 
+ModuleQueue_JT1078.o:./ModuleQueue_JT1078/ModuleQueue_JT1078.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleQueue_JT1078/ModuleQueue_JT1078.cpp 
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModuleHelp.$(FILEEXT)
-	cp ./libXEngine_ModuleHelp.$(FILEEXT) ../../XEngine_Release/libXEngine_ModuleHelp.$(FILEEXT)
+InstallSo:./libXEngine_ModuleQueue.$(FILEEXT)
+	cp ./libXEngine_ModuleQueue.$(FILEEXT) ../../XEngine_Release/libXEngine_ModuleQueue.$(FILEEXT)
 
 
 CleanAll:CleanObj CleanMk

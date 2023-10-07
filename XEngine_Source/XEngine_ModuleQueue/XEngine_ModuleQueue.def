@@ -1,0 +1,9 @@
+LIBRARY
+
+EXPORTS
+	ModuleQueue_GetLastError
+
+	ModuleQueue_JT1078_Create
+	ModuleQueue_JT1078_Destroy
+	ModuleQueue_JT1078_Insert
+	ModuleQueue_JT1078_Get
