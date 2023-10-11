@@ -16,23 +16,6 @@ c c++ streammedia server  
 ## 软件架构
 基于libXEngine开发并实现的一套简洁高性能跨平台流媒体解析推流服务  
 
-推流支持:
-1. RTMP(H264,H265,AAC)
-2. XStream
-3. SRT
-4. JT1078
-5. GB28181(planning)
-6. WEBRTC(planning)
-
-拉流支持:
-1. srt
-2. RTMP(H264,H265,AAC)
-3. FLV(H264,H265,AAC)
-4. XStream
-5. HLS(TS)(planning)
-6. webrtc(planning)
-7. RTSP(planning)
-
 特性:  
 1. 支持语音对讲(planning)
 2. 支持视频转码(planning)
@@ -41,6 +24,17 @@ c c++ streammedia server  
 5. 支持透传数据(planning)
 6. 支持HTTP API管理接口
 7. 支持HTTP HOOK(planning)
+
+支持协议:  
+|  推流   | 拉流  |
+|  ----  | ----  |
+| RTMP(H264,H265,AAC)  | RTMP(H264,H265,AAC) |
+| XStream  | XStream |
+| SRT  | SRT |
+| JT1078  | FLV(H264,H265,AAC) |
+| XStream  | HLS(TS)(planning) |
+| webrtc(planning)  | webrtc(planning) |
+| GB28181(planning)  | RTSP(planning) |
 
 ## 安装教程
 

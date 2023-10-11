@@ -13,23 +13,6 @@ This is a cross-platform server, provides a complete demo code
 ## Software feature
 A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
 
-Push stream Protocol:
-1. RTMP(H264,H265,AAC)
-2. XStream
-3. SRT
-4. JT1078(planning)
-5. GB28181(planning)
-6. WEBRTC(planning)
-
-Pull Stream Protocols:  
-1. srt
-2. RTMP(H264,H265,AAC)
-3. FLV(H264,H265,AAC)
-4. XStream
-4. HLS(TS)(planning)
-5. webrtc(planning)
-6. RTSP(planning)
-
 feature:  
 1. Support voice intercom(planning)
 2. Support video transcoding(planning)
@@ -38,6 +21,17 @@ feature:
 5. Support Transparent transmission(planning)
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
+
+Protocol Support:  
+|  publish   | play  |
+|  ----  | ----  |
+| RTMP(H264,H265,AAC)  | RTMP(H264,H265,AAC) |
+| XStream  | XStream |
+| SRT  | SRT |
+| JT1078  | FLV(H264,H265,AAC) |
+| XStream  | HLS(TS)(planning) |
+| webrtc(planning)  | webrtc(planning) |
+| GB28181(planning)  | RTSP(planning) |
 
 ## install
 
