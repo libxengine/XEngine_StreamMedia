@@ -138,8 +138,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	//pSt_VFile = _xtfopen("./1.ts", "wb");
-	//pSt_AFile = _xtfopen("./1.h264", "wb");
+	pSt_VFile = _xtfopen("./1.ts", "wb");
+	pSt_AFile = _xtfopen("./1.h264", "wb");
 
 	st_XLogConfig.XLog_MaxBackupFile = 10;
 	st_XLogConfig.XLog_MaxSize = 1024000;

@@ -52,8 +52,10 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
+	int nPMLen = 0;
 	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	
 	if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_CONNREQ == pSt_RTMPHdr->byTypeID)
 	{
@@ -423,7 +425,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+		RTMPProtocol_Help_ParseAudio(&st_RTMPAudio, ptszMSGBuffer, &nPMLen, lpszMsgBuffer + sizeof(XENGINE_RTMPAUDIO), nMsgLen - sizeof(XENGINE_RTMPAUDIO));
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, ptszMSGBuffer, nPMLen, 0, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据"), lpszClientAddr);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_VIDEO == pSt_RTMPHdr->byTypeID)
@@ -436,12 +439,14 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		}
-		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+		RTMPProtocol_Help_ParseVideo(&st_RTMPVideo, ptszMSGBuffer, &nPMLen, lpszMsgBuffer + sizeof(XENGINE_RTMPVIDEO), nMsgLen - sizeof(XENGINE_RTMPVIDEO));
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, ptszMSGBuffer, nPMLen, 0, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 	
 	free(ptszRVBuffer);
 	free(ptszSDBuffer);
+	free(ptszMSGBuffer);
 	ptszRVBuffer = NULL;
 	ptszSDBuffer = NULL;
 	return true;
