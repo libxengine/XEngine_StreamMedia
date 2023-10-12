@@ -265,7 +265,7 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	}
 	return true;
 }
-bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nTimeStamp, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
+bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
 {
 	XBYTE byFrameType = 0;
 	if (0 == byAVType)
@@ -289,9 +289,9 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		memset(&st_ProtocolAVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVDATA));
 
 		st_ProtocolAVInfo.byAVType = byAVType;
-		st_ProtocolAVInfo.byFrameType = 0;
+		st_ProtocolAVInfo.byFrameType = byFrameType;
 		st_ProtocolAVInfo.nFrameSize = nMsgLen;
-		st_ProtocolAVInfo.nTimeStamp = nTimeStamp;
+		st_ProtocolAVInfo.nTimeStamp = 0;
 
 		*pInt_SDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nMsgLen);
 
