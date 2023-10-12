@@ -449,5 +449,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	free(ptszMSGBuffer);
 	ptszRVBuffer = NULL;
 	ptszSDBuffer = NULL;
+	ptszMSGBuffer = NULL;
 	return true;
 }

@@ -117,7 +117,6 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 
 	if (0x1b == byAVType)
 	{
-		fwrite(lpszMsgBuffer, 1, nMsgLen, pSt_AFile);
 		int nPos = 0;
 		int nNALLen = 0;
 		int nFIXLen = 0;
@@ -149,7 +148,7 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 	{
 		//AAC
 		XEngine_AVPacket_AVHdr(lpszClientAddr, lpszMsgBuffer, nMsgLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer, nMsgLen, 1);
+		XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, lpszMsgBuffer + 7, nMsgLen - 7, 1);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 
