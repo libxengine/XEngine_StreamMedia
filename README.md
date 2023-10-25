@@ -10,7 +10,7 @@
 c c++ 流媒体服务器  
 c c++ streammedia server  
 这是一个支持多种流协议的流媒体服务器,他支持推流和拉流,支持各种主流标准协议的流媒体服务器
-他还可以作为抽帧服务和转码服务使用.  
+他还可以作为抽帧服务和转码服务使用.  
 这是一个跨平台的流媒体服务器,提供了完整的演示代码  
 
 ## 软件架构
@@ -25,17 +25,28 @@ c c++ streammedia server  
 6. 支持HTTP API管理接口
 7. 支持HTTP HOOK(planning)
 
-支持协议:  
-|  推流   | 拉流  |
-|  ----  | ----  |
-| RTMP(H264,H265,AAC)  | RTMP(H264,H265,AAC) |
-| XStream  | XStream |
-| SRT  | SRT |
-| JT1078  | FLV(H264,H265,AAC) |
-| XStream  | HLS(TS)(planning) |
-| webrtc(planning)  | webrtc(planning) |
-| GB28181(planning)  | RTSP(planning) |
+推流协议:
 
+| 协议名称 | 视频格式  | 音频格式 | 当前状态 |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264,H265 | AAC      | 已完成   |
+| SRT      | H264,H265 | AAC      | 已完成   |
+| WEBRTC   | H264,H265 | AAC      | 未开始   |
+| GB28181  | H264,H265 | AAC      | 未开始   |
+| JT1078   | H264,H265 | AAC      | 已完成   |
+| XStream  | H264,H265 | AAC      | 已完成   |
+  
+拉流协议:
+
+| 协议名称 | 视频格式  | 音频格式 | 当前状态 |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264      | AAC      | 已完成   |
+| SRT      | H264,H265 | AAC      | 已完成   |
+| WEBRTC   | H264,H265 | AAC      | 未开始   |
+| HTTP-FLV | H264      | AAC      | 已完成   |
+| XStream  | H264,H265 | AAC      | 已完成   |
+| RTSP     | H264,H265 | AAC      | 进行中   |
+  
 ## 安装教程
 
 #### XEngine环境
@@ -46,20 +57,20 @@ GITHUB:https://github.com/libxengine/xengine  
 
 #### 快速部署
 
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
-window执行XEngine_WINEnv.bat 脚本.  
-Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
-macos执行:./XEngine_LINEnv.sh -i 3  
+git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
+window执行XEngine_WINEnv.bat 脚本.  
+Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
+macos执行:./XEngine_LINEnv.sh -i 3  
 
 #### Windows
 
-使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
+使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
 还需要libsrt库,通过vcpkg安装
 
 #### Linux
-配置完XEngine后需要安装srt库  
-ubuntu:sudo apt install libsrt-openssl-dev  
-Rockylinux:sudo dnf install srt-devel  
+配置完XEngine后需要安装srt库  
+ubuntu:sudo apt install libsrt-openssl-dev  
+Rockylinux:sudo dnf install srt-devel  
 
 Linux使用Makefile编译  
 UBUNTU22.04 或者 RockyLinux 9 x64均可  
@@ -72,8 +83,8 @@ make FLAGS=InstallAll 安装库程序  
 make FLAGS=CleanAll 清理编译  
 
 #### MacOS
-配置完XEngine后需要安装srt库  
-ubuntu:sudo brew install libsrt  
+配置完XEngine后需要安装srt库  
+ubuntu:sudo brew install libsrt  
 使用makefile编译,控制台运行,需要mac 13以及以上版本
 
 ###### 编译命令
@@ -93,19 +104,19 @@ ubuntu:sudo brew install libsrt
 ## 示例
 
 #### 推流示例
-rtmp://127.0.0.1/live/qyt  
-srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish  
-xstream://127.0.0.1:5601(参考例子)  
+1. rtmp://127.0.0.1/live/qyt
+2. srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish
+3. xstream://127.0.0.1:5601
 
 #### 拉流示例
-http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
-rtmp://127.0.0.1/live/qyt  
-srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
-xstream://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)  
+1. http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)
+2. rtmp://127.0.0.1/live/qyt
+3. srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request
+4. http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
 
 #### 管理接口示例
-http://127.0.0.1:5600/api?function=publish&method=get  
-http://127.0.0.1:5600/api?function=pull&method=get
+1. http://127.0.0.1:5600/api?function=publish&method=get
+2. http://127.0.0.1:5600/api?function=pull&method=get
 
 ## 目录结构
 
@@ -123,7 +134,9 @@ http://127.0.0.1:5600/api?function=pull&method=get
 
 ## 关注我们
 
-如果你觉得这个软件对你有帮助,请你给我们一个START吧
+如果你觉得这个软件对你有帮助,请你给我们一个START吧  
+也可以通过微信关注我们  
+![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## 提交问题
 

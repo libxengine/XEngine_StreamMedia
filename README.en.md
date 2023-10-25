@@ -22,16 +22,27 @@ feature:
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
 
-Protocol Support:  
-|  publish   | play  |
-|  ----  | ----  |
-| RTMP(H264,H265,AAC)  | RTMP(H264,H265,AAC) |
-| XStream  | XStream |
-| SRT  | SRT |
-| JT1078  | FLV(H264,H265,AAC) |
-| XStream  | HLS(TS)(planning) |
-| webrtc(planning)  | webrtc(planning) |
-| GB28181(planning)  | RTSP(planning) |
+Publish Stream:
+
+| ProtocolName | VideoCodec  | AudioCodec | Status |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264,H265 | AAC      | Completed   |
+| SRT      | H264,H265 | AAC      | Completed   |
+| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| GB28181  | H264,H265 | AAC      | Not Start   |
+| JT1078   | H264,H265 | AAC      | Completed   |
+| XStream  | H264,H265 | AAC      | Completed   |
+  
+Play Stream:
+
+| ProtocolName | VideoCodec  | AudioCodec | Status |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264      | AAC      | Completed   |
+| SRT      | H264,H265 | AAC      | Completed   |
+| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| HTTP-FLV | H264      | AAC      | Completed   |
+| XStream  | H264,H265 | AAC      | Completed   |
+| RTSP     | H264,H265 | AAC      | Process   |
 
 ## install
 
@@ -83,18 +94,19 @@ refer to linux
 
 ## example 
 #### publish Stream
-rtmp://127.0.0.1/live/qyt  
-srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish  
-xstream://127.0.0.1:5601(refer example)  
+1. rtmp://127.0.0.1/live/qyt
+2. srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish
+3. xstream://127.0.0.1:5601
+
 #### Pull Stream
-http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
-rtmp://127.0.0.1/live/qyt  
-srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
-xstream://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)  
+1. http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)
+2. rtmp://127.0.0.1/live/qyt
+3. srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request
+4. http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
 
 #### Management HTTP API
-http://127.0.0.1:5600/api?function=publish&method=get  
-http://127.0.0.1:5600/api?function=pull&method=get
+1. http://127.0.0.1:5600/api?function=publish&method=get
+2. http://127.0.0.1:5600/api?function=pull&method=get
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
@@ -110,7 +122,9 @@ http://127.0.0.1:5600/api?function=pull&method=get
 4.  New Pull Request
 
 ## Follow us
-If you think this software is helpful to you, please give us a START
+If you think this software is helpful to you, please give us a START  
+and wechat qr scan to follow us 
+![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## post issues
 
