@@ -76,7 +76,7 @@ make FLAGS=CleanAll Clear Complie
 
 #### MacOS
 install srt library after Configure Xengine to Completed  
-ubuntu:sudo brew install libsrt  
+brew install libsrt  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command
@@ -94,19 +94,19 @@ refer to linux
 
 ## example 
 #### publish Stream
-1. rtmp://127.0.0.1/live/qyt
-2. srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish
-3. xstream://127.0.0.1:5601
+rtmp://127.0.0.1/live/qyt  
+srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish  
+xstream://127.0.0.1:5601
 
 #### Pull Stream
-1. http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)
-2. rtmp://127.0.0.1/live/qyt
-3. srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request
-4. http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
+http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
+rtmp://127.0.0.1/live/qyt  
+srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
+http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
 
 #### Management HTTP API
-1. http://127.0.0.1:5600/api?function=publish&method=get
-2. http://127.0.0.1:5600/api?function=pull&method=get
+http://127.0.0.1:5600/api?function=publish&method=get  
+http://127.0.0.1:5600/api?function=pull&method=get
 
 ## Dir Struct
 - XEngine_Docment Docment Dir Struct
@@ -122,8 +122,9 @@ refer to linux
 4.  New Pull Request
 
 ## Follow us
-If you think this software is helpful to you, please give us a START  
-and wechat qr scan to follow us 
+
+如果你觉得这个软件对你有帮助,请你给我们一个START吧  
+也可以通过微信关注我们  
 ![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## post issues
