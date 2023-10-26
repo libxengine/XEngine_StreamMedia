@@ -38,11 +38,13 @@ Play Stream:
 | ProtocolName | VideoCodec  | AudioCodec | Status |
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
+| RTSP     | H264,H265 | AAC      | Process     |
+| TS       | H264,H265 | AAC      | Process     |
 | SRT      | H264,H265 | AAC      | Completed   |
 | WEBRTC   | H264,H265 | AAC      | Not Start   |
 | HTTP-FLV | H264      | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
-| RTSP     | H264,H265 | AAC      | Process   |
+
 
 ## install
 

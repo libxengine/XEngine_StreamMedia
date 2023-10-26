@@ -41,12 +41,13 @@ c c++ streammedia server
 | 协议名称 | 视频格式  | 音频格式 | 当前状态 |
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
+| RTSP     | H264,H265 | AAC      | 进行中   |
+| TS       | H264,H265 | AAC      | 进行中   |
 | SRT      | H264,H265 | AAC      | 已完成   |
 | WEBRTC   | H264,H265 | AAC      | 未开始   |
 | HTTP-FLV | H264      | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
-| RTSP     | H264,H265 | AAC      | 进行中   |
-  
+
 ## 安装教程
 
 #### XEngine环境
