@@ -150,6 +150,37 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
 			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
 		}
+		else if (0 == _tcsxnicmp(tszVluBuffer, "ts", 2))
+		{
+			int nPATLen = 0;
+			int nPMTLen = 0;
+			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS;
+
+			memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
+			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+
+			HLSProtocol_TSPacket_PATInfo(tszPushAddr, (XBYTE*)tszRVBuffer, &nPATLen);
+			HLSProtocol_TSPacket_PMTInfo(tszPushAddr, (XBYTE*)tszRVBuffer + nPATLen, &nPMTLen);
+			nRVLen = nPATLen + nPMTLen;
+			//返回数据,为HTTP CHUNKED
+			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
+				"Connection: Close\r\n"
+				"Content-Type: video/x-stream\r\n"
+				"Server: XEngine/%s\r\n"
+				"Access-Control-Allow-Origin: *\r\n"
+				"Access-Control-Allow-Credentials: true\r\n"
+				"Transfer-Encoding: chunked\r\n\r\n"
+				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
+			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
+			nSDLen += nRVLen;
+			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
+			nSDLen += 2;
+
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+
+			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
+			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+		}
 		else
 		{
 			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 500, "not support");

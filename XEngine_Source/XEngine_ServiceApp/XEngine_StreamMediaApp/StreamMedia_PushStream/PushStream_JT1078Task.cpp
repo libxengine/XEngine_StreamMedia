@@ -96,7 +96,7 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078:%s,流媒体服务创建,设备ID：%s,通道:%d,创建地址:%s"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, tszSMSAddr);
 	}
-	//H264
+	
 	if (3 == pSt_RTPHdr->byType)
 	{
 		//音频
@@ -132,7 +132,7 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 				{
 					XEngine_AVPacket_AVHdr(lpszClientAddr, ptszMsgBuffer, nMLen, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
 				}
-				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, ptszMsgBuffer, nMLen, -1, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, lpszClientAddr, ptszMsgBuffer, nMLen, 0);
 			}
 		}
 	}

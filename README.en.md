@@ -13,23 +13,6 @@ This is a cross-platform server, provides a complete demo code
 ## Software feature
 A set of concise and high-performance cross-platform streaming media analysis and push streaming services developed and implemented based on libXEngine  
 
-Push stream Protocol:
-1. RTMP(H264,H265,AAC)
-2. XStream
-3. SRT
-4. JT1078(planning)
-5. GB28181(planning)
-6. WEBRTC(planning)
-
-Pull Stream Protocols:  
-1. srt
-2. RTMP(H264,H265,AAC)
-3. FLV(H264,H265,AAC)
-4. XStream
-4. HLS(TS)(planning)
-5. webrtc(planning)
-6. RTSP(planning)
-
 feature:  
 1. Support voice intercom(planning)
 2. Support video transcoding(planning)
@@ -38,6 +21,30 @@ feature:
 5. Support Transparent transmission(planning)
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
+
+Publish Stream:
+
+| ProtocolName | VideoCodec  | AudioCodec | Status |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264,H265 | AAC      | Completed   |
+| SRT      | H264,H265 | AAC      | Completed   |
+| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| GB28181  | H264,H265 | AAC      | Not Start   |
+| JT1078   | H264,H265 | AAC      | Completed   |
+| XStream  | H264,H265 | AAC      | Completed   |
+  
+Play Stream:
+
+| ProtocolName | VideoCodec  | AudioCodec | Status |
+| -------- | --------- | -------- | -------- |
+| RTMP     | H264      | AAC      | Completed   |
+| RTSP     | H264,H265 | AAC      | Process     |
+| TS       | H264,H265 | AAC      | Process     |
+| SRT      | H264,H265 | AAC      | Completed   |
+| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| HTTP-FLV | H264      | AAC      | Completed   |
+| XStream  | H264,H265 | AAC      | Completed   |
+
 
 ## install
 
@@ -71,7 +78,7 @@ make FLAGS=CleanAll Clear Complie
 
 #### MacOS
 install srt library after Configure Xengine to Completed  
-ubuntu:sudo brew install libsrt  
+brew install libsrt  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command
@@ -89,14 +96,15 @@ refer to linux
 
 ## example 
 #### publish Stream
-rtmp://127.0.0.1/live/qyt  
+rtmp://127.0.0.1/live/qyt  
 srt://127.0.0.1:5603?streamid=#!::h=live/qyt,m=publish  
-xstream://127.0.0.1:5601(refer example)  
+xstream://127.0.0.1:5601
+
 #### Pull Stream
 http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
-rtmp://127.0.0.1/live/qyt  
+rtmp://127.0.0.1/live/qyt  
 srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
-xstream://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)  
+http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
 
 #### Management HTTP API
 http://127.0.0.1:5600/api?function=publish&method=get  
@@ -116,7 +124,10 @@ http://127.0.0.1:5600/api?function=pull&method=get
 4.  New Pull Request
 
 ## Follow us
-If you think this software is helpful to you, please give us a START
+
+如果你觉得这个软件对你有帮助,请你给我们一个START吧  
+也可以通过微信关注我们  
+![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## post issues
 
