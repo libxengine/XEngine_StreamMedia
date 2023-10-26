@@ -1,3 +1,17 @@
+XEngine_StreamMedia V2.4.0.1001
+
+增加:http ts播放流支持
+增加:TS流转换代码
+优化:转换流协议代码,现在avframe函数都是输入源数据了
+修复:srt转换的问题
+删除:avpacket没有使用的参数
+
+added:http ts play stream
+added:ts convert code
+improved:convert stream protocol,now XEngine_AVPacket_AVFrame input source stream
+fixed:srt convert problem
+delete:avpacket unused parament
+=======================================================
 XEngine_StreamMedia V2.3.0.1001
 
 增加:队列模块
