@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ModuleHelp_JT1078/ModuleHelp_JT1078.h"
 #include "ModuleHelp_Srt/ModuleHelp_SrtCore.h"
+#include "ModuleHelp_Rtsp/ModuleHelp_Rtsp.h"
 /********************************************************************
 //    Created:     2022/04/24  16:28:09
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleHelp\pch.cpp
@@ -17,6 +18,7 @@ XLONG ModuleHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CModuleHelp_JT1078 m_HelpJT1078;
 CModuleHelp_SrtCore m_SrtCore;
+CModuleHelp_Rtsp m_HelpRtsp;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -65,4 +67,11 @@ extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, SRTSOCKET hSock
 extern "C" bool ModuleHelp_SrtCore_Destory()
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Destory();
+}
+/************************************************************************/
+/*                         导出的RTSP函数                               */
+/************************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR * ptszSMSAddr)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetSMSAddr(lpszURLStr, ptszSMSAddr);
 }

@@ -12,3 +12,5 @@ EXPORTS
 	ModuleHelp_SrtCore_GetStreamID
 	ModuleHelp_SrtCore_Close
 	ModuleHelp_SrtCore_Destory
+
+	ModuleHelp_Rtsp_GetSMSAddr

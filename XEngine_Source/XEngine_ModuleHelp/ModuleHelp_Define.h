@@ -152,3 +152,25 @@ extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, SRTSOCKE
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_Destory();
+/************************************************************************/
+/*                         导出的RTSP函数                               */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetSMSAddr
+函数功能：获得流媒体地址
+ 参数.一：lpszURLStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的URL
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获得的流媒体地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR* ptszSMSAddr);
