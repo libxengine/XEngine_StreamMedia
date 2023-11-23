@@ -38,8 +38,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
-#include <XEngine_Include/XEngine_RfcComponents/SDPProtocol_Define.h>
-#include <XEngine_Include/XEngine_RfcComponents/SDPProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Define.h>
@@ -160,7 +160,7 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
-#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_SDPProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_SDPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTMPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_HLSProtocol.lib")
