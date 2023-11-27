@@ -19,4 +19,5 @@ EXPORTS
 	ModuleHelp_Rtsp_SetClient
 	ModuleHelp_Rtsp_GetClient
 	ModuleHelp_Rtsp_SetSession
+	ModuleHelp_Rtsp_GetSession
 	ModuleHelp_Rtsp_SetSsrc

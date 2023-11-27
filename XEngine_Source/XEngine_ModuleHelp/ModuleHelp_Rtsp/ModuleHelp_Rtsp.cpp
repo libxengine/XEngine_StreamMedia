@@ -243,6 +243,38 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR 
 	return true;
 }
 /********************************************************************
+函数名称：ModuleHelp_Rtsp_GetSession
+函数功能：获取一个会话ID
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszSessionStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的会话ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR* ptszSessionStr)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO>::iterator stl_MapIterator = stl_MapRTSPClient.find(lpszClientID);
+	if (stl_MapIterator == stl_MapRTSPClient.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_RTSP_NOTFOUND;
+		return false;
+	}
+	_tcsxcpy(ptszSessionStr, stl_MapIterator->second.tszSession);
+	return true;
+}
+/********************************************************************
 函数名称：ModuleHelp_Rtsp_SetSsrc
 函数功能：设置一个RTSP的RTP关联的SSRC
  参数.一：lpszClientID

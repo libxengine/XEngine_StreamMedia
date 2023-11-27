@@ -95,6 +95,10 @@ extern "C" bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSes
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_SetSession(lpszClientID, lpszSessionStr);
 }
+extern "C" bool ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR * ptszSessionStr)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetSession(lpszClientID, ptszSessionStr);
+}
 extern "C" bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo)
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_SetSsrc(lpszClientID, lpszSsrcStr, bVideo);

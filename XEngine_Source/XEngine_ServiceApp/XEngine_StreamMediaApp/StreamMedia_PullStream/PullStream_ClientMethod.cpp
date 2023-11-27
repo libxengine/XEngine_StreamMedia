@@ -151,9 +151,8 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	}
 	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_SETUP == st_RTSPRequest.enMethod)
 	{
+		ModuleHelp_Rtsp_GetSession(lpszClientAddr, st_RTSPResponse.tszSession);
 		ModuleHelp_Rtsp_SetClient(lpszClientAddr, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort, st_RTSPRequest.st_ChannelInfo.nChannelNumber);
-
-		
 
 		st_RTSPResponse.st_TransportInfo.st_TransFlags.bAVP = true;
 		st_RTSPResponse.st_TransportInfo.st_TransFlags.bRTP = true;

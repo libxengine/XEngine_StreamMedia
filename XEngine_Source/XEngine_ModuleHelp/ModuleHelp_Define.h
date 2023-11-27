@@ -290,6 +290,25 @@ extern "C" bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPor
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr);
 /********************************************************************
+函数名称：ModuleHelp_Rtsp_GetSession
+函数功能：获取一个会话ID
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszSessionStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的会话ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR* ptszSessionStr);
+/********************************************************************
 函数名称：ModuleHelp_Rtsp_SetSsrc
 函数功能：设置一个RTSP的RTP关联的SSRC
  参数.一：lpszClientID
