@@ -75,3 +75,27 @@ extern "C" bool ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR * ptszSMSAd
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_GetSMSAddr(lpszURLStr, ptszSMSAddr);
 }
+extern "C" bool ModuleHelp_Rtsp_CreateClient(LPCXSTR lpszClientID, int nVControlID, int nAControlID)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_CreateClient(lpszClientID, nVControlID, nAControlID);
+}
+extern "C" bool ModuleHelp_Rtsp_DeleteClient(LPCXSTR lpszClientID)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_DeleteClient(lpszClientID);
+}
+extern "C" bool ModuleHelp_Rtsp_SetClient(LPCXSTR lpszClientID, int nRTPPort, int nRTCPPort, int nTrackID)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_SetClient(lpszClientID, nRTPPort, nRTCPPort, nTrackID);
+}
+extern "C" bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort, int* pInt_RTCPPort, bool bVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetClient(lpszClientID, pInt_RTPPort, pInt_RTCPPort, bVideo);
+}
+extern "C" bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_SetSession(lpszClientID, lpszSessionStr);
+}
+extern "C" bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_SetSsrc(lpszClientID, lpszSsrcStr, bVideo);
+}

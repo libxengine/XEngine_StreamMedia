@@ -14,3 +14,9 @@ EXPORTS
 	ModuleHelp_SrtCore_Destory
 
 	ModuleHelp_Rtsp_GetSMSAddr
+	ModuleHelp_Rtsp_CreateClient
+	ModuleHelp_Rtsp_DeleteClient
+	ModuleHelp_Rtsp_SetClient
+	ModuleHelp_Rtsp_GetClient
+	ModuleHelp_Rtsp_SetSession
+	ModuleHelp_Rtsp_SetSsrc

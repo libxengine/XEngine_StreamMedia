@@ -27,3 +27,7 @@
 #define ERROR_MODULE_HELP_SRT_ACCEPT 0xD1008                              //接受失败
 #define ERROR_MODULE_HELP_SRT_GETID 0xD1009                               //获取STREAMID
 #define ERROR_MODULE_HELP_SRT_NOTFOUND 0xD100A                            //没有找到
+//////////////////////////////////////////////////////////////////////////
+//                        导出的RTSP错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_MODULE_HELP_RTSP_NOTFOUND 0xD2001                           //参数错误

@@ -133,8 +133,36 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 		SDPProtocol_Packet_GetPacket(xhSDPToken, tszRVBuffer, &nRVLen);
 		SDPProtocol_Packet_Destory(xhSDPToken);
+		ModuleHelp_Rtsp_CreateClient(lpszClientAddr, 0, 1);
+
+		st_RTSPResponse.nPLen = nRVLen;
+		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+		XEngine_Network_Send(lpszClientAddr, tszRVBuffer, nRVLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求DESCRIBE选项成功,请求的拉流ID:%s"), lpszClientAddr, tszSMSAddr);
+	}
+	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_SETUP == st_RTSPRequest.enMethod)
+	{
+		ModuleHelp_Rtsp_SetClient(lpszClientAddr, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort, st_RTSPRequest.st_ChannelInfo.nChannelNumber);
+
+		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession);
+		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
+
+		st_RTSPResponse.st_TransportInfo.st_TransFlags.bAVP = true;
+		st_RTSPResponse.st_TransportInfo.st_TransFlags.bRTP = true;
+		st_RTSPResponse.st_TransportInfo.st_TransFlags.bUDP = true;
+		st_RTSPResponse.st_TransportInfo.st_TransTypes.bUnicast = true;
+
+		st_RTSPResponse.st_TransportInfo.st_ClientPorts.nRTPPort = st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort;
+		st_RTSPResponse.st_TransportInfo.st_ClientPorts.nRTCPPort = st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort;
+
+		st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTPPort = 0;
+		st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTCPPort = 1;
+		_tcsxcpy(st_RTSPResponse.st_TransportInfo.tszSSRCStr, _X("0000002"));
+
+		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求SETUP选项成功,请求的拉流ID:%s"), lpszClientAddr);
 	}
 	else
 	{

@@ -10,6 +10,18 @@
 //    Purpose:     RTSP协议处理帮助函数
 //    History:
 *********************************************************************/
+typedef struct  
+{
+	XCHAR tszSession[64];
+	XCHAR tszVSsrc[64];
+	XCHAR tszASsrc[64];
+	int nVTrackID;
+	int nATrackID;
+	int nVideoRTPPort;
+	int nVideoRTCPPort;
+	int nAudioRTPPort;
+	int nAudioRTCPPort;
+}RTSPPROTOCOL_CLIENTINFO;
 
 class CModuleHelp_Rtsp
 {
@@ -18,6 +30,14 @@ public:
 	~CModuleHelp_Rtsp();
 public:
 	bool ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR* ptszSMSAddr);
+public:
+	bool ModuleHelp_Rtsp_CreateClient(LPCXSTR lpszClientID, int nVControlID, int nAControlID);
+	bool ModuleHelp_Rtsp_DeleteClient(LPCXSTR lpszClientID);
+	bool ModuleHelp_Rtsp_SetClient(LPCXSTR lpszClientID, int nRTPPort, int nRTCPPort, int nTrackID);
+	bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort, int* pInt_RTCPPort, bool bVideo = true);
+	bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr);
+	bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo = true);
 protected:
 private:
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO> stl_MapRTSPClient;
 };

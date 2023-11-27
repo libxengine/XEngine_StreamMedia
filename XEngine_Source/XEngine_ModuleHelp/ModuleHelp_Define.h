@@ -174,3 +174,142 @@ extern "C" bool ModuleHelp_SrtCore_Destory();
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR* ptszSMSAddr);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_CreateClient
+函数功能：创建一个RTSP客户端管理器
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：nVControlID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：视频ID
+ 参数.三：nAControlID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：音频控制ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_CreateClient(LPCXSTR lpszClientID, int nVControlID, int nAControlID);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_DeleteClient
+函数功能：删除一个RTSP客户端
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_DeleteClient(LPCXSTR lpszClientID);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_SetClient
+函数功能：设置一个RTSP客户端管理器
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：nRTPPort
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：RTP端口
+ 参数.三：nRTCPPort
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：RTCP端口
+ 参数.四：nTrackID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：所属端口音视频类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_SetClient(LPCXSTR lpszClientID, int nRTPPort, int nRTCPPort, int nTrackID);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetClient
+函数功能：获取一个RTSP客户端管理器
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：pInt_RTPPort
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：RTP端口
+ 参数.三：pInt_RTCPPort
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：RTCP端口
+ 参数.四：nTrackID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：所属端口音视频类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort, int* pInt_RTCPPort, bool bVideo = true);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_SetSession
+函数功能：设置一个会话ID
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：lpszSessionStr
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输入要设置的会话ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_SetSsrc
+函数功能：设置一个RTSP的RTP关联的SSRC
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：lpszSsrcStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要关联的SSRC
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：输入关联的类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo = true);
