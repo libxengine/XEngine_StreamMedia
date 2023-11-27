@@ -34,17 +34,20 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 			for (int j = 0; j < ppSst_ListAddr[i]->nPktCount; j++)
 			{
 				int nMsgLen = 0;                                    //客户端发送的数据大小,不包括头
+				int nHCount = 0;
 				XCHAR* ptszMsgBuffer = NULL;                         //客户端发送的数据
+				XCHAR** pptszListHdr;
 				RFCCOMPONENTS_HTTP_REQPARAM st_HTTPReqparam;        //客户端的请求参数
 
 				memset(&st_HTTPReqparam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 				//得到一个指定客户端的完整数据包
-				if (HttpProtocol_Server_GetMemoryEx(xhHttpPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPReqparam))
+				if (HttpProtocol_Server_GetMemoryEx(xhHttpPacket, ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPReqparam, &pptszListHdr, &nHCount))
 				{
 					//在另外一个函数里面处理数据
-					XEngine_HTTPTask_Handle(&st_HTTPReqparam, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
+					XEngine_HTTPTask_Handle(&st_HTTPReqparam, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &pptszListHdr, nHCount);
 					//释放内存
 					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_OperatorMemory_Free((XPPPMEM)&pptszListHdr, nHCount);
 				}
 			}
 		}
@@ -52,7 +55,7 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 	}
 	return 0;
 }
-bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR*** ppptszHDRList, int nHDRCount)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
@@ -126,7 +129,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	else
 	{
 		//可能是RTSP
-		PullStream_ClientMethod_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount);
+		PullStream_ClientMethod_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount, ppptszHDRList, nHDRCount);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;

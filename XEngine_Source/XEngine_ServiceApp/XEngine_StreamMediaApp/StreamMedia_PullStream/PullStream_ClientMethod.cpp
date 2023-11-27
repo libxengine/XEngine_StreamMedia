@@ -10,7 +10,7 @@
 //    Purpose:     其他方法处理
 //    History:
 *********************************************************************/
-bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR*** ppptszListHdr, int nListCount)
+bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR*** ppptszParamList, int nParamCount, XCHAR*** ppptszHDRList, int nHDRList)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
@@ -19,20 +19,21 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	RTSPPROTOCOL_REQUEST st_RTSPRequest = {};
 	RTSPPROTOCOL_RESPONSE st_RTSPResponse = {};
 
-	RTSPProtocol_REQParse_Request(&st_RTSPRequest, pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, pSt_HTTPParam->tszHttpVer, ppptszListHdr, nListCount);
+	RTSPProtocol_REQParse_Request(&st_RTSPRequest, pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, pSt_HTTPParam->tszHttpVer, ppptszHDRList, nHDRList);
 
 	st_RTSPResponse.nCode = 200;
 	st_RTSPResponse.nCSeq = st_RTSPRequest.nCseq;
 	if (ENUM_RTSPPROTOCOL_METHOD_TYPE_OPTIONS == st_RTSPRequest.enMethod)
 	{
 		//OPTIONS rtsp://10.0.1.89:554/480p.264 RTSP/1.0
+		XCHAR tszKeyStr[MAX_PATH];
 		XCHAR tszPushAddr[MAX_PATH];
 		XCHAR tszSMSAddr[MAX_PATH];
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-		ModuleHelp_Rtsp_GetSMSAddr(st_RTSPRequest.tszUrl, tszSMSAddr);
+		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
 			st_RTSPResponse.nCode = 404;
@@ -55,6 +56,7 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_DESCRIBE == st_RTSPRequest.enMethod)
 	{
 		//DESCRIBE rtsp://10.0.1.89:554/480p.264 RTSP/1.0
+		XCHAR tszKeyStr[MAX_PATH];
 		XCHAR tszPushAddr[MAX_PATH];
 		XCHAR tszSMSAddr[MAX_PATH];
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
@@ -63,7 +65,7 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
 
-		ModuleHelp_Rtsp_GetSMSAddr(st_RTSPRequest.tszUrl, tszSMSAddr);
+		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
 			st_RTSPResponse.nCode = 404;
@@ -85,7 +87,11 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		SDPProtocol_Packet_Owner(xhSDPToken, _X("XEngine"), nSessionID, _X("0.0.0.0"));
 		SDPProtocol_Packet_Session(xhSDPToken, tszSMSAddr);
 		SDPProtocol_Packet_KeepTime(xhSDPToken);
+		SDPProtocol_Packet_OptionalRange(xhSDPToken);
 		SDPProtocol_Packet_Control(xhSDPToken, -1);
+		//创建SESSION
+		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession);
+		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
 		//配置视频属性
 		int nListCount = 0;
 		XCHAR** pptszAVList;
@@ -107,7 +113,6 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		OPenSsl_Codec_Base64((LPCXSTR)tszPPSBuffer, st_SDPMediaVideo.st_FmtpVideo.tszPPSBase, &nPPSLen, true);
 		
 		st_SDPMediaVideo.nTrackID = 0;
-		st_SDPMediaVideo.st_RTPMap.nChannel = 2;
 		st_SDPMediaVideo.st_RTPMap.nSampleRate = 90000;
 		_tcsxcpy(st_SDPMediaVideo.st_RTPMap.tszCodecName, _X("H264"));
 		SDPProtocol_Packet_VideoFmt(xhSDPToken, 96, &st_SDPMediaVideo);
@@ -122,11 +127,14 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		AVHelp_Parse_AACInfo((const XBYTE*)st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nALen, &st_SDPMediaAudio.st_RTPMap.nChannel, &st_SDPMediaAudio.st_RTPMap.nSampleRate, &st_SDPMediaAudio.st_FmtpAudio.nProfileID, &st_SDPMediaAudio.st_FmtpAudio.nConfig);
 
 		st_SDPMediaAudio.nTrackID = 1;
-		_tcsxcpy(st_SDPMediaAudio.st_RTPMap.tszCodecName, _X("mpeg4-generic"));
-
 		st_SDPMediaAudio.st_FmtpAudio.nDeltaLen = 3;
 		st_SDPMediaAudio.st_FmtpAudio.nIndexLen = 3;
 		st_SDPMediaAudio.st_FmtpAudio.nSizeLen = 13;
+
+		st_SDPMediaAudio.st_RTPMap.nChannel = 2;
+		st_SDPMediaAudio.st_RTPMap.nSampleRate = 90000;
+		_tcsxcpy(st_SDPMediaAudio.st_RTPMap.tszCodecName, _X("mpeg4-generic"));
+
 		_tcsxcpy(st_SDPMediaAudio.st_FmtpAudio.tszMode, "AAC-hbr");
 		SDPProtocol_Packet_AudioFmt(xhSDPToken, 98, &st_SDPMediaAudio);
 		SDPProtocol_Packet_Control(xhSDPToken, 1);
@@ -145,8 +153,7 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	{
 		ModuleHelp_Rtsp_SetClient(lpszClientAddr, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort, st_RTSPRequest.st_ChannelInfo.nChannelNumber);
 
-		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession);
-		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
+		
 
 		st_RTSPResponse.st_TransportInfo.st_TransFlags.bAVP = true;
 		st_RTSPResponse.st_TransportInfo.st_TransFlags.bRTP = true;
