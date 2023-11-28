@@ -21,3 +21,5 @@ EXPORTS
 	ModuleHelp_Rtsp_SetSession
 	ModuleHelp_Rtsp_GetSession
 	ModuleHelp_Rtsp_SetSsrc
+	ModuleHelp_Rtsp_GetSsrc
+	ModuleHelp_Rtsp_GetTrack

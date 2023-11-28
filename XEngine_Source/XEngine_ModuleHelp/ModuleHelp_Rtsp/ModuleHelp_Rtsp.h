@@ -38,6 +38,8 @@ public:
 	bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr);
 	bool ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR *ptszSessionStr);
 	bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo = true);
+	bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR *ptszSsrcStr, bool bVideo = true);
+	bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo);
 protected:
 private:
 	unordered_map<string, RTSPPROTOCOL_CLIENTINFO> stl_MapRTSPClient;

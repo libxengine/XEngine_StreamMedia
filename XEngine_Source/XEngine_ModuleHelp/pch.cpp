@@ -103,3 +103,11 @@ extern "C" bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcSt
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_SetSsrc(lpszClientID, lpszSsrcStr, bVideo);
 }
+extern "C" bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR * ptszSsrcStr, bool bVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetSsrc(lpszClientID, ptszSsrcStr, bVideo);
+}
+extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetTrack(lpszClientID, nTrackID, pbVideo);
+}

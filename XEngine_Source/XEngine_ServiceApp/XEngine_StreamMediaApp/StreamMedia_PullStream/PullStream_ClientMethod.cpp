@@ -144,6 +144,10 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		ModuleHelp_Rtsp_CreateClient(lpszClientAddr, 0, 1);
 
 		st_RTSPResponse.nPLen = nRVLen;
+		_tcsxcpy(st_RTSPResponse.tszConBase, st_RTSPRequest.tszUrl);
+		st_RTSPResponse.st_AdditionalOPtions.bDynamicRate = true;
+		st_RTSPResponse.st_AdditionalOPtions.bRetransmit = true;
+
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XEngine_Network_Send(lpszClientAddr, tszRVBuffer, nRVLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
@@ -162,13 +166,25 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		st_RTSPResponse.st_TransportInfo.st_ClientPorts.nRTPPort = st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort;
 		st_RTSPResponse.st_TransportInfo.st_ClientPorts.nRTCPPort = st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort;
 
-		st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTPPort = 0;
-		st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTCPPort = 1;
-		_tcsxcpy(st_RTSPResponse.st_TransportInfo.tszSSRCStr, _X("0000002"));
+		bool bVideo = false;
+		ModuleHelp_Rtsp_GetTrack(lpszClientAddr, st_RTSPRequest.st_ChannelInfo.nChannelNumber, &bVideo);
+		if (bVideo)
+		{
+			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort;
+			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTCPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nVRTCPPort;
+		}
+		else
+		{
+			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort;
+			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTCPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort;
+		}
+		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.st_TransportInfo.tszSSRCStr, 8, 1);
+		ModuleHelp_Rtsp_SetSsrc(lpszClientAddr, st_RTSPResponse.st_TransportInfo.tszSSRCStr, bVideo);
 
+		
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求SETUP选项成功,请求的拉流ID:%s"), lpszClientAddr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求SETUP选项成功,请求的设置的TRACKID:%s,客户端RTP端口:%d,客户端RTCP端口:%d"), lpszClientAddr, st_RTSPRequest.st_ChannelInfo.nChannelNumber, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort);
 	}
 	else
 	{

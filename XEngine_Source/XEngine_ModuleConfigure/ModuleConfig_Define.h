@@ -71,8 +71,10 @@ typedef struct tag_XEngine_ServiceConfig
 		struct  
 		{
 			bool bEnable;
-			int nRTPPort;
-			int nRTCPPort;
+			int nVRTPPort;
+			int nVRTCPPort;
+			int nARTPPort;
+			int nARTCPPort;
 		}st_PullRtsp;
 	}st_XPull;
 	struct  

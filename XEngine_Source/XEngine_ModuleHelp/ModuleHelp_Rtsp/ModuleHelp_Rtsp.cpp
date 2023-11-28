@@ -276,7 +276,7 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR* p
 }
 /********************************************************************
 函数名称：ModuleHelp_Rtsp_SetSsrc
-函数功能：设置一个RTSP的RTP关联的SSRC
+函数功能：设置一个RTSP关联的SSRC
  参数.一：lpszClientID
   In/Out：In
   类型：常量字符指针
@@ -316,6 +316,96 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lps
 	else
 	{
 		_tcsxcpy(stl_MapIterator->second.tszASsrc, lpszSsrcStr);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetSsrc
+函数功能：获取一个RTSP关联的SSRC
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszSsrcStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出关联的SSRC
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：输入关联的类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR* ptszSsrcStr, bool bVideo /* = true */)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO>::iterator stl_MapIterator = stl_MapRTSPClient.find(lpszClientID);
+	if (stl_MapIterator == stl_MapRTSPClient.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_RTSP_NOTFOUND;
+		return false;
+	}
+
+	if (bVideo)
+	{
+		_tcsxcpy(ptszSsrcStr,stl_MapIterator->second.tszVSsrc);
+	}
+	else
+	{
+		_tcsxcpy(ptszSsrcStr,stl_MapIterator->second.tszASsrc);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetTrack
+函数功能：获取RTSP的TRACKID类型
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：nTrackID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入TRACKID
+ 参数.三：pbVideo
+  In/Out：Out
+  类型：逻辑型指针
+  可空：Y
+  意思：输出是视频还是音频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO>::iterator stl_MapIterator = stl_MapRTSPClient.find(lpszClientID);
+	if (stl_MapIterator == stl_MapRTSPClient.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_RTSP_NOTFOUND;
+		return false;
+	}
+
+	if (nTrackID == stl_MapIterator->second.nVTrackID)
+	{
+		*pbVideo = true;
+	}
+	else
+	{
+		*pbVideo = false;
 	}
 	return true;
 }

@@ -332,3 +332,51 @@ extern "C" bool ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR* ptszSess
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo = true);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetSsrc
+函数功能：获取一个RTSP关联的SSRC
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszSsrcStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出关联的SSRC
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：输入关联的类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR* ptszSsrcStr, bool bVideo = true);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetTrack
+函数功能：获取RTSP的TRACKID类型
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：nTrackID
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入TRACKID
+ 参数.三：pbVideo
+  In/Out：Out
+  类型：逻辑型指针
+  可空：Y
+  意思：输出是视频还是音频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo);
