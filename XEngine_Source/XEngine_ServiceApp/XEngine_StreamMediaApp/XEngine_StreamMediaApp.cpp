@@ -32,6 +32,9 @@ XHANDLE xhJT1078Socket = NULL;
 XHANDLE xhJT1078Heart = NULL;
 XHANDLE xhJT1078Pkt = NULL;
 XHANDLE xhJT1078Pool = NULL;
+//RTSP的UDP网络
+XHANDLE xhRTPSocket = NULL;
+XHANDLE xhRTCPSocket = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -49,6 +52,11 @@ void ServiceApp_Stop(int signo)
 		NetCore_TCPXCore_DestroyEx(xhXStreamSocket);
 		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
+		if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhRTPSocket);
+			NetCore_UDPXCore_DestroyEx(xhRTCPSocket);
+		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
@@ -431,6 +439,21 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nSRTThread);
 	}
+
+	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
+	{
+		xhRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nRTPPort, 1);
+		if (NULL == xhSRTPool)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动RTSP的RTP网络端口失败,错误：%d"), errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		xhRTCPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nRTCPPort, 1);
+
+		NetCore_UDPXCore_RegisterCallBackEx(xhRTPSocket, Network_Callback_RTPRecv);
+		NetCore_UDPXCore_RegisterCallBackEx(xhRTCPSocket, Network_Callback_RTCPRecv);
+	}
+
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
 	while (true)
@@ -448,6 +471,11 @@ XENGINE_SERVICEAPP_EXIT:
 		NetCore_TCPXCore_DestroyEx(xhXStreamSocket);
 		NetCore_TCPXCore_DestroyEx(xhRTMPSocket);
 		NetCore_TCPXCore_DestroyEx(xhJT1078Socket);
+		if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhRTPSocket);
+			NetCore_UDPXCore_DestroyEx(xhRTCPSocket);
+		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);

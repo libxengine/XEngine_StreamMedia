@@ -109,12 +109,14 @@ extern XHANDLE xhRTMPSocket;
 extern XHANDLE xhRTMPHeart;
 extern XHANDLE xhRTMPPool;
 extern XHANDLE xhSRTPool;
-//配置文件
 //JT1078推流
 extern XHANDLE xhJT1078Socket;
 extern XHANDLE xhJT1078Heart;
 extern XHANDLE xhJT1078Pkt;
 extern XHANDLE xhJT1078Pool;
+//RTSP的UDP网络
+extern XHANDLE xhRTPSocket;
+extern XHANDLE xhRTCPSocket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试

@@ -139,6 +139,15 @@ void CALLBACK Network_Callback_SRTLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s，离开了服务器"), lpszClientAddr);
 }
+//UDP
+void CALLBACK Network_Callback_RTPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+
+}
+void CALLBACK Network_Callback_RTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+
+}
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
