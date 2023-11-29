@@ -472,8 +472,8 @@ int main(int argc, char** argv)
 		}
 		NetCore_UDPXCore_RegisterCallBackEx(xhVRTPSocket, Network_Callback_VideoRTPRecv);
 		NetCore_UDPXCore_RegisterCallBackEx(xhVRTCPSocket, Network_Callback_VideoRTCPRecv);
-		NetCore_UDPXCore_RegisterCallBackEx(xhVRTPSocket, Network_Callback_AudioRTPRecv);
-		NetCore_UDPXCore_RegisterCallBackEx(xhVRTCPSocket, Network_Callback_AudioRTCPRecv);
+		NetCore_UDPXCore_RegisterCallBackEx(xhARTPSocket, Network_Callback_AudioRTPRecv);
+		NetCore_UDPXCore_RegisterCallBackEx(xhARTCPSocket, Network_Callback_AudioRTCPRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTSP视频RTP端口:%d 和视频RTCP端口:%d,以及音频的RTP端口:%d 和RTCP端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nVRTCPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort);
 	}
 

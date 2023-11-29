@@ -89,9 +89,6 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		SDPProtocol_Packet_KeepTime(xhSDPToken);
 		SDPProtocol_Packet_OptionalRange(xhSDPToken);
 		SDPProtocol_Packet_Control(xhSDPToken, -1);
-		//创建SESSION
-		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession);
-		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
 		//配置视频属性
 		int nListCount = 0;
 		XCHAR** pptszAVList;
@@ -142,6 +139,9 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		SDPProtocol_Packet_GetPacket(xhSDPToken, tszRVBuffer, &nRVLen);
 		SDPProtocol_Packet_Destory(xhSDPToken);
 		ModuleHelp_Rtsp_CreateClient(lpszClientAddr, 0, 1);
+		//创建SESSION
+		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession, 12);
+		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
 
 		st_RTSPResponse.nPLen = nRVLen;
 		_tcsxcpy(st_RTSPResponse.tszConBase, st_RTSPRequest.tszUrl);
@@ -181,15 +181,79 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.st_TransportInfo.tszSSRCStr, 8, 1);
 		ModuleHelp_Rtsp_SetSsrc(lpszClientAddr, st_RTSPResponse.st_TransportInfo.tszSSRCStr, bVideo);
 
-		
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求SETUP选项成功,请求的设置的TRACKID:%s,客户端RTP端口:%d,客户端RTCP端口:%d"), lpszClientAddr, st_RTSPRequest.st_ChannelInfo.nChannelNumber, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求SETUP选项成功,请求的设置的TRACKID:%d,客户端RTP端口:%d,客户端RTCP端口:%d"), lpszClientAddr, st_RTSPRequest.st_ChannelInfo.nChannelNumber, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTPPort, st_RTSPRequest.st_TransportInfo.st_ClientPorts.nRTCPPort);
+	}
+	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_PLAY == st_RTSPRequest.enMethod)
+	{
+		XCHAR tszKeyStr[MAX_PATH];
+		XCHAR tszPushAddr[MAX_PATH];
+		XCHAR tszSMSAddr[MAX_PATH];
+		XENGINE_PROTOCOL_AVINFO st_AVInfo;
+
+		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+
+		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
+
+		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+		{
+			st_RTSPResponse.nCode = 404;
+			RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTSP:%s,请求拉流的URL参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+			return false;
+		}
+		ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
+
+		st_RTSPResponse.st_Range.bNPTTime = true;
+		_tcsxcpy(st_RTSPResponse.tszSession, st_RTSPRequest.tszSession);
+
+		st_RTSPResponse.nRTPCount = 2;
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTSPResponse.ppSt_RTPInfo, 2, sizeof(RTSPPROTOCOL_RTPINFO));
+
+		XCHAR tszSSRCVideo[128] = {};
+		XCHAR tszSSRCAudio[128] = {};
+		ModuleHelp_Rtsp_GetSsrc(lpszClientAddr, tszSSRCVideo, true);
+		ModuleHelp_Rtsp_GetSsrc(lpszClientAddr, tszSSRCAudio, false);
+		//创建RTP包管理器
+		RTPProtocol_Packet_Insert(tszSSRCVideo, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
+		RTPProtocol_Packet_Insert(tszSSRCAudio, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
+
+		RTPProtocol_Packet_SetTime(tszSSRCVideo, st_AVInfo.st_VideoInfo.nFrameRate);
+		RTPProtocol_Packet_SetTime(tszSSRCAudio, st_AVInfo.st_AudioInfo.nSampleRate);
+
+		RTPProtocol_Packet_GetTime(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nNTPTime);
+		RTPProtocol_Packet_GetTime(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nNTPTime);
+		RTPProtocol_Packet_GetCSeq(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nCSeq);
+		RTPProtocol_Packet_GetCSeq(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nCSeq);
+
+		_xstprintf(st_RTSPResponse.ppSt_RTPInfo[0]->tszURLStr, _X("%s/trackID=0"), st_RTSPRequest.tszUrl);
+		_xstprintf(st_RTSPResponse.ppSt_RTPInfo[1]->tszURLStr, _X("%s/trackID=1"), st_RTSPRequest.tszUrl);
+
+		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求PLAY选项成功,会话ID:%s,视频SSRC:%s,音频SSRC:%s"), lpszClientAddr, st_RTSPRequest.tszSession, tszSSRCVideo, tszSSRCAudio);
+	}
+	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_TEARDOWN == st_RTSPRequest.enMethod)
+	{
+		XCHAR tszSSRCVideo[128] = {};
+		XCHAR tszSSRCAudio[128] = {};
+
+		ModuleHelp_Rtsp_GetSsrc(lpszClientAddr, tszSSRCVideo, true);
+		ModuleHelp_Rtsp_GetSsrc(lpszClientAddr, tszSSRCAudio, false);
+		RTPProtocol_Packet_Delete(tszSSRCVideo);
+		RTPProtocol_Packet_Delete(tszSSRCAudio);
+
+		ModuleHelp_Rtsp_DeleteClient(lpszClientAddr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求关闭选项成功,会话ID:%s,视频SSRC:%s,音频SSRC:%s,"), lpszClientAddr, st_RTSPRequest.tszSession, tszSSRCVideo, tszSSRCAudio);
 	}
 	else
 	{
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求的类型不支持:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpMethod);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTSP:%s,请求的类型不支持:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpMethod);
 		return false;
 	}
 	return true;
