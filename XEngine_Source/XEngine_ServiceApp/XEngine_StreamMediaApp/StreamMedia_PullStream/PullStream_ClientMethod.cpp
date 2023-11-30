@@ -246,9 +246,8 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		ModuleHelp_Rtsp_GetSsrc(lpszClientAddr, tszSSRCAudio, false);
 		RTPProtocol_Packet_Delete(tszSSRCVideo);
 		RTPProtocol_Packet_Delete(tszSSRCAudio);
-
 		ModuleHelp_Rtsp_DeleteClient(lpszClientAddr);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求关闭选项成功,会话ID:%s,视频SSRC:%s,音频SSRC:%s,"), lpszClientAddr, st_RTSPRequest.tszSession, tszSSRCVideo, tszSSRCAudio);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求关闭选项成功,会话ID:%s,视频SSRC:%s,音频SSRC:%s"), lpszClientAddr, st_RTSPRequest.tszSession, tszSSRCVideo, tszSSRCAudio);
 	}
 	else
 	{

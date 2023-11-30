@@ -102,6 +102,7 @@ xstream://127.0.0.1:5601
 
 #### Pull Stream
 http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
+rtsp://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=rtsp  
 rtmp://127.0.0.1/live/qyt  
 srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
 http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)
