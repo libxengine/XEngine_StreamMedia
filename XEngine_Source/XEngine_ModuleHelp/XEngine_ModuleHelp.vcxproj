@@ -167,6 +167,7 @@
     <ClInclude Include="ModuleHelp_Define.h" />
     <ClInclude Include="ModuleHelp_Error.h" />
     <ClInclude Include="ModuleHelp_JT1078\ModuleHelp_JT1078.h" />
+    <ClInclude Include="ModuleHelp_Rtmp\ModuleHelp_Rtmp.h" />
     <ClInclude Include="ModuleHelp_Rtsp\ModuleHelp_Rtsp.h" />
     <ClInclude Include="ModuleHelp_Srt\ModuleHelp_SrtCore.h" />
     <ClInclude Include="pch.h" />
@@ -174,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ModuleHelp_JT1078\ModuleHelp_JT1078.cpp" />
+    <ClCompile Include="ModuleHelp_Rtmp\ModuleHelp_Rtmp.cpp" />
     <ClCompile Include="ModuleHelp_Rtsp\ModuleHelp_Rtsp.cpp" />
     <ClCompile Include="ModuleHelp_Srt\ModuleHelp_SrtCore.cpp" />
     <ClCompile Include="pch.cpp">

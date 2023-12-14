@@ -2,6 +2,7 @@
 #include "ModuleHelp_JT1078/ModuleHelp_JT1078.h"
 #include "ModuleHelp_Srt/ModuleHelp_SrtCore.h"
 #include "ModuleHelp_Rtsp/ModuleHelp_Rtsp.h"
+#include "ModuleHelp_Rtmp/ModuleHelp_Rtmp.h"
 /********************************************************************
 //    Created:     2022/04/24  16:28:09
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleHelp\pch.cpp
@@ -19,6 +20,7 @@ XLONG ModuleHelp_dwErrorCode = 0;
 CModuleHelp_JT1078 m_HelpJT1078;
 CModuleHelp_SrtCore m_SrtCore;
 CModuleHelp_Rtsp m_HelpRtsp;
+CModuleHelp_Rtmp m_HelpRtmp;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -110,4 +112,19 @@ extern "C" bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR * ptszSsrcSt
 extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo)
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_GetTrack(lpszClientID, nTrackID, pbVideo);
+}
+/************************************************************************/
+/*                         导出的RTMP函数                               */
+/************************************************************************/
+extern "C" bool ModuleHelp_Rtmp_CreateSession(LPCXSTR lpszURLAddr, LPCXSTR lpszURLStr)
+{
+	return m_HelpRtmp.ModuleHelp_Rtmp_CreateSession(lpszURLAddr, lpszURLStr);
+}
+extern "C" bool ModuleHelp_Rtmp_GetSession(LPCXSTR lpszURLAddr, XCHAR * ptszLiveName)
+{
+	return m_HelpRtmp.ModuleHelp_Rtmp_GetSession(lpszURLAddr, ptszLiveName);
+}
+extern "C" bool ModuleHelp_Rtmp_DeleteSession(LPCXSTR lpszURLAddr)
+{
+	return m_HelpRtmp.ModuleHelp_Rtmp_DeleteSession(lpszURLAddr);
 }

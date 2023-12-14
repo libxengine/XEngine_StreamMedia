@@ -217,6 +217,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
+		ModuleHelp_Rtmp_DeleteSession(lpszClientAddr);
 		RTMPProtocol_Parse_Delete(lpszClientAddr);
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);

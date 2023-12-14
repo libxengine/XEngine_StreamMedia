@@ -380,3 +380,58 @@ extern "C" bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR* ptszSsrcStr
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo);
+/************************************************************************/
+/*                         导出的RTMP函数                               */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleHelp_Rtmp_CreateSession
+函数功能：创建一个rtmp会话
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入创建的地址
+ 参数.二：lpszURLStr
+  In/Out：Out
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的URL
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtmp_CreateSession(LPCXSTR lpszURLAddr, LPCXSTR lpszURLStr);
+/********************************************************************
+函数名称：ModuleHelp_Rtmp_GetSession
+函数功能：获取会话名称
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszLiveName
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出RTMP的LIVE名称
+ 返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtmp_GetSession(LPCXSTR lpszURLAddr, XCHAR* ptszLiveName);
+/********************************************************************
+函数名称：ModuleHelp_Rtmp_DeleteSession
+函数功能：删除一个RTMP客户端
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtmp_DeleteSession(LPCXSTR lpszURLAddr);

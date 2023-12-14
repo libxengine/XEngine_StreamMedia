@@ -304,6 +304,14 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_CONNECT, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_CONNECT)))
 		{
+			for (int i = 0; i < st_RTMPCommand.nProCount; i++)
+			{
+				if (0 == _tcsxnicmp(st_RTMPCommand.ppSt_CMDProperty[i]->tszKeyBuffer, "tcurl", 5))
+				{
+					ModuleHelp_Rtmp_CreateSession(lpszClientAddr, st_RTMPCommand.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer);
+				}
+			}
+			
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nProCount = 0;
@@ -326,12 +334,15 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY)))
 		{
 			XCHAR tszSMSAddr[2048];
+			XCHAR tszLiveName[MAX_PATH];
 			XCHAR tszPushAddr[MAX_PATH];
 
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
+			memset(tszLiveName, '\0', sizeof(tszLiveName));
 			memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 
-			_xstprintf(tszSMSAddr, _X("live/%s"), st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
+			ModuleHelp_Rtmp_GetSession(lpszClientAddr, tszLiveName);
+			_xstprintf(tszSMSAddr, _X("%s/%s"), tszLiveName, st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
 
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
