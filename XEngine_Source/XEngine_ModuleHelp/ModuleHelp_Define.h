@@ -380,6 +380,54 @@ extern "C" bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR* ptszSsrcStr
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetRTPAddr
+函数功能：获取RTP发送地址端口
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszADDRStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出地址字符串
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是音频还是视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo);
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetRTPAddr
+函数功能：获取RTCP发送地址端口
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszADDRStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出地址字符串
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是音频还是视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_Rtsp_GetRTCPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo);
 /************************************************************************/
 /*                         导出的RTMP函数                               */
 /************************************************************************/

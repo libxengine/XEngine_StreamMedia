@@ -235,6 +235,9 @@ bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+
+		ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTSP);
+		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTSP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTSP:%s,请求PLAY选项成功,会话ID:%s,视频SSRC:%s,音频SSRC:%s"), lpszClientAddr, st_RTSPRequest.tszSession, tszSSRCVideo, tszSSRCAudio);
 	}
 	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_TEARDOWN == st_RTSPRequest.enMethod)

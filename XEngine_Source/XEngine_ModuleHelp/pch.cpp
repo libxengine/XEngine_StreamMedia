@@ -113,6 +113,14 @@ extern "C" bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, boo
 {
 	return m_HelpRtsp.ModuleHelp_Rtsp_GetTrack(lpszClientID, nTrackID, pbVideo);
 }
+extern "C" bool ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR * ptszADDRStr, bool bVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetRTPAddr(lpszClientID, ptszADDRStr, bVideo);
+}
+extern "C" bool ModuleHelp_Rtsp_GetRTCPAddr(LPCXSTR lpszClientID, XCHAR * ptszADDRStr, bool bVideo)
+{
+	return m_HelpRtsp.ModuleHelp_Rtsp_GetRTCPAddr(lpszClientID, ptszADDRStr, bVideo);
+}
 /************************************************************************/
 /*                         导出的RTMP函数                               */
 /************************************************************************/

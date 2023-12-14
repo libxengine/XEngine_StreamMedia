@@ -34,12 +34,14 @@ public:
 	bool ModuleHelp_Rtsp_CreateClient(LPCXSTR lpszClientID, int nVControlID, int nAControlID);
 	bool ModuleHelp_Rtsp_DeleteClient(LPCXSTR lpszClientID);
 	bool ModuleHelp_Rtsp_SetClient(LPCXSTR lpszClientID, int nRTPPort, int nRTCPPort, int nTrackID);
-	bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort, int* pInt_RTCPPort, bool bVideo = true);
+	bool ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort = NULL, int* pInt_RTCPPort = NULL, bool bVideo = true);
 	bool ModuleHelp_Rtsp_SetSession(LPCXSTR lpszClientID, LPCXSTR lpszSessionStr);
 	bool ModuleHelp_Rtsp_GetSession(LPCXSTR lpszClientID, XCHAR *ptszSessionStr);
 	bool ModuleHelp_Rtsp_SetSsrc(LPCXSTR lpszClientID, LPCXSTR lpszSsrcStr, bool bVideo = true);
 	bool ModuleHelp_Rtsp_GetSsrc(LPCXSTR lpszClientID, XCHAR *ptszSsrcStr, bool bVideo = true);
 	bool ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrackID, bool* pbVideo);
+	bool ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo);
+	bool ModuleHelp_Rtsp_GetRTCPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo);
 protected:
 private:
 	unordered_map<string, RTSPPROTOCOL_CLIENTINFO> stl_MapRTSPClient;

@@ -185,7 +185,7 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_SetClient(LPCXSTR lpszClientID, int nRTPP
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort, int* pInt_RTCPPort, bool bVideo /* = true */)
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt_RTPPort /* = NULL */, int* pInt_RTCPPort /* = NULL */, bool bVideo /* = true */)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -199,13 +199,25 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetClient(LPCXSTR lpszClientID, int* pInt
 
 	if (bVideo)
 	{
-		*pInt_RTPPort = stl_MapIterator->second.nVideoRTPPort;
-		*pInt_RTCPPort = stl_MapIterator->second.nVideoRTCPPort;
+		if (NULL != pInt_RTPPort)
+		{
+			*pInt_RTPPort = stl_MapIterator->second.nVideoRTPPort;
+		}
+		if (NULL != pInt_RTCPPort)
+		{
+			*pInt_RTCPPort = stl_MapIterator->second.nVideoRTCPPort;
+		}
 	}
 	else
 	{
-		*pInt_RTPPort = stl_MapIterator->second.nAudioRTPPort;
-		*pInt_RTCPPort = stl_MapIterator->second.nAudioRTCPPort;
+		if (NULL != pInt_RTPPort)
+		{
+			*pInt_RTPPort = stl_MapIterator->second.nAudioRTPPort;
+		}
+		if (NULL != pInt_RTCPPort)
+		{
+			*pInt_RTCPPort = stl_MapIterator->second.nAudioRTCPPort;
+		}
 	}
 	return true;
 }
@@ -406,6 +418,100 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetTrack(LPCXSTR lpszClientID, int nTrack
 	else
 	{
 		*pbVideo = false;
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetRTPAddr
+函数功能：获取RTP发送地址端口
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszADDRStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出地址字符串
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是音频还是视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO>::iterator stl_MapIterator = stl_MapRTSPClient.find(lpszClientID);
+	if (stl_MapIterator == stl_MapRTSPClient.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_RTSP_NOTFOUND;
+		return false;
+	}
+	int nPort = 0;
+	XCHAR tszIPAddr[128] = {};
+	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nPort);
+	if (bVideo)
+	{
+		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nVideoRTPPort);
+	}
+	else
+	{
+		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nAudioRTPPort);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_Rtsp_GetRTPAddr
+函数功能：获取RTCP发送地址端口
+ 参数.一：lpszClientID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端ID
+ 参数.二：ptszADDRStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出地址字符串
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是音频还是视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetRTCPAddr(LPCXSTR lpszClientID, XCHAR* ptszADDRStr, bool bVideo)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+	unordered_map<string, RTSPPROTOCOL_CLIENTINFO>::iterator stl_MapIterator = stl_MapRTSPClient.find(lpszClientID);
+	if (stl_MapIterator == stl_MapRTSPClient.end())
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_RTSP_NOTFOUND;
+		return false;
+	}
+	int nPort = 0;
+	XCHAR tszIPAddr[128] = {};
+	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nPort);
+	if (bVideo)
+	{
+		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nVideoRTCPPort);
+	}
+	else
+	{
+		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nAudioRTCPPort);
 	}
 	return true;
 }
