@@ -172,7 +172,6 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		}
 		//需要主动删除与客户端对应的组包器队列中的资源
 		HttpProtocol_Server_CloseClinetEx(xhHttpPacket, lpszClientAddr);
-		ModuleHelp_Rtsp_DeleteClient(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,离开服务器"), lpszClientAddr);
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
