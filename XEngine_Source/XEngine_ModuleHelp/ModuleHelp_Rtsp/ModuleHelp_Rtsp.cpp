@@ -457,6 +457,8 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR* p
 	}
 	int nPort = 0;
 	XCHAR tszIPAddr[128] = {};
+	_tcsxcpy(tszIPAddr, lpszClientID);
+
 	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nPort);
 	if (bVideo)
 	{
