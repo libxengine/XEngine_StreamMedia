@@ -413,17 +413,22 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, true);
 					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						NetCore_UDPXCore_SendEx(xhVRTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+					}
 				}
 				else
 				{
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, false);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, false);
 					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
-				}
-				//发送数据,RTSP使用UDP发送
-				for (int i = 0; i < nPacketCount; i++)
-				{
-					NetCore_UDPXCore_SendEx(xhVRTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+					}
 				}
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
 			}
