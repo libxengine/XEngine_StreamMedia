@@ -50,6 +50,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/RTSPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AudioCodec_Define.h>
@@ -80,7 +82,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
-#include "./StreamMedia_PullStream/PullStream_ClientMethod.h"
+#include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_Hdr.h
@@ -170,6 +172,7 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_HLSProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTSPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"Ws2_32.lib")

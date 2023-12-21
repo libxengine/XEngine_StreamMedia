@@ -129,7 +129,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	else
 	{
 		//可能是RTSP
-		PullStream_ClientMethod_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount, ppptszHDRList, nHDRCount);
+		PullStream_ClientRtsp_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount, ppptszHDRList, nHDRCount);
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;
