@@ -1,16 +1,70 @@
 ﻿#include "../XEngine_Hdr.h"
 /********************************************************************
-//    Created:     2023/09/18  14:19:28
-//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PullStream\PullStream_ClientMethod.cpp
+//    Created:     2023/12/20  14:59:42
+//    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PullStream\PullStream_ClientRtsp.cpp
 //    File Path:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\StreamMedia_PullStream
-//    File Base:   PullStream_ClientMethod
+//    File Base:   PullStream_ClientRtsp
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     其他方法处理
+//    Purpose:     RTSP推流服务
 //    History:
 *********************************************************************/
-bool PullStream_ClientMethod_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR*** ppptszParamList, int nParamCount, XCHAR*** ppptszHDRList, int nHDRList)
+bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
+{
+	if (nMsgLen > 4)
+	{
+		int nPos = 0;
+		RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
+		RTCPProtocol_Parse_Header(&st_RTCPHdr, lpszMsgBuffer, nMsgLen);
+		nPos += sizeof(RTCPPROTOCOL_RTCPHDR);
+
+		int nListCount;
+		RTCPPROTOCOL_RTCPRECVER** ppSt_ListRecvInfo;
+		RTCPProtocol_Parse_Recver(&ppSt_ListRecvInfo, &nListCount, &st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+		nPos += sizeof(RTCPPROTOCOL_RTCPRECVER);
+		//后续是否还有数据
+		if (nMsgLen - nPos > 0)
+		{
+			//是SDES
+			st_RTCPHdr = {};
+			int nListCount = 0;
+			STREAMMEDIA_RTCPPROTOCOL_SDESINFO** ppSt_ListSdeser;
+
+			RTCPProtocol_Parse_Header(&st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+			nPos += sizeof(RTCPPROTOCOL_RTCPHDR);
+			
+			if (ENUM_STREAMMEDIA_RTCPPROTOCOL_PACKET_TYPE_SDES == st_RTCPHdr.byPT)
+			{
+				nPos -= sizeof(uint32_t);
+			}
+			RTCPProtocol_Parse_Sdeser(&ppSt_ListSdeser, &nListCount, &st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListSdeser, nListCount);
+		}
+		/*
+		int nSDLen = 0;
+		XCHAR tszMSGBuffer[1024] = {};
+		RTCPPROTOCOL_RTCPSENDER st_SendInfo = {};
+
+		RTCPProtocol_Packet_Sender(tszMSGBuffer, &nSDLen, st_RTCPHdr.unSsrc, &st_SendInfo);
+		NetCore_UDPXCore_SendEx(xhVRTCPSocket, lpszClientAddr, tszMSGBuffer, nSDLen);
+
+		nListCount = 1;
+		STREAMMEDIA_RTCPPROTOCOL_SDESINFO** ppSt_SDESList;
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_SDESList, nListCount, sizeof(STREAMMEDIA_RTCPPROTOCOL_SDESINFO));
+
+		memset(tszMSGBuffer, '\0', sizeof(tszMSGBuffer));
+		ppSt_SDESList[0]->enSDESType = ENUM_STREAMMEDIA_RTCPPROTOCOL_SDES_TYPE_CNAME;
+		ppSt_SDESList[0]->xhSsrc = st_RTCPHdr.unSsrc;
+		ppSt_SDESList[0]->nMLen = _tcsxlen(XENGINE_NAME_STR);
+		_tcsxcpy(ppSt_SDESList[0]->tszMSGBuffer, XENGINE_NAME_STR);
+		RTCPProtocol_Packet_Sdeser(tszMSGBuffer, &nSDLen, &ppSt_SDESList, nListCount);
+		NetCore_UDPXCore_SendEx(xhVRTCPSocket, lpszClientAddr, tszMSGBuffer, nSDLen);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_SDESList, nListCount);*/
+	}
+	return true;
+}
+bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR*** ppptszParamList, int nParamCount, XCHAR*** ppptszHDRList, int nHDRList)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
