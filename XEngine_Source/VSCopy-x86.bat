@@ -17,6 +17,8 @@ copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_StreamClient.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_FLVProtocol.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_RTMPProtocol.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_RTSPProtocol.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_RTPProtocol.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_RTCPProtocol.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_StreamMedia\StreamMedia_HLSProtocol.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_AVCodec\XEngine_AVHelp.dll" "./"
 
