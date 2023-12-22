@@ -1,3 +1,21 @@
+XEngine_StreamMedia V2.5.0.1001
+
+增加:RTCP协议解析支持
+增加:RTP和RTCP的UDP套接字支持
+增加:RTSP拉流支持
+修改:客户端方法文件名称修改
+修改:http任务增加头列表参数传递
+修正:版本兼容问题
+修正:RTMP拉流无法修改live名称的问题
+
+added:rtcp parse supported
+added:rtp and rtcp udp socket supported
+added:rtsp play supported
+modify:client method name to client rtsp
+modify:httptask added http hdr list parament
+fixed:xengine v8.20 complie error
+fixed:the problem that the live of rtmp pull stream cannot be modified
+=======================================================
 XEngine_StreamMedia V2.4.0.1001
 
 增加:http ts播放流支持

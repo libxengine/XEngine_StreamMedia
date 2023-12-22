@@ -26,7 +26,7 @@
     },
     "XPull":{
         "XStream":{
-            "bEnable":false
+            "bEnable":true
         },
         "RTMP":{
             "bEnable":true
@@ -35,7 +35,11 @@
             "bEnable":true
         },
         "RTSP":{
-            "bEnable":false
+            "bEnable":true,
+            "nVRTPPort":56001,
+            "nVRTCPPort":56002,
+            "nARTPPort":56003,
+            "nARTCPPort":56004
         },
         "HLS":{
             "bEnable":false
@@ -47,6 +51,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V2.5.0.1001 Build20231222",
         "V2.4.0.1001 Build20231026",
         "V2.3.0.1001 Build20231007",
         "V2.2.0.1001 Build20230804",

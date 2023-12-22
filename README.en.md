@@ -28,7 +28,7 @@ Publish Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264,H265 | AAC      | Completed   |
 | SRT      | H264,H265 | AAC      | Completed   |
-| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| WEBRTC   | H264,H265 | AAC      | Process     |
 | GB28181  | H264,H265 | AAC      | Not Start   |
 | JT1078   | H264,H265 | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
@@ -38,7 +38,7 @@ Play Stream:
 | ProtocolName | VideoCodec  | AudioCodec | Status |
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
-| RTSP     | H264,H265 | AAC      | Process     |
+| RTSP     | H264      | AAC      | Completed   |
 | TS       | H264,H265 | AAC      | Process     |
 | SRT      | H264,H265 | AAC      | Completed   |
 | WEBRTC   | H264,H265 | AAC      | Not Start   |
