@@ -12,3 +12,20 @@ EXPORTS
 	ModuleHelp_SrtCore_GetStreamID
 	ModuleHelp_SrtCore_Close
 	ModuleHelp_SrtCore_Destory
+
+	ModuleHelp_Rtsp_GetSMSAddr
+	ModuleHelp_Rtsp_CreateClient
+	ModuleHelp_Rtsp_DeleteClient
+	ModuleHelp_Rtsp_SetClient
+	ModuleHelp_Rtsp_GetClient
+	ModuleHelp_Rtsp_SetSession
+	ModuleHelp_Rtsp_GetSession
+	ModuleHelp_Rtsp_SetSsrc
+	ModuleHelp_Rtsp_GetSsrc
+	ModuleHelp_Rtsp_GetTrack
+	ModuleHelp_Rtsp_GetRTPAddr
+	ModuleHelp_Rtsp_GetRTCPAddr
+
+	ModuleHelp_Rtmp_CreateSession
+	ModuleHelp_Rtmp_GetSession
+	ModuleHelp_Rtmp_DeleteSession

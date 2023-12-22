@@ -31,7 +31,7 @@ c c++ streammedia server
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264,H265 | AAC      | 已完成   |
 | SRT      | H264,H265 | AAC      | 已完成   |
-| WEBRTC   | H264,H265 | AAC      | 未开始   |
+| WEBRTC   | H264,H265 | AAC      | 进行中   |
 | GB28181  | H264,H265 | AAC      | 未开始   |
 | JT1078   | H264,H265 | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
@@ -41,7 +41,7 @@ c c++ streammedia server
 | 协议名称 | 视频格式  | 音频格式 | 当前状态 |
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
-| RTSP     | H264,H265 | AAC      | 进行中   |
+| RTSP     | H264      | AAC      | 已完成   |
 | TS       | H264,H265 | AAC      | 进行中   |
 | SRT      | H264,H265 | AAC      | 已完成   |
 | WEBRTC   | H264,H265 | AAC      | 未开始   |
@@ -111,6 +111,7 @@ xstream://127.0.0.1:5601
 
 #### 拉流示例
 http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
+rtsp://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=rtsp  
 rtmp://127.0.0.1/live/qyt  
 srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
 http://127.0.0.1:5601?api?stream=play&sms=live/qyt&type=xstream(http-xstream)

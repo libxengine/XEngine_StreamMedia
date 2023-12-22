@@ -139,6 +139,25 @@ void CALLBACK Network_Callback_SRTLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket,
 	XEngine_Network_Close(lpszClientAddr, hSocket, false, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s，离开了服务器"), lpszClientAddr);
 }
+//RTSP
+void CALLBACK Network_Callback_VideoRTPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTP视频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK Network_Callback_VideoRTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	PullStream_ClientRtsp_RTCPProcess(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTCP视频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK Network_Callback_AudioRTPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTP音频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK Network_Callback_AudioRTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	PullStream_ClientRtsp_RTCPProcess(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTCP音频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
@@ -200,6 +219,7 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			SocketOpt_HeartBeat_DeleteAddrEx(xhRTMPHeart, lpszClientAddr);
 		}
+		ModuleHelp_Rtmp_DeleteSession(lpszClientAddr);
 		RTMPProtocol_Parse_Delete(lpszClientAddr);
 		XEngine_AVPacket_AVDelete(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端:%s,离开服务器,心跳标志:%d"), lpszClientAddr, bHeart);

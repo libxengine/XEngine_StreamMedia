@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17 
+CC = g++ -Wall -std=c++17 -Wno-format-overflow
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
@@ -8,11 +8,11 @@ LOADHDR = -I ./
 LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents -L /usr/local/lib/XEngine_Release/XEngine_AVCodec -L /usr/local/lib/XEngine_Release/XEngine_StreamMedia  \
          -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
 		 -L ../../XEngine_ThirdPart/jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_NetXApi -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lRfcComponents_HttpProtocol -lRfcComponents_SDPProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_NetXApi -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lRfcComponents_HttpProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_SDPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol -lStreamMedia_RTCPProtocol \
       -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp -lXEngine_ModuleQueue \
 	  -ljsoncpp -lsrt-gnutls
 LIBEX = 
-OBJECTS = PullStream_ClientGet.o PullStream_ClientMethod.o \
+OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o \
           PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o \
 		  StreamMedia_HTTPApi.o \
           XEngine_AVPacket.o XEngine_Configure.o XEngine_HttpTask.o XEngine_Network.o XEngine_StreamMediaApp.o
@@ -54,8 +54,8 @@ all:$(OBJECTS)
 
 PullStream_ClientGet.o:./StreamMedia_PullStream/PullStream_ClientGet.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientGet.cpp
-PullStream_ClientMethod.o:./StreamMedia_PullStream/PullStream_ClientMethod.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientMethod.cpp
+PullStream_ClientRtsp.o:./StreamMedia_PullStream/PullStream_ClientRtsp.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientRtsp.cpp
 
 PushStream_XStreamTask.o:./StreamMedia_PushStream/PushStream_XStreamTask.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_XStreamTask.cpp

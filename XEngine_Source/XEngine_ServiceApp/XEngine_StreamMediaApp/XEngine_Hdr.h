@@ -38,8 +38,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
-#include <XEngine_Include/XEngine_RfcComponents/SDPProtocol_Define.h>
-#include <XEngine_Include/XEngine_RfcComponents/SDPProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTMPProtocol_Define.h>
@@ -50,6 +50,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/RTSPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AudioCodec_Define.h>
@@ -80,7 +82,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
-#include "./StreamMedia_PullStream/PullStream_ClientMethod.h"
+#include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_Hdr.h
@@ -109,12 +111,16 @@ extern XHANDLE xhRTMPSocket;
 extern XHANDLE xhRTMPHeart;
 extern XHANDLE xhRTMPPool;
 extern XHANDLE xhSRTPool;
-//配置文件
 //JT1078推流
 extern XHANDLE xhJT1078Socket;
 extern XHANDLE xhJT1078Heart;
 extern XHANDLE xhJT1078Pkt;
 extern XHANDLE xhJT1078Pool;
+//RTSP的UDP网络
+extern XHANDLE xhVRTPSocket;
+extern XHANDLE xhVRTCPSocket;
+extern XHANDLE xhARTPSocket;
+extern XHANDLE xhARTCPSocket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -160,12 +166,13 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
-#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_SDPProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_SDPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTMPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_HLSProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTSPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol.lib")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"Ws2_32.lib")

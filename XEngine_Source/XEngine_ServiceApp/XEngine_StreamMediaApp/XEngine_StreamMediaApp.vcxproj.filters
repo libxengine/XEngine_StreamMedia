@@ -66,7 +66,7 @@
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp">
       <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
-    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientMethod.cpp">
+    <ClCompile Include="StreamMedia_PullStream\PullStream_ClientRtsp.cpp">
       <Filter>源文件\StreamMedia_PullStream</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,7 +104,7 @@
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h">
       <Filter>头文件\StreamMedia_PullStream</Filter>
     </ClInclude>
-    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientMethod.h">
+    <ClInclude Include="StreamMedia_PullStream\PullStream_ClientRtsp.h">
       <Filter>头文件\StreamMedia_PullStream</Filter>
     </ClInclude>
   </ItemGroup>

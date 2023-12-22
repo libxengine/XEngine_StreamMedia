@@ -136,7 +136,13 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullXStream.bEnable = st_PullXStream["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullRtmp.bEnable = st_PullRtmp["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullFlv.bEnable = st_PullFlv["bEnable"].asBool();
+	
 	pSt_ServerConfig->st_XPull.st_PullRtsp.bEnable = st_PullRtsp["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.nVRTPPort = st_PullRtsp["nVRTPPort"].asInt();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.nVRTCPPort = st_PullRtsp["nVRTCPPort"].asInt();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTPPort = st_PullRtsp["nARTPPort"].asInt();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTCPPort = st_PullRtsp["nARTCPPort"].asInt();
+
 	pSt_ServerConfig->st_XPull.st_PullHls.bEnable = st_PullHls["bEnable"].asBool();
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
