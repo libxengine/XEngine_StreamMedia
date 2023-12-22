@@ -144,7 +144,6 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		SDPProtocol_Packet_OptionalRange(xhSDPToken);
 		SDPProtocol_Packet_Control(xhSDPToken, -1);
 		//配置视频属性
-		int nListCount = 0;
 		XCHAR** pptszAVList;
 		BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, 64);
 		_tcsxcpy(pptszAVList[0], "96");

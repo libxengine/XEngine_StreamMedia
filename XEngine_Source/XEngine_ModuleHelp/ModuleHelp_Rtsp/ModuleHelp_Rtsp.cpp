@@ -42,7 +42,7 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetSMSAddr(LPCXSTR lpszURLStr, XCHAR* pts
 {
 	ModuleHelp_IsErrorOccur = false;
 
-	LPCXSTR lpszRTSPAddr = _tcsstr(lpszURLStr, _X("554"));
+	LPCXSTR lpszRTSPAddr = _tcsxstr(lpszURLStr, _X("554"));
 	_tcsxcpy(ptszSMSAddr, lpszRTSPAddr + 4);
 	return true;
 }
