@@ -387,6 +387,19 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		{
 			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == stl_ListIteratorClient->enClientType)
 			{
+				//如果是关键帧
+				if (1 == byFrameType)
+				{
+					int nPATLen = 0;
+					int nPMTLen = 0;
+					XBYTE tszPATBuffer[MAX_PATH] = {};
+					XBYTE tszPMTBuffer[MAX_PATH] = {};
+
+					HLSProtocol_TSPacket_PATInfo(lpszClientAddr, tszPATBuffer, &nPATLen);
+					HLSProtocol_TSPacket_PMTInfo(lpszClientAddr, tszPMTBuffer, &nPMTLen);
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPATBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPMTBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
+				}
 				for (int i = 0; i < nListCount; i++)
 				{
 					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)pptszMsgBuffer[i], 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
