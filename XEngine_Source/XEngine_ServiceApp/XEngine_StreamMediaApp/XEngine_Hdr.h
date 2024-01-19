@@ -83,6 +83,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
 #include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
+#include "./StreamMedia_PullStream/PullStream_ClientWebRtc.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_Hdr.h
