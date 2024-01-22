@@ -158,6 +158,11 @@ void CALLBACK Network_Callback_AudioRTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	PullStream_ClientRtsp_RTCPProcess(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTCP音频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
+//WEBRTC
+void CALLBACK Network_Callback_STUNRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("STUN客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {

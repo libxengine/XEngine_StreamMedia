@@ -122,6 +122,8 @@ extern XHANDLE xhVRTPSocket;
 extern XHANDLE xhVRTCPSocket;
 extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
+//WEBRTC网络
+extern XHANDLE xhSTUNSocket;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试

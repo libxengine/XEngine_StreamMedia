@@ -37,6 +37,8 @@ XHANDLE xhVRTPSocket = NULL;
 XHANDLE xhVRTCPSocket = NULL;
 XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
+//WEBRTC网络
+XHANDLE xhSTUNSocket = NULL;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -60,6 +62,10 @@ void ServiceApp_Stop(int signo)
 			NetCore_UDPXCore_DestroyEx(xhVRTCPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTCPSocket);
+		}
+		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -477,6 +483,18 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTSP视频RTP端口:%d 和视频RTCP端口:%d,以及音频的RTP端口:%d 和RTCP端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nVRTCPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort);
 	}
 
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, 1);
+		if (NULL == xhSTUNSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC的STUN网络端口:%d 失败,错误：%d"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		NetCore_UDPXCore_RegisterCallBackEx(xhSTUNSocket, Network_Callback_VideoRTPRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC的STUN端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort);
+	}
+
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
 	while (true)
@@ -500,6 +518,10 @@ XENGINE_SERVICEAPP_EXIT:
 			NetCore_UDPXCore_DestroyEx(xhVRTCPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTCPSocket);
+		}
+		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
