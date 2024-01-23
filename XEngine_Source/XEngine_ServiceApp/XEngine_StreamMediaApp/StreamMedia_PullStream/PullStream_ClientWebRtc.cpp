@@ -10,6 +10,44 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
+bool PullStream_ClientStun_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+{
+	int nAttrCount = 0;
+	RFCCOMPONENTS_NATATTR** ppSt_ListAttr;
+	RFCCOMPONENTS_NATSTUN st_NatClient = {};
+
+	if (!NatProtocol_StunNat_Parse(lpszMsgBuffer, nMsgLen, &st_NatClient, &ppSt_ListAttr, &nAttrCount))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("STUN客户端:%s,请求的STUN协议不正确,解析失败,错误:%lX"), lpszClientAddr, NatProtocol_GetLastError());
+		return false;
+	}
+	XCHAR tszUserStr[128] = {};
+	for (int i = 0; i < nAttrCount; i++)
+	{
+		if (RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME == ppSt_ListAttr[i]->wAttr)
+		{
+			memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
+		}
+	}
+	int nTMPLen = 0;
+	int nMSGLen = 0;
+	int nIPPort = 0;
+	XCHAR tszTMPBuffer[1024] = {};
+	XCHAR tszMSGBuffer[1024] = {};
+	XCHAR tszIPAddr[128] = {};
+
+	_tcsxcpy(tszIPAddr, lpszClientAddr);
+
+	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nIPPort);
+
+	NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
+	NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, tszIPAddr, nIPPort, true);
+	//NatProtocol_StunNat_BuildMSGIntegrity(tszMSGBuffer, &nMSGLen, tszTMPBuffer, nTMPLen, );
+	NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
+
+	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+	return true;
+}
 bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
