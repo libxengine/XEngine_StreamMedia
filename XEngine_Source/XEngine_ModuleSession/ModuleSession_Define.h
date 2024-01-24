@@ -396,6 +396,25 @@ extern "C" bool ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppS
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszTSFile, XNETHANDLE xhToken);
 /********************************************************************
+函数名称：ModuleSession_PushStream_HLSInsert
+函数功能：插入创建一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件保存路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSGetFile(LPCXSTR lpszClientAddr, XCHAR* ptszFileName);
+/********************************************************************
 函数名称：ModuleSession_PushStream_HLSWrite
 函数功能：HLS写入数据
  参数.一：lpszClientAddr

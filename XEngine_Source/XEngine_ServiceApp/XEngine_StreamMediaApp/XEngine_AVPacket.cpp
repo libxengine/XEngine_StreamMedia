@@ -30,20 +30,13 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 			XNETHANDLE xhSub = 0;
 			XCHAR tszHLSFile[MAX_PATH] = {};
 			XCHAR tszTSFile[MAX_PATH] = {};
-			XCHAR tszFile[MAX_PATH] = {};
-			XCHAR tszKeyStr[MAX_PATH] = {};
-			XCHAR tszKeyVlu[MAX_PATH] = {};
-
-			BaseLib_OperatorString_GetKeyValue(tszSMSAddr, "/", tszKeyStr, tszKeyVlu);
 
 			_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
-			_xstprintf(tszTSFile, _X("./%s/%lld.ts"), tszKeyVlu, time(NULL));
-			_xstprintf(tszFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+			_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
 
 			HLSProtocol_M3u8File_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
-			HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSub, tszTSFile, st_ServiceConfig.st_XPull.st_PullHls.nTime, false);
-			ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszFile, xhSub);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体文件创建成功,M3U8文件地址:%s,TS文件地址:%s,数据流地址:%s"), lpszClientAddr, tszHLSFile, tszTSFile, tszFile);
+			ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSub);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体文件创建成功,M3U8文件地址:%s,TS文件地址:%s"), lpszClientAddr, tszHLSFile, tszTSFile);
 		}
 	}
 	return true;
@@ -428,16 +421,22 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			{
 				XNETHANDLE xhSubFile = 0;
 				XCHAR tszTSFile[MAX_PATH] = {};
+				XCHAR tszHLSFile[MAX_PATH] = {};
+				XCHAR tszFile[MAX_PATH] = {};
 				XCHAR tszSMSAddr[MAX_PATH] = {};
+
 				ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
 				ModuleSession_PushStream_HLSTimeSet(lpszClientAddr, __int64u(nTimeEnd));
-				//先关闭
+				//添加文件到M3U8中
+				ModuleSession_PushStream_HLSGetFile(lpszClientAddr, tszHLSFile);
 				ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhSubFile);
-				//在打开
+
+				BaseLib_OperatorString_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
+				HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
+				//打开新的
 				_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
-				HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSubFile, tszTSFile, double(nCalValue), false);
 				ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSubFile);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体打包成功,开始处理新的文件:%s,时间:%llu"), lpszClientAddr, tszTSFile, nCalValue);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体打包成功,开始处理新的文件:%s,插入的TS文件:%s,时间:%llu"), lpszClientAddr, tszTSFile, tszFile, nCalValue);
 			}
 			HLSProtocol_TSPacket_PATInfo(lpszClientAddr, tszPATBuffer, &nPATLen);
 			HLSProtocol_TSPacket_PMTInfo(lpszClientAddr, tszPMTBuffer, &nPMTLen);

@@ -553,6 +553,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 	BaseLib_OperatorString_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
 	SystemApi_File_CreateMutilFolder(tszFilePath);
 
+	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
 	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
 	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
 	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
@@ -562,6 +563,48 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 		st_Locker.unlock_shared();
 		return false;
 	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSInsert
+函数功能：插入创建一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件保存路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSGetFile(LPCXSTR lpszClientAddr, XCHAR* ptszFileName)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(ptszFileName, stl_MapIterator->second->st_HLSFile.tszFileName);
 	st_Locker.unlock_shared();
 	return true;
 }
@@ -661,7 +704,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSClose(LPCXSTR lpszCl
 	{
 		fclose(stl_MapIterator->second->st_HLSFile.pSt_File);
 	}
-
+	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', MAX_PATH);
 	st_Locker.unlock_shared();
 	return true;
 }
@@ -746,6 +789,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpsz
 		st_Locker.unlock_shared();
 		return false;
 	}
+	
 	*pInt_Time = stl_MapIterator->second->st_HLSFile.nTime;
 	st_Locker.unlock_shared();
 	return true;

@@ -114,6 +114,10 @@ extern "C" bool ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXS
 {
 	return m_PushStream.ModuleSession_PushStream_HLSInsert(lpszClientAddr, lpszTSFile, xhToken);
 }
+extern "C" bool ModuleSession_PushStream_HLSGetFile(LPCXSTR lpszClientAddr, XCHAR * ptszFileName)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSGetFile(lpszClientAddr, ptszFileName);
+}
 extern "C" bool ModuleSession_PushStream_HLSWrite(LPCXSTR lpszClientAddr, LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	return m_PushStream.ModuleSession_PushStream_HLSWrite(lpszClientAddr, lpszMSGBuffer, nMSGLen);

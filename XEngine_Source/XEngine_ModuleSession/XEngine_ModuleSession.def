@@ -24,6 +24,7 @@ EXPORTS
 	ModuleSession_PushStream_ClientDelete
 	ModuleSession_PushStream_ClientList
 	ModuleSession_PushStream_HLSInsert
+	ModuleSession_PushStream_HLSGetFile
 	ModuleSession_PushStream_HLSWrite
 	ModuleSession_PushStream_HLSClose
 	ModuleSession_PushStream_HLSTimeSet
