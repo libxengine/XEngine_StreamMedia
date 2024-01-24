@@ -146,6 +146,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTPPort = st_PullRtsp["nARTPPort"].asInt();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTCPPort = st_PullRtsp["nARTCPPort"].asInt();
 
+	pSt_ServerConfig->st_XPull.st_PullHls.nTime = st_PullHls["nTime"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullHls.tszHLSPath, st_PullHls["tszHLSPath"].asCString());
 
 	pSt_ServerConfig->st_XPull.st_PullWebRtc.nSTUNPort = st_PullWebRtc["nSTUNPort"].asInt();

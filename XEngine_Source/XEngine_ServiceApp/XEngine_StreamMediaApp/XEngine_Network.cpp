@@ -250,6 +250,12 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 	}
 	if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 	{
+		XNETHANDLE xhHLSToken = 0;
+		ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhHLSToken);
+		if (xhHLSToken > 0)
+		{
+			HLSProtocol_M3u8File_Delete(xhHLSFile, xhHLSToken);
+		}
 		ModuleSession_PullStream_PublishDelete(tszSMSAddr);
 		ModuleSession_PushStream_Destroy(lpszClientAddr);
 	}
