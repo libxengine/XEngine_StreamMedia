@@ -24,9 +24,9 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 	if (bPublish)
 	{
-		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//创建会话
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//need to parse ts stream
 		HLSProtocol_TSParse_Insert(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,创建流成功,推流地址：%s,类型:推流端"), lpszClientAddr, tszSMSAddr);

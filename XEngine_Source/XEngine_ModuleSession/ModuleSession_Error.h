@@ -24,3 +24,4 @@
 #define ERROR_STREAMMEDIA_MODULE_SESSION_EMPTY 0xE0009                    //空的列表
 #define ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND 0xE000A                 //没有找到
 #define ERROR_STREAMMEDIA_MODULE_SESSION_NOTSUPPORT 0xE000B               //不支持的类型
+#define ERROR_STREAMMEDIA_MODULE_SESSION_FILE 0xE000C                     //文件操作失败

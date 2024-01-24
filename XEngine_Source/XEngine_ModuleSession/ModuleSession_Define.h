@@ -371,3 +371,108 @@ extern "C" bool ModuleSession_PushStream_GetAVInfo(LPCXSTR lpszClientAddr, XENGI
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO*** pppSt_ProtocolStream, int* pInt_ListCount);
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSInsert
+函数功能：插入创建一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszTSFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入路径
+ 参数.三：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入HLS文件句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszTSFile, XNETHANDLE xhToken);
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSWrite
+函数功能：HLS写入数据
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要写入的缓冲区数据
+ 参数.三：nMSGLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSWrite(LPCXSTR lpszClientAddr, LPCXSTR lpszMSGBuffer, int nMSGLen);
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSClose
+函数功能：关闭一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出HLS文件句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSClose(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSTimeSet
+函数功能：设置一个时间戳
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：nTime
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要设置的时间戳
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime);
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSTimeGet
+函数功能：获取一个时间戳
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：pInt_Time
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的时间戳
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u* pInt_Time);

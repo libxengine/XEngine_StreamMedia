@@ -39,6 +39,8 @@ XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
 XHANDLE xhSTUNSocket = NULL;
+//HLS流
+XNETHANDLE xhHLSFile = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -86,6 +88,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		HLSProtocol_M3u8File_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
@@ -495,6 +498,16 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC的STUN端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort);
 	}
 
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+	{
+		if (!HLSProtocol_M3u8File_Create(&xhHLSFile, NULL))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动HLS(M3U8)文件流失败,错误：%d"), HLSProtocol_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动HLS(M3U8)文件流成功"));
+	}
+
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
 	while (true)
@@ -542,6 +555,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		HLSProtocol_M3u8File_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);

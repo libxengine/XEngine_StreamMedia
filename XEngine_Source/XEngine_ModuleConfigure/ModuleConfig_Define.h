@@ -67,6 +67,7 @@ typedef struct tag_XEngine_ServiceConfig
 		struct
 		{
 			bool bEnable;
+			XCHAR tszHLSPath[MAX_PATH];
 		}st_PullHls;
 		struct  
 		{

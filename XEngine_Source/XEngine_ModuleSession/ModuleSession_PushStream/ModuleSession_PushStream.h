@@ -12,10 +12,16 @@
 *********************************************************************/
 typedef struct
 {
+	struct  
+	{
+		XNETHANDLE xhToken;
+		__int64u nTime;
+		FILE* pSt_File;
+	}st_HLSFile;
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszSMSAddr[MAX_PATH];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
-	
+
 	unique_ptr<mutex> st_ClientLocker;
 	unique_ptr<list<STREAMMEDIA_SESSIONCLIENT>> pStl_ListClient;
 }PUSHSTREAM_PACKET;
@@ -37,6 +43,12 @@ public:
 	bool ModuleSession_PushStream_ClientInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
 	bool ModuleSession_PushStream_ClientDelete(LPCXSTR lpszClientAddr, LPCXSTR lpszPullAddr);
 	bool ModuleSession_PushStream_ClientList(LPCXSTR lpszClientAddr, list<STREAMMEDIA_SESSIONCLIENT> *pStl_ListClient);
+public:
+	bool ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszTSFile, XNETHANDLE xhToken);
+	bool ModuleSession_PushStream_HLSWrite(LPCXSTR lpszClientAddr, LPCXSTR lpszMSGBuffer, int nMSGLen);
+	bool ModuleSession_PushStream_HLSClose(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
+	bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime);
+	bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u *pInt_Time);
 private:
 	shared_mutex st_Locker;
 private:

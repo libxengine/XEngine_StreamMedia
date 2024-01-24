@@ -23,6 +23,28 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
 	{
 		HLSProtocol_TSPacket_Insert(lpszClientAddr, 100);
+
+		XCHAR tszSMSAddr[MAX_PATH] = {};
+		if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+		{
+			XNETHANDLE xhSub = 0;
+			XCHAR tszHLSFile[MAX_PATH] = {};
+			XCHAR tszTSFile[MAX_PATH] = {};
+			XCHAR tszFile[MAX_PATH] = {};
+			XCHAR tszKeyStr[MAX_PATH] = {};
+			XCHAR tszKeyVlu[MAX_PATH] = {};
+
+			BaseLib_OperatorString_GetKeyValue(tszSMSAddr, "/", tszKeyStr, tszKeyVlu);
+
+			_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
+			_xstprintf(tszTSFile, _X("./%s/%lld.ts"), tszKeyVlu, time(NULL));
+			_xstprintf(tszFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+
+			HLSProtocol_M3u8File_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
+			HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSub, tszTSFile, 15, false);
+			ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszFile, xhSub);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体文件创建成功,M3U8文件地址:%s,TS文件地址:%s,数据流地址:%s"), lpszClientAddr, tszHLSFile, tszTSFile, tszFile);
+		}
 	}
 	return true;
 }
@@ -378,9 +400,55 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		else
 		{
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x101, lpszMsgBuffer, nMsgLen);
+			XCHAR byAACBuffer[1024] = {};
+			XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+
+			ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
+			AVHelp_Packet_AACHdr((XBYTE*)byAACBuffer, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, nMsgLen);
+			memcpy(byAACBuffer + 7, lpszMsgBuffer, nMsgLen);
+			nMsgLen += 7;
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x101, byAACBuffer, nMsgLen);
 		}
-		//是否有客户端需要发送XStream流
+
+		//如果是关键帧
+		if (1 == byFrameType)
+		{
+			int nPATLen = 0;
+			int nPMTLen = 0;
+			XBYTE tszPATBuffer[MAX_PATH] = {};
+			XBYTE tszPMTBuffer[MAX_PATH] = {};
+
+			double nTimeEnd = 0;
+			__int64u nTimeStart = 0;
+			HLSProtocol_TSPacket_GetTime(lpszClientAddr, &nTimeEnd);
+			ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, &nTimeStart);
+
+			__int64u nCalValue = __int64u(nTimeEnd) - nTimeStart;
+			if (nCalValue >= 15)
+			{
+				XNETHANDLE xhSubFile = 0;
+				XCHAR tszTSFile[MAX_PATH] = {};
+				XCHAR tszSMSAddr[MAX_PATH] = {};
+				ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
+				ModuleSession_PushStream_HLSTimeSet(lpszClientAddr, __int64u(nTimeEnd));
+				//先关闭
+				ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhSubFile);
+				//在打开
+				_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+				HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSubFile, tszTSFile, nCalValue, false);
+				ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSubFile);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体打包成功,开始处理新的文件:%s,时间:%llu"), lpszClientAddr, tszTSFile, nCalValue);
+			}
+			HLSProtocol_TSPacket_PATInfo(lpszClientAddr, tszPATBuffer, &nPATLen);
+			HLSProtocol_TSPacket_PMTInfo(lpszClientAddr, tszPMTBuffer, &nPMTLen);
+			ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)tszPATBuffer, nPATLen);
+			ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)tszPMTBuffer, nPMTLen);
+		}
+		for (int i = 0; i < nListCount; i++)
+		{
+			ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)pptszMsgBuffer[i], 188);
+		}
+		/*
 		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
 		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
 		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
@@ -405,7 +473,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)pptszMsgBuffer[i], 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
 				}
 			}
-		}
+		}*/
 	}
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{

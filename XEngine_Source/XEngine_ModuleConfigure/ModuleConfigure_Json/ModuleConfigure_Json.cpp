@@ -146,6 +146,8 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTPPort = st_PullRtsp["nARTPPort"].asInt();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTCPPort = st_PullRtsp["nARTCPPort"].asInt();
 
+	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullHls.tszHLSPath, st_PullHls["tszHLSPath"].asCString());
+
 	pSt_ServerConfig->st_XPull.st_PullWebRtc.nSTUNPort = st_PullWebRtc["nSTUNPort"].asInt();
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
