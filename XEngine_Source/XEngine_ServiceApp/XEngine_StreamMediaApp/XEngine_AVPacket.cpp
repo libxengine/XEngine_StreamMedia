@@ -34,7 +34,7 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 			_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
 			_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
 
-			HLSProtocol_M3u8File_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
+			HLSProtocol_M3u8Packet_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
 			ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSub);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体文件创建成功,M3U8文件地址:%s,TS文件地址:%s"), lpszClientAddr, tszHLSFile, tszTSFile);
 		}
@@ -432,7 +432,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhSubFile);
 
 				BaseLib_OperatorString_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
-				HLSProtocol_M3u8File_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
+				HLSProtocol_M3u8Packet_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
 				//打开新的
 				_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
 				ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSubFile);

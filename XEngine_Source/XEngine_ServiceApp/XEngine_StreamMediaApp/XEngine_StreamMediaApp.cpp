@@ -88,7 +88,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
-		HLSProtocol_M3u8File_Delete(xhHLSFile);
+		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
@@ -500,7 +500,7 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
 	{
-		if (!HLSProtocol_M3u8File_Create(&xhHLSFile, NULL))
+		if (!HLSProtocol_M3u8Packet_Create(&xhHLSFile, NULL))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动HLS(M3U8)文件流失败,错误：%d"), HLSProtocol_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
@@ -555,7 +555,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
-		HLSProtocol_M3u8File_Delete(xhHLSFile);
+		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
