@@ -71,6 +71,10 @@ typedef struct tag_XEngine_ServiceConfig
 			bool bEnable;
 			bool bClear;
 		}st_PullHls;
+		struct
+		{
+			bool bEnable;
+		}st_PullSrt;
 		struct  
 		{
 			bool bEnable;
