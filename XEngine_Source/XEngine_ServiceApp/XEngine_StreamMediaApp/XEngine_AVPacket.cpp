@@ -20,7 +20,7 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 	{
 		RTMPProtocol_Packet_Insert(lpszClientAddr);
 	}
-	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable)
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable || st_ServiceConfig.st_XPull.st_PullTs.bEnable)
 	{
 		HLSProtocol_TSPacket_Insert(lpszClientAddr, 100);
 
@@ -386,13 +386,12 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			}
 		}
 	}
-	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable)
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable || st_ServiceConfig.st_XPull.st_PullTs.bEnable)
 	{
-		int nListCount = 0;
-		XBYTE** pptszMsgBuffer = NULL;
+		*pInt_SDLen = 0;
 		if (0 == byAVType)
 		{
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x100, lpszMsgBuffer, nMsgLen);
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE *)ptszSDBuffer, pInt_SDLen, 0x100, lpszMsgBuffer, nMsgLen);
 		}
 		else
 		{
@@ -403,7 +402,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			AVHelp_Packet_AACHdr((XBYTE*)byAACBuffer, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, nMsgLen);
 			memcpy(byAACBuffer + 7, lpszMsgBuffer, nMsgLen);
 			nMsgLen += 7;
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x101, byAACBuffer, nMsgLen);
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE*)ptszSDBuffer, pInt_SDLen, 0x101, byAACBuffer, nMsgLen);
 		}
 
 		int nPATLen = 0;
@@ -452,10 +451,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		//HLS推流
 		if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
 		{
-			for (int i = 0; i < nListCount; i++)
-			{
-				ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)pptszMsgBuffer[i], 188);
-			}
+			ModuleSession_PushStream_HLSWrite(lpszClientAddr, ptszSDBuffer, *pInt_SDLen);
 		}
 		//SRT推流
 		if (st_ServiceConfig.st_XPull.st_PullSrt.bEnable)
@@ -472,14 +468,20 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPATBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPMTBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
 					}
-					for (int i = 0; i < nListCount; i++)
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+				}
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == stl_ListIteratorClient->enClientType)
+				{
+					//如果是关键帧
+					if (1 == byFrameType)
 					{
-						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)pptszMsgBuffer[i], 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPATBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPMTBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 					}
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszMsgBuffer, nListCount);
 	}
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
