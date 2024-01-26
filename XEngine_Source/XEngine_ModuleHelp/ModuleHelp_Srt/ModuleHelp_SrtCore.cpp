@@ -155,6 +155,9 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 			bFound = true;
 			break;
 		}
+		else
+		{
+		}
 	}
 	if (!bFound)
 	{
@@ -165,23 +168,41 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 	}
 	//int nSRTEvent = SRT_EPOLL_OUT | SRT_EPOLL_ERR;
 	//srt_epoll_add_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
+
+	int nRet = 0;
+	int nSendCount = 0;
+	int nLeftCount = nMsgLen;
 	SRTSOCKET hSocket = stl_MapIterator->second.hSocket;
-	st_Locker.unlock_shared();
+	
 	while (true)
 	{
-		int nRet = srt_sendmsg(hSocket, lpszMsgBuffer, nMsgLen, -1, 1);
-		if (nRet >= 0) 
+		if (nLeftCount > 1300)
+		{
+			nRet = srt_send(hSocket, lpszMsgBuffer + nSendCount, 1300);
+			nSendCount += 1300;
+			nLeftCount -= 1300;
+		}
+		else
+		{
+			nRet = srt_send(hSocket, lpszMsgBuffer + nSendCount, nLeftCount);
+			nSendCount += nLeftCount;
+			nLeftCount -= nLeftCount;
+		}
+
+		if (nSendCount == nMsgLen)
 		{
 			break;
 		}
-		nRet = srt_getlasterror(NULL);
-		if (SRT_EASYNCSND != nRet)
+		
+		if (-1 == nRet)
 		{
 			ModuleHelp_IsErrorOccur = true;
-			ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_NOTFOUND;
+			ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_SENDFAILED;
+			st_Locker.unlock_shared();
 			return false;
 		}
 	}
+	st_Locker.unlock_shared();
 	//nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
 	//srt_epoll_update_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
 
