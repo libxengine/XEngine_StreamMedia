@@ -452,6 +452,10 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nSRTThread);
 	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用x"));
+	}
 
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
@@ -485,6 +489,10 @@ int main(int argc, char** argv)
 		NetCore_UDPXCore_RegisterCallBackEx(xhARTCPSocket, Network_Callback_AudioRTCPRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTSP视频RTP端口:%d 和视频RTCP端口:%d,以及音频的RTP端口:%d 和RTCP端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nVRTCPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort);
 	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTSP拉流服务被禁用"));
+	}
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
@@ -506,6 +514,10 @@ int main(int argc, char** argv)
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动HLS(M3U8)文件流成功,TS文件流时间:%d"), st_ServiceConfig.st_XPull.st_PullHls.nTime);
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
