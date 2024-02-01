@@ -34,7 +34,11 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 				XCHAR tszTSFile[MAX_PATH] = {};
 
 				_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
+#ifdef _MSC_BUILD
 				_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+#else
+				_xstprintf(tszTSFile, _X("%s/%s/%ld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+#endif
 
 				HLSProtocol_M3u8Packet_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
 				ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSub);
@@ -423,7 +427,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, &nTimeStart);
 
 				__int64u nCalValue = __int64u(nTimeEnd) - nTimeStart;
-				if (nCalValue >= st_ServiceConfig.st_XPull.st_PullHls.nTime)
+				if (nCalValue >= XUINT(st_ServiceConfig.st_XPull.st_PullHls.nTime))
 				{
 					XNETHANDLE xhSubFile = 0;
 					XCHAR tszTSFile[MAX_PATH] = {};
@@ -440,7 +444,11 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					BaseLib_OperatorString_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
 					HLSProtocol_M3u8Packet_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
 					//打开新的
+#ifdef _MSC_BUILD
 					_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+#else
+					_xstprintf(tszTSFile, _X("%s/%s/%ld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+#endif
 					ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSubFile);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体打包成功,开始处理新的文件:%s,插入的TS文件:%s,时间:%llu"), lpszClientAddr, tszTSFile, tszFile, nCalValue);
 				}
