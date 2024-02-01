@@ -30,11 +30,11 @@ c c++ streammedia server
 
 | 协议名称 | 视频格式  | 音频格式 | 当前状态 |
 | -------- | --------- | -------- | -------- |
-| RTMP     | H264,H265 | AAC      | 已完成   |
+| RTMP     | H264      | AAC      | 已完成   |
 | SRT      | H264,H265 | AAC      | 已完成   |
-| WEBRTC   | H264,H265 | AAC      | 未开始   |
-| GB28181  | H264,H265 | AAC      | 未开始   |
-| JT1078   | H264,H265 | AAC      | 已完成   |
+| WEBRTC   | H264      | AAC      | 未开始   |
+| GB28181  | H264      | AAC      | 未开始   |
+| JT1078   | H264      | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
   
 拉流协议:
@@ -45,7 +45,7 @@ c c++ streammedia server
 | RTSP     | H264      | AAC      | 已完成   |
 | M3U8     | H264,H265 | AAC      | 已完成   |
 | SRT      | H264,H265 | AAC      | 已完成   |
-| WEBRTC   | H264,H265 | AAC      | 进行中   |
+| WEBRTC   | H264      | AAC      | 进行中   |
 | HTTP-FLV | H264      | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
 | TS       | H264,H265 | AAC      | 已完成   |
