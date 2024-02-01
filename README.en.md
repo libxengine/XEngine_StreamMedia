@@ -21,6 +21,7 @@ feature:
 5. Support Transparent transmission(planning)
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
+8. Support for the transfer of all streaming media protocols
 
 Publish Stream:
 
@@ -28,7 +29,7 @@ Publish Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264,H265 | AAC      | Completed   |
 | SRT      | H264,H265 | AAC      | Completed   |
-| WEBRTC   | H264,H265 | AAC      | Process     |
+| WEBRTC   | H264,H265 | AAC      | Not Start   |
 | GB28181  | H264,H265 | AAC      | Not Start   |
 | JT1078   | H264,H265 | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
@@ -39,12 +40,12 @@ Play Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
 | RTSP     | H264      | AAC      | Completed   |
-| TS       | H264,H265 | AAC      | Process     |
+| M3U8     | H264,H265 | AAC      | Completed   |
 | SRT      | H264,H265 | AAC      | Completed   |
-| WEBRTC   | H264,H265 | AAC      | Not Start   |
+| WEBRTC   | H264,H265 | AAC      | Processing  |
 | HTTP-FLV | H264      | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
-
+| TS       | H264,H265 | AAC      | Completed   |
 
 ## install
 
@@ -102,6 +103,7 @@ xstream://127.0.0.1:5601
 
 #### Pull Stream
 http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv(http-flv)  
+http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=ts  
 rtsp://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=rtsp  
 rtmp://127.0.0.1/live/qyt  
 srt://127.0.0.1:5603?streamid=#!::r=live/qyt,m=request  
