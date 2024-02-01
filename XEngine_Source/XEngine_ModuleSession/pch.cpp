@@ -110,3 +110,27 @@ extern "C" bool ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUBLISHINFO * **ppp
 {
 	return m_PushStream.ModuleSession_PushStream_GetInfo(pppSt_ProtocolStream, pInt_ListCount);
 }
+extern "C" bool ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszTSFile, XNETHANDLE xhToken)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSInsert(lpszClientAddr, lpszTSFile, xhToken);
+}
+extern "C" bool ModuleSession_PushStream_HLSGetFile(LPCXSTR lpszClientAddr, XCHAR * ptszFileName)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSGetFile(lpszClientAddr, ptszFileName);
+}
+extern "C" bool ModuleSession_PushStream_HLSWrite(LPCXSTR lpszClientAddr, LPCXSTR lpszMSGBuffer, int nMSGLen)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSWrite(lpszClientAddr, lpszMSGBuffer, nMSGLen);
+}
+extern "C" bool ModuleSession_PushStream_HLSClose(LPCXSTR lpszClientAddr, XNETHANDLE * pxhToken)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSClose(lpszClientAddr, pxhToken);
+}
+extern "C" bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSTimeSet(lpszClientAddr, nTime);
+}
+extern "C" bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u * pInt_Time)
+{
+	return m_PushStream.ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, pInt_Time);
+}

@@ -66,8 +66,19 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullFlv;
 		struct
 		{
+			XCHAR tszHLSPath[MAX_PATH];
+			int nTime;
 			bool bEnable;
+			bool bClear;
 		}st_PullHls;
+		struct
+		{
+			bool bEnable;
+		}st_PullSrt;
+		struct
+		{
+			bool bEnable;
+		}st_PullTs;
 		struct  
 		{
 			bool bEnable;
@@ -76,6 +87,11 @@ typedef struct tag_XEngine_ServiceConfig
 			int nARTPPort;
 			int nARTCPPort;
 		}st_PullRtsp;
+		struct  
+		{
+			bool bEnable;
+			int nSTUNPort;
+		}st_PullWebRtc;
 	}st_XPull;
 	struct  
 	{

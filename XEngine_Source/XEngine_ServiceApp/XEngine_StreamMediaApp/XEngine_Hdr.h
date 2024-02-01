@@ -38,6 +38,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/NatProtocol_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/NatProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/FLVProtocol_Define.h>
@@ -59,6 +61,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 //加载项目相关头文件
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
@@ -83,6 +87,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
 #include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
+#include "./StreamMedia_PullStream/PullStream_ClientWebRtc.h"
 /********************************************************************
 //    Created:     2023/06/04  10:35:46
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_Hdr.h
@@ -121,6 +126,10 @@ extern XHANDLE xhVRTPSocket;
 extern XHANDLE xhVRTCPSocket;
 extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
+//WEBRTC网络
+extern XHANDLE xhSTUNSocket;
+//HLS流
+extern XNETHANDLE xhHLSFile;
 //配置文件
 extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -166,6 +175,7 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_NatProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_SDPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_FLVProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTMPProtocol.lib")
@@ -175,5 +185,6 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

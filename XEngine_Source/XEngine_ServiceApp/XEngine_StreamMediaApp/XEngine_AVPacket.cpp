@@ -20,9 +20,27 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 	{
 		RTMPProtocol_Packet_Insert(lpszClientAddr);
 	}
-	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable || st_ServiceConfig.st_XPull.st_PullTs.bEnable)
 	{
 		HLSProtocol_TSPacket_Insert(lpszClientAddr, 100);
+
+		if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+		{
+			XCHAR tszSMSAddr[MAX_PATH] = {};
+			if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
+			{
+				XNETHANDLE xhSub = 0;
+				XCHAR tszHLSFile[MAX_PATH] = {};
+				XCHAR tszTSFile[MAX_PATH] = {};
+
+				_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
+				_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+
+				HLSProtocol_M3u8Packet_AddStream(xhHLSFile, &xhSub, tszHLSFile, false);
+				ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSub);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体文件创建成功,M3U8文件地址:%s,TS文件地址:%s"), lpszClientAddr, tszHLSFile, tszTSFile);
+			}
+		}
 	}
 	return true;
 }
@@ -368,28 +386,99 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			}
 		}
 	}
-	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable || st_ServiceConfig.st_XPull.st_PullSrt.bEnable || st_ServiceConfig.st_XPull.st_PullTs.bEnable)
 	{
-		int nListCount = 0;
-		XBYTE** pptszMsgBuffer = NULL;
+		*pInt_SDLen = 0;
 		if (0 == byAVType)
 		{
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x100, lpszMsgBuffer, nMsgLen);
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE *)ptszSDBuffer, pInt_SDLen, 0x100, lpszMsgBuffer, nMsgLen);
 		}
 		else
 		{
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, &pptszMsgBuffer, &nListCount, 0x101, lpszMsgBuffer, nMsgLen);
+			XCHAR byAACBuffer[1024] = {};
+			XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+
+			ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
+			AVHelp_Packet_AACHdr((XBYTE*)byAACBuffer, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, nMsgLen);
+			memcpy(byAACBuffer + 7, lpszMsgBuffer, nMsgLen);
+			nMsgLen += 7;
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE*)ptszSDBuffer, pInt_SDLen, 0x101, byAACBuffer, nMsgLen);
 		}
-		//是否有客户端需要发送XStream流
-		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
-		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
-		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+
+		int nPATLen = 0;
+		int nPMTLen = 0;
+		XBYTE tszPATBuffer[MAX_PATH] = {};
+		XBYTE tszPMTBuffer[MAX_PATH] = {};
+		//如果是关键帧
+		if (1 == byFrameType)
 		{
-			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == stl_ListIteratorClient->enClientType)
+			HLSProtocol_TSPacket_PATInfo(lpszClientAddr, tszPATBuffer, &nPATLen);
+			HLSProtocol_TSPacket_PMTInfo(lpszClientAddr, tszPMTBuffer, &nPMTLen);
+
+			if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
 			{
-				for (int i = 0; i < nListCount; i++)
+				double nTimeEnd = 0;
+				__int64u nTimeStart = 0;
+				HLSProtocol_TSPacket_GetTime(lpszClientAddr, &nTimeEnd);
+				ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, &nTimeStart);
+
+				__int64u nCalValue = __int64u(nTimeEnd) - nTimeStart;
+				if (nCalValue >= st_ServiceConfig.st_XPull.st_PullHls.nTime)
 				{
-					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)pptszMsgBuffer[i], 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
+					XNETHANDLE xhSubFile = 0;
+					XCHAR tszTSFile[MAX_PATH] = {};
+					XCHAR tszHLSFile[MAX_PATH] = {};
+					XCHAR tszFile[MAX_PATH] = {};
+					XCHAR tszSMSAddr[MAX_PATH] = {};
+
+					ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
+					ModuleSession_PushStream_HLSTimeSet(lpszClientAddr, __int64u(nTimeEnd));
+					//添加文件到M3U8中
+					ModuleSession_PushStream_HLSGetFile(lpszClientAddr, tszHLSFile);
+					ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhSubFile);
+
+					BaseLib_OperatorString_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
+					HLSProtocol_M3u8Packet_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
+					//打开新的
+					_xstprintf(tszTSFile, _X("%s/%s/%lld.ts"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr, time(NULL));
+					ModuleSession_PushStream_HLSInsert(lpszClientAddr, tszTSFile, xhSubFile);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HLS端:%s,媒体打包成功,开始处理新的文件:%s,插入的TS文件:%s,时间:%llu"), lpszClientAddr, tszTSFile, tszFile, nCalValue);
+				}
+				ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)tszPATBuffer, nPATLen);
+				ModuleSession_PushStream_HLSWrite(lpszClientAddr, (LPCXSTR)tszPMTBuffer, nPMTLen);
+			}
+		}
+		//HLS推流
+		if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+		{
+			ModuleSession_PushStream_HLSWrite(lpszClientAddr, ptszSDBuffer, *pInt_SDLen);
+		}
+		//SRT推流
+		if (st_ServiceConfig.st_XPull.st_PullSrt.bEnable)
+		{
+			list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+			ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+			for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+			{
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == stl_ListIteratorClient->enClientType)
+				{
+					//如果是关键帧
+					if (1 == byFrameType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPATBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPMTBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+					}
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+				}
+				if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == stl_ListIteratorClient->enClientType)
+				{
+					//如果是关键帧
+					if (1 == byFrameType)
+					{
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPATBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, (LPCXSTR)tszPMTBuffer, 188, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					}
+					XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ptszSDBuffer, *pInt_SDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 				}
 			}
 		}

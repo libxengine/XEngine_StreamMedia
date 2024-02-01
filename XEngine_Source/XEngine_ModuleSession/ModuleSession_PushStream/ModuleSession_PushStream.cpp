@@ -126,6 +126,11 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Destroy(LPCXSTR lpszCli
 		st_Locker.unlock();
 		return false;
 	}
+	if (NULL != stl_MapIterator->second->st_HLSFile.pSt_File)
+	{
+		fclose(stl_MapIterator->second->st_HLSFile.pSt_File);
+	}
+
 	delete stl_MapIterator->second;
 	stl_MapIterator->second = NULL;
 	stl_MapPushStream.erase(stl_MapIterator);
@@ -496,6 +501,296 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_ClientList(LPCXSTR lpsz
 	stl_MapIterator->second->st_ClientLocker->lock();
 	*pStl_ListClient = *stl_MapIterator->second->pStl_ListClient;
 	stl_MapIterator->second->st_ClientLocker->unlock();
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSInsert
+函数功能：插入创建一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszTSFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入路径
+ 参数.三：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入HLS文件句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszClientAddr, LPCXSTR lpszTSFile, XNETHANDLE xhToken)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	XCHAR tszFilePath[MAX_PATH] = {};
+	XCHAR tszFileName[MAX_PATH] = {};
+	//获得文件名和路径
+	BaseLib_OperatorString_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
+	SystemApi_File_CreateMutilFolder(tszFilePath);
+
+	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
+	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
+	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
+	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSInsert
+函数功能：插入创建一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件保存路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSGetFile(LPCXSTR lpszClientAddr, XCHAR* ptszFileName)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(ptszFileName, stl_MapIterator->second->st_HLSFile.tszFileName);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSWrite
+函数功能：HLS写入数据
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要写入的缓冲区数据
+ 参数.三：nMSGLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSWrite(LPCXSTR lpszClientAddr, LPCXSTR lpszMSGBuffer, int nMSGLen)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+
+	if (NULL != stl_MapIterator->second->st_HLSFile.pSt_File)
+	{
+		fwrite(lpszMSGBuffer, 1, nMSGLen, stl_MapIterator->second->st_HLSFile.pSt_File);
+	}
+
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSClose
+函数功能：关闭一个HLS文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出HLS文件句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSClose(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+
+	*pxhToken = stl_MapIterator->second->st_HLSFile.xhToken;
+	if (NULL != stl_MapIterator->second->st_HLSFile.pSt_File)
+	{
+		fclose(stl_MapIterator->second->st_HLSFile.pSt_File);
+	}
+	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', MAX_PATH);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSTimeSet
+函数功能：设置一个时间戳
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：nTime
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要设置的时间戳
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_HLSFile.nTime = nTime;
+
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_HLSTimeGet
+函数功能：获取一个时间戳
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：pInt_Time
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的时间戳
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u* pInt_Time)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	
+	*pInt_Time = stl_MapIterator->second->st_HLSFile.nTime;
 	st_Locker.unlock_shared();
 	return true;
 }

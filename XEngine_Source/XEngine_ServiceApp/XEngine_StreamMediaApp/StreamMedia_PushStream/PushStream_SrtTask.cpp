@@ -24,9 +24,9 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 	if (bPublish)
 	{
-		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//创建会话
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		//need to parse ts stream
 		HLSProtocol_TSParse_Insert(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,创建流成功,推流地址：%s,类型:推流端"), lpszClientAddr, tszSMSAddr);
@@ -55,17 +55,6 @@ bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXST
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求数据推流,错误:%lX"), lpszClientAddr, HLSProtocol_GetLastError());
 		return false;
 	}
-	//SRT客户端就直接转发
-	list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
-	ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
-	for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
-	{
-		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == stl_ListIteratorClient->enClientType)
-		{
-			XEngine_Network_Send(stl_ListIteratorClient->tszClientID, lpszMsgBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-		}
-	}
-
 	return true;
 }
 

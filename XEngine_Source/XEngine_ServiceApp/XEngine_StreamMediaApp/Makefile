@@ -12,7 +12,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool 
       -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp -lXEngine_ModuleQueue \
 	  -ljsoncpp -lsrt-gnutls
 LIBEX = 
-OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o \
+OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o PullStream_ClientWebRtc.o \
           PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o \
 		  StreamMedia_HTTPApi.o \
           XEngine_AVPacket.o XEngine_Configure.o XEngine_HttpTask.o XEngine_Network.o XEngine_StreamMediaApp.o
@@ -56,6 +56,8 @@ PullStream_ClientGet.o:./StreamMedia_PullStream/PullStream_ClientGet.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientGet.cpp
 PullStream_ClientRtsp.o:./StreamMedia_PullStream/PullStream_ClientRtsp.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientRtsp.cpp
+PullStream_ClientWebRtc.o:./StreamMedia_PullStream/PullStream_ClientWebRtc.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PullStream/PullStream_ClientWebRtc.cpp
 
 PushStream_XStreamTask.o:./StreamMedia_PushStream/PushStream_XStreamTask.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_XStreamTask.cpp

@@ -91,9 +91,9 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 	if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 	{
 		//没有就创建
-		XEngine_AVPacket_AVCreate(lpszClientAddr);
-		ModuleQueue_JT1078_Create(lpszClientAddr);
 		ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
+		ModuleQueue_JT1078_Create(lpszClientAddr);
+		XEngine_AVPacket_AVCreate(lpszClientAddr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("JT1078:%s,流媒体服务创建,设备ID：%s,通道:%d,创建地址:%s"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, tszSMSAddr);
 	}
 	

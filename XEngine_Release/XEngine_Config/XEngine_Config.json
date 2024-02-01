@@ -41,8 +41,21 @@
             "nARTPPort":56003,
             "nARTCPPort":56004
         },
+        "RTC":{
+            "bEnable":true,
+            "nSTUNPort":56010
+        },
+        "SRT":{
+            "bEnable":true
+        },
+        "TS":{
+            "bEnable":true
+        },
         "HLS":{
-            "bEnable":false
+            "bEnable":false,
+            "bClear":false,
+            "nTime":15,
+            "tszHLSPath":"./XEngine_File"
         }
     },
     "XLog":{
@@ -51,6 +64,7 @@
         "LogLeave":32
     },
     "XVer":[
+        "V2.6.0.1001 Build20240201",
         "V2.5.0.1001 Build20231222",
         "V2.4.0.1001 Build20231026",
         "V2.3.0.1001 Build20231007",

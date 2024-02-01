@@ -37,6 +37,10 @@ XHANDLE xhVRTPSocket = NULL;
 XHANDLE xhVRTCPSocket = NULL;
 XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
+//WEBRTC网络
+XHANDLE xhSTUNSocket = NULL;
+//HLS流
+XNETHANDLE xhHLSFile = 0;
 //配置文件
 XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
@@ -61,6 +65,10 @@ void ServiceApp_Stop(int signo)
 			NetCore_UDPXCore_DestroyEx(xhARTPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTCPSocket);
 		}
+		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
@@ -80,6 +88,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
@@ -316,11 +325,11 @@ int main(int argc, char** argv)
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTMP端心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTMP端心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTMPTimeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTMP端心跳服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTMPTimeout);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,实时RTMP端管理服务没有启用!"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,实时RTMP端心跳服务没有启用!"));
 		}
 		xhRTMPSocket = NetCore_TCPXCore_StartEx(st_ServiceConfig.nRTMPPort, st_ServiceConfig.st_XMax.nMaxClient, st_ServiceConfig.st_XMax.nIOThread);
 		if (NULL == xhRTMPSocket)
@@ -443,6 +452,10 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRT端处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nSRTThread);
 	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用x"));
+	}
 
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
@@ -476,6 +489,36 @@ int main(int argc, char** argv)
 		NetCore_UDPXCore_RegisterCallBackEx(xhARTCPSocket, Network_Callback_AudioRTCPRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动RTSP视频RTP端口:%d 和视频RTCP端口:%d,以及音频的RTP端口:%d 和RTCP端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nVRTCPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort, st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort);
 	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTSP拉流服务被禁用"));
+	}
+
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, 1);
+		if (NULL == xhSTUNSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC的STUN网络端口:%d 失败,错误：%d"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		NetCore_UDPXCore_RegisterCallBackEx(xhSTUNSocket, Network_Callback_VideoRTPRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC的STUN端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort);
+	}
+
+	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
+	{
+		if (!HLSProtocol_M3u8Packet_Create(&xhHLSFile, NULL))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动HLS(M3U8)文件流失败,错误：%d"), HLSProtocol_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动HLS(M3U8)文件流成功,TS文件流时间:%d"), st_ServiceConfig.st_XPull.st_PullHls.nTime);
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
+	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
@@ -501,6 +544,10 @@ XENGINE_SERVICEAPP_EXIT:
 			NetCore_UDPXCore_DestroyEx(xhARTPSocket);
 			NetCore_UDPXCore_DestroyEx(xhARTCPSocket);
 		}
+		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+		{
+			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
@@ -520,6 +567,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);

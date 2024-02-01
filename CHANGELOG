@@ -1,3 +1,25 @@
+XEngine_StreamMedia V2.6.0.1001
+
+增加:ts拉流支持
+增加:其他推流协议转换成SRT拉流协议
+增加:m3u8文件录像的支持并且支持时间设置
+增加:webrtc初始代码
+增加:webrtc的stun网络协议支持
+优化:日志打印信息
+修改:hls的TS流如果视频数据是关键帧,就添加PAT和PMT信息
+修改:hls支持设置关闭后删除录制流
+修正:srt发送数据不正确的问题
+
+added:ts stream pull supported
+added:other protocols convert to srt stream
+added:m3u8 file record supported and time set
+added:webrtc code file
+added:stun network of the webrtc support
+improved:log print
+modify:hls ts stream if the video is key frame,then add to pat and pmt
+modify:hls supported delete file when stream closed
+fixed:srt send message is incorrect
+=======================================================
 XEngine_StreamMedia V2.5.0.1001
 
 增加:RTCP协议解析支持
