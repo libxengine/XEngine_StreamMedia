@@ -95,6 +95,9 @@ brew install libsrt
 
 参考Linux
 
+## 视频教程
+你也可以观看视频教程来了解我们的代码框架情况:https://www.bilibili.com/video/BV17F4m1M7Ph
+
 ## 使用说明
 
 1. 切换到MASTER分支
