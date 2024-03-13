@@ -452,7 +452,7 @@ XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 		int nSRTCount = 100;
 		SRTSOCKET hSRTClient[100];
 
-		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, hSRTClient, &nSRTCount, 0, 0, 100, 0, 0, 0, 0);
+		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, hSRTClient, &nSRTCount, NULL, NULL, -1, NULL, NULL, NULL, NULL);
 		for (int i = 0; i < nSRTIndex; i++)
 		{
 			SRT_SOCKSTATUS nSRTStatus = srt_getsockstate(hSRTClient[i]);
