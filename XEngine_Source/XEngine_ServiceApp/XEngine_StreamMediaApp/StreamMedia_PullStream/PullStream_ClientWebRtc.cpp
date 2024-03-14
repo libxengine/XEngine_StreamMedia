@@ -73,12 +73,18 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	bool bBundle = false;
 	bool bRTCPMux = false;
 	int nListCount = 0;
+	XCHAR tszICEUser[MAX_PATH] = {};
+	XCHAR tszICEPass[MAX_PATH] = {};
+	XCHAR tszHMacStr[MAX_PATH] = {};
 	STREAMMEDIA_SDPPROTOCOL_ATTR** ppSt_ListAttr;
 	SDPProtocol_Parse_GetAttr(xhParse, &ppSt_ListAttr, &nListCount);
 	for (int i = 0; i < nListCount; i++)
 	{
 		LPCXSTR lpszAttrGroup = _X("group");
 		LPCXSTR lpszAttrMux = _X("rtcp-mux");
+		LPCXSTR lpszICEUfrag = _X("ice-ufrag");
+		LPCXSTR lpszICEPwd = _X("ice-pwd");
+		LPCXSTR lpszFinger = _X("fingerprint");
 		if (0 == _tcsxnicmp(lpszAttrGroup, ppSt_ListAttr[i]->tszAttrKey, _tcsxlen(lpszAttrGroup)))
 		{
 			LPCXSTR lpszBundleStr = _X("BUNDLE");
@@ -86,15 +92,29 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 			{
 				//是否启用了端口一致绑定
 				bBundle = true;
-				break;
 			}
 		}
 		else if (0 == _tcsxnicmp(lpszAttrMux, ppSt_ListAttr[i]->tszAttrKey, _tcsxlen(lpszAttrMux)))
 		{
 			bRTCPMux = true;  //复用端口检查
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SDPProtocol_Parse_GetAttr:%s-%s"), ppSt_ListAttr[i]->tszAttrKey, ppSt_ListAttr[i]->tszAttrValue);
+		else if (0 == _tcsxnicmp(lpszICEUfrag, ppSt_ListAttr[i]->tszAttrKey, _tcsxlen(lpszICEUfrag)))
+		{
+			_tcsxcpy(tszICEUser, ppSt_ListAttr[i]->tszAttrValue);
+		}
+		else if (0 == _tcsxnicmp(lpszICEPwd, ppSt_ListAttr[i]->tszAttrKey, _tcsxlen(lpszICEPwd)))
+		{
+			_tcsxcpy(tszICEPass, ppSt_ListAttr[i]->tszAttrValue);
+		}
+		else if (0 == _tcsxnicmp(lpszFinger, ppSt_ListAttr[i]->tszAttrKey, _tcsxlen(lpszFinger)))
+		{
+			XCHAR tszKeyStr[MAX_PATH] = {};
+			BaseLib_OperatorString_GetKeyValue(ppSt_ListAttr[i]->tszAttrValue, _X(" "), tszKeyStr, tszHMacStr);
+		}
 	}
+	SDPProtocol_Parse_Destory(xhParse);
+	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nListCount);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,请求的SDP信息属性解析完毕,总共解析了:%d 个属性"), nListCount);
 
 	SDPProtocol_Packet_Create(&xhPacket);
 	SDPProtocol_Packet_Owner(xhPacket, _X("rtc"), xhPacket, _X("0.0.0.0"));
@@ -110,11 +130,15 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
 	SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1);
 
-	ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen);
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-ufrag"), "j107le40");
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-pwd"), "3321308h8i6vt3769r6638l1409d50jz");
+
+	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
+	SDPProtocol_Packet_Destory(xhPacket);
+
+	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-	SDPProtocol_Parse_Destory(xhParse);
-	SDPProtocol_Packet_Destory(xhPacket);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHIP协议拉流请求成功"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHEP协议拉流请求成功"), lpszClientAddr);
 	return true;
 }
