@@ -119,14 +119,9 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		{
 			HTTPApi_Management_Task(lpszClientAddr, &pptszList, nListCount);
 		}
-		else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+		else if (0 == _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 		{
-			LPCXSTR lpszTypeStr = _X("webrtc");
-			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszValue);
-			if (0 == _tcsxnicmp(lpszTypeStr, tszValue, _tcsxlen(lpszTypeStr)))
-			{
-				PullStream_ClientWebRtc_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-			}
+			PullStream_ClientWebRtc_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
