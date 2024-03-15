@@ -9,8 +9,15 @@ UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
 LIB = -lXEngine_OPenSsl
-LIBEX = -lsrt-gnutls
+LIBEX = 
 OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o pch.o
+
+MACRO_SRT_SUPPORT := $(shell gcc -E -dM ../XStorage_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT | cut -d ' ' -f 3)
+MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XStorage_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC | cut -d ' ' -f 3)
+
+ifeq ($(MACRO_SRT_SUPPORT),1)
+    LIB += -lsrt-gnutls
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 

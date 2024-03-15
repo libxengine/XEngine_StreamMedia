@@ -308,11 +308,13 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 		if (!ModuleHelp_SrtCore_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT服务端:%s,发送数据失败，错误:%lX"), lpszClientAddr, ModuleHelp_GetLastError());
 			return false;
 		}
+#endif
 	}
 	return true;
 }

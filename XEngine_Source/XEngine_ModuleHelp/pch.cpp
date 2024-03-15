@@ -58,11 +58,11 @@ extern "C" bool ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgB
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 }
-extern "C" bool ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish)
+extern "C" bool ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_GetStreamID(hSocket, ptszSMSAddr, pbPublish);
 }
-extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
+extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Close(lpszClientAddr, hSocket);
 }

@@ -154,7 +154,9 @@ int main(int argc, char** argv)
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 	THREADPOOL_PARAMENT** ppSt_ListRTMPParam;
 	THREADPOOL_PARAMENT** ppSt_ListJT1078Param;
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	THREADPOOL_PARAMENT** ppSt_ListSRTParam;
+#endif
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
@@ -418,6 +420,7 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	if (st_ServiceConfig.nSrtPort > 0)
 	{
 		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
@@ -454,9 +457,11 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用x"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用"));
 	}
-
+#else
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRT协议编译选项被禁用,无法使用SRT协议"));
+#endif
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);

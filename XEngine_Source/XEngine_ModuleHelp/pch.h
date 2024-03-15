@@ -21,7 +21,9 @@
 #include <thread>
 #include <shared_mutex>
 #include <unordered_map>
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 #include <srt/srt.h>
+#endif
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
