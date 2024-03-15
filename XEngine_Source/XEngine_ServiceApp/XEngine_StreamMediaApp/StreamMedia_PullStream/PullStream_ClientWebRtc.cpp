@@ -135,6 +135,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
+	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
 
 	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
