@@ -14,6 +14,7 @@
 #include <WinSock2.h>
 #endif
 #endif //PCH_H
+#include "../XEngine_BuildSwitch.h"
 #include <string.h>
 #include <errno.h>
 #include <time.h>
@@ -34,7 +35,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include "../XEngine_UserProtocol.h"
-#include "../XEngine_BuildSwitch.h"
 #include "ModuleHelp_Define.h"
 #include "ModuleHelp_Error.h"
 /********************************************************************

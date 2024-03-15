@@ -133,6 +133,31 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-ufrag"), "j107le40");
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-pwd"), "3321308h8i6vt3769r6638l1409d50jz");
 
+	int nDLen = 0;
+	XBYTE tszDigestStr[MAX_PATH] = {};
+	XCHAR tszDigestHex[MAX_PATH] = {};
+	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
+	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszRequestKey, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
+	for (int i = 0; i < nDLen; i++)
+	{
+		int nRet = _xstprintf(tszDigestHex + nPos, _X("%02X"), tszDigestStr[i]);
+		nPos += nRet;
+		tszDigestHex[nPos] = ':';
+		nPos++;
+	}
+	tszDigestHex[nPos - 1] = '\0';
+
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("fingerprint"), tszDigestHex);
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("setup"), _X("passive"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("0"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
+	SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+	SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("111 opus/48000/2"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ssrc"), _X("2124085006 cname:79a9722580589zr5"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ssrc"), _X("2124085006 label:audio-23z8fj2g"));
+	
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);

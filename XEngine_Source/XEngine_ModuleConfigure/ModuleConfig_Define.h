@@ -89,8 +89,11 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullRtsp;
 		struct  
 		{
-			bool bEnable;
+			XCHAR tszPrivateKey[MAX_PATH];
+			XCHAR tszPublicKey[MAX_PATH];
+			XCHAR tszRequestKey[MAX_PATH];
 			int nSTUNPort;
+			bool bEnable;
 		}st_PullWebRtc;
 	}st_XPull;
 	struct  
