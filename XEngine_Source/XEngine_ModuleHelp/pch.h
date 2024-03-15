@@ -32,6 +32,7 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include "../XEngine_UserProtocol.h"
+#include "../XEngine_BuildSwitch.h"
 #include "ModuleHelp_Define.h"
 #include "ModuleHelp_Error.h"
 /********************************************************************
@@ -52,5 +53,4 @@ extern XLONG ModuleHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"Ws2_32")
-#pragma comment(lib,"srt")
 #endif

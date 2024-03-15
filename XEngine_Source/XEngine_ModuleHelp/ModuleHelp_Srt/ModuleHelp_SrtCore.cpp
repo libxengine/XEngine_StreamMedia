@@ -172,7 +172,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 	int nRet = 0;
 	int nSendCount = 0;
 	int nLeftCount = nMsgLen;
-	SRTSOCKET hSocket = stl_MapIterator->second.hSocket;
+	XSOCKET hSocket = stl_MapIterator->second.hSocket;
 	
 	while (true)
 	{
@@ -231,7 +231,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -292,7 +292,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHA
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, SRTSOCKET hSocket /* = 0 */)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, XSOCKET hSocket /* = 0 */)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -336,7 +336,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
 //////////////////////////////////////////////////////////////////////////
 //                             保护函数
 //////////////////////////////////////////////////////////////////////////
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(XSOCKET hSRTSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -384,7 +384,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket)
 	lpCall_Login(st_SRTClient.tszClientAddr, st_SRTClient.hSocket, m_lLogin);
 	return true;
 }
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(XSOCKET hSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -414,7 +414,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket)
 	}
 	return true;
 }
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(SRTSOCKET hSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(XSOCKET hSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -450,9 +450,9 @@ XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 	while (pClass_This->bRun)
 	{
 		int nSRTCount = 100;
-		SRTSOCKET hSRTClient[100];
+		XSOCKET hSRTClient[100];
 
-		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, hSRTClient, &nSRTCount, NULL, NULL, -1, NULL, NULL, NULL, NULL);
+		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, (SRTSOCKET *)hSRTClient, &nSRTCount, NULL, NULL, -1, NULL, NULL, NULL, NULL);
 		for (int i = 0; i < nSRTIndex; i++)
 		{
 			SRT_SOCKSTATUS nSRTStatus = srt_getsockstate(hSRTClient[i]);
