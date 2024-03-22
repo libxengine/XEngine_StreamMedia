@@ -501,14 +501,14 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
-		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, 1);
+		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.nRTCPort, 1);
 		if (NULL == xhSTUNSocket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC的STUN网络端口:%d 失败,错误：%d"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCPort, errno);
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		NetCore_UDPXCore_RegisterCallBackEx(xhSTUNSocket, Network_Callback_VideoRTPRecv);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC的STUN端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)

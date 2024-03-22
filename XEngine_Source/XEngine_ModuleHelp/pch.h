@@ -25,6 +25,9 @@
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 #include <srt/srt.h>
 #endif
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+#include <srtp2/srtp.h>
+#endif
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>

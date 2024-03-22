@@ -158,9 +158,6 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 			bFound = true;
 			break;
 		}
-		else
-		{
-		}
 	}
 	if (!bFound)
 	{

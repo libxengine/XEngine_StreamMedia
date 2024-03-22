@@ -90,6 +90,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->nXStreamPort = st_JsonRoot["nXStreamPort"].asInt();
 	pSt_ServerConfig->nJT1078Port = st_JsonRoot["nJT1078Port"].asInt();
 	pSt_ServerConfig->nSrtPort = st_JsonRoot["nSrtPort"].asInt();
+	pSt_ServerConfig->nRTCPort = st_JsonRoot["nRTCPort"].asInt();
 	//最大配置
 	if (st_JsonRoot["XMax"].empty() || (8 != st_JsonRoot["XMax"].size()))
 	{
@@ -154,7 +155,6 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullHls.nTime = st_PullHls["nTime"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullHls.tszHLSPath, st_PullHls["tszHLSPath"].asCString());
 
-	pSt_ServerConfig->st_XPull.st_PullWebRtc.nSTUNPort = st_PullWebRtc["nSTUNPort"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszPrivateKey, st_PullWebRtc["RSAPrivateKey"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszPublicKey, st_PullWebRtc["RSAPublicKey"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszRequestKey, st_PullWebRtc["RSARequestKey"].asCString());
