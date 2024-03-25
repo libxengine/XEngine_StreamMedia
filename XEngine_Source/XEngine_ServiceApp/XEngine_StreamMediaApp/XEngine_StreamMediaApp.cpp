@@ -503,7 +503,7 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
-		xhRTCSsl = OPenSsl_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszPublicKey, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszPublicKey, false, false, XENGINE_OPENSSL_PROTOCOL_DTL_SERVER);
+		xhRTCSsl = OPenSsl_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_OPENSSL_PROTOCOL_DTL_SERVER);
 		if (NULL == xhRTCSsl)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), OPenSsl_GetLastError());

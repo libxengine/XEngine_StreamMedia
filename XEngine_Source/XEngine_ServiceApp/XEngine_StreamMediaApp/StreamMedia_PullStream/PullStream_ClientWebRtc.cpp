@@ -10,42 +10,83 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
-bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+int PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
-	int nAttrCount = 0;
-	RFCCOMPONENTS_NATATTR** ppSt_ListAttr;
-	RFCCOMPONENTS_NATSTUN st_NatClient = {};
+	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
+	return nMSGLen >= 13 && lpszMSGBuffer[0] == 0x16;
+}
+int PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
+{
+	// STUN消息的类型字段（前两位为00）以及魔术cookie字段
+	return nMSGLen >= 20 && (lpszMSGBuffer[0] & 0xC0) == 0x00 && lpszMSGBuffer[4] == 0x21 && lpszMSGBuffer[5] == 0x12 && lpszMSGBuffer[6] == 0xA4 && lpszMSGBuffer[7] == 0x42;
+}
+bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
+{
+	if (PullStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
+	{
+		int nSDLen = 2048;
+		XCHAR tszSDBuffer[2048] = {};
+		XBYTE tszSDKey[128] = {};
+		XBYTE tszRVKey[128] = {};
 
-	if (!NatProtocol_StunNat_Parse(lpszMsgBuffer, nMsgLen, &st_NatClient, &ppSt_ListAttr, &nAttrCount))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("STUN客户端:%s,请求的STUN协议不正确,解析失败,错误:%lX"), lpszClientAddr, NatProtocol_GetLastError());
-		return false;
-	}
-	XCHAR tszUserStr[128] = {};
-	for (int i = 0; i < nAttrCount; i++)
-	{
-		if (RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME == ppSt_ListAttr[i]->wAttr)
+		if (OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen))
 		{
-			memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
+			OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszSDKey, tszRVKey);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
+		}
+		else
+		{
+			int nPort = 0;
+			XCHAR tszIPPort[128] = {};
+			_tcsxcpy(tszIPPort, lpszClientAddr);
+			BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
+			NetCore_UDPSelect_Send(xhRTCSocket, tszSDBuffer, nSDLen, tszIPPort, nPort);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议,还需要进一步处理,响应大小:%d"), lpszClientAddr, nSDLen);
 		}
 	}
-	int nTMPLen = 0;
-	int nMSGLen = 0;
-	int nIPPort = 0;
-	XCHAR tszTMPBuffer[1024] = {};
-	XCHAR tszMSGBuffer[1024] = {};
-	XCHAR tszIPAddr[128] = {};
+	else if (PullStream_ClientProtocol_Stun(lpszMsgBuffer, nMsgLen))
+	{
+		int nAttrCount = 0;
+		RFCCOMPONENTS_NATATTR** ppSt_ListAttr;
+		RFCCOMPONENTS_NATSTUN st_NatClient = {};
 
-	_tcsxcpy(tszIPAddr, lpszClientAddr);
+		if (!NatProtocol_StunNat_Parse(lpszMsgBuffer, nMsgLen, &st_NatClient, &ppSt_ListAttr, &nAttrCount))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("STUN客户端:%s,请求的STUN协议不正确,解析失败,错误:%lX"), lpszClientAddr, NatProtocol_GetLastError());
+			return false;
+		}
+		XCHAR tszUserStr[128] = {};
+		for (int i = 0; i < nAttrCount; i++)
+		{
+			if (RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME == ppSt_ListAttr[i]->wAttr)
+			{
+				memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
+			}
+		}
+		int nTMPLen = 0;
+		int nMSGLen = 0;
+		int nIPPort = 0;
+		XCHAR tszTMPBuffer[1024] = {};
+		XCHAR tszMSGBuffer[1024] = {};
+		XCHAR tszIPAddr[128] = {};
 
-	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nIPPort);
+		_tcsxcpy(tszIPAddr, lpszClientAddr);
 
-	NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
-	NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, tszIPAddr, nIPPort, true);
-	//NatProtocol_StunNat_BuildMSGIntegrity(tszMSGBuffer, &nMSGLen, tszTMPBuffer, nTMPLen, );
-	NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nIPPort);
 
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+		NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
+		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, tszIPAddr, nIPPort, true);
+		//NatProtocol_StunNat_BuildMSGIntegrity(tszMSGBuffer, &nMSGLen, tszTMPBuffer, nTMPLen, );
+		NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
+
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+	}
+	else 
+	{
+		
+	}
+
+	
 	return true;
 }
 bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
@@ -137,7 +178,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	XBYTE tszDigestStr[MAX_PATH] = {};
 	XCHAR tszDigestHex[MAX_PATH] = {};
 	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
-	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszRequestKey, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
+	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCsrStr, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
 	for (int i = 0; i < nDLen; i++)
 	{
 		int nRet = _xstprintf(tszDigestHex + nPos, _X("%02X"), tszDigestStr[i]);

@@ -90,9 +90,9 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullRtsp;
 		struct  
 		{
-			XCHAR tszPrivateKey[MAX_PATH];
-			XCHAR tszPublicKey[MAX_PATH];
-			XCHAR tszRequestKey[MAX_PATH];
+			XCHAR tszCertStr[MAX_PATH];
+			XCHAR tszKeyStr[MAX_PATH];
+			XCHAR tszCsrStr[MAX_PATH];
 			bool bEnable;
 		}st_PullWebRtc;
 	}st_XPull;

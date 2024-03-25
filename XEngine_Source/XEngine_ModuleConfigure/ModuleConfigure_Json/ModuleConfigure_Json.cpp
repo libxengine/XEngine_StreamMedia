@@ -155,9 +155,9 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullHls.nTime = st_PullHls["nTime"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullHls.tszHLSPath, st_PullHls["tszHLSPath"].asCString());
 
-	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszPrivateKey, st_PullWebRtc["RSAPrivateKey"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszPublicKey, st_PullWebRtc["RSAPublicKey"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszRequestKey, st_PullWebRtc["RSARequestKey"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszCertStr, st_PullWebRtc["tszCertStr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszKeyStr, st_PullWebRtc["tszKeyStr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszCsrStr, st_PullWebRtc["tszCsrStr"].asCString());
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{
