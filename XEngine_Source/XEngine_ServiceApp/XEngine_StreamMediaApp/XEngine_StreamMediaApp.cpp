@@ -38,7 +38,8 @@ XHANDLE xhVRTCPSocket = NULL;
 XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
-XHANDLE xhSTUNSocket = NULL;
+XHANDLE xhRTCSocket = NULL;
+XHANDLE xhRTCSsl = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
 //配置文件
@@ -67,7 +68,8 @@ void ServiceApp_Stop(int signo)
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+			NetCore_UDPSelect_Stop(xhRTCSocket);
+			OPenSsl_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -501,13 +503,21 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
-		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.nRTCPort, 1);
-		if (NULL == xhSTUNSocket)
+		xhRTCSsl = OPenSsl_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszPublicKey, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszPublicKey, false, false, XENGINE_OPENSSL_PROTOCOL_DTL_SERVER);
+		if (NULL == xhRTCSsl)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), OPenSsl_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		OPenSsl_Server_ConfigEx(xhRTCSsl);
+		
+		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
+		if (NULL == xhRTCSocket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCPort, errno);
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		NetCore_UDPXCore_RegisterCallBackEx(xhSTUNSocket, Network_Callback_VideoRTPRecv);
+		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
 	}
 
@@ -551,7 +561,8 @@ XENGINE_SERVICEAPP_EXIT:
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+			NetCore_UDPSelect_Stop(xhRTCSocket);
+			OPenSsl_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);

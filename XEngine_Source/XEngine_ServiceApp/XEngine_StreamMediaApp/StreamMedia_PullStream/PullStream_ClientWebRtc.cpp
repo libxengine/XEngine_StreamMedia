@@ -10,7 +10,7 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
-bool PullStream_ClientStun_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nAttrCount = 0;
 	RFCCOMPONENTS_NATATTR** ppSt_ListAttr;
