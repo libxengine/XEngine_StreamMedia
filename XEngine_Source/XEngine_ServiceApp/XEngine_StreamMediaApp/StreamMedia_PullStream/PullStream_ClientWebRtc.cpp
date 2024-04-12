@@ -105,7 +105,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
 	}
 	//生成用户和密码
-	SDPProtocol_Packet_ICEUser(xhPacket, _X("j107le40"), _X("3321308h8i6vt3769r6638l1409d50jz"));
+	SDPProtocol_Packet_ICEUser(xhPacket, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
 
 	int nDLen = 0;
 	XBYTE tszDigestStr[MAX_PATH] = {};
@@ -172,19 +172,19 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	XCHAR tszAPPName[128] = {};
-	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszAPPName, _X("app="), _X("&"));
-	_tcsxcat(tszAPPName, _X("/"));
-	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszAPPName + _tcsxlen(tszAPPName), _X("stream="));
+	XCHAR tszSMSAddr[128] = {};
+	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr, _X("app="), _X("&"));
+	_tcsxcat(tszSMSAddr, _X("/"));
+	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr + _tcsxlen(tszSMSAddr), _X("stream="));
 	//查找流是否存在
 	XCHAR tszPushAddr[128] = {};
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
-	if (!ModuleSession_PushStream_FindStream(tszAPPName, tszPushAddr))
+	if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "stream name not found");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的地址:%s 不正确,没有找到,错误:%lX"), lpszClientAddr, tszAPPName, ModuleSession_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的地址:%s 不正确,没有找到,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
 		return false;
 	}
 	ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
@@ -230,8 +230,17 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 #endif
+	XCHAR tszHDRStr[MAX_PATH] = {};
+	XCHAR tszUserStr[MAX_PATH] = {};
+
+	_xstprintf(tszUserStr, _X("%s:%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, tszICEUser);
+	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=6150ecg33&app=live&stream=livestream.flv&session=%s\r\n"), tszUserStr);
+
+	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+	ModuleSession_PullStream_RTCSet(tszUserStr, tszICEUser, tszICEPass, tszHMacStr);
+
 	st_HDRParam.nHttpCode = 201;
-	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHEP协议拉流请求成功"), lpszClientAddr);
 	return true;

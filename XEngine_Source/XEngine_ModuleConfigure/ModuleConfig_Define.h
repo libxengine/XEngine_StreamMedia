@@ -90,6 +90,8 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullRtsp;
 		struct  
 		{
+			XCHAR tszICEUser[MAX_PATH];
+			XCHAR tszICEPass[MAX_PATH];
 			XCHAR tszCertStr[MAX_PATH];
 			XCHAR tszKeyStr[MAX_PATH];
 			XCHAR tszCsrStr[MAX_PATH];

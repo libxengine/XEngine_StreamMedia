@@ -24,6 +24,12 @@ typedef struct
 }STREAMMEDIA_PUBLISHINFO;
 typedef struct
 {
+	struct  
+	{
+		XCHAR tszICEUser[MAX_PATH];
+		XCHAR tszICEPass[MAX_PATH];
+		XCHAR tszHMacStr[MAX_PATH];
+	}st_WEBRtc;
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszPushAddr[MAX_PATH];
 	int nFLVTag;
@@ -123,6 +129,64 @@ extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCH
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSet
+函数功能：设置RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：lpszICEUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE用户
+ 参数.三：lpszICEPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE密码
+ 参数.四：lpszHMacStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCGet
+函数功能：获取RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszICEUser
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE用户
+ 参数.三：ptszICEPass
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE密码
+ 参数.四：ptszHMacStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
 /********************************************************************
 函数名称：ModuleSession_PullStream_Delete
 函数功能：删除一个拉流端
