@@ -173,10 +173,24 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
-	/*
+
+	XCHAR tszAPPName[128] = {};
+	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszAPPName, _X("app="), _X("&"));
+	_tcsxcat(tszAPPName, _X("/"));
+	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszAPPName + _tcsxlen(tszAPPName), _X("stream="));
+	//查找流是否存在
+	XCHAR tszPushAddr[128] = {};
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
-	ModuleSession_PushStream_GetAVInfo(lpszSMSAddr, &st_AVInfo);
-	*/
+	if (!ModuleSession_PushStream_FindStream(tszAPPName, tszPushAddr))
+	{
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "stream name not found");
+		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的地址:%s 不正确,没有找到,错误:%lX"), lpszClientAddr, tszAPPName, ModuleSession_GetLastError());
+		return false;
+	}
+	ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
+	//解析SDP
 	if (!SDPProtocol_Parse_Create(&xhParse, lpszMsgBuffer, nMsgLen))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "sdp is incorrent");
@@ -185,7 +199,6 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的SDP不正确,错误:%lX"), lpszClientAddr, SDPProtocol_GetLastError());
 		return false;
 	}
-
 	bool bBundle = false;
 	bool bRTCPMux = false;
 	int nListCount = 0;
