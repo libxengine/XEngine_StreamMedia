@@ -145,7 +145,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			"Access-Control-Allow-Credentials: false\r\n"
 			"Access-Control-Request-Private-Network: true\r\n"
 			"Content-Length: 0\r\n"
-			"Server: %s\r\n\r\n"), BaseLib_OperatorVer_XTypeStr());
+			"Server: %s/V%s\r\n\r\n"), XENGINE_NAME_STR, BaseLib_OperatorVer_XNumberStr());
 
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求OPTION方法成功"), lpszClientAddr);
