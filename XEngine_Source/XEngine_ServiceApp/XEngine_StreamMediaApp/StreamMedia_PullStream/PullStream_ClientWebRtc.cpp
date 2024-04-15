@@ -161,6 +161,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 }
 bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
+#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 29
 	int nRVLen = 0;
 	int nSDLen = 0;
 	XNETHANDLE xhParse = 0;
@@ -175,7 +176,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	XCHAR tszSMSAddr[128] = {};
 	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr, _X("app="), _X("&"));
 	_tcsxcat(tszSMSAddr, _X("/"));
-	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr + _tcsxlen(tszSMSAddr), _X("stream="));
+	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr + _tcsxlen(tszSMSAddr), _X("stream="), NULL);
 	//查找流是否存在
 	XCHAR tszPushAddr[128] = {};
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
@@ -197,7 +198,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的SDP不正确,错误:%lX"), lpszClientAddr, SDPProtocol_GetLastError());
 		return false;
 	}
-#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 29
+
 	bool bAudio = false;
 	bool bVideo = false;
 	bool bRTCPMux = false;
@@ -229,7 +230,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	PullStream_ClientWebRtc_SDKPacket(xhPacket, true, &st_AVInfo);
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
-#endif
+
 	XCHAR tszHDRStr[MAX_PATH] = {};
 	XCHAR tszUserStr[MAX_PATH] = {};
 
@@ -243,5 +244,6 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHEP协议拉流请求成功"), lpszClientAddr);
+#endif
 	return true;
 }
