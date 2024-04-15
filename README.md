@@ -32,7 +32,7 @@ c c++ streammedia server
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
 | SRT      | H264,H265 | AAC      | 已完成   |
-| WEBRTC   | H264      | AAC      | 未开始   |
+| WEBRTC   | H264      | OPUS     | 未开始   |
 | GB28181  | H264      | AAC      | 未开始   |
 | JT1078   | H264      | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
@@ -45,7 +45,7 @@ c c++ streammedia server
 | RTSP     | H264      | AAC      | 已完成   |
 | M3U8     | H264,H265 | AAC      | 已完成   |
 | SRT      | H264,H265 | AAC      | 已完成   |
-| WEBRTC   | H264      | AAC      | 进行中   |
+| WEBRTC   | H264      | OPUS     | 进行中   |
 | HTTP-FLV | H264      | AAC      | 已完成   |
 | XStream  | H264,H265 | AAC      | 已完成   |
 | TS       | H264,H265 | AAC      | 已完成   |
@@ -69,12 +69,12 @@ macos执行:./XEngine_LINEnv.sh -i 3
 
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
 还需要libsrt库,通过vcpkg安装  
-vcpkg.exe install libsrt:x86-windows libsrt:x64-windows
+vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libsrtp:x64-windows
 
 #### Linux
 配置完XEngine后需要安装srt库  
-ubuntu:sudo apt install libsrt-openssl-dev  
-Rockylinux:sudo dnf install srt-devel
+ubuntu:sudo apt install libsrt-openssl-dev libsrtp2-dev  
+Rockylinux:sudo dnf install srt-devel srtp2-devel
 
 Linux使用Makefile编译  
 UBUNTU22.04 或者 RockyLinux 9 x64均可
@@ -88,7 +88,7 @@ make FLAGS=CleanAll 清理编译
 
 #### MacOS
 配置完XEngine后需要安装srt库  
-brew install libsrt  
+brew install libsrt srtp  
 使用makefile编译,控制台运行,需要mac 13以及以上版本
 
 ###### 编译命令

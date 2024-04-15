@@ -29,7 +29,7 @@ Publish Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
 | SRT      | H264,H265 | AAC      | Completed   |
-| WEBRTC   | H264      | AAC      | Not Start   |
+| WEBRTC   | H264      | OPUS     | Not Start   |
 | GB28181  | H264      | AAC      | Not Start   |
 | JT1078   | H264      | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
@@ -42,7 +42,7 @@ Play Stream:
 | RTSP     | H264      | AAC      | Completed   |
 | M3U8     | H264,H265 | AAC      | Completed   |
 | SRT      | H264,H265 | AAC      | Completed   |
-| WEBRTC   | H264      | AAC      | Processing  |
+| WEBRTC   | H264      | OPUS     | Processing  |
 | HTTP-FLV | H264      | AAC      | Completed   |
 | XStream  | H264,H265 | AAC      | Completed   |
 | TS       | H264,H265 | AAC      | Completed   |
@@ -61,12 +61,12 @@ Linux Exection:sudo ./XEngine_LINEnv.sh -i 3
 Macos Exection:./XEngine_LINEnv.sh -i 3  
 
 #### Windows
-use vs open and complie  
-
+use vs open and complie,you need to install vcpkg and install depend library by vcpkg  
+vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libsrtp:x64-windows
 #### Linux
 install srt library after Configure Xengine to Completed  
-ubuntu:sudo apt install libsrt-openssl-dev  
-Rockylinux:sudo dnf install srt-devel  
+ubuntu:sudo apt install libsrt-openssl-dev libsrtp2-dev  
+Rockylinux:sudo dnf install srt-devel srtp2-devel  
 
 Linux use Makefile complie  
 UBUNTU22.04 x64 or RockyLinux 9 x64  
@@ -79,7 +79,7 @@ make FLAGS=CleanAll Clear Complie
 
 #### MacOS
 install srt library after Configure Xengine to Completed  
-brew install libsrt  
+brew install libsrt srtp  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command

@@ -1,3 +1,35 @@
+XEngine_StreamMedia V2.7.0.1001
+
+增加:srtp核心代码文件
+增加:HTTP OPTION 选项支持
+增加:编译选项支持SRT协议开关
+更新匹配:XEngine V8.25
+修改:增加RTC的URL名称支持当HTTPAPI访问时候
+修改:srt的SRTSOCKET类型修改为XSOCKET
+修改:stun端口移动为rtc端口
+修改:dtls握手支持
+修改:dtls和stun和srtp包解析分离支持
+修改:继续优化webrtc的sdp处理和打包协议
+修正:srt服务接受数据异常的问题
+修正:没有处理rtc播放请求的问题
+修正:http 的API请求处理错误
+修正:makefile的宏名称不正确
+
+added:srtp core code file
+added:http option supported
+added:build switch and srt protocol support
+update:match xengine v8.25
+modify:added rtc url name when http api verification
+modify:srt SRTSOCKET type to XSOCKET
+modfy:stun port remove rtc port
+modify:dtls handshakes supported
+modify:dtls and stun and srtp packet judgment handle
+modify:continue to improve the sdp of webrtc
+fixed:srt server caused exceptions when recv message
+fixed:not handle webrtc play request
+fixed:http restful api handle error
+fixed:makefile macro name is incorrect
+=======================================================
 XEngine_StreamMedia V2.6.0.1001
 
 增加:ts拉流支持
