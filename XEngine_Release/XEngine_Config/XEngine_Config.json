@@ -7,6 +7,7 @@
     "nXStreamPort": 5601,
     "nJT1078Port": 5602,
     "nSrtPort": 5603,
+    "nRTCPort": 5604,
     "XMax": {
         "nMaxClient": 10000,
         "nMaxQueue": 10000,
@@ -43,10 +44,11 @@
         },
         "RTC": {
             "bEnable": true,
-            "nSTUNPort": 56010,
-            "RSAPrivateKey": "./XEngine_Key/RSAPrivate.Key",
-            "RSAPublicKey": "./XEngine_Key/RSAPublic.Key",
-            "RSARequestKey": "./XEngine_Key/RSARequest.csr"
+            "tszICEUser": "xengine",
+            "tszICEPass": "123456789abcd",
+            "tszCertStr": "./XEngine_Key/server.crt",
+            "tszKeyStr": "./XEngine_Key/server.key",
+            "tszCsrStr": "./XEngine_Key/server.csr"
         },
         "SRT": {
             "bEnable": true
@@ -67,7 +69,7 @@
         "LogLeave": 32
     },
     "XVer": [
-        "V2.7.0.1001 Build20240330",
+        "V2.7.0.1001 Build20240415",
         "V2.6.0.1001 Build20240201",
         "V2.5.0.1001 Build20231222",
         "V2.4.0.1001 Build20231026",
