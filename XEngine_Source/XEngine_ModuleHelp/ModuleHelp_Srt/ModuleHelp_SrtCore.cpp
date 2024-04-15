@@ -37,6 +37,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Start(int nPort)
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	hSRTSocket = srt_create_socket();
 	if (hSRTSocket < 0)
 	{
@@ -90,6 +91,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Start(int nPort)
 		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRT_THREAD;
 		return false;
 	}
+#endif
 	return true;
 }
 /********************************************************************
@@ -139,6 +141,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	if (NULL == lpszClientAddr)
 	{
 		ModuleHelp_IsErrorOccur = true;
@@ -155,9 +158,6 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 			bFound = true;
 			break;
 		}
-		else
-		{
-		}
 	}
 	if (!bFound)
 	{
@@ -172,7 +172,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 	int nRet = 0;
 	int nSendCount = 0;
 	int nLeftCount = nMsgLen;
-	SRTSOCKET hSocket = stl_MapIterator->second.hSocket;
+	XSOCKET hSocket = stl_MapIterator->second.hSocket;
 	
 	while (true)
 	{
@@ -205,7 +205,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 	st_Locker.unlock_shared();
 	//nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
 	//srt_epoll_update_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
-
+#endif
 	return true;
 }
 /********************************************************************
@@ -231,7 +231,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish)
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -292,10 +292,11 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHA
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, SRTSOCKET hSocket /* = 0 */)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = NULL */, XSOCKET hSocket /* = 0 */)
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	if (0 != hSocket)
 	{
 		st_Locker.lock();
@@ -309,6 +310,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = N
 		}
 		st_Locker.unlock();
 	}
+#endif
 	return true;
 }
 /********************************************************************
@@ -323,6 +325,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	bRun = false;
 	srt_close(hSRTSocket);
 	srt_epoll_release(hSRTEPoll);
@@ -331,15 +334,17 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
 	{
 		pSDTThread->join();
 	}
+#endif
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                             保护函数
 //////////////////////////////////////////////////////////////////////////
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(XSOCKET hSRTSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	SRTCORE_CLIENTINFO st_SRTClient;
 	sockaddr_storage st_ClientAddr;
 
@@ -382,12 +387,14 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Accept(SRTSOCKET hSRTSocket)
 	stl_MapClients.insert(make_pair(st_SRTClient.hSocket, st_SRTClient));
 	st_Locker.unlock();
 	lpCall_Login(st_SRTClient.tszClientAddr, st_SRTClient.hSocket, m_lLogin);
+#endif
 	return true;
 }
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(XSOCKET hSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	st_Locker.lock_shared();
 	auto stl_MapIterator = stl_MapClients.find(hSocket);
 	if (stl_MapIterator == stl_MapClients.end())
@@ -412,12 +419,14 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Recv(SRTSOCKET hSocket)
 		}
 		lpCall_Recv(st_SRTClient.tszClientAddr, hSocket, tszMsgBuffer, nRet, m_lRecv);
 	}
+#endif
 	return true;
 }
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(SRTSOCKET hSocket)
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(XSOCKET hSocket)
 {
 	ModuleHelp_IsErrorOccur = false;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	if (0 != hSocket)
 	{
 		XCHAR tszClientAddr[128];
@@ -437,7 +446,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(SRTSOCKET hSocket)
 
 		lpCall_Leave(tszClientAddr, hSocket, m_lLeave);
 	}
-
+#endif
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -447,12 +456,13 @@ XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 {
 	CModuleHelp_SrtCore* pClass_This = (CModuleHelp_SrtCore*)lParam;
 
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	while (pClass_This->bRun)
 	{
 		int nSRTCount = 100;
-		SRTSOCKET hSRTClient[100];
+		XSOCKET hSRTClient[100];
 
-		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, hSRTClient, &nSRTCount, 0, 0, 100, 0, 0, 0, 0);
+		int nSRTIndex = srt_epoll_wait(pClass_This->hSRTEPoll, (SRTSOCKET *)hSRTClient, &nSRTCount, NULL, NULL, -1, NULL, NULL, NULL, NULL);
 		for (int i = 0; i < nSRTIndex; i++)
 		{
 			SRT_SOCKSTATUS nSRTStatus = srt_getsockstate(hSRTClient[i]);
@@ -471,5 +481,6 @@ XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 			}
 		}
 	}
+#endif
 	return 0;
 }

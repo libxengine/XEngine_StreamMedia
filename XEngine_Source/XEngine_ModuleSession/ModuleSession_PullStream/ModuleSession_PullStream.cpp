@@ -267,6 +267,111 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetStreamType(LPCXSTR l
 	return true;
 }
 /********************************************************************
+函数名称：ModuleSession_PullStream_RTCSet
+函数功能：设置RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：lpszICEUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE用户
+ 参数.三：lpszICEPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE密码
+ 参数.四：lpszHMacStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+
+	_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszICEUser, lpszICEUser);
+	_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszICEPass, lpszICEPass);
+	_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszHMacStr, lpszHMacStr);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCGet
+函数功能：获取RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszICEUser
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE用户
+ 参数.三：ptszICEPass
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE密码
+ 参数.四：ptszHMacStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszICEUser /* = NULL */, XCHAR* ptszICEPass /* = NULL */, XCHAR* ptszHMacStr /* = NULL */)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+
+	if (NULL != ptszICEUser)
+	{
+		_tcsxcpy(ptszICEUser, stl_MapIterator->second->st_WEBRtc.tszICEUser);
+	}
+	if (NULL != ptszICEPass)
+	{
+		_tcsxcpy(ptszICEPass, stl_MapIterator->second->st_WEBRtc.tszICEPass);
+	}
+	if (NULL != ptszHMacStr)
+	{
+		_tcsxcpy(ptszHMacStr, stl_MapIterator->second->st_WEBRtc.tszHMacStr);
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
 函数名称：ModuleSession_PullStream_GetList
 函数功能：获取用户列表
  参数.一：pppSt_PullList

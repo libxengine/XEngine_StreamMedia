@@ -30,8 +30,10 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
-#include <XEngine_Include/XEngine_Core/NetXApi_Define.h>
-#include <XEngine_Include/XEngine_Core/NetXApi_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
@@ -59,11 +61,10 @@ using namespace std;
 #include <XEngine_Include/XEngine_AVCodec/AudioCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 //加载项目相关头文件
+#include "../../XEngine_BuildSwitch.h"
 #include "../../XEngine_UserProtocol.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Define.h"
 #include "../../XEngine_ModuleConfigure/ModuleConfig_Error.h"
@@ -127,7 +128,8 @@ extern XHANDLE xhVRTCPSocket;
 extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
 //WEBRTC网络
-extern XHANDLE xhSTUNSocket;
+extern XHANDLE xhRTCSocket;
+extern XHANDLE xhRTCSsl;
 //HLS流
 extern XNETHANDLE xhHLSFile;
 //配置文件
@@ -171,7 +173,8 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl.lib")
-#pragma comment(lib,"XEngine_Core/XEngine_NetXApi.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
@@ -184,7 +187,6 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

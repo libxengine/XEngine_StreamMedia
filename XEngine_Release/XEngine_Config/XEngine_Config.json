@@ -1,69 +1,75 @@
 {
-    "tszSMSUrl":"rtmp://app.xyry.org/live",
-    "tszIPAddr":"127.0.0.1",
-    "bDeamon":0,
-    "nRTMPPort":1935,
-    "nHttpPort":5600,
-    "nXStreamPort":5601,
-    "nJT1078Port":5602,
-    "nSrtPort":5603,
-    "XMax":{
-        "nMaxClient":10000,
-        "nMaxQueue":10000,
-        "nIOThread":1,
-        "nHTTPThread":1,
-        "nXStreamThread":2,
-        "nRTMPThread":2,
-        "nSRTThread":2,
-        "nJT1078Thread":2
+    "tszSMSUrl": "rtmp://app.xyry.org/live",
+    "tszIPAddr": "127.0.0.1",
+    "bDeamon": 0,
+    "nRTMPPort": 1935,
+    "nHttpPort": 5600,
+    "nXStreamPort": 5601,
+    "nJT1078Port": 5602,
+    "nSrtPort": 5603,
+    "nRTCPort": 5604,
+    "XMax": {
+        "nMaxClient": 10000,
+        "nMaxQueue": 10000,
+        "nIOThread": 1,
+        "nHTTPThread": 1,
+        "nXStreamThread": 2,
+        "nRTMPThread": 2,
+        "nSRTThread": 2,
+        "nJT1078Thread": 2
     },
-    "XTime":{
-        "nTimeCheck":3,
-        "nHTTPTimeout":0,
-        "nXStreamTimeout":0,
-        "nRTMPTimeout":0,
-        "nJT1078Timeout":0
+    "XTime": {
+        "nTimeCheck": 3,
+        "nHTTPTimeout": 0,
+        "nXStreamTimeout": 0,
+        "nRTMPTimeout": 0,
+        "nJT1078Timeout": 0
     },
-    "XPull":{
-        "XStream":{
-            "bEnable":true
+    "XPull": {
+        "XStream": {
+            "bEnable": true
         },
-        "RTMP":{
-            "bEnable":true
+        "RTMP": {
+            "bEnable": true
         },
-        "FLV":{
-            "bEnable":true
+        "FLV": {
+            "bEnable": true
         },
-        "RTSP":{
-            "bEnable":true,
-            "nVRTPPort":56001,
-            "nVRTCPPort":56002,
-            "nARTPPort":56003,
-            "nARTCPPort":56004
+        "RTSP": {
+            "bEnable": true,
+            "nVRTPPort": 56001,
+            "nVRTCPPort": 56002,
+            "nARTPPort": 56003,
+            "nARTCPPort": 56004
         },
-        "RTC":{
-            "bEnable":true,
-            "nSTUNPort":56010
+        "RTC": {
+            "bEnable": true,
+            "tszICEUser": "xengine",
+            "tszICEPass": "123456789abcd",
+            "tszCertStr": "./XEngine_Key/server.crt",
+            "tszKeyStr": "./XEngine_Key/server.key",
+            "tszCsrStr": "./XEngine_Key/server.csr"
         },
-        "SRT":{
-            "bEnable":true
+        "SRT": {
+            "bEnable": true
         },
-        "TS":{
-            "bEnable":true
+        "TS": {
+            "bEnable": true
         },
-        "HLS":{
-            "bEnable":false,
-            "bClear":false,
-            "nTime":15,
-            "tszHLSPath":"./XEngine_File"
+        "HLS": {
+            "bEnable": false,
+            "bClear": false,
+            "nTime": 15,
+            "tszHLSPath": "./XEngine_File"
         }
     },
-    "XLog":{
-        "MaxSize":1024000,
-        "MaxCount":10,
-        "LogLeave":32
+    "XLog": {
+        "MaxSize": 1024000,
+        "MaxCount": 10,
+        "LogLeave": 32
     },
-    "XVer":[
+    "XVer": [
+        "V2.7.0.1001 Build20240415",
         "V2.6.0.1001 Build20240201",
         "V2.5.0.1001 Build20231222",
         "V2.4.0.1001 Build20231026",

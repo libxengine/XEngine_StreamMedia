@@ -61,7 +61,7 @@ bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nM
 		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT));
 		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
 
-		NetXApi_Socket_GetAddress(hSocket, tszClientAddr, false);
+		XSocket_Api_GetAddress(hSocket, tszClientAddr, false);
 		PushStream_JT1078Task_Handle(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
 	}
 	else

@@ -14,6 +14,7 @@
 #include <WinSock2.h>
 #endif
 #endif //PCH_H
+#include "../XEngine_BuildSwitch.h"
 #include <string.h>
 #include <errno.h>
 #include <time.h>
@@ -21,7 +22,12 @@
 #include <thread>
 #include <shared_mutex>
 #include <unordered_map>
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 #include <srt/srt.h>
+#endif
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+#include <srtp2/srtp.h>
+#endif
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
@@ -52,5 +58,4 @@ extern XLONG ModuleHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"Ws2_32")
-#pragma comment(lib,"srt")
 #endif

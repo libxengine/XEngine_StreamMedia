@@ -47,6 +47,14 @@ extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, E
 {
 	return m_PullStream.ModuleSession_PullStream_GetStreamType(lpszClientAddr, penStreamType);
 }
+extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCSet(lpszClientAddr, lpszICEUser, lpszICEPass, lpszHMacStr);
+}
+extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * ptszICEUser, XCHAR * ptszICEPass, XCHAR * ptszHMacStr)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCGet(lpszClientAddr, ptszICEUser, ptszICEPass, ptszHMacStr);
+}
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
 	return m_PullStream.ModuleSession_PullStream_Delete(lpszClientAddr);

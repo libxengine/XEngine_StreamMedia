@@ -123,7 +123,7 @@ extern "C" bool ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish);
+extern "C" bool ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR * ptszSMSAddr, bool* pbPublish);
 /********************************************************************
 函数名称：ModuleHelp_SrtCore_Close
 函数功能：关闭一个指定的客户端
@@ -142,7 +142,7 @@ extern "C" bool ModuleHelp_SrtCore_GetStreamID(SRTSOCKET hSocket, XCHAR * ptszSM
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, SRTSOCKET hSocket = 0);
+extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, XSOCKET hSocket = 0);
 /********************************************************************
 函数名称：ModuleHelp_SrtCore_Destory
 函数功能：销毁SRT服务

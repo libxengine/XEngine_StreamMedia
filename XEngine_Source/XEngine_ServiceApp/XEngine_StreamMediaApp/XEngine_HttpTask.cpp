@@ -63,6 +63,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	XCHAR** pptszList;
 	LPCXSTR lpszMethodPost = _X("POST");
 	LPCXSTR lpszMethodGet = _X("GET");
+	LPCXSTR lpszMethodOPtion = _X("OPTION");
 	XCHAR tszRVBuffer[4096];
 	XCHAR tszSDBuffer[4096];
 	XCHAR tszUrlName[128];
@@ -75,6 +76,9 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
+
+	XCHAR tszAPIType[MAX_PATH] = {};
+	HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIType);
 	//得到URL参数个数
 	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszList, &nListCount, tszUrlName);
 	if (nListCount < 1)
@@ -91,11 +95,12 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	LPCXSTR lpszFuncName = _X("api");
 	LPCXSTR lpszFunctionStr = _X("function");
 	LPCXSTR lpszStreamStr = _X("stream");
+	LPCXSTR lpszFunRtc = _X("rtc");
 
 	memset(tszKey, '\0', sizeof(tszKey));
 	memset(tszValue, '\0', sizeof(tszValue));
 
-	if (0 != _tcsxnicmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)))
+	if (0 != _tcsxnicmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)) && 0 != _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -107,8 +112,17 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	//获得方法
 	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
+		if (0 == _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
+		{
+			PullStream_ClientWebRtc_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		}
+	}
+	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
+	{
 		//获得函数名
 		BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
+
+		//获得函数名
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
 		if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
 		{
@@ -116,23 +130,25 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		}
 		else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
 		{
-			LPCXSTR lpszTypeStr = _X("webrtc");
-			BaseLib_OperatorString_GetKeyValue(pptszList[2], "=", tszKey, tszValue);
-			if (0 == _tcsxnicmp(lpszTypeStr, tszValue, _tcsxlen(lpszTypeStr)))
-			{
-				PullStream_ClientWebRtc_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-			}
-		}
-	}
-	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
-	{
-		//获得函数名
-		BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
-		if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
-		{
 			//如果是拉流请求
 			PullStream_ClientGet_Handle(lpszClientAddr, &pptszList, nListCount);
 		}
+	}
+	else if (0 == _tcsxnicmp(lpszMethodOPtion, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOPtion)))
+	{
+		nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
+			"Connection: Close\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"Access-Control-Allow-Headers: *\r\n"
+			"Access-Control-Allow-Methods: *\r\n"
+			"Access-Control-Expose-Headers: *\r\n"
+			"Access-Control-Allow-Credentials: false\r\n"
+			"Access-Control-Request-Private-Network: true\r\n"
+			"Content-Length: 0\r\n"
+			"Server: %s/V%s\r\n\r\n"), XENGINE_NAME_STR, BaseLib_OperatorVer_XNumberStr());
+
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求OPTION方法成功"), lpszClientAddr);
 	}
 	else
 	{

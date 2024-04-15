@@ -159,9 +159,9 @@ void CALLBACK Network_Callback_AudioRTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTCP音频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
 //WEBRTC
-void CALLBACK Network_Callback_STUNRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void CALLBACK Network_Callback_RTCRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
-	PullStream_ClientStun_Handle(lpszClientAddr, lpszRecvMsg, nMsgLen);
+	PullStream_ClientProtocol_Handle(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("STUN客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
@@ -308,11 +308,13 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 		if (!ModuleHelp_SrtCore_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT服务端:%s,发送数据失败，错误:%lX"), lpszClientAddr, ModuleHelp_GetLastError());
 			return false;
 		}
+#endif
 	}
 	return true;
 }

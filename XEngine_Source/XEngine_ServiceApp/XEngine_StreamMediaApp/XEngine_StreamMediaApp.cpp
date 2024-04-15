@@ -38,7 +38,8 @@ XHANDLE xhVRTCPSocket = NULL;
 XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
-XHANDLE xhSTUNSocket = NULL;
+XHANDLE xhRTCSocket = NULL;
+XHANDLE xhRTCSsl = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
 //配置文件
@@ -67,7 +68,8 @@ void ServiceApp_Stop(int signo)
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+			NetCore_UDPSelect_Stop(xhRTCSocket);
+			OPenSsl_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -154,7 +156,9 @@ int main(int argc, char** argv)
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
 	THREADPOOL_PARAMENT** ppSt_ListRTMPParam;
 	THREADPOOL_PARAMENT** ppSt_ListJT1078Param;
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	THREADPOOL_PARAMENT** ppSt_ListSRTParam;
+#endif
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
@@ -418,6 +422,7 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	if (st_ServiceConfig.nSrtPort > 0)
 	{
 		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
@@ -454,9 +459,11 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用x"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRT流协议服务被禁用"));
 	}
-
+#else
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRT协议编译选项被禁用,无法使用SRT协议"));
+#endif
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);
@@ -496,14 +503,22 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
-		xhSTUNSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, 1);
-		if (NULL == xhSTUNSocket)
+		xhRTCSsl = OPenSsl_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_OPENSSL_PROTOCOL_DTL_SERVER);
+		if (NULL == xhRTCSsl)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC的STUN网络端口:%d 失败,错误：%d"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort, errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), OPenSsl_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		NetCore_UDPXCore_RegisterCallBackEx(xhSTUNSocket, Network_Callback_VideoRTPRecv);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC的STUN端口:%d 成功"), st_ServiceConfig.st_XPull.st_PullWebRtc.nSTUNPort);
+		OPenSsl_Server_ConfigEx(xhRTCSsl);
+		
+		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
+		if (NULL == xhRTCSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCPort, errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
@@ -546,7 +561,8 @@ XENGINE_SERVICEAPP_EXIT:
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPXCore_DestroyEx(xhSTUNSocket);
+			NetCore_UDPSelect_Stop(xhRTCSocket);
+			OPenSsl_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);

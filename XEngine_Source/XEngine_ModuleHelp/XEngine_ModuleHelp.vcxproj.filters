@@ -37,6 +37,12 @@
     <Filter Include="源文件\ModuleHelp_Rtmp">
       <UniqueIdentifier>{301461bf-f0c1-48b4-85e9-5424834f57e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\ModuleHelp_SRtp">
+      <UniqueIdentifier>{3954caa5-b437-4d6d-abfa-6f6cd7354b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\ModuleHelp_SRtp">
+      <UniqueIdentifier>{ce029e9f-9497-4ec2-8882-8bedd40eb742}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -63,6 +69,9 @@
     <ClInclude Include="ModuleHelp_Rtmp\ModuleHelp_Rtmp.h">
       <Filter>头文件\ModuleHelp_Rtmp</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleHelp_SRtp\ModuleHelp_SRTPCore.h">
+      <Filter>头文件\ModuleHelp_SRtp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -82,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="ModuleHelp_Rtmp\ModuleHelp_Rtmp.cpp">
       <Filter>源文件\ModuleHelp_Rtmp</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHelp_SRtp\ModuleHelp_SRTPCore.cpp">
+      <Filter>源文件\ModuleHelp_SRtp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
