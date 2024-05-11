@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleConfigure", "XEngine_ModuleConfigure\XEngine_ModuleConfigure.vcxproj", "{F54F152C-594F-4465-A44E-2DB915B39760}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_UserHdr", "XEngine_UserHdr", "{9E4F2158-9AC1-4C19-A3F7-375A9DBCF856}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,12 +17,24 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_ServiceApp", "XEngine_ServiceApp", "{79A9A569-7DA8-4D9D-AD34-D11115199EA1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleProtocol", "XEngine_ModuleProtocol\XEngine_ModuleProtocol.vcxproj", "{6C935BE1-77E3-4719-A7A6-C76ABAFEE010}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleHelp", "XEngine_ModuleHelp\XEngine_ModuleHelp.vcxproj", "{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleSession", "XEngine_ModuleSession\XEngine_ModuleSession.vcxproj", "{98DB01B5-30B7-4C00-9A84-39886680F069}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_StreamMediaApp", "XEngine_ServiceApp\XEngine_StreamMediaApp\XEngine_StreamMediaApp.vcxproj", "{2E55D676-E9F5-48B8-B65E-FE0E7C3D2AEB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C935BE1-77E3-4719-A7A6-C76ABAFEE010} = {6C935BE1-77E3-4719-A7A6-C76ABAFEE010}
+		{6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D} = {6D0FCB40-D544-4AB2-A239-2FEBC4B98F6D}
+		{98DB01B5-30B7-4C00-9A84-39886680F069} = {98DB01B5-30B7-4C00-9A84-39886680F069}
+		{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9} = {9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+		{F54F152C-594F-4465-A44E-2DB915B39760} = {F54F152C-594F-4465-A44E-2DB915B39760}
+		{F6520D2C-BB8E-45BB-964B-F5D6A4318A89} = {F6520D2C-BB8E-45BB-964B-F5D6A4318A89}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleQueue", "XEngine_ModuleQueue\XEngine_ModuleQueue.vcxproj", "{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}"
 EndProject
@@ -28,6 +43,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_Depend\XEngine_Module\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngine_Depend\XEngine_Module\XEngine_InfoReport\XEngine_InfoReport.vcxproj", "{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
