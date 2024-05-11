@@ -19,3 +19,4 @@
 #define ERROR_MODULE_CONFIGURE_JSON_XVER 0xA0007                     //读取版本列表失败
 #define ERROR_MODULE_CONFIGURE_JSON_MALLOC 0xA0008                   //申请内存失败
 #define ERROR_MODULE_CONFIGURE_JSON_XPULL 0xA0009                    //拉流配置不存在
+#define ERROR_MODULE_CONFIGURE_JSON_REPORT 0xA000A                   //报告配置不存在

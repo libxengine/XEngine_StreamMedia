@@ -98,6 +98,12 @@ typedef struct tag_XEngine_ServiceConfig
 			bool bEnable;
 		}st_PullWebRtc;
 	}st_XPull;
+	struct
+	{
+		XCHAR tszAPIUrl[MAX_PATH];
+		XCHAR tszServiceName[128];
+		bool bEnable;
+	}st_XReport;
 	struct  
 	{
 		list<string> *pStl_ListVer;           //版本列表
