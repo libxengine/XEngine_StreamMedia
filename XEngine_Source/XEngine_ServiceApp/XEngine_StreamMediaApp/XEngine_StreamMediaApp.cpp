@@ -159,15 +159,14 @@ int main(int argc, char** argv)
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	THREADPOOL_PARAMENT** ppSt_ListSRTParam;
 #endif
-
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
 	//pSt_VFile = _xtfopen("./1.ts", "wb");
 	//pSt_AFile = _xtfopen("./1.h264", "wb");
 
-	st_XLogConfig.XLog_MaxBackupFile = 10;
-	st_XLogConfig.XLog_MaxSize = 1024000;
+	st_XLogConfig.XLog_MaxBackupFile = st_ServiceConfig.st_XLog.nMaxCount;
+	st_XLogConfig.XLog_MaxSize = st_ServiceConfig.st_XLog.nMaxSize;
 	_tcsxcpy(st_XLogConfig.tszFileName, lpszLogFile);
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
@@ -180,7 +179,7 @@ int main(int argc, char** argv)
 		ServiceApp_Deamon();
 	}
 	//初始日志
-	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_STD | HELPCOMPONENTS_XLOG_OUTTYPE_FILE, &st_XLogConfig);
+	xhLog = HelpComponents_XLog_Init(st_ServiceConfig.st_XLog.nLogLeave, &st_XLogConfig);
 	if (NULL == xhLog)
 	{
 		printf("启动服务中,启动日志失败,错误：%lX", XLog_GetLastError());
