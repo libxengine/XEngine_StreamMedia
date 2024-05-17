@@ -150,7 +150,6 @@ int main(int argc, char** argv)
 	bIsRun = true;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
-	LPCXSTR lpszLogFile = _X("./XEngine_XLog/XEngine_StreamMediaApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListHTTPParam;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
@@ -164,15 +163,14 @@ int main(int argc, char** argv)
 
 	//pSt_VFile = _xtfopen("./1.ts", "wb");
 	//pSt_AFile = _xtfopen("./1.h264", "wb");
-
-	st_XLogConfig.XLog_MaxBackupFile = st_ServiceConfig.st_XLog.nMaxCount;
-	st_XLogConfig.XLog_MaxSize = st_ServiceConfig.st_XLog.nMaxSize;
-	_tcsxcpy(st_XLogConfig.tszFileName, lpszLogFile);
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
 		return -1;
 	}
+	st_XLogConfig.XLog_MaxBackupFile = st_ServiceConfig.st_XLog.nMaxCount;
+	st_XLogConfig.XLog_MaxSize = st_ServiceConfig.st_XLog.nMaxSize;
+	_tcsxcpy(st_XLogConfig.tszFileName, st_ServiceConfig.st_XLog.tszLogFile);
 	//判断是否以守护进程启动
 	if (st_ServiceConfig.bDeamon)
 	{
