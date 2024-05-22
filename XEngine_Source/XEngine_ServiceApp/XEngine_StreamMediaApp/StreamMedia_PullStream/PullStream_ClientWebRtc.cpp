@@ -65,20 +65,13 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		}
 		int nTMPLen = 0;
 		int nMSGLen = 0;
-		int nIPPort = 0;
 		XCHAR tszTMPBuffer[1024] = {};
 		XCHAR tszMSGBuffer[1024] = {};
-		XCHAR tszIPAddr[128] = {};
-
-		_tcsxcpy(tszIPAddr, lpszClientAddr);
-
-		BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nIPPort);
 
 		NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
-		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, tszIPAddr, nIPPort, true);
-		//NatProtocol_StunNat_BuildMSGIntegrity(tszMSGBuffer, &nMSGLen, tszTMPBuffer, nTMPLen, );
+		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort, true);
+		//NatProtocol_StunNat_BuildMSGIntegrity(tszTMPBuffer + nTMPLen, &nTMPLen, tszTMPBuffer, nTMPLen, );
 		NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
-
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
 	}
 	else 
