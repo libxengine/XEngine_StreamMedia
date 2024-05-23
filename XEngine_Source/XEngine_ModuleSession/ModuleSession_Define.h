@@ -30,6 +30,14 @@ typedef struct
 		XCHAR tszICEUser[MAX_PATH];
 		XCHAR tszICEPass[MAX_PATH];
 		XCHAR tszHMacStr[MAX_PATH];
+
+		XNETHANDLE nVSsrc;
+		XCHAR tszVideoCName[MAX_PATH];
+		XCHAR tszVideoLabel[MAX_PATH];
+		
+		XNETHANDLE nASsrc;
+		XCHAR tszAudioCName[MAX_PATH];
+		XCHAR tszAudioLabel[MAX_PATH];
 	}st_WEBRtc;
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszPushAddr[MAX_PATH];
@@ -258,22 +266,22 @@ extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR 
   可空：N
   意思：输入要处理的客户端
  参数.二：ptszTokenStr
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出TOKEN
  参数.三：ptszICEUser
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出ICE用户
  参数.四：ptszICEPass
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出ICE密码
  参数.五：ptszHMacStr
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出HMAC的SHA值
@@ -283,6 +291,40 @@ extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR 
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * ptszTokenStr = NULL, XCHAR * ptszICEUser = NULL, XCHAR * ptszICEPass = NULL, XCHAR * ptszHMacStr = NULL);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSSrcSet
+函数功能：设置SSRC
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：nSSrc
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要设置的SSRC
+ 参数.三：lpszCNameStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSRC别名
+ 参数.四：lpszLabelStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSRC描述
+ 参数.五：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是否为视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/

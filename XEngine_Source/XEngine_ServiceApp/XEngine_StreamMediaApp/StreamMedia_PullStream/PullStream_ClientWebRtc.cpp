@@ -79,7 +79,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
 
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("STUN客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("STUN客户端:%s,请求的STUN协议处理成功,请求的用户:%s,密码:%s"), lpszClientAddr, tszUserStr, tszICEPass);
 	}
 	else 
 	{
@@ -88,7 +88,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 	return true;
 }
-bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
+bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
 {
 	XCHAR** pptszAVList;
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
@@ -97,11 +97,13 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 	{
 		_tcsxcpy(pptszAVList[0], _X("106"));
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	else
 	{
 		_tcsxcpy(pptszAVList[0], _X("111"));
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	//生成用户和密码
 	SDPProtocol_Packet_ICEUser(xhPacket, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
@@ -121,13 +123,13 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 	tszDigestHex[nPos - 1] = '\0';
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("fingerprint"), tszDigestHex);
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("setup"), _X("passive"));
-	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
-	SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
-	SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
-
 	if (bVideo)
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("1"));
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
+
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 H264/90000"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 transport-cc"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack"));
@@ -144,14 +146,26 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 		st_SDPMedia.st_FmtpVideo.tszLeaveId[1] = tszSPSBuffer[1];
 		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = tszSPSBuffer[2];
 		SDPProtocol_Packet_VideoFmt(xhPacket, 106, &st_SDPMedia, true);
-		SDPProtocol_Packet_CName(xhPacket, 2124085006, _X("79a9722580589zr5"), _X("video-666q08to"));
+
+		XNETHANDLE nVSSrc = 0;
+		BaseLib_OperatorHandle_Create(&nVSSrc, 2000000000, 3000000000);
+		SDPProtocol_Packet_CName(xhPacket, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
 	}
 	else
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("0"));
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
+
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("111 opus/48000/2"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
-		SDPProtocol_Packet_CName(xhPacket, 2124085006, _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
+
+		XNETHANDLE nASSrc = 0;
+		BaseLib_OperatorHandle_Create(&nASSrc, 2000000000, 3000000000);
+		SDPProtocol_Packet_CName(xhPacket, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
@@ -223,11 +237,6 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-lite"));
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
 
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, false, &st_AVInfo);
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, true, &st_AVInfo);
-	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
-	SDPProtocol_Packet_Destory(xhPacket);
-
 	XCHAR tszTokenStr[MAX_PATH] = {};
 	XCHAR tszHDRStr[MAX_PATH] = {};
 	XCHAR tszUserStr[MAX_PATH] = {};
@@ -238,6 +247,11 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
+
+	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
+	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
+	SDPProtocol_Packet_Destory(xhPacket);
 
 	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);

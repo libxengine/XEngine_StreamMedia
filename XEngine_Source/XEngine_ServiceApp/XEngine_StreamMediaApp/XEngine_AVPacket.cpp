@@ -289,6 +289,15 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 }
 bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
 {
+	if (1 == byAVType && nMsgLen > 1024)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("检测到推流:%s 过大的音频包:%d"), lpszClientAddr, nMsgLen);
+		for (int i = 0; i < nMsgLen; i++)
+		{
+			printf("%02X ", (XBYTE)lpszMsgBuffer[i]);
+		}
+		printf("\n");
+	}
 	XBYTE byFrameType = 0;
 	if (0 == byAVType)
 	{
@@ -399,7 +408,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		else
 		{
-			XCHAR byAACBuffer[1024] = {};
+			XCHAR byAACBuffer[2048] = {};
 			XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
 
 			ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);

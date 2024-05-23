@@ -447,22 +447,22 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSet(LPCXSTR lpszClie
   可空：N
   意思：输入要处理的客户端
  参数.二：ptszTokenStr
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出TOKEN
  参数.三：ptszICEUser
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出ICE用户
  参数.四：ptszICEPass
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出ICE密码
  参数.五：ptszHMacStr
-  In/Out：In
+  In/Out：Out
   类型：字符指针
   可空：N
   意思：输出HMAC的SHA值
@@ -500,6 +500,68 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCGet(LPCXSTR lpszClie
 	if (NULL != ptszHMacStr)
 	{
 		_tcsxcpy(ptszHMacStr, stl_MapIterator->second->st_WEBRtc.tszHMacStr);
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSSrcSet
+函数功能：设置SSRC
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：nSSrc
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要设置的SSRC
+ 参数.三：lpszCNameStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSRC别名
+ 参数.四：lpszLabelStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSRC描述
+ 参数.五：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是否为视频
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+
+	if (bVideo)
+	{
+		stl_MapIterator->second->st_WEBRtc.nVSsrc = nSSrc;
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszVideoCName, lpszCNameStr);
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszVideoLabel, lpszLabelStr);
+	}
+	else
+	{
+		stl_MapIterator->second->st_WEBRtc.nASsrc = nSSrc;
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszAudioCName, lpszCNameStr);
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszAudioLabel, lpszLabelStr);
 	}
 	st_Locker.unlock_shared();
 	return true;
