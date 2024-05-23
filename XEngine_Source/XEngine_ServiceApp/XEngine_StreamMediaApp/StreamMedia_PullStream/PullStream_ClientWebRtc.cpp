@@ -10,15 +10,15 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
-int PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
 	return nMSGLen >= 13 && lpszMSGBuffer[0] == 0x16;
 }
-int PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// STUN消息的类型字段（前两位为00）以及魔术cookie字段
-	return nMSGLen >= 20 && (lpszMSGBuffer[0] & 0xC0) == 0x00 && lpszMSGBuffer[4] == 0x21 && lpszMSGBuffer[5] == 0x12 && lpszMSGBuffer[6] == 0xA4 && lpszMSGBuffer[7] == 0x42;
+	return (nMSGLen >= 20) && ((lpszMSGBuffer[0] & 0xC0) == 0x00) && (lpszMSGBuffer[4] == 0x21) && (lpszMSGBuffer[5] == 0x12) && ((XBYTE)lpszMSGBuffer[6] == 0xA4) && (lpszMSGBuffer[7] == 0x42);
 }
 bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
@@ -67,12 +67,19 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		int nMSGLen = 0;
 		XCHAR tszTMPBuffer[1024] = {};
 		XCHAR tszMSGBuffer[1024] = {};
+		XCHAR tszICEPass[MAX_PATH] = {};
+
+		ModuleSession_PullStream_RTCGet(tszUserStr, NULL, NULL, tszICEPass);
 
 		NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
 		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort, true);
-		//NatProtocol_StunNat_BuildMSGIntegrity(tszTMPBuffer + nTMPLen, &nTMPLen, tszTMPBuffer, nTMPLen, );
-		NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
+		//NatProtocol_StunNat_BuildMSGIntegrity(tszTMPBuffer + nTMPLen, &nTMPLen, tszTMPBuffer, nTMPLen, "123456789");
+		NatProtocol_StunNat_Packet(tszMSGBuffer, &nTMPLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
+		//NatProtocol_StunNat_BuildFinger(tszMSGBuffer + nTMPLen, &nMSGLen, tszMSGBuffer, nTMPLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+
+		XEngine_Network_Send(lpszClientAddr, tszMSGBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("STUN客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
 	else 
 	{
@@ -121,7 +128,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 	if (bVideo)
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("1"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 oH264/90000"));
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 H264/90000"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 transport-cc"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack pli"));
@@ -221,14 +228,16 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 
+	XCHAR tszTokenStr[MAX_PATH] = {};
 	XCHAR tszHDRStr[MAX_PATH] = {};
 	XCHAR tszUserStr[MAX_PATH] = {};
 
+	BaseLib_OperatorHandle_CreateStr(tszTokenStr, 10);
 	_xstprintf(tszUserStr, _X("%s:%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, tszICEUser);
-	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=6150ecg33&app=live&stream=livestream.flv&session=%s\r\n"), tszUserStr);
+	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=%s&app=live&stream=livestream.flv&session=%s\r\n"), tszTokenStr, tszUserStr);
 
 	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
-	ModuleSession_PullStream_RTCSet(tszUserStr, tszICEUser, tszICEPass, tszHMacStr);
+	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
 
 	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);

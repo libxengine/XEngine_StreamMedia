@@ -316,5 +316,17 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		}
 #endif
 	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC == enClientType)
+	{
+		int nPort = 0;
+		XCHAR tszIPPort[128] = {};
+		_tcsxcpy(tszIPPort, lpszClientAddr);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
+		if (!NetCore_UDPSelect_Send(xhRTCSocket, lpszMsgBuffer, nMsgLen, tszIPPort, nPort))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC服务端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+			return false;
+		}
+	}
 	return true;
 }
