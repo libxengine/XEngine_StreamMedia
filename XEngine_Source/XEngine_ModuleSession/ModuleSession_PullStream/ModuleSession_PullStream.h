@@ -20,14 +20,15 @@ public:
 	bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
 	bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
 	bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
-	bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
-	bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
 public:
 	bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize);
 	bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize);
+public:
+	bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszTokenStr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
+	bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszTokenStr = NULL, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
 private:
 	shared_mutex st_Locker;
 private:

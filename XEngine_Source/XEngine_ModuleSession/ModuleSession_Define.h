@@ -26,6 +26,7 @@ typedef struct
 {
 	struct  
 	{
+		XCHAR tszTokenStr[MAX_PATH];
 		XCHAR tszICEUser[MAX_PATH];
 		XCHAR tszICEPass[MAX_PATH];
 		XCHAR tszHMacStr[MAX_PATH];
@@ -130,64 +131,6 @@ extern "C" bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCH
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 /********************************************************************
-函数名称：ModuleSession_PullStream_RTCSet
-函数功能：设置RTC流的信息
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要处理的客户端
- 参数.二：lpszICEUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入ICE用户
- 参数.三：lpszICEPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入ICE密码
- 参数.四：lpszHMacStr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入HMAC的SHA值
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
-/********************************************************************
-函数名称：ModuleSession_PullStream_RTCGet
-函数功能：获取RTC流的信息
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要处理的客户端
- 参数.二：ptszICEUser
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出ICE用户
- 参数.三：ptszICEPass
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出ICE密码
- 参数.四：ptszHMacStr
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出HMAC的SHA值
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
-/********************************************************************
 函数名称：ModuleSession_PullStream_Delete
 函数功能：删除一个拉流端
  参数.一：lpszClientAddr
@@ -234,9 +177,112 @@ extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
-
+/********************************************************************
+函数名称：ModuleSession_PullStream_FLVTagSet
+函数功能：设置会话的FLV标签大小
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：nTagSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入标签大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize);
+/********************************************************************
+函数名称：ModuleSession_PullStream_FLVTagGet
+函数功能：获取会话的FLV标签大小
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pInt_TagSize
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出标签大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSet
+函数功能：设置RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：lpszTokenStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入令牌字符串
+ 参数.三：lpszICEUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE用户
+ 参数.四：lpszICEPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入ICE密码
+ 参数.五：lpszHMacStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszTokenStr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCGet
+函数功能：获取RTC流的信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszTokenStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出TOKEN
+ 参数.三：ptszICEUser
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE用户
+ 参数.四：ptszICEPass
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出ICE密码
+ 参数.五：ptszHMacStr
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出HMAC的SHA值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * ptszTokenStr = NULL, XCHAR * ptszICEUser = NULL, XCHAR * ptszICEPass = NULL, XCHAR * ptszHMacStr = NULL);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/
