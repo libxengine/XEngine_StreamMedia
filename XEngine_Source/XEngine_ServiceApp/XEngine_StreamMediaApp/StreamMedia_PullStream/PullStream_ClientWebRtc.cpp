@@ -22,10 +22,13 @@ bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
 }
 bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XCHAR tszRVBuffer[1024] = {};
+	XCHAR tszSDBuffer[1024] = {};
+
 	if (PullStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
 	{
-		int nSDLen = 2048;
-		XCHAR tszSDBuffer[2048] = {};
 		XBYTE tszSDKey[128] = {};
 		XBYTE tszRVKey[128] = {};
 
@@ -63,22 +66,22 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 				memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
 			}
 		}
-		int nTMPLen = 0;
-		int nMSGLen = 0;
-		XCHAR tszTMPBuffer[1024] = {};
-		XCHAR tszMSGBuffer[1024] = {};
 		XCHAR tszICEPass[MAX_PATH] = {};
 
 		ModuleSession_PullStream_RTCGet(tszUserStr, NULL, NULL, tszICEPass);
 
-		NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
-		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort, true);
-		//NatProtocol_StunNat_BuildMSGIntegrity(tszTMPBuffer + nTMPLen, &nTMPLen, tszTMPBuffer, nTMPLen, "123456789");
-		NatProtocol_StunNat_Packet(tszMSGBuffer, &nTMPLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
-		//NatProtocol_StunNat_BuildFinger(tszMSGBuffer + nTMPLen, &nMSGLen, tszMSGBuffer, nTMPLen);
+		NatProtocol_StunNat_BuildAttr(tszRVBuffer, &nRVLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
+		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort, true);
+		NatProtocol_StunNat_BuildMSGIntegrity(tszRVBuffer + nRVLen, &nRVLen, tszRVBuffer, nRVLen, tszICEPass);
+
+		nRVLen += 8;  //Finger 消息先加
+		NatProtocol_StunNat_Packet(tszSDBuffer, &nRVLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer);
+		nRVLen -= 8;  //计算效验不包含自己的8个字节属性
+		nSDLen = nRVLen;
+		NatProtocol_StunNat_BuildFinger(tszSDBuffer + nSDLen, &nSDLen, tszSDBuffer, nSDLen);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
 
-		XEngine_Network_Send(lpszClientAddr, tszMSGBuffer, nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("STUN客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
 	else 
