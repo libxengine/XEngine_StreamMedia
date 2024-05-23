@@ -39,11 +39,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		}
 		else
 		{
-			int nPort = 0;
-			XCHAR tszIPPort[128] = {};
-			_tcsxcpy(tszIPPort, lpszClientAddr);
-			BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
-			NetCore_UDPSelect_Send(xhRTCSocket, tszSDBuffer, nSDLen, tszIPPort, nPort);
+			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议,还需要进一步处理,响应大小:%d"), lpszClientAddr, nSDLen);
 		}
 	}
@@ -64,6 +60,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			if (RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME == ppSt_ListAttr[i]->wAttr)
 			{
 				memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
+				break;
 			}
 		}
 		XCHAR tszICEPass[MAX_PATH] = {};
