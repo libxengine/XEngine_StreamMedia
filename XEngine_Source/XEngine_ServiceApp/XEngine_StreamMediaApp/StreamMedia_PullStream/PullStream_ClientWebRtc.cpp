@@ -68,7 +68,13 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		ModuleSession_PullStream_RTCGet(tszUserStr, NULL, NULL, tszICEPass);
 
 		NatProtocol_StunNat_BuildAttr(tszRVBuffer, &nRVLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
-		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort, true);
+
+		int nPort = 0;
+		XCHAR tszIPPort[128] = {};
+		_tcsxcpy(tszIPPort, lpszClientAddr);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
+
+		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
 		NatProtocol_StunNat_BuildMSGIntegrity(tszRVBuffer + nRVLen, &nRVLen, tszRVBuffer, nRVLen, tszICEPass);
 
 		nRVLen += 8;  //Finger 消息先加
