@@ -24,11 +24,12 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR tszRVBuffer[1024] = {};
-	XCHAR tszSDBuffer[1024] = {};
+	XCHAR tszRVBuffer[2048] = {};
+	XCHAR tszSDBuffer[2048] = {};
 
 	if (PullStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
 	{
+		nSDLen = 2048;
 		XBYTE tszSDKey[128] = {};
 		XBYTE tszRVKey[128] = {};
 
