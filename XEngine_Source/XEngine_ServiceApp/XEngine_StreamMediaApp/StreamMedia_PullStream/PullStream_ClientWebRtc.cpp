@@ -13,7 +13,7 @@
 bool PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
-	return nMSGLen >= 13 && lpszMSGBuffer[0] == 0x16;
+	return ((nMSGLen >= 13) && (lpszMSGBuffer[0] == 0x16));
 }
 bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
@@ -74,10 +74,9 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
 		nSDLen = nRVLen;
 		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer);
-		//消息效验需要加上4个属性头大小
+		//消息效验需要加上24个属性头大小
 		NatProtocol_StunNat_Resize(tszSDBuffer, 24);
 		NatProtocol_StunNat_BuildMSGIntegrity(tszSDBuffer + nSDLen, &nSDLen, tszSDBuffer, nSDLen, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
-		//NatProtocol_StunNat_Resize(tszSDBuffer, 20);   //消息大小
 
 		nSDLen += 8;  //加上Finger的大小
 		NatProtocol_StunNat_Resize(tszSDBuffer, nSDLen - 20, 2);  //减去头大小20是固定头大小
