@@ -55,7 +55,7 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
 {
 	return m_PullStream.ModuleSession_PullStream_RTCGet(lpszClientAddr, ptszTokenStr, ptszICEUser, ptszICEPass, ptszHMacStr);
 }
-extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
 {
 	return m_PullStream.ModuleSession_PullStream_RTCSSrcSet(lpszClientAddr, nSSrc, lpszCNameStr, lpszLabelStr, bVideo);
 }

@@ -537,7 +537,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCGet(LPCXSTR lpszClie
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
 {
 	Session_IsErrorOccur = false;
 

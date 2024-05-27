@@ -29,7 +29,7 @@ public:
 public:
 	bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszTokenStr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr);
 	bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszTokenStr = NULL, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
-	bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
+	bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 	//bool ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszTokenStr = NULL, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
 private:
 	shared_mutex st_Locker;

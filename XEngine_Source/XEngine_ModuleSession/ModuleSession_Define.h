@@ -31,11 +31,11 @@ typedef struct
 		XCHAR tszICEPass[MAX_PATH];
 		XCHAR tszHMacStr[MAX_PATH];
 
-		XNETHANDLE nVSsrc;
+		__int64x nVSsrc;
 		XCHAR tszVideoCName[MAX_PATH];
 		XCHAR tszVideoLabel[MAX_PATH];
 		
-		XNETHANDLE nASsrc;
+		__int64x nASsrc;
 		XCHAR tszAudioCName[MAX_PATH];
 		XCHAR tszAudioLabel[MAX_PATH];
 	}st_WEBRtc;
@@ -324,7 +324,7 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, XNETHANDLE nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/
