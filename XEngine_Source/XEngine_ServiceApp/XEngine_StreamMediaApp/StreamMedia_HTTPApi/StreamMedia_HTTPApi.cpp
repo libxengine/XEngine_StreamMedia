@@ -49,7 +49,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 			ModuleProtocol_Packet_HTTPPublishGet(tszRVBuffer, &nRVLen, &ppSt_ProtocolStream, nListCount);
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取发布流信息成功,个数:d"), lpszClientAddr, nListCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取发布流信息成功,个数:%d"), lpszClientAddr, nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ProtocolStream, nListCount);
 		}
 	}
@@ -68,7 +68,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 			ModuleProtocol_Packet_HTTPPullGet(tszRVBuffer, &nRVLen, &ppSt_PullList, nListCount);
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取订阅流信息成功,个数:d"), lpszClientAddr, nListCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取订阅流信息成功,个数:%d"), lpszClientAddr, nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PullList, nListCount);
 		}
 	}
