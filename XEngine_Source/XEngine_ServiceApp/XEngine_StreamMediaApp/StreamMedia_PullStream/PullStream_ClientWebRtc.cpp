@@ -74,16 +74,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		NatProtocol_StunNat_BuildAttr(tszRVBuffer, &nRVLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
 		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
 		nSDLen = nRVLen;
-		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer);
-		//消息效验需要加上24个属性头大小
-		NatProtocol_StunNat_Resize(tszSDBuffer, 24);
-		NatProtocol_StunNat_BuildMSGIntegrity(tszSDBuffer + nSDLen, &nSDLen, tszSDBuffer, nSDLen, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
-
-		nSDLen += 8;  //加上Finger的大小
-		NatProtocol_StunNat_Resize(tszSDBuffer, nSDLen - 20, 2);  //减去头大小20是固定头大小
-		nSDLen -= 8;  //计算效验不包含自己的8个字节属性
-
-		NatProtocol_StunNat_BuildFinger(tszSDBuffer + nSDLen, &nSDLen, tszSDBuffer, nSDLen);
+		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("STUN客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
