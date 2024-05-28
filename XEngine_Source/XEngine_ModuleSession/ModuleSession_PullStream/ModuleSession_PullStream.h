@@ -31,6 +31,12 @@ public:
 	bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR* ptszTokenStr = NULL, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
 	bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 	//bool ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszTokenStr = NULL, XCHAR* ptszICEUser = NULL, XCHAR* ptszICEPass = NULL, XCHAR* ptszHMacStr = NULL);
+	bool ModuleSession_PullStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr);
+	bool ModuleSession_PullStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);
+	bool ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect);
+	bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
+	//bool ModuleSession_PullStream_RTCSHandshakeSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
+	//bool ModuleSession_PullStream_RTCSHandshakeGet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 private:
 	shared_mutex st_Locker;
 private:

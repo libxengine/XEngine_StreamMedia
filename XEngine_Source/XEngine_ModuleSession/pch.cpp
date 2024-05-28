@@ -47,6 +47,24 @@ extern "C" bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, E
 {
 	return m_PullStream.ModuleSession_PullStream_GetStreamType(lpszClientAddr, penStreamType);
 }
+extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_PublishDelete(lpszClientAddr);
+}
+extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount)
+{
+	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount);
+}
+//////////////////////////////////////////////////////////////////////////
+extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+}
+extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize)
+{
+	return m_PullStream.ModuleSession_PullStream_FLVTagGet(lpszClientAddr, pInt_TagSize);
+}
+//////////////////////////////////////////////////////////////////////////
 extern "C" bool ModuleSession_PullStream_RTCSet(LPCXSTR lpszClientAddr, LPCXSTR lpszTokenStr, LPCXSTR lpszICEUser, LPCXSTR lpszICEPass, LPCXSTR lpszHMacStr)
 {
 	return m_PullStream.ModuleSession_PullStream_RTCSet(lpszClientAddr, lpszTokenStr, lpszICEUser, lpszICEPass, lpszHMacStr);
@@ -63,21 +81,21 @@ extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
 	return m_PullStream.ModuleSession_PullStream_Delete(lpszClientAddr);
 }
-extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
+extern "C" bool ModuleSession_PullStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr)
 {
-	return m_PullStream.ModuleSession_PullStream_PublishDelete(lpszClientAddr);
+	return m_PullStream.ModuleSession_PullStream_RTCAddrSet(lpszClientUser, lpszClientAddr);
 }
-extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO * **pppSt_PullList, int* pInt_ListCount)
+extern "C" bool ModuleSession_PullStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser)
 {
-	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount);
+	return m_PullStream.ModuleSession_PullStream_RTCAddrGet(lpszClientAddr, ptszClientUser);
 }
-extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)
+extern "C" bool ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect)
 {
-	return m_PullStream.ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+	return m_PullStream.ModuleSession_PullStream_RTCConnSet(lpszClientAddr, bConnect);
 }
-extern "C" bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize)
+extern "C" bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
 {
-	return m_PullStream.ModuleSession_PullStream_FLVTagGet(lpszClientAddr, pInt_TagSize);
+	return m_PullStream.ModuleSession_PullStream_RTCConnGet(lpszClientAddr, pbConnect);
 }
 /*********************************************************************************
 *                          推流导出会话模块                                      *

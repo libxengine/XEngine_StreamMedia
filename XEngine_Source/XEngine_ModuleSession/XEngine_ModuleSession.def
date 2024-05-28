@@ -17,6 +17,10 @@ EXPORTS
 	ModuleSession_PullStream_RTCSet
 	ModuleSession_PullStream_RTCGet
 	ModuleSession_PullStream_RTCSSrcSet
+	ModuleSession_PullStream_RTCAddrSet
+	ModuleSession_PullStream_RTCAddrGet
+	ModuleSession_PullStream_RTCConnSet
+	ModuleSession_PullStream_RTCConnGet
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy

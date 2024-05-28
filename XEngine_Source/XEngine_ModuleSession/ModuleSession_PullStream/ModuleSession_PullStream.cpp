@@ -566,3 +566,176 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpsz
 	st_Locker.unlock_shared();
 	return true;
 }
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCAddrSet
+函数功能：设置RTC的数据通信地址
+ 参数.一：lpszClientUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的用户
+ 参数.二：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入绑定的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapClient.find(lpszClientUser);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszClientAddr, lpszClientAddr);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCAddrGet
+函数功能：获取地址绑定的用户
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：ptszClientUser
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出绑定的用户
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser)
+{
+	Session_IsErrorOccur = false;
+
+	bool bFound = false;
+
+	st_Locker.lock_shared();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_MapIterator->second->enStreamType)
+		{
+			if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+			{
+				bFound = true;
+				break;
+			}
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCConnSet
+函数功能：设置RTC用户是否链接
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：bConnect
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是否链接
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect)
+{
+	Session_IsErrorOccur = false;
+
+	bool bFound = false;
+	st_Locker.lock_shared();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_MapIterator->second->enStreamType)
+		{
+			if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+			{
+				bFound = true;
+				stl_MapIterator->second->st_WEBRtc.bConnect = bConnect;
+				break;
+			}
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCConnGet
+函数功能：获取RTC是否链接
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：pbConnect
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出是否链接
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
+{
+	Session_IsErrorOccur = false;
+
+	bool bFound = false;
+	st_Locker.lock_shared();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_MapIterator->second->enStreamType)
+		{
+			if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+			{
+				bFound = true;
+				*pbConnect = stl_MapIterator->second->st_WEBRtc.bConnect;
+				break;
+			}
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	return true;
+}
