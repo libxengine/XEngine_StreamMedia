@@ -97,9 +97,16 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 	}
 	else if ((lpszMsgBuffer[0] >> 6 == 2))
 	{
-		if ((lpszMsgBuffer[1] >= 200) && (lpszMsgBuffer[1] <= 204))
+		if ((lpszMsgBuffer[1] >= 200) && (lpszMsgBuffer[1] <= 207))
 		{
 			//RTCP
+			RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
+			if (!RTCPProtocol_Parse_Header(lpszMsgBuffer, nMsgLen, &st_RTCPHdr))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTCP协议解析失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, RTCPProtocol_GetLastError());
+				return false;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTCP协议处理成功,请求处理的协议:%d"), lpszClientAddr, st_RTCPHdr.byPT);
 		}
 		else
 		{

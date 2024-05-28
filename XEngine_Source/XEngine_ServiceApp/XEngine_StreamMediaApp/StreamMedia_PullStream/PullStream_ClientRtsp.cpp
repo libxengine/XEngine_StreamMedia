@@ -16,12 +16,12 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 	{
 		int nPos = 0;
 		RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
-		RTCPProtocol_Parse_Header(&st_RTCPHdr, lpszMsgBuffer, nMsgLen);
+		RTCPProtocol_Parse_Header(lpszMsgBuffer, nMsgLen, &st_RTCPHdr);
 		nPos += sizeof(RTCPPROTOCOL_RTCPHDR);
 
 		int nListCount;
 		RTCPPROTOCOL_RTCPRECVER** ppSt_ListRecvInfo;
-		RTCPProtocol_Parse_Recver(&ppSt_ListRecvInfo, &nListCount, &st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+		RTCPProtocol_Parse_Recver(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr, &ppSt_ListRecvInfo, &nListCount);
 		nPos += sizeof(RTCPPROTOCOL_RTCPRECVER);
 		//后续是否还有数据
 		if (nMsgLen - nPos > 0)
@@ -31,14 +31,14 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 			int nListCount = 0;
 			STREAMMEDIA_RTCPPROTOCOL_SDESINFO** ppSt_ListSdeser;
 
-			RTCPProtocol_Parse_Header(&st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+			RTCPProtocol_Parse_Header(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr);
 			nPos += sizeof(RTCPPROTOCOL_RTCPHDR);
 			
 			if (ENUM_STREAMMEDIA_RTCPPROTOCOL_PACKET_TYPE_SDES == st_RTCPHdr.byPT)
 			{
 				nPos -= sizeof(uint32_t);
 			}
-			RTCPProtocol_Parse_Sdeser(&ppSt_ListSdeser, &nListCount, &st_RTCPHdr, lpszMsgBuffer + nPos, nMsgLen - nPos);
+			RTCPProtocol_Parse_Sdeser(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr, &ppSt_ListSdeser, &nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListSdeser, nListCount);
 		}
 		/*
