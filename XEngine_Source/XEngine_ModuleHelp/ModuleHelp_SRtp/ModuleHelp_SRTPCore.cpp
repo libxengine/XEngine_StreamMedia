@@ -75,13 +75,13 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
 	const int SRTP_MASTER_KEY_KEY_LEN = 16;
 	const int SRTP_MASTER_KEY_SALT_LEN = 14;
 
-	std::string m_StrClientKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer), 16);
-	nPos += 16;
-	std::string m_StrServerKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 16);
-	nPos += 16;
-	std::string m_StrClientSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 14);
-	nPos += 14;
-	std::string m_StrServerSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 14);
+	std::string m_StrClientKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer), SRTP_MASTER_KEY_KEY_LEN);
+	nPos += SRTP_MASTER_KEY_KEY_LEN;
+	std::string m_StrServerKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_KEY_LEN);
+	nPos += SRTP_MASTER_KEY_KEY_LEN;
+	std::string m_StrClientSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_SALT_LEN);
+	nPos += SRTP_MASTER_KEY_SALT_LEN;
+	std::string m_StrServerSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_SALT_LEN);
 
 	std::string m_ClientKey = m_StrClientKey + m_StrClientSalt;
 	std::string m_ServerKey = m_StrServerKey + m_StrServerSalt;

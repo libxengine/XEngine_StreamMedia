@@ -10,13 +10,16 @@ LOADHDR = -I ./
 LOADSO = 
 LIB = -lXEngine_OPenSsl
 LIBEX = 
-OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o pch.o
+OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o ModuleHelp_SRTPCore.o pch.o
 
 MACRO_SRT_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT | cut -d ' ' -f 3)
 MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC | cut -d ' ' -f 3)
 
 ifeq ($(MACRO_SRT_SUPPORT),1)
     LIB += -lsrt-gnutls
+endif
+ifeq ($(MACRO_SRT_SUPPORT),1)
+    LIB += -lsrtp2
 endif
 
 ifeq ($(RELEASE),1)
@@ -67,6 +70,8 @@ ModuleHelp_Rtsp.o:./ModuleHelp_Rtsp/ModuleHelp_Rtsp.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_Rtsp/ModuleHelp_Rtsp.cpp 
 ModuleHelp_Rtmp.o:./ModuleHelp_Rtmp/ModuleHelp_Rtmp.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_Rtmp/ModuleHelp_Rtmp.cpp
+ModuleHelp_SRTPCore.o:./ModuleHelp_SRtp/ModuleHelp_SRTPCore.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./ModuleHelp_SRtp/ModuleHelp_SRTPCore.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp

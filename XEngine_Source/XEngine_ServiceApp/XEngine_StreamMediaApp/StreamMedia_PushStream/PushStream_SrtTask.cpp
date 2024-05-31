@@ -10,7 +10,7 @@
 //    Purpose:     SRT推拉流代码
 //    History:
 *********************************************************************/
-bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
+bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, XSOCKET hSocket)
 {
 	bool bPublish = false;
 	XCHAR tszSMSAddr[MAX_PATH];
@@ -18,7 +18,7 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 
 	if (!ModuleHelp_SrtCore_GetStreamID(hSocket, tszSMSAddr, &bPublish))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：获取流ID信息失败,错误码：%lX,错误信息:%s"), ModuleHelp_GetLastError(), srt_getlasterror_str());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：获取流ID信息失败,错误码：%lX"), ModuleHelp_GetLastError());
 		return false;
 	}
 
@@ -48,7 +48,7 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, SRTSOCKET hSocket)
 	return true;
 }
 
-bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, SRTSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	if (!HLSProtocol_TSParse_Send(lpszClientAddr, lpszMsgBuffer, nMsgLen))
 	{

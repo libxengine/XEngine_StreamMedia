@@ -490,9 +490,9 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(XSOCKET hSocket)
 //////////////////////////////////////////////////////////////////////////
 XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 {
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	CModuleHelp_SrtCore* pClass_This = (CModuleHelp_SrtCore*)lParam;
 
-#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	while (pClass_This->bRun)
 	{
 		int nSRTCount = 100;
