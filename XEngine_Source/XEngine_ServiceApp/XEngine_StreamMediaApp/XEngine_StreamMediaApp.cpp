@@ -418,6 +418,14 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+
+	if (!ModuleHelp_SrtCore_Init())
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%s"), srt_getlasterror_str());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化SRT服务成功"));
+
 	if (st_ServiceConfig.nSrtPort > 0)
 	{
 		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
@@ -460,7 +468,7 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRT协议编译选项被禁用,无法使用SRT协议"));
 #endif
 
-#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRTP
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
 		if (!ModuleHelp_SRTPCore_Init())

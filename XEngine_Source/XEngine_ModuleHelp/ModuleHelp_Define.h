@@ -54,6 +54,24 @@ extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbyS
 /*                         导出的SRT函数                                */
 /************************************************************************/
 /********************************************************************
+函数名称：ModuleHelp_SrtCore_Init
+函数功能：初始化SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Init();
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Destory
+函数功能：销毁SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Destory();
+/********************************************************************
 函数名称：ModuleHelp_SrtCore_Start
 函数功能：启动SRT
  参数.一：nPort
@@ -144,14 +162,14 @@ extern "C" bool ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR * ptszSMSA
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, XSOCKET hSocket = 0);
 /********************************************************************
-函数名称：ModuleHelp_SrtCore_Destory
+函数名称：ModuleHelp_SrtCore_Stop
 函数功能：销毁SRT服务
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_SrtCore_Destory();
+extern "C" bool ModuleHelp_SrtCore_Stop();
 /************************************************************************/
 /*                         导出的RTSP函数                               */
 /************************************************************************/

@@ -48,6 +48,14 @@ extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE * pby
 /************************************************************************/
 /*                         导出的SRT函数                                */
 /************************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Init()
+{
+	return m_SrtCore.ModuleHelp_SrtCore_Init();
+}
+extern "C" bool ModuleHelp_SrtCore_Destory()
+{
+	return m_SrtCore.ModuleHelp_SrtCore_Destory();
+}
 extern "C" bool ModuleHelp_SrtCore_Start(int nPort)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Start(nPort);
@@ -68,9 +76,9 @@ extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Close(lpszClientAddr, hSocket);
 }
-extern "C" bool ModuleHelp_SrtCore_Destory()
+extern "C" bool ModuleHelp_SrtCore_Stop()
 {
-	return m_SrtCore.ModuleHelp_SrtCore_Destory();
+	return m_SrtCore.ModuleHelp_SrtCore_Stop();
 }
 /************************************************************************/
 /*                         导出的RTSP函数                               */
