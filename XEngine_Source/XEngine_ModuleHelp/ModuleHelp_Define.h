@@ -536,3 +536,79 @@ extern "C" bool ModuleHelp_SRTPCore_Destory();
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPINProtect
+函数功能：RTP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPUNProtect
+函数功能：RTP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPINProtect
+函数功能：RTCP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTCPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPUNProtect
+函数功能：RTCP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTCPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);

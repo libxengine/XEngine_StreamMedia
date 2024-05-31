@@ -161,3 +161,19 @@ extern "C" bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
 {
 	return m_HelpSRtp.ModuleHelp_SRTPCore_Create(lpszKEYBuffer);
 }
+extern "C" bool ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTPINProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTPUNProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTCPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTCPINProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTCPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTCPUNProtect(ptszMSGBuffer, pInt_MSGLen);
+}

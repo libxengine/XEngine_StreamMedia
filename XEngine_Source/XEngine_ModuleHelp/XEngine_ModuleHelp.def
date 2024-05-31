@@ -35,3 +35,7 @@ EXPORTS
 	ModuleHelp_SRTPCore_Init
 	ModuleHelp_SRTPCore_Destory
 	ModuleHelp_SRTPCore_Create
+	ModuleHelp_SRTPCore_RTPINProtect
+	ModuleHelp_SRTPCore_RTPUNProtect
+	ModuleHelp_SRTPCore_RTCPINProtect
+	ModuleHelp_SRTPCore_RTCPUNProtect

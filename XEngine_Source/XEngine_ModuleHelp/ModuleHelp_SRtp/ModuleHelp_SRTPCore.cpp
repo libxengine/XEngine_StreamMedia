@@ -87,9 +87,6 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
 	std::string m_ServerKey = m_StrServerKey + m_StrServerSalt;
 
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
-	SRTPCORE_CLIENTINFO st_SRTPCore = {};
-	srtp_policy_t st_SRTPPolicy = {};
-
 	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtp);
 	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtcp);
 
@@ -100,21 +97,164 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
 
 	//初始化接受上下文
 	st_SRTPPolicy.ssrc.type = ssrc_any_inbound;
-	st_SRTPPolicy.key = (unsigned char*)m_ServerKey.c_str();
+	st_SRTPPolicy.key = (unsigned char*)m_ClientKey.c_str();
 
 	srtp_err_status_t nRet = srtp_err_status_ok;
 	if (srtp_err_status_ok != (nRet = srtp_create(&st_SRTPCore.pSt_SRTPRecvCtx, &st_SRTPPolicy)))
 	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_CREATE;
 		return false;
 	}
-
 	st_SRTPPolicy.ssrc.type = ssrc_any_outbound;
-	st_SRTPPolicy.key = (unsigned char*)m_ClientKey.c_str();
+	st_SRTPPolicy.key = (unsigned char*)m_ServerKey.c_str();
 
 	if (srtp_err_status_ok != (nRet = srtp_create(&st_SRTPCore.pSt_SRTPSendCtx, &st_SRTPPolicy)))
 	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_CREATE;
 		return false;
 	}
+#endif
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPINProtect
+函数功能：RTP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+	
+	int nRet = srtp_protect(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	if (srtp_err_status_ok != nRet)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_INPROTECT;
+		return false;
+	}
+
+#endif
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPUNProtect
+函数功能：RTP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+
+	int nRet = srtp_unprotect(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	if (srtp_err_status_ok != nRet)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_UNPROTECT;
+		return false;
+	}
+
+#endif
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPINProtect
+函数功能：RTCP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTCPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+
+	int nRet = srtp_protect_rtcp(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	if (srtp_err_status_ok != nRet)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_INPROTECT;
+		return false;
+	}
+
+#endif
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPUNProtect
+函数功能：RTCP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTCPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+
+	int nRet = srtp_unprotect_rtcp(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	if (srtp_err_status_ok != nRet)
+	{
+		ModuleHelp_IsErrorOccur = true;
+		ModuleHelp_dwErrorCode = ERROR_MODULE_HELP_SRTP_UNPROTECT;
+		return false;
+	}
+
 #endif
 	return true;
 }
