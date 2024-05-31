@@ -92,8 +92,7 @@ void ServiceApp_Stop(int signo)
 		ModuleHelp_SrtCore_Destory();
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
-		srt_cleanup();
-
+		
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{
@@ -142,8 +141,6 @@ static int ServiceApp_Deamon()
 
 int main(int argc, char** argv)
 {
-	srt_startup();
-	srt_setloglevel(srt_logging::LogLevel::fatal);
 #ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
@@ -627,7 +624,6 @@ XENGINE_SERVICEAPP_EXIT:
 		ModuleHelp_SrtCore_Destory();
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
-		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)

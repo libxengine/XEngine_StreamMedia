@@ -13,9 +13,16 @@
 *********************************************************************/
 CModuleHelp_SrtCore::CModuleHelp_SrtCore()
 {
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+	srt_startup();
+	srt_setloglevel(srt_logging::LogLevel::fatal);
+#endif
 }
 CModuleHelp_SrtCore::~CModuleHelp_SrtCore()
 {
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+	srt_cleanup();
+#endif
 }
 //////////////////////////////////////////////////////////////////////////
 //                             公有函数
