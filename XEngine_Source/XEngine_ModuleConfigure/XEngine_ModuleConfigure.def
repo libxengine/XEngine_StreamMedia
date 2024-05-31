@@ -4,3 +4,4 @@ EXPORTS
 	ModuleConfigure_GetLastError
 
 	ModuleConfigure_Json_File
+	ModuleConfigure_Json_Versions

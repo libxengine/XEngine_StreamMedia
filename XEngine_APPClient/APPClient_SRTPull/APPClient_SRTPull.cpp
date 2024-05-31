@@ -10,12 +10,12 @@
 #include <XEngine_Include/XEngine_Types.h>
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_SRTPull.cpp -o APPClient_SRTPull.exe -lsrt
-//macos::g++ -std=c++17 -Wall -g APPClient_SRTPull.cpp -o APPClient_SRTPull.exe -lsrt
+//g++ -std=c++17 -Wall -g APPClient_SRTPull.cpp -o APPClient_SRTPull.exe -lsrt
+
 FILE* pSt_File;
 
 int nPort = 10080;
-LPCXSTR lpszServiceAddr = _X("10.0.3.155");
+LPCXSTR lpszServiceAddr = _X("127.0.0.1");
 
 int main()
 {
@@ -71,7 +71,7 @@ int main()
 		{
 			fwrite(tszMsgBuffer, 1, ret, pSt_File);
 		}
-
+		printf("%d\n", ret);
 		if (nTimeEnd - nTimeStart > 20)
 		{
 			break;

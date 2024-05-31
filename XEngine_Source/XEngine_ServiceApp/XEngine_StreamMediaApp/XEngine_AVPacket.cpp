@@ -179,8 +179,8 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			int nPos = 0;
 			int nSPSLen = 0;
 			int nPPSLen = 0;
-			XBYTE uszSPSBuffer[512];
-			XBYTE uszPPSBuffer[512];
+			XBYTE uszSPSBuffer[1024];
+			XBYTE uszPPSBuffer[1024];
 
 			memset(uszSPSBuffer, '\0', sizeof(uszSPSBuffer));
 			memset(uszPPSBuffer, '\0', sizeof(uszPPSBuffer));
@@ -238,8 +238,8 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			int nPos = 0;
 			int nSPSLen = 0;
 			int nPPSLen = 0;
-			XBYTE uszSPSBuffer[512];
-			XBYTE uszPPSBuffer[512];
+			XBYTE uszSPSBuffer[1024];
+			XBYTE uszPPSBuffer[1024];
 
 			memset(uszSPSBuffer, '\0', sizeof(uszSPSBuffer));
 			memset(uszPPSBuffer, '\0', sizeof(uszPPSBuffer));
@@ -289,6 +289,10 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 }
 bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
 {
+	if (1 == byAVType && nMsgLen > 1024)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("检测到推流:%s 过大的音频包:%d"), lpszClientAddr, nMsgLen);
+	}
 	XBYTE byFrameType = 0;
 	if (0 == byAVType)
 	{
@@ -399,14 +403,13 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 		}
 		else
 		{
-			XCHAR byAACBuffer[1024] = {};
 			XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
 
 			ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
-			AVHelp_Packet_AACHdr((XBYTE*)byAACBuffer, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, nMsgLen);
-			memcpy(byAACBuffer + 7, lpszMsgBuffer, nMsgLen);
+			AVHelp_Packet_AACHdr((XBYTE*)ptszRVBuffer, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, nMsgLen);
+			memcpy(ptszRVBuffer + 7, lpszMsgBuffer, nMsgLen);
 			nMsgLen += 7;
-			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE*)ptszSDBuffer, pInt_SDLen, 0x101, byAACBuffer, nMsgLen);
+			HLSProtocol_TSPacket_AVPacket(lpszClientAddr, (XBYTE*)ptszSDBuffer, pInt_SDLen, 0x101, ptszRVBuffer, nMsgLen);
 		}
 
 		int nPATLen = 0;

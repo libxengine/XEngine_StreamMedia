@@ -3,6 +3,7 @@
 #include "ModuleHelp_Srt/ModuleHelp_SrtCore.h"
 #include "ModuleHelp_Rtsp/ModuleHelp_Rtsp.h"
 #include "ModuleHelp_Rtmp/ModuleHelp_Rtmp.h"
+#include "ModuleHelp_SRtp/ModuleHelp_SRTPCore.h"
 /********************************************************************
 //    Created:     2022/04/24  16:28:09
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleHelp\pch.cpp
@@ -21,6 +22,7 @@ CModuleHelp_JT1078 m_HelpJT1078;
 CModuleHelp_SrtCore m_SrtCore;
 CModuleHelp_Rtsp m_HelpRtsp;
 CModuleHelp_Rtmp m_HelpRtmp;
+CModuleHelp_SRTPCore m_HelpSRtp;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -46,6 +48,14 @@ extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE * pby
 /************************************************************************/
 /*                         导出的SRT函数                                */
 /************************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Init()
+{
+	return m_SrtCore.ModuleHelp_SrtCore_Init();
+}
+extern "C" bool ModuleHelp_SrtCore_Destory()
+{
+	return m_SrtCore.ModuleHelp_SrtCore_Destory();
+}
 extern "C" bool ModuleHelp_SrtCore_Start(int nPort)
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Start(nPort);
@@ -66,9 +76,9 @@ extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket
 {
 	return m_SrtCore.ModuleHelp_SrtCore_Close(lpszClientAddr, hSocket);
 }
-extern "C" bool ModuleHelp_SrtCore_Destory()
+extern "C" bool ModuleHelp_SrtCore_Stop()
 {
-	return m_SrtCore.ModuleHelp_SrtCore_Destory();
+	return m_SrtCore.ModuleHelp_SrtCore_Stop();
 }
 /************************************************************************/
 /*                         导出的RTSP函数                               */
@@ -135,4 +145,35 @@ extern "C" bool ModuleHelp_Rtmp_GetSession(LPCXSTR lpszURLAddr, XCHAR * ptszLive
 extern "C" bool ModuleHelp_Rtmp_DeleteSession(LPCXSTR lpszURLAddr)
 {
 	return m_HelpRtmp.ModuleHelp_Rtmp_DeleteSession(lpszURLAddr);
+}
+/************************************************************************/
+/*                         导出的SRTP函数                               */
+/************************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_Init()
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Init();
+}
+extern "C" bool ModuleHelp_SRTPCore_Destory()
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Destory();
+}
+extern "C" bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Create(lpszKEYBuffer);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTPINProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTPUNProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTCPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTCPINProtect(ptszMSGBuffer, pInt_MSGLen);
+}
+extern "C" bool ModuleHelp_SRTPCore_RTCPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_RTCPUNProtect(ptszMSGBuffer, pInt_MSGLen);
 }

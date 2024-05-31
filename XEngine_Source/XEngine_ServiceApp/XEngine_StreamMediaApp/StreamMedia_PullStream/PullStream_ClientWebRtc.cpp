@@ -10,39 +10,56 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
-int PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
-	return nMSGLen >= 13 && lpszMSGBuffer[0] == 0x16;
+	return ((nMSGLen >= 13) && (lpszMSGBuffer[0] == 0x16));
 }
-int PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// STUN消息的类型字段（前两位为00）以及魔术cookie字段
-	return nMSGLen >= 20 && (lpszMSGBuffer[0] & 0xC0) == 0x00 && lpszMSGBuffer[4] == 0x21 && lpszMSGBuffer[5] == 0x12 && lpszMSGBuffer[6] == 0xA4 && lpszMSGBuffer[7] == 0x42;
+	return (nMSGLen >= 20) && ((lpszMSGBuffer[0] & 0xC0) == 0x00) && (lpszMSGBuffer[4] == 0x21) && (lpszMSGBuffer[5] == 0x12) && ((XBYTE)lpszMSGBuffer[6] == 0xA4) && (lpszMSGBuffer[7] == 0x42);
 }
 bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XCHAR tszRVBuffer[2048] = {};
+	XCHAR tszSDBuffer[2048] = {};
+
 	if (PullStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
 	{
-		int nSDLen = 2048;
-		XCHAR tszSDBuffer[2048] = {};
-		XBYTE tszSDKey[128] = {};
-		XBYTE tszRVKey[128] = {};
+		nSDLen = 2048;
+		bool bConnect = false;
 
-		if (OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen))
+		if (!ModuleSession_PullStream_RTCConnGet(lpszClientAddr, &bConnect))
 		{
-			OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszSDKey, tszRVKey);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,请求的DTLS协议处理失败,地址不存在"), lpszClientAddr);
+			return false;
+		}
+
+		if (bConnect)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("RTC客户端:%s,请求的DTLS协议已经链接成功,但是发送了一段未知协议"), lpszClientAddr);
 		}
 		else
 		{
-			int nPort = 0;
-			XCHAR tszIPPort[128] = {};
-			_tcsxcpy(tszIPPort, lpszClientAddr);
-			BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
-			NetCore_UDPSelect_Send(xhRTCSocket, tszSDBuffer, nSDLen, tszIPPort, nPort);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议,还需要进一步处理,响应大小:%d"), lpszClientAddr, nSDLen);
+			if (OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen))
+			{
+#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 32
+				XBYTE tszKEYBuffer[MAX_PATH] = {};
+				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
+				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
+#endif
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
+			}
+			else
+			{
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议,还需要进一步处理,响应大小:%d"), lpszClientAddr, nSDLen);
+			}
 		}
+		
 	}
 	else if (PullStream_ClientProtocol_Stun(lpszMsgBuffer, nMsgLen))
 	{
@@ -52,7 +69,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 		if (!NatProtocol_StunNat_Parse(lpszMsgBuffer, nMsgLen, &st_NatClient, &ppSt_ListAttr, &nAttrCount))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("STUN客户端:%s,请求的STUN协议不正确,解析失败,错误:%lX"), lpszClientAddr, NatProtocol_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,请求的STUN协议不正确,解析失败,错误:%lX"), lpszClientAddr, NatProtocol_GetLastError());
 			return false;
 		}
 		XCHAR tszUserStr[128] = {};
@@ -61,36 +78,52 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			if (RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME == ppSt_ListAttr[i]->wAttr)
 			{
 				memcpy(tszUserStr, ppSt_ListAttr[i]->tszMsgBuffer, ppSt_ListAttr[i]->wLen);
+				break;
 			}
 		}
-		int nTMPLen = 0;
-		int nMSGLen = 0;
-		int nIPPort = 0;
-		XCHAR tszTMPBuffer[1024] = {};
-		XCHAR tszMSGBuffer[1024] = {};
-		XCHAR tszIPAddr[128] = {};
-
-		_tcsxcpy(tszIPAddr, lpszClientAddr);
-
-		BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nIPPort);
-
-		NatProtocol_StunNat_BuildAttr(tszTMPBuffer, &nTMPLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
-		NatProtocol_StunNat_BuildMapAddress(tszTMPBuffer + nTMPLen, &nTMPLen, tszIPAddr, nIPPort, true);
-		//NatProtocol_StunNat_BuildMSGIntegrity(tszMSGBuffer, &nMSGLen, tszTMPBuffer, nTMPLen, );
-		NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_FLAGS, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS);
-
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+
+		int nPort = 0;
+		XCHAR tszIPPort[128] = {};
+		_tcsxcpy(tszIPPort, lpszClientAddr);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
+
+		NatProtocol_StunNat_BuildAttr(tszRVBuffer, &nRVLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
+		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
+		nSDLen = nRVLen;
+		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
+		//更新绑定的地址
+		ModuleSession_PullStream_RTCAddrSet(tszUserStr, lpszClientAddr);
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
-	else 
+	else if ((lpszMsgBuffer[0] >> 6 == 2))
 	{
-		
+		if ((lpszMsgBuffer[1] >= 200) && (lpszMsgBuffer[1] <= 207))
+		{
+			//RTCP
+			RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
+			if (!RTCPProtocol_Parse_Header(lpszMsgBuffer, nMsgLen, &st_RTCPHdr))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTCP协议解析失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, RTCPProtocol_GetLastError());
+				return false;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTCP协议处理成功,请求处理的协议:%d"), lpszClientAddr, st_RTCPHdr.byPT);
+		}
+		else
+		{
+			//RTP
+		}
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,发送了不能识别的协议,大小:%d"), lpszClientAddr, nMsgLen);
 	}
 
 	return true;
 }
-bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
+bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
 {
-#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 29
 	XCHAR** pptszAVList;
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
 
@@ -98,11 +131,13 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 	{
 		_tcsxcpy(pptszAVList[0], _X("106"));
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	else
 	{
 		_tcsxcpy(pptszAVList[0], _X("111"));
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	//生成用户和密码
 	SDPProtocol_Packet_ICEUser(xhPacket, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
@@ -122,14 +157,14 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 	tszDigestHex[nPos - 1] = '\0';
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("fingerprint"), tszDigestHex);
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("setup"), _X("passive"));
-	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
-	SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
-	SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
-
 	if (bVideo)
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("1"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 oH264/90000"));
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
+
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 H264/90000"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 transport-cc"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack pli"));
@@ -145,23 +180,33 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, bool bVideo, XENGINE
 		st_SDPMedia.st_FmtpVideo.tszLeaveId[1] = tszSPSBuffer[1];
 		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = tszSPSBuffer[2];
 		SDPProtocol_Packet_VideoFmt(xhPacket, 106, &st_SDPMedia, true);
-		SDPProtocol_Packet_CName(xhPacket, 2124085006, _X("79a9722580589zr5"), _X("video-666q08to"));
+
+		XNETHANDLE nVSSrc = 0;
+		BaseLib_OperatorHandle_Create(&nVSSrc, 2000000000, 3000000000);
+		SDPProtocol_Packet_CName(xhPacket, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
 	}
 	else
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("0"));
+		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
+
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("111 opus/48000/2"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
-		SDPProtocol_Packet_CName(xhPacket, 2124085006, _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
+
+		XNETHANDLE nASSrc = 0;
+		BaseLib_OperatorHandle_Create(&nASSrc, 2000000000, 3000000000);
+		SDPProtocol_Packet_CName(xhPacket, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
-#endif
 	return true;
 }
 bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
-#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 29
 	int nRVLen = 0;
 	int nSDLen = 0;
 	XNETHANDLE xhParse = 0;
@@ -226,24 +271,25 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-lite"));
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
 
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, false, &st_AVInfo);
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, true, &st_AVInfo);
-	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
-	SDPProtocol_Packet_Destory(xhPacket);
-
+	XCHAR tszTokenStr[MAX_PATH] = {};
 	XCHAR tszHDRStr[MAX_PATH] = {};
 	XCHAR tszUserStr[MAX_PATH] = {};
 
+	BaseLib_OperatorHandle_CreateStr(tszTokenStr, 10);
 	_xstprintf(tszUserStr, _X("%s:%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, tszICEUser);
-	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=6150ecg33&app=live&stream=livestream.flv&session=%s\r\n"), tszUserStr);
+	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=%s&app=live&stream=livestream.flv&session=%s\r\n"), tszTokenStr, tszUserStr);
 
 	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
-	ModuleSession_PullStream_RTCSet(tszUserStr, tszICEUser, tszICEPass, tszHMacStr);
+	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
+
+	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
+	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
+	SDPProtocol_Packet_Destory(xhPacket);
 
 	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHEP协议拉流请求成功"), lpszClientAddr);
-#endif
 	return true;
 }

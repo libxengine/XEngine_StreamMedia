@@ -8,7 +8,6 @@
 #include <thread>
 #include <list>
 #include <string>
-#include <srt/srt.h>
 #ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>
@@ -32,8 +31,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
@@ -76,6 +73,8 @@ using namespace std;
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Define.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Error.h"
+#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
+#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
@@ -147,12 +146,14 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleQueue")
+#pragma comment(lib,"../../x64/Debug/XEngine_InfoReport")
 #else
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleQueue")
+#pragma comment(lib,"../../x64/Release/XEngine_InfoReport")
 #endif
 #else
 #ifdef _DEBUG
@@ -161,12 +162,14 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"../../Debug/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Debug/XEngine_ModuleQueue")
+#pragma comment(lib,"../../Debug/XEngine_InfoReport")
 #else
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleSession.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Release/XEngine_ModuleQueue")
+#pragma comment(lib,"../../Release/XEngine_InfoReport")
 #endif
 #endif
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
@@ -174,7 +177,6 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket.lib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")

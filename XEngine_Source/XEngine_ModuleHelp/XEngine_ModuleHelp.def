@@ -6,12 +6,14 @@ EXPORTS
 	ModuleHelp_JT1078_BCDToString
 	ModuleHelp_JT1078_StringToBCD
 
+	ModuleHelp_SrtCore_Init
+	ModuleHelp_SrtCore_Destory
 	ModuleHelp_SrtCore_Start
 	ModuleHelp_SrtCore_SetCallback
 	ModuleHelp_SrtCore_Send
 	ModuleHelp_SrtCore_GetStreamID
 	ModuleHelp_SrtCore_Close
-	ModuleHelp_SrtCore_Destory
+	ModuleHelp_SrtCore_Stop
 
 	ModuleHelp_Rtsp_GetSMSAddr
 	ModuleHelp_Rtsp_CreateClient
@@ -29,3 +31,11 @@ EXPORTS
 	ModuleHelp_Rtmp_CreateSession
 	ModuleHelp_Rtmp_GetSession
 	ModuleHelp_Rtmp_DeleteSession
+
+	ModuleHelp_SRTPCore_Init
+	ModuleHelp_SRTPCore_Destory
+	ModuleHelp_SRTPCore_Create
+	ModuleHelp_SRTPCore_RTPINProtect
+	ModuleHelp_SRTPCore_RTPUNProtect
+	ModuleHelp_SRTPCore_RTCPINProtect
+	ModuleHelp_SRTPCore_RTCPUNProtect

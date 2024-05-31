@@ -54,6 +54,24 @@ extern "C" bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbyS
 /*                         导出的SRT函数                                */
 /************************************************************************/
 /********************************************************************
+函数名称：ModuleHelp_SrtCore_Init
+函数功能：初始化SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Init();
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Destory
+函数功能：销毁SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SrtCore_Destory();
+/********************************************************************
 函数名称：ModuleHelp_SrtCore_Start
 函数功能：启动SRT
  参数.一：nPort
@@ -144,14 +162,14 @@ extern "C" bool ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR * ptszSMSA
 *********************************************************************/
 extern "C" bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, XSOCKET hSocket = 0);
 /********************************************************************
-函数名称：ModuleHelp_SrtCore_Destory
+函数名称：ModuleHelp_SrtCore_Stop
 函数功能：销毁SRT服务
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleHelp_SrtCore_Destory();
+extern "C" bool ModuleHelp_SrtCore_Stop();
 /************************************************************************/
 /*                         导出的RTSP函数                               */
 /************************************************************************/
@@ -483,3 +501,114 @@ extern "C" bool ModuleHelp_Rtmp_GetSession(LPCXSTR lpszURLAddr, XCHAR* ptszLiveN
 备注：
 *********************************************************************/
 extern "C" bool ModuleHelp_Rtmp_DeleteSession(LPCXSTR lpszURLAddr);
+/************************************************************************/
+/*                         导出的SRTP函数                               */
+/************************************************************************/
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_Init
+函数功能：SRTP初始化函数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_Init();
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_Destory
+函数功能：SRTP销毁函数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_Destory();
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_Create
+函数功能：创建SRTP发送和接受处理程序
+ 参数.一：lpszKEYBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSL的KEY
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPINProtect
+函数功能：RTP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTPUNProtect
+函数功能：RTP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPINProtect
+函数功能：RTCP协议加密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要加密的数据,输出加密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要加密的大小,输出加密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTCPINProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_RTCPUNProtect
+函数功能：RTCP协议解密函数
+ 参数.一：ptszMSGBuffer
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要解密的数据,输出解密后的数据
+ 参数.二：pInt_MSGLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入要解密的大小,输出解密后的大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_RTCPUNProtect(XCHAR* ptszMSGBuffer, int* pInt_MSGLen);

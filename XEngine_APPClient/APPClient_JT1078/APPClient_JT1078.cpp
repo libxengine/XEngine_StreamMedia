@@ -26,8 +26,7 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -lXEngine_BaseLib -lXEngine_OPenSsl -lXClient_Socket -lXEngine_AVHelp
 
 void XEngine_Device_StrtoBCD(LPCXSTR lpszPhoneCode, XBYTE* ptszBCD)
 {

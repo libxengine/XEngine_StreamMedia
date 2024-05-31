@@ -90,9 +90,9 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
-		srt_cleanup();
-
+		
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{
@@ -141,8 +141,6 @@ static int ServiceApp_Deamon()
 
 int main(int argc, char** argv)
 {
-	srt_startup();
-	srt_setloglevel(srt_logging::LogLevel::fatal);
 #ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
@@ -150,7 +148,6 @@ int main(int argc, char** argv)
 	bIsRun = true;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
-	LPCXSTR lpszLogFile = _X("./XEngine_XLog/XEngine_StreamMediaApp.Log");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListHTTPParam;
 	THREADPOOL_PARAMENT** ppSt_ListCenterParam;
@@ -159,28 +156,26 @@ int main(int argc, char** argv)
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	THREADPOOL_PARAMENT** ppSt_ListSRTParam;
 #endif
-
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
 	//pSt_VFile = _xtfopen("./1.ts", "wb");
 	//pSt_AFile = _xtfopen("./1.h264", "wb");
-
-	st_XLogConfig.XLog_MaxBackupFile = 10;
-	st_XLogConfig.XLog_MaxSize = 1024000;
-	_tcsxcpy(st_XLogConfig.tszFileName, lpszLogFile);
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
 		return -1;
 	}
+	st_XLogConfig.XLog_MaxBackupFile = st_ServiceConfig.st_XLog.nMaxCount;
+	st_XLogConfig.XLog_MaxSize = st_ServiceConfig.st_XLog.nMaxSize;
+	_tcsxcpy(st_XLogConfig.tszFileName, st_ServiceConfig.st_XLog.tszLogFile);
 	//判断是否以守护进程启动
 	if (st_ServiceConfig.bDeamon)
 	{
 		ServiceApp_Deamon();
 	}
 	//初始日志
-	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_STD | HELPCOMPONENTS_XLOG_OUTTYPE_FILE, &st_XLogConfig);
+	xhLog = HelpComponents_XLog_Init(st_ServiceConfig.st_XLog.nLogLeave, &st_XLogConfig);
 	if (NULL == xhLog)
 	{
 		printf("启动服务中,启动日志失败,错误：%lX", XLog_GetLastError());
@@ -423,11 +418,19 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+
+	if (!ModuleHelp_SrtCore_Init())
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化SRT服务成功"));
+
 	if (st_ServiceConfig.nSrtPort > 0)
 	{
 		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT服务失败,错误：%s"), srt_getlasterror_str());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		ModuleHelp_SrtCore_SetCallback(Network_Callback_SRTLogin, Network_Callback_SRTRecv, Network_Callback_SRTLeave);
@@ -464,6 +467,25 @@ int main(int argc, char** argv)
 #else
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRT协议编译选项被禁用,无法使用SRT协议"));
 #endif
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		if (!ModuleHelp_SRTPCore_Init())
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRTP的服务失败"));
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRTP协议处理程序初始化成功"), st_ServiceConfig.st_XMax.nSRTThread);
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRTP流协议服务被禁用"));
+	}
+#else
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRTP协议编译选项被禁用,无法使用SRTP协议"));
+#endif
+	
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);
@@ -534,6 +556,31 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
+	//发送信息报告
+	if (st_ServiceConfig.st_XReport.bEnable)
+	{
+		if (InfoReport_APIMachine_Send(st_ServiceConfig.st_XReport.tszAPIUrl, st_ServiceConfig.st_XReport.tszServiceName))
+		{
+			__int64x nTimeCount = 0;
+			if (InfoReport_APIMachine_GetTime(st_ServiceConfig.st_XReport.tszAPIUrl, st_ServiceConfig.st_XReport.tszServiceName, &nTimeCount))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,报告次数:%lld"), st_ServiceConfig.st_XReport.tszAPIUrl, nTimeCount);
+			}
+			else
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,获取报告次数失败,错误:%lX"), st_ServiceConfig.st_XReport.tszAPIUrl, InfoReport_GetLastError());
+			}
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动信息报告给API服务器:%s 失败，错误：%lX"), st_ServiceConfig.st_XReport.tszAPIUrl, InfoReport_GetLastError());
+		}
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
+	}
+
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
@@ -583,8 +630,8 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
-		srt_cleanup();
 
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)

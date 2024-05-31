@@ -25,12 +25,14 @@ public:
 	CModuleHelp_SrtCore();
 	~CModuleHelp_SrtCore();
 public:
+	bool ModuleHelp_SrtCore_Init();
+	bool ModuleHelp_SrtCore_Destory();
 	bool ModuleHelp_SrtCore_Start(int nPort);
 	bool ModuleHelp_SrtCore_SetCallback(CALLBACK_NETCORE_SOCKET_NETEVENT_LOGIN fpCallePoll_Login, CALLBACK_NETCORE_SOCKET_NETEVENT_RECV fpCallePoll_Recv, CALLBACK_NETCORE_SOCKET_NETEVENT_LEAVE fpCallePoll_Leave, XPVOID lPLogin = NULL, XPVOID lPRecv = NULL, XPVOID lPLeave = NULL);
 	bool ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
 	bool ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR* ptszSMSAddr, bool* pbPublish);
 	bool ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr = NULL, XSOCKET hSocket = 0);
-	bool ModuleHelp_SrtCore_Destory();
+	bool ModuleHelp_SrtCore_Stop();
 protected:
 	bool ModuleHelp_SrtCore_Accept(XSOCKET hSRTSocket);
 	bool ModuleHelp_SrtCore_Recv(XSOCKET hSocket);

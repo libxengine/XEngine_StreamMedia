@@ -45,7 +45,7 @@
         "RTC": {
             "bEnable": true,
             "tszICEUser": "xengine",
-            "tszICEPass": "123456789abcd",
+            "tszICEPass": "3321308h8i6vt3769r6638l1409d50jz",
             "tszCertStr": "./XEngine_Key/server.crt",
             "tszKeyStr": "./XEngine_Key/server.key",
             "tszCsrStr": "./XEngine_Key/server.csr"
@@ -64,24 +64,14 @@
         }
     },
     "XLog": {
+        "LogFile": "./XEngine_XLog/XEngine_StreamMediaApp.Log",
         "MaxSize": 1024000,
         "MaxCount": 10,
-        "LogLeave": 32
+        "LogLeave": 17
     },
-    "XVer": [
-        "V2.7.0.1001 Build20240415",
-        "V2.6.0.1001 Build20240201",
-        "V2.5.0.1001 Build20231222",
-        "V2.4.0.1001 Build20231026",
-        "V2.3.0.1001 Build20231007",
-        "V2.2.0.1001 Build20230804",
-        "V2.1.0.1001 Build20230726",
-        "V2.0.0.1001 Build20230615",
-        "V1.4.1.1001 Build20230515",
-        "V1.4.0.1001 Build20221202",
-        "V1.3.0.1001 Build20221025",
-        "V1.2.0.1001 Build20221014",
-        "V1.1.0.1001 Build20220805",
-        "V1.0.0.1001 Build20220715"
-    ]
+    "XReport":{
+        "bEnable":true,
+        "tszServiceName":"XEngine_StreamMedia",
+        "tszAPIUrl":"http://app.xyry.org:5501/api?function=machine"
+    }
 }

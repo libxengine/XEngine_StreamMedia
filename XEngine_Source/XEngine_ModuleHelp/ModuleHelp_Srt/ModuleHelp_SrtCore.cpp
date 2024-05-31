@@ -21,6 +21,42 @@ CModuleHelp_SrtCore::~CModuleHelp_SrtCore()
 //                             公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
+函数名称：ModuleHelp_SrtCore_Init
+函数功能：初始化SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Init()
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+	srt_startup();
+	srt_setloglevel(srt_logging::LogLevel::fatal);
+#endif
+
+	return true;
+}
+/********************************************************************
+函数名称：ModuleHelp_SrtCore_Destory
+函数功能：销毁SRT服务
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
+{
+	ModuleHelp_IsErrorOccur = false;
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
+	srt_cleanup();
+#endif
+	return true;
+}
+/********************************************************************
 函数名称：ModuleHelp_SrtCore_Start
 函数功能：启动SRT
  参数.一：nPort
@@ -314,14 +350,14 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Close(LPCXSTR lpszClientAddr /* = N
 	return true;
 }
 /********************************************************************
-函数名称：ModuleHelp_SrtCore_Destory
+函数名称：ModuleHelp_SrtCore_Stop
 函数功能：销毁SRT服务
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Destory()
+bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Stop()
 {
 	ModuleHelp_IsErrorOccur = false;
 
@@ -454,9 +490,9 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(XSOCKET hSocket)
 //////////////////////////////////////////////////////////////////////////
 XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 {
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	CModuleHelp_SrtCore* pClass_This = (CModuleHelp_SrtCore*)lParam;
 
-#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	while (pClass_This->bRun)
 	{
 		int nSRTCount = 100;

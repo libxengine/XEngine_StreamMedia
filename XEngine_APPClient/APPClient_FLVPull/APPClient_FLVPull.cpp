@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
+#pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"Ws2_32")
 #endif
 #include <list>
@@ -12,15 +12,14 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Define.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
 using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_FLVPull.cpp -o APPClient_FLVPull.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_FLVPull.cpp -o APPClient_FLVPull.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//g++ -std=c++17 -Wall -g APPClient_FLVPull.cpp -o APPClient_FLVPull.exe -lXEngine_BaseLib -lXClient_APIHelp
 FILE* pSt_File;
 
 static void CALLBACK APPClient_FLVPull_Callback(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, int nMsgLen, XPVOID lParam)

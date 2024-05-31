@@ -31,11 +31,11 @@ c c++ streammedia server
 | 协议名称 | 视频格式  | 音频格式 | 当前状态 |
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
-| SRT      | H264,H265 | AAC      | 已完成   |
+| SRT      | H264      | AAC      | 已完成   |
 | WEBRTC   | H264      | OPUS     | 未开始   |
 | GB28181  | H264      | AAC      | 未开始   |
 | JT1078   | H264      | AAC      | 已完成   |
-| XStream  | H264,H265 | AAC      | 已完成   |
+| XStream  | H264      | AAC      | 已完成   |
   
 拉流协议:
 
@@ -43,12 +43,12 @@ c c++ streammedia server
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
 | RTSP     | H264      | AAC      | 已完成   |
-| M3U8     | H264,H265 | AAC      | 已完成   |
-| SRT      | H264,H265 | AAC      | 已完成   |
+| M3U8     | H264      | AAC      | 已完成   |
+| SRT      | H264      | AAC      | 已完成   |
 | WEBRTC   | H264      | OPUS     | 进行中   |
 | HTTP-FLV | H264      | AAC      | 已完成   |
-| XStream  | H264,H265 | AAC      | 已完成   |
-| TS       | H264,H265 | AAC      | 已完成   |
+| XStream  | H264      | AAC      | 已完成   |
+| TS       | H264      | AAC      | 已完成   |
 
 ## 安装教程
 
@@ -73,7 +73,7 @@ vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libs
 
 #### Linux
 配置完XEngine后需要安装srt库  
-ubuntu:sudo apt install libsrt-openssl-dev libsrtp2-dev  
+ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
 Rockylinux:sudo dnf install srt-devel srtp2-devel
 
 Linux使用Makefile编译  

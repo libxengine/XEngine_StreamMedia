@@ -1,3 +1,45 @@
+XEngine_StreamMedia V2.8.0.1001
+
+增加:支持srtcp和srtp处理数据了
+增加:信息报告功能
+增加:SSRC会话设置
+更新:移除JSONCPP模块并使用GIT SUBMODULE替代
+修改:分离了版本列表配置从主配置中
+修改:配置文件支持日志设置
+修改:sdp的打包已经能够正常使用了
+修改:dtls握手处理已经能够正常使用
+修改:某些时候aac包过大问题提示
+修改:rtc和rtcp协议判断
+修改:srt有初始化和反初始化函数
+修改:srt和srtp默认关闭了
+修正:日志配置没有效果的问题
+修正:STUN的IP和端口不正确的问题
+修正:STUN协议处理不正确导致返回数据不正确的问题
+修正:某些时候av包缓冲溢出问题
+修正:dtls判断某些时候出错的问题
+修正:http api日志打印出错
+修正:关闭srtp和srt编译选项没有效果的问题
+
+added:srtcp and srtp process data
+added:info report
+added:ssrc set for session module
+update:remove jsoncpp and use git submodule instead
+modify:detach version list from main configure
+modify:set log file for configure
+modify:sdp packet work now
+modify:dtls handshakes is work now
+modify:sometime aac packet size is to big and tips
+modify:rtc rtcp judgment
+modify:have function for srt init and destory
+modify:srt and rtc off by default
+fixed:log configure is not work
+fixed:stun ip and port is incorrect
+fixed:stun message reply is incorrect
+fixed:sometimes av packet buffer is leak
+fixed:dtls judgment fails sometimes
+fixed:log print error that http api
+fixed:disable compile options not work for srt and rtc
+=======================================================
 XEngine_StreamMedia V2.7.0.1001
 
 增加:srtp核心代码文件

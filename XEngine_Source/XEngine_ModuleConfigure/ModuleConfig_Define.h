@@ -46,6 +46,7 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
+		XCHAR tszLogFile[MAX_PATH];
 		int nMaxSize;                         //最大日志大小
 		int nMaxCount;                        //最大日志个数
 		int nLogLeave;                        //日志等级
@@ -98,6 +99,12 @@ typedef struct tag_XEngine_ServiceConfig
 			bool bEnable;
 		}st_PullWebRtc;
 	}st_XPull;
+	struct
+	{
+		XCHAR tszAPIUrl[MAX_PATH];
+		XCHAR tszServiceName[128];
+		bool bEnable;
+	}st_XReport;
 	struct  
 	{
 		list<string> *pStl_ListVer;           //版本列表
@@ -129,3 +136,22 @@ extern "C" XLONG ModuleConfigure_GetLastError(int* pInt_ErrorCode = NULL);
 备注：
 *********************************************************************/
 extern "C" bool ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
+/********************************************************************
+函数名称：ModuleConfigure_Json_Versions
+函数功能：读取版本列表配置
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取的配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出服务配置信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleConfigure_Json_Versions(LPCXSTR lpszConfigFile, XENGINE_SERVICECONFIG* pSt_ServerConfig);
