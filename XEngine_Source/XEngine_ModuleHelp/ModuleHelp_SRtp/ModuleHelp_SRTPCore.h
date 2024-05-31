@@ -25,7 +25,7 @@ public:
 public:
 	bool ModuleHelp_SRTPCore_Init();
 	bool ModuleHelp_SRTPCore_Destory();
-	bool ModuleHelp_SRTPCore_Create(LPCXSTR lpszSendKey, LPCXSTR lpszRecvKey);
+	bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer);
 protected:
 private:
 };

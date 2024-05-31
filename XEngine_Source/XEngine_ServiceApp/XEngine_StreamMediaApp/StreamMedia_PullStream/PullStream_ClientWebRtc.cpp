@@ -31,8 +31,6 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 	{
 		nSDLen = 2048;
 		bool bConnect = false;
-		XBYTE tszSDKey[128] = {};
-		XBYTE tszRVKey[128] = {};
 
 		if (!ModuleSession_PullStream_RTCConnGet(lpszClientAddr, &bConnect))
 		{
@@ -48,7 +46,9 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		{
 			if (OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen))
 			{
-				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszSDKey, tszRVKey);
+				XBYTE tszKEYBuffer[MAX_PATH] = {};
+				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
+				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
 			}
 			else

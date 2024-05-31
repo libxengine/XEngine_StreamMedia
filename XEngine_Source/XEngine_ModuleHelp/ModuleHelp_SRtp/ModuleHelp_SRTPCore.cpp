@@ -22,12 +22,7 @@ CModuleHelp_SRTPCore::~CModuleHelp_SRTPCore()
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
 函数名称：ModuleHelp_SRTPCore_Init
-函数功能：启动SRT
- 参数.一：nPort
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要绑定的端口
+函数功能：SRTP初始化函数
 返回值
   类型：逻辑型
   意思：是否成功
@@ -42,6 +37,14 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Init()
 #endif
 	return true;
 }
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_Destory
+函数功能：SRTP销毁函数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Destory()
 {
 	ModuleHelp_IsErrorOccur = false;
@@ -51,9 +54,37 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Destory()
 #endif
 	return true;
 }
-bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXSTR lpszSendKey, LPCXSTR lpszRecvKey)
+/********************************************************************
+函数名称：ModuleHelp_SRTPCore_Create
+函数功能：创建SRTP发送和接受处理程序
+ 参数.一：lpszKEYBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入SSL的KEY
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
 {
 	ModuleHelp_IsErrorOccur = false;
+
+	int nPos = 0;
+	const int SRTP_MASTER_KEY_KEY_LEN = 16;
+	const int SRTP_MASTER_KEY_SALT_LEN = 14;
+
+	std::string m_StrClientKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer), 16);
+	nPos += 16;
+	std::string m_StrServerKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 16);
+	nPos += 16;
+	std::string m_StrClientSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 14);
+	nPos += 14;
+	std::string m_StrServerSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), 14);
+
+	std::string m_ClientKey = m_StrClientKey + m_StrClientSalt;
+	std::string m_ServerKey = m_StrServerKey + m_StrServerSalt;
 
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
 	SRTPCORE_CLIENTINFO st_SRTPCore = {};
@@ -69,20 +100,20 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_Create(LPCXSTR lpszSendKey, LPCXS
 
 	//初始化接受上下文
 	st_SRTPPolicy.ssrc.type = ssrc_any_inbound;
-	st_SRTPPolicy.key = (unsigned char*)lpszRecvKey;
+	st_SRTPPolicy.key = (unsigned char*)m_ServerKey.c_str();
 
-	srtp_err_status_t r0 = srtp_err_status_ok;
-	if ((r0 = srtp_create(&st_SRTPCore.pSt_SRTPRecvCtx, &st_SRTPPolicy)) != srtp_err_status_ok)
+	srtp_err_status_t nRet = srtp_err_status_ok;
+	if (srtp_err_status_ok != (nRet = srtp_create(&st_SRTPCore.pSt_SRTPRecvCtx, &st_SRTPPolicy)))
 	{
-
+		return false;
 	}
 
 	st_SRTPPolicy.ssrc.type = ssrc_any_outbound;
-	st_SRTPPolicy.key = (unsigned char*)lpszSendKey;
+	st_SRTPPolicy.key = (unsigned char*)m_ClientKey.c_str();
 
-	if ((r0 = srtp_create(&st_SRTPCore.pSt_SRTPSendCtx, &st_SRTPPolicy)) != srtp_err_status_ok)
+	if (srtp_err_status_ok != (nRet = srtp_create(&st_SRTPCore.pSt_SRTPSendCtx, &st_SRTPPolicy)))
 	{
-
+		return false;
 	}
 #endif
 	return true;

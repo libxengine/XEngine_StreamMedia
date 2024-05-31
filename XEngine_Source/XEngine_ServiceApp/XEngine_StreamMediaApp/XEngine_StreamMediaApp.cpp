@@ -90,6 +90,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 
@@ -461,6 +462,25 @@ int main(int argc, char** argv)
 #else
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRT协议编译选项被禁用,无法使用SRT协议"));
 #endif
+
+#if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRTP
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		if (!ModuleHelp_SRTPCore_Init())
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRTP的服务失败"));
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动SRTP协议处理程序初始化成功"), st_ServiceConfig.st_XMax.nSRTThread);
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,SRTP流协议服务被禁用"));
+	}
+#else
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRTP协议编译选项被禁用,无法使用SRTP协议"));
+#endif
+	
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);
@@ -605,6 +625,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ManagePool_Thread_NQDestroy(xhJT1078Pool);
 		//销毁其他资源
 		ModuleHelp_SrtCore_Destory();
+		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		srt_cleanup();
 

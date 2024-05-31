@@ -3,6 +3,7 @@
 #include "ModuleHelp_Srt/ModuleHelp_SrtCore.h"
 #include "ModuleHelp_Rtsp/ModuleHelp_Rtsp.h"
 #include "ModuleHelp_Rtmp/ModuleHelp_Rtmp.h"
+#include "ModuleHelp_SRtp/ModuleHelp_SRTPCore.h"
 /********************************************************************
 //    Created:     2022/04/24  16:28:09
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleHelp\pch.cpp
@@ -21,6 +22,7 @@ CModuleHelp_JT1078 m_HelpJT1078;
 CModuleHelp_SrtCore m_SrtCore;
 CModuleHelp_Rtsp m_HelpRtsp;
 CModuleHelp_Rtmp m_HelpRtmp;
+CModuleHelp_SRTPCore m_HelpSRtp;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -135,4 +137,19 @@ extern "C" bool ModuleHelp_Rtmp_GetSession(LPCXSTR lpszURLAddr, XCHAR * ptszLive
 extern "C" bool ModuleHelp_Rtmp_DeleteSession(LPCXSTR lpszURLAddr)
 {
 	return m_HelpRtmp.ModuleHelp_Rtmp_DeleteSession(lpszURLAddr);
+}
+/************************************************************************/
+/*                         导出的SRTP函数                               */
+/************************************************************************/
+extern "C" bool ModuleHelp_SRTPCore_Init()
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Init();
+}
+extern "C" bool ModuleHelp_SRTPCore_Destory()
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Destory();
+}
+extern "C" bool ModuleHelp_SRTPCore_Create(LPCXBTR lpszKEYBuffer)
+{
+	return m_HelpSRtp.ModuleHelp_SRTPCore_Create(lpszKEYBuffer);
 }
