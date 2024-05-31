@@ -421,7 +421,7 @@ int main(int argc, char** argv)
 
 	if (!ModuleHelp_SrtCore_Init())
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%s"), srt_getlasterror_str());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
 		goto XENGINE_SERVICEAPP_EXIT;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化SRT服务成功"));
@@ -430,7 +430,7 @@ int main(int argc, char** argv)
 	{
 		if (!ModuleHelp_SrtCore_Start(st_ServiceConfig.nSrtPort))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT服务失败,错误：%s"), srt_getlasterror_str());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		ModuleHelp_SrtCore_SetCallback(Network_Callback_SRTLogin, Network_Callback_SRTRecv, Network_Callback_SRTLeave);
