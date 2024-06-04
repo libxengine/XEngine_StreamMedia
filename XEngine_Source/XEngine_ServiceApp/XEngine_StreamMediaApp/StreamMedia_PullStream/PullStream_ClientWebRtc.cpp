@@ -51,6 +51,19 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
 #endif
+				XCHAR tszSMSName[128] = {};
+				XCHAR tszSMSAddr[128] = {};
+				if (!ModuleSession_PullStream_RTCSmsGet(lpszClientAddr, tszSMSName))
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,握手成功,处理SMS地址失败,诶有找到"), lpszClientAddr);
+					return false;
+				}
+				if (!ModuleSession_PushStream_FindStream(tszSMSName, tszSMSAddr))
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,握手成功,处理SMS地址失败,诶有找到"), lpszClientAddr);
+					return false;
+				}
+				ModuleSession_PushStream_ClientInsert(tszSMSAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
 			}
 			else
