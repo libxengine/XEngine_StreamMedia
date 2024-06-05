@@ -128,6 +128,7 @@ extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
 //WEBRTC网络
 extern XHANDLE xhRTCSocket;
+extern XHANDLE xhRTCHeart;
 extern XHANDLE xhRTCSsl;
 //HLS流
 extern XNETHANDLE xhHLSFile;

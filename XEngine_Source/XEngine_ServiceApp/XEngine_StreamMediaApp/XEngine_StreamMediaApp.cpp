@@ -39,6 +39,7 @@ XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
 XHANDLE xhRTCSocket = NULL;
+XHANDLE xhRTCHeart = NULL;
 XHANDLE xhRTCSsl = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
@@ -76,6 +77,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);
@@ -541,6 +543,21 @@ int main(int argc, char** argv)
 		}
 		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
+
+		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
+		{
+			xhRTCHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCHBLeave);
+			if (NULL == xhRTCHeart)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTC心跳管理服务没有启用!"));
+		}
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
@@ -616,6 +633,7 @@ XENGINE_SERVICEAPP_EXIT:
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);

@@ -40,9 +40,10 @@ typedef struct tag_XEngine_ServiceConfig
 	{
 		int nTimeCheck;                       //检测次数
 		int nHTTPTimeout;                     //HTTP超时时间
-		int nXStreamTimeout;                   //业务超时时间
+		int nXStreamTimeout;                  //业务超时时间
 		int nRTMPTimeout;                     //RTMP超时时间
 		int nJT1078Timeout;                   //1078超时时间
+		int nRTCTimeout;                      //RTC超时时间
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{

@@ -546,7 +546,6 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				int nPacketCount = 0;
 				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
 				XCHAR tszSSCRStr[MAX_PATH] = {};
-				XCHAR tszADDRStr[128] = {};
 
 				if (0 == byAVType)
 				{
@@ -556,7 +555,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					for (int i = 0; i < nPacketCount; i++)
 					{
 						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
-						NetCore_UDPXCore_SendEx(xhVRTPSocket, stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+						NetCore_UDPXCore_SendEx(xhRTCSocket, stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
 					}
 				}
 				else
@@ -567,7 +566,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					for (int i = 0; i < nPacketCount; i++)
 					{
 						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
-						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+						NetCore_UDPXCore_SendEx(xhRTCSocket, stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
 					}
 				}
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);

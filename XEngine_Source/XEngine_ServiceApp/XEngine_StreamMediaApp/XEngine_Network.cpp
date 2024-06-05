@@ -164,6 +164,11 @@ void CALLBACK Network_Callback_RTCRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 	PullStream_ClientProtocol_Handle(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("STUN客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
+void CALLBACK Network_Callback_RTCHBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s，离开了服务器"), lpszClientAddr);
+}
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {

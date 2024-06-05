@@ -107,6 +107,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
 		//更新绑定的地址
 		ModuleSession_PullStream_RTCAddrSet(tszUserStr, lpszClientAddr);
+		SocketOpt_HeartBeat_ActiveAddrEx(xhRTCHeart, tszUserStr);            //激活一次心跳
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
@@ -296,9 +297,11 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
+	SocketOpt_HeartBeat_InsertAddrEx(xhRTCHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 
 	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
 	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 
