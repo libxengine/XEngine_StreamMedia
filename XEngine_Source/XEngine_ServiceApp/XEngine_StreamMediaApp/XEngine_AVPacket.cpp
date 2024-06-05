@@ -534,5 +534,43 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			}
 		}
 	}
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		//是否有客户端需要发送WEBRTC流
+		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+		{
+			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_ListIteratorClient->enClientType)
+			{
+				int nPacketCount = 0;
+				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
+				XCHAR tszSSCRStr[MAX_PATH] = {};
+				XCHAR tszADDRStr[128] = {};
+
+				if (0 == byAVType)
+				{
+					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						NetCore_UDPXCore_SendEx(xhVRTPSocket, stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+					}
+				}
+				else
+				{
+					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, false);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+					}
+				}
+				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
+			}
+		}
+	}
 	return true;
 }
