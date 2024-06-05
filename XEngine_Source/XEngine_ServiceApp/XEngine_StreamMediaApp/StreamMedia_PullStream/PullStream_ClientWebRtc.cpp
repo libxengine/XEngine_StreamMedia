@@ -198,6 +198,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
+		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
 	}
 	else
 	{
@@ -213,6 +214,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
+		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
