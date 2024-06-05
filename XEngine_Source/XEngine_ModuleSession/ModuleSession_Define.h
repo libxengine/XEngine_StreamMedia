@@ -33,11 +33,11 @@ typedef struct
 		XCHAR tszClientAddr[128];
 		bool bConnect;
 
-		__int64x nVSsrc;
+		XCHAR tszVSSrcStr[128];
 		XCHAR tszVideoCName[MAX_PATH];
 		XCHAR tszVideoLabel[MAX_PATH];
 		
-		__int64x nASsrc;
+		XCHAR tszASSrcStr[128];
 		XCHAR tszAudioCName[MAX_PATH];
 		XCHAR tszAudioLabel[MAX_PATH];
 	}st_WEBRtc;
@@ -303,9 +303,9 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
   类型：常量字符指针
   可空：N
   意思：输入要处理的客户端
- 参数.二：nSSrc
+ 参数.二：lpszSSRCStr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
   意思：输入要设置的SSRC
  参数.三：lpszCNameStr
@@ -328,7 +328,31 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, LPCXSTR lpszSSRCStr, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSSrcGet
+函数功能：通过地址后去SSRC信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSSRCStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的SSRC
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：视频还是音频的SSRC
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszSSRCStr, bool bVideo = true);
 /********************************************************************
 函数名称：ModuleSession_PullStream_RTCAddrSet
 函数功能：设置RTC的数据通信地址
@@ -405,6 +429,25 @@ extern "C" bool ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSmsGet
+函数功能：获取RTC对应的SMS名称
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的SMS地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_RTCSmsGet(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
 /*********************************************************************************
 *                         推流端导出会话模块                                     *
 *********************************************************************************/

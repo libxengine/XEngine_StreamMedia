@@ -73,9 +73,13 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
 {
 	return m_PullStream.ModuleSession_PullStream_RTCGet(lpszClientAddr, ptszTokenStr, ptszICEUser, ptszICEPass, ptszHMacStr);
 }
-extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, LPCXSTR lpszSSRCStr, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
 {
-	return m_PullStream.ModuleSession_PullStream_RTCSSrcSet(lpszClientAddr, nSSrc, lpszCNameStr, lpszLabelStr, bVideo);
+	return m_PullStream.ModuleSession_PullStream_RTCSSrcSet(lpszClientAddr, lpszSSRCStr, lpszCNameStr, lpszLabelStr, bVideo);
+}
+extern "C" bool ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszSSRCStr, bool bVideo)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCSSrcGet(lpszClientAddr, ptszSSRCStr, bVideo);
 }
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
@@ -96,6 +100,10 @@ extern "C" bool ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool
 extern "C" bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
 {
 	return m_PullStream.ModuleSession_PullStream_RTCConnGet(lpszClientAddr, pbConnect);
+}
+extern "C" bool ModuleSession_PullStream_RTCSmsGet(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCSmsGet(lpszClientAddr, ptszSMSAddr);
 }
 /*********************************************************************************
 *                          推流导出会话模块                                      *

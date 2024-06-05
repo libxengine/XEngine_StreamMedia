@@ -194,10 +194,10 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = tszSPSBuffer[2];
 		SDPProtocol_Packet_VideoFmt(xhPacket, 106, &st_SDPMedia, true);
 
-		XNETHANDLE nVSSrc = 0;
-		BaseLib_OperatorHandle_Create(&nVSSrc, 2000000000, 3000000000);
-		SDPProtocol_Packet_CName(xhPacket, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
-		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nVSSrc, _X("79a9722580589zr5"), _X("video-666q08to"));
+		XCHAR tszSSrcStr[128] = {};
+		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 	}
 	else
 	{
@@ -209,10 +209,10 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("111 opus/48000/2"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
 
-		XNETHANDLE nASSrc = 0;
-		BaseLib_OperatorHandle_Create(&nASSrc, 2000000000, 3000000000);
-		SDPProtocol_Packet_CName(xhPacket, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
-		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, nASSrc, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
+		XCHAR tszSSrcStr[128] = {};
+		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
+		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
