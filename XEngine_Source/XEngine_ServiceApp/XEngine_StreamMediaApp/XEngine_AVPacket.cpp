@@ -560,6 +560,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				}
 				else
 				{
+					/*
 					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, false);
 					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
@@ -567,7 +568,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					{
 						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
 						NetCore_UDPXCore_SendEx(xhRTCSocket, stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
-					}
+					}*/
 				}
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
 			}

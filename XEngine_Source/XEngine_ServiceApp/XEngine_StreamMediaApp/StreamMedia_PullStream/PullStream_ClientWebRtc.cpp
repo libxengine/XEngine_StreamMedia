@@ -174,7 +174,6 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	if (bVideo)
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("1"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 
@@ -204,7 +203,6 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	else
 	{
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("0"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("extmap"), _X("3 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"));
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 
