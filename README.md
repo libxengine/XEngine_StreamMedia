@@ -65,6 +65,12 @@ window执行XEngine_WINEnv.bat 脚本
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
 
+#### sub module
+由于依赖的子模块,在你checkout仓库后,在仓库目录下执行下面的命令拉取子模块  
+git submodule init  
+git submodule update  
+如果github访问失败,也可以在XEngine_Source\XEngine_Depend 下直接clone项目:git clone https://gitee.com/xengine/XEngine_OPenSource.git
+
 #### Windows
 
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
