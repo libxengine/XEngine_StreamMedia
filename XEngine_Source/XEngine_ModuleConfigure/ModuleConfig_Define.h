@@ -96,7 +96,7 @@ typedef struct tag_XEngine_ServiceConfig
 			XCHAR tszICEPass[MAX_PATH];
 			XCHAR tszCertStr[MAX_PATH];
 			XCHAR tszKeyStr[MAX_PATH];
-			XCHAR tszCsrStr[MAX_PATH];
+			XCHAR tszDerStr[MAX_PATH];
 			bool bEnable;
 		}st_PullWebRtc;
 	}st_XPull;

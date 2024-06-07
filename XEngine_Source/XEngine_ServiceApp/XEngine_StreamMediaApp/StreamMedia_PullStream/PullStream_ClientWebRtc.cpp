@@ -164,7 +164,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	XBYTE tszDigestStr[MAX_PATH] = {};
 	XCHAR tszDigestHex[MAX_PATH] = {};
 	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
-	OPenSsl_Api_Digest("D:\\XEngine_StreamMedia\\XEngine_Source\\Debug\\XEngine_Key\\server.der", tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
+	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszDerStr, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
 	for (int i = 0; i < nDLen; i++)
 	{
 		int nRet = _xstprintf(tszDigestHex + nPos, _X("%02X"), tszDigestStr[i]);

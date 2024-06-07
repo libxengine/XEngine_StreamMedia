@@ -160,7 +160,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszICEPass, st_PullWebRtc["tszICEPass"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszCertStr, st_PullWebRtc["tszCertStr"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszKeyStr, st_PullWebRtc["tszKeyStr"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszCsrStr, st_PullWebRtc["tszCsrStr"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszDerStr, st_PullWebRtc["tszDerStr"].asCString());
 	//日志配置
 	if (st_JsonRoot["XLog"].empty() || (4 != st_JsonRoot["XLog"].size()))
 	{
