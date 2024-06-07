@@ -594,25 +594,32 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpsz
 	Session_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
-	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapClient.end())
+	bool bFound = false;
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			if (bVideo)
+			{
+				_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
+			}
+			else
+			{
+				_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
+			}
+			bFound = true;
+			break;
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
-
-	if (bVideo)
-	{
-		_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
-	}
-	else
-	{
-		_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
-	}
 	
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
