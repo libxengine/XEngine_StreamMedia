@@ -70,7 +70,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 				}
 				ModuleSession_PullStream_RTCConnSet(lpszClientAddr, true);
 				ModuleSession_PushStream_ClientInsert(tszSMSAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功,绑定的地址:%s,绑定的名称:%s"), lpszClientAddr, tszSMSAddr, tszSMSName);
 			}
 			else
 			{
@@ -119,13 +119,27 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 	{
 		if (((XBYTE)lpszMsgBuffer[1] >= 200) && ((XBYTE)lpszMsgBuffer[1] <= 207))
 		{
+			nRVLen = nMsgLen;
+			memcpy(tszRVBuffer, lpszMsgBuffer, nMsgLen);
+
+			if (!ModuleHelp_SRTPCore_RTCPUNProtect(tszRVBuffer, &nRVLen))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTCP协议解密失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, ModuleHelp_GetLastError());
+				return false;
+			}
 			//RTCP
 			RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
-			if (!RTCPProtocol_Parse_Header(lpszMsgBuffer, nMsgLen, &st_RTCPHdr))
+			if (!RTCPProtocol_Parse_Header(tszRVBuffer, nRVLen, &st_RTCPHdr))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTCP协议解析失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, RTCPProtocol_GetLastError());
 				return false;
 			}
+			int nPos = sizeof(RTCPPROTOCOL_RTCPHDR);
+
+			int nListCount = 0;
+			RTCPPROTOCOL_RTCPRECVER** ppSt_ListRecvInfo;
+			RTCPProtocol_Parse_Recver(tszRVBuffer + nPos, nRVLen - nPos, &st_RTCPHdr, &ppSt_ListRecvInfo, &nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListRecvInfo, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTCP协议处理成功,请求处理的协议:%d"), lpszClientAddr, st_RTCPHdr.byPT);
 		}
 		else
