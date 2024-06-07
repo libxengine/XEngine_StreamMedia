@@ -534,6 +534,7 @@ int main(int argc, char** argv)
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		OPenSsl_Server_ConfigEx(xhRTCSsl);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
 		
 		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
 		if (NULL == xhRTCSocket)

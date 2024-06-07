@@ -37,20 +37,25 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,请求的DTLS协议处理失败,地址不存在"), lpszClientAddr);
 			return false;
 		}
-
+		
 		if (bConnect)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("RTC客户端:%s,请求的DTLS协议已经链接成功,但是发送了一段未知协议"), lpszClientAddr);
 		}
 		else
 		{
-			if (OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen))
+			bool bRet = OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen);
+			if (nSDLen > 0)
 			{
-#if XENGINE_VERSION_KERNEL >= 8 && XENGINE_VERSION_MAIN >= 32
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+			}
+			
+			if (bRet)
+			{
 				XBYTE tszKEYBuffer[MAX_PATH] = {};
 				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
-#endif
+
 				XCHAR tszSMSName[128] = {};
 				XCHAR tszSMSAddr[128] = {};
 				if (!ModuleSession_PullStream_RTCSmsGet(lpszClientAddr, tszSMSName))
@@ -63,16 +68,15 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,握手成功,处理SMS地址失败,诶有找到"), lpszClientAddr);
 					return false;
 				}
+				ModuleSession_PullStream_RTCConnSet(lpszClientAddr, true);
 				ModuleSession_PushStream_ClientInsert(tszSMSAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功"), lpszClientAddr);
 			}
 			else
 			{
-				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议,还需要进一步处理,响应大小:%d"), lpszClientAddr, nSDLen);
 			}
 		}
-		
 	}
 	else if (PullStream_ClientProtocol_Stun(lpszMsgBuffer, nMsgLen))
 	{
@@ -160,7 +164,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	XBYTE tszDigestStr[MAX_PATH] = {};
 	XCHAR tszDigestHex[MAX_PATH] = {};
 	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
-	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCsrStr, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
+	OPenSsl_Api_Digest("D:\\XEngine_StreamMedia\\XEngine_Source\\Debug\\XEngine_Key\\server.der", tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
 	for (int i = 0; i < nDLen; i++)
 	{
 		int nRet = _xstprintf(tszDigestHex + nPos, _X("%02X"), tszDigestStr[i]);

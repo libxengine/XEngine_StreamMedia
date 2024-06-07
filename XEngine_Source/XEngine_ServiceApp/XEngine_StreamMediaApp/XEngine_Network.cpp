@@ -167,7 +167,7 @@ void CALLBACK Network_Callback_RTCRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 void CALLBACK Network_Callback_RTCHBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s，离开了服务器"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端：%s，离开了服务器"), lpszClientAddr);
 }
 //////////////////////////////////////////////////////////////////////////网络IO关闭操作
 void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
@@ -329,7 +329,7 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
 		if (!NetCore_UDPSelect_Send(xhRTCSocket, lpszMsgBuffer, nMsgLen, tszIPPort, nPort))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC服务端:%s,发送数据失败，错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC服务端:%s,发送数据失败,大小:%d，错误:%lX"), lpszClientAddr, nMsgLen, NetCore_GetLastError());
 			return false;
 		}
 	}
