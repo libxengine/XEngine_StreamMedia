@@ -115,9 +115,9 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
-	else if ((lpszMsgBuffer[0] >> 6 == 2))
+	else if (((XBYTE)lpszMsgBuffer[0] >> 6) == 2)
 	{
-		if ((lpszMsgBuffer[1] >= 200) && (lpszMsgBuffer[1] <= 207))
+		if (((XBYTE)lpszMsgBuffer[1] >= 200) && ((XBYTE)lpszMsgBuffer[1] <= 207))
 		{
 			//RTCP
 			RTCPPROTOCOL_RTCPHDR st_RTCPHdr = {};
@@ -131,11 +131,12 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		else
 		{
 			//RTP
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTP协议处理成功"), lpszClientAddr);
 		}
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,发送了不能识别的协议,大小:%d"), lpszClientAddr, nMsgLen);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,发送了不能识别的协议,大小:%d,首位值:%02X"), lpszClientAddr, nMsgLen, (XBYTE)lpszMsgBuffer[0]);
 	}
 
 	return true;
