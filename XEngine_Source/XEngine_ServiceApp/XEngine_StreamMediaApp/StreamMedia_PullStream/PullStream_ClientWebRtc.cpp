@@ -219,6 +219,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
 		RTPProtocol_Packet_SetPType(tszSSrcStr, 106);
+		RTPProtocol_Packet_SetTime(tszSSrcStr, 30);
 	}
 	else
 	{
