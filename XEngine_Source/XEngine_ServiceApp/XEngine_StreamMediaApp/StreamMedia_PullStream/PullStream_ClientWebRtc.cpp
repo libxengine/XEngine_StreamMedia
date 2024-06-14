@@ -163,13 +163,13 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	if (bVideo)
 	{
 		_tcsxcpy(pptszAVList[0], _X("106"));
-		SDPProtocol_Packet_AddMedia(xhPacket, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_AddMedia(xhPacket, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 1, 9);
 		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	else
 	{
 		_tcsxcpy(pptszAVList[0], _X("111"));
-		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 9);
+		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 0, 9);
 		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	//生成用户和密码
@@ -192,7 +192,6 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("setup"), _X("passive"));
 	if (bVideo)
 	{
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("1"));
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 
@@ -205,16 +204,15 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		XCHAR tszSPSBuffer[MAX_PATH] = {};
 		STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMedia = {};
 
-		AVHelp_Parse_VideoHdr(pSt_AVInfo->st_VideoInfo.tszVInfo, pSt_AVInfo->st_VideoInfo.nVLen, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, NULL, (XBYTE *)tszSPSBuffer, NULL, NULL, NULL, &nSPSLen, NULL, NULL, NULL);
-
 		st_SDPMedia.st_FmtpVideo.nPacketMode = 1;
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[0] = tszSPSBuffer[0];
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[1] = tszSPSBuffer[1];
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = tszSPSBuffer[2];
+		st_SDPMedia.st_FmtpVideo.tszLeaveId[0] = 0x42;
+		st_SDPMedia.st_FmtpVideo.tszLeaveId[1] = 0xe0;
+		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = 0x1f;
 		SDPProtocol_Packet_VideoFmt(xhPacket, 106, &st_SDPMedia, true);
 
 		XCHAR tszSSrcStr[128] = {};
-		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		_xstprintf(tszSSrcStr, _X("2124085007"));
+		//BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
@@ -223,7 +221,6 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	}
 	else
 	{
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("mid"), _X("0"));
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 
@@ -231,7 +228,8 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
 
 		XCHAR tszSSrcStr[128] = {};
-		BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		_xstprintf(tszSSrcStr, _X("2124085006"));
+		//BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
@@ -280,9 +278,8 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 		return false;
 	}
 
-	bool bAudio = false;
-	bool bVideo = false;
-	bool bRTCPMux = false;
+	int nIndex1 = -1;
+	int nIndex2 = -1;
 	int nListCount = 0;
 	XCHAR tszICEUser[MAX_PATH] = {};
 	XCHAR tszICEPass[MAX_PATH] = {};
@@ -291,7 +288,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	STREAMMEDIA_SDPPROTOCOL_ATTR** ppSt_ListAttr;
 	SDPProtocol_Parse_GetAttr(xhParse, &ppSt_ListAttr, &nListCount);
 
-	SDPProtocol_Parse_AttrBundle(&ppSt_ListAttr, nListCount, &bAudio, &bVideo, &bRTCPMux);
+	SDPProtocol_Parse_AttrBundle(&ppSt_ListAttr, nListCount, &nIndex1, &nIndex2);
 	SDPProtocol_Parse_AttrICEUser(&ppSt_ListAttr, nListCount, tszICEUser, tszICEPass);
 	SDPProtocol_Parse_AttrFinger(&ppSt_ListAttr, nListCount, tszAlgType, tszHMacStr);
 	SDPProtocol_Parse_Destory(xhParse);
