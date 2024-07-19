@@ -15,6 +15,7 @@
 #include <list>
 #include <thread>
 #include <memory>
+#include <srtp2/srtp.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
@@ -32,6 +33,12 @@
 #include <XEngine_Include/XEngine_RfcComponents/NatProtocol_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
 using namespace std;
+
+typedef struct
+{
+	srtp_t st_SRTPSendCtx;
+	srtp_t st_SRTPRecvCtx;
+}SRTPCORE_CLIENTINFO;
 
 bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR* ptszSDPPacket, int* pInt_SDPLen)
 {
@@ -169,6 +176,61 @@ bool APPClient_WEBRTC_StunSend(XSOCKET hSocket, LPCXSTR lpszICEUser, LPCXSTR lps
 	
 	return true;
 }
+
+bool PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
+{
+	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
+	return ((nMSGLen >= 13) && (lpszMSGBuffer[0] == 0x16));
+}
+bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
+{
+	// STUN消息的类型字段（前两位为00）以及魔术cookie字段
+	return (nMSGLen >= 20) && ((lpszMSGBuffer[0] & 0xC0) == 0x00) && (lpszMSGBuffer[4] == 0x21) && (lpszMSGBuffer[5] == 0x12) && ((XBYTE)lpszMSGBuffer[6] == 0xA4) && (lpszMSGBuffer[7] == 0x42);
+}
+bool APPClient_WEBRTC_SRTPCreate(LPCXBTR lpszKEYBuffer, SRTPCORE_CLIENTINFO* pSt_SRTPCore)
+{
+	int nPos = 0;
+	const int SRTP_MASTER_KEY_KEY_LEN = 16;
+	const int SRTP_MASTER_KEY_SALT_LEN = 14;
+	srtp_policy_t st_SRTPPolicy = {};
+
+	std::string m_StrClientKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer), SRTP_MASTER_KEY_KEY_LEN);
+	nPos += SRTP_MASTER_KEY_KEY_LEN;
+	std::string m_StrServerKey(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_KEY_LEN);
+	nPos += SRTP_MASTER_KEY_KEY_LEN;
+	std::string m_StrClientSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_SALT_LEN);
+	nPos += SRTP_MASTER_KEY_SALT_LEN;
+	std::string m_StrServerSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_SALT_LEN);
+
+	std::string m_ClientKey = m_StrClientKey + m_StrClientSalt;
+	std::string m_ServerKey = m_StrServerKey + m_StrServerSalt;
+
+	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtp);
+	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtcp);
+
+	st_SRTPPolicy.ssrc.value = 0;
+	st_SRTPPolicy.window_size = 8192;
+	st_SRTPPolicy.allow_repeat_tx = 1;
+	st_SRTPPolicy.next = NULL;
+
+	//初始化接受上下文
+	st_SRTPPolicy.ssrc.type = ssrc_any_inbound;
+	st_SRTPPolicy.key = (unsigned char*)m_ServerKey.c_str();
+
+	srtp_err_status_t nRet = srtp_err_status_ok;
+	if (srtp_err_status_ok != (nRet = srtp_create(&pSt_SRTPCore->st_SRTPRecvCtx, &st_SRTPPolicy)))
+	{
+		return false;
+	}
+	st_SRTPPolicy.ssrc.type = ssrc_any_outbound;
+	st_SRTPPolicy.key = (unsigned char*)m_ClientKey.c_str();
+
+	if (srtp_err_status_ok != (nRet = srtp_create(&pSt_SRTPCore->st_SRTPSendCtx, &st_SRTPPolicy)))
+	{
+		return false;
+	}
+	return true;
+}
 bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 {
 	LPCXSTR lpszCertFile = _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\certificate.crt");
@@ -181,21 +243,43 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 	}
 	XClient_OPenSsl_ConfigEx(xhSsl);
 
-	XCLIENT_SSLCERT_SRVINFO st_SslInfo;
+	XCLIENT_SSLCERT_SRVINFO st_SslInfo = {};
+	SRTPCORE_CLIENTINFO st_SRTPInfo = {};
 	XClient_OPenSsl_ConnectEx(xhSsl, hSocket, &st_SslInfo);
 
 	XBYTE byKEYBuffer[128] = {};
 	XClient_OPenSsl_GetKeyEx(xhSsl, byKEYBuffer);
+	APPClient_WEBRTC_SRTPCreate(byKEYBuffer, &st_SRTPInfo);
 	while (true)
 	{
 		int nMSGLen = 2048;
 		XCHAR tszMSGBuffer[2048] = {};
 		if (XClient_UDPSelect_RecvMsg(hSocket, tszMSGBuffer, &nMSGLen))
 		{
-			int nRVLen = 0;
-			XCHAR* ptszMSGBuffer = NULL;
-			XClient_OPenSsl_RecvMemoryEx(xhSsl, &ptszMSGBuffer, &nRVLen, tszMSGBuffer, nMSGLen);
-			printf("%d\n", nRVLen);
+			if (PullStream_ClientProtocol_Dtls(tszMSGBuffer, nMSGLen))
+			{
+				printf("dtls protcol recved\n");
+			}
+			else if (PullStream_ClientProtocol_Stun(tszMSGBuffer, nMSGLen))
+			{
+				printf("stun protocol recved\n");
+			}
+			else if ((XBYTE)tszMSGBuffer[0] == 0x80)
+			{
+				int nRet = srtp_unprotect(st_SRTPInfo.st_SRTPRecvCtx, tszMSGBuffer, &nMSGLen);
+				if (srtp_err_status_ok == nRet)
+				{
+					printf("srtp protcol recved unprotocol ok\n");
+				}
+				else
+				{
+					printf("srtp protcol recved unprotocol failed\n");
+				}
+			}
+			else
+			{
+				printf("unknow protocol recved\n");
+			}
 		}
 	}
 	return true;
@@ -203,13 +287,14 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 
 int main()
 {
+	int nMSGLen = 0;
 	XSOCKET hSocket;
+	XCHAR tszMSGBuffer[2048] = {};
 	//LPCXSTR lpszAPIUrl = _X("http://10.0.1.88:5600/rtc/v1/whep/?app=live&stream=livestream.flv");
 	LPCXSTR lpszAPIUrl = _X("http://app.xyry.org:1985/rtc/v1/whep/?app=live&stream=livestream");
 	LPCXSTR lpszFileCert = _X("");
-	int nMSGLen = 0;
-	XCHAR tszMSGBuffer[2048] = {};
 
+	srtp_init();
 	APPClient_WEBRTC_SDPPacket(lpszAPIUrl, lpszFileCert, tszMSGBuffer, &nMSGLen);
 
 	int nHTTPCode = 0;
@@ -238,5 +323,6 @@ int main()
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	XClient_UDPSelect_Close(hSocket);
+	srtp_shutdown();
 	return 0;
 }
