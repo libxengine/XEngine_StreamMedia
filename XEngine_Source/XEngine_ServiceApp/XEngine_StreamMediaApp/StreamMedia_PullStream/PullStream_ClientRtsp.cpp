@@ -275,17 +275,20 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		RTPProtocol_Packet_Insert(tszSSRCVideo, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
 		RTPProtocol_Packet_Insert(tszSSRCAudio, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
 
-		RTPProtocol_Packet_SetTime(tszSSRCVideo, st_AVInfo.st_VideoInfo.nFrameRate);
-		RTPProtocol_Packet_SetTime(tszSSRCAudio, st_AVInfo.st_AudioInfo.nSampleRate);
-
-		RTPProtocol_Packet_GetTime(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nNTPTime);
-		RTPProtocol_Packet_GetTime(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nNTPTime);
-		RTPProtocol_Packet_GetCSeq(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nCSeq);
-		RTPProtocol_Packet_GetCSeq(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nCSeq);
-
-		_xstprintf(st_RTSPResponse.ppSt_RTPInfo[0]->tszURLStr, _X("%s/trackID=0"), st_RTSPRequest.tszUrl);
-		_xstprintf(st_RTSPResponse.ppSt_RTPInfo[1]->tszURLStr, _X("%s/trackID=1"), st_RTSPRequest.tszUrl);
-
+		if (st_AVInfo.st_VideoInfo.nFrameRate > 0)
+		{
+			RTPProtocol_Packet_SetTime(tszSSRCVideo, st_AVInfo.st_VideoInfo.nFrameRate);
+			RTPProtocol_Packet_GetTime(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nNTPTime);
+			RTPProtocol_Packet_GetCSeq(tszSSRCVideo, &st_RTSPResponse.ppSt_RTPInfo[0]->nCSeq);
+			_xstprintf(st_RTSPResponse.ppSt_RTPInfo[0]->tszURLStr, _X("%s/trackID=0"), st_RTSPRequest.tszUrl);
+		}
+		if (st_AVInfo.st_AudioInfo.nSampleRate > 0)
+		{
+			RTPProtocol_Packet_SetTime(tszSSRCAudio, st_AVInfo.st_AudioInfo.nSampleRate);
+			RTPProtocol_Packet_GetTime(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nNTPTime);
+			RTPProtocol_Packet_GetCSeq(tszSSRCAudio, &st_RTSPResponse.ppSt_RTPInfo[1]->nCSeq);
+			_xstprintf(st_RTSPResponse.ppSt_RTPInfo[1]->tszURLStr, _X("%s/trackID=1"), st_RTSPRequest.tszUrl);
+		}
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
