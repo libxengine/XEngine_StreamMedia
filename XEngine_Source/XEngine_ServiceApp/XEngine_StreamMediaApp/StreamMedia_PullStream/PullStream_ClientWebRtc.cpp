@@ -216,7 +216,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
-		RTPProtocol_Packet_SetPType(tszSSrcStr, 106);
+		RTPProtocol_Packet_SetPType(tszSSrcStr, 96);
 		RTPProtocol_Packet_SetTime(tszSSrcStr, 30);
 	}
 	else
@@ -299,7 +299,14 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_Owner(xhPacket, _X("rtc"), xhPacket, _X("0.0.0.0"));
 	SDPProtocol_Packet_Session(xhPacket, _X("XEngine_Session"));
 	SDPProtocol_Packet_KeepTime(xhPacket);
-	SDPProtocol_Packet_Bundle(xhPacket);
+	if (nIndex1 >= 0 && nIndex2 >= 0)
+	{
+		SDPProtocol_Packet_Bundle(xhPacket);
+	}
+	else
+	{
+		SDPProtocol_Packet_Bundle(xhPacket, 0, -1);
+	}
 	SDPProtocol_Packet_OptionalRange(xhPacket);
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-lite"));
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
@@ -316,8 +323,15 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
 	SocketOpt_HeartBeat_InsertAddrEx(xhRTCHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
-	PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	if (nIndex1 >= 0 && nIndex2 >= 0)
+	{
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	}
+	else
+	{
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+	}
 	
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);

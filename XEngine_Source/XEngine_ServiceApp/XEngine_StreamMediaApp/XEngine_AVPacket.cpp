@@ -554,7 +554,11 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
-						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
+						if (!ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen))
+						{
+							XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,推流失败"), stl_ListIteratorClient->tszClientID);
+							continue;
+						}
 						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 					}
 				}
