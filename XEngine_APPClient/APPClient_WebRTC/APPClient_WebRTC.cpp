@@ -9,6 +9,8 @@
 #pragma comment(lib,"XEngine_Client/XClient_OPenSsl")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_SDPProtocol")
+#pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol")
+#pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_NatProtocol")
 #pragma comment(lib,"Ws2_32")
 #endif
@@ -21,6 +23,8 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
+#include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
 #include <XEngine_Include/XEngine_Client/XClient_Define.h>
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
@@ -29,6 +33,11 @@
 #include <XEngine_Include/XEngine_Client/SslClient_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Error.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Define.h>
+#include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Error.h>
+#include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/NatProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/NatProtocol_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
@@ -40,6 +49,9 @@ typedef struct
 	srtp_t st_SRTPRecvCtx;
 }SRTPCORE_CLIENTINFO;
 
+std::string m_ClientKey;
+std::string m_ServerKey;
+
 bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR* ptszSDPPacket, int* pInt_SDPLen)
 {
 	XNETHANDLE xhToken = 0;
@@ -48,14 +60,16 @@ bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR*
 	SDPProtocol_Packet_Owner(xhToken, _X("-"), 123456789, _X("127.0.0.1"));
 	SDPProtocol_Packet_Session(xhToken, _X("live/stream"));
 	SDPProtocol_Packet_KeepTime(xhToken);
-	SDPProtocol_Packet_Bundle(xhToken);
+	SDPProtocol_Packet_Bundle(xhToken, 0, -1);
 
 	SDPProtocol_Packet_OptionalAddAttr(xhToken, _X("extmap-allow-mixed"));
 	SDPProtocol_Packet_OptionalAddAttr(xhToken, _X("msid-semantic"), _X(" WMS"));
+	STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMedia = {};
 	//AUDIO
+	
 	int nAVCount = 1;
 	XCHAR** pptszAVList;
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, nAVCount, 64);
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, nAVCount, 64);/*
 	_xstprintf(pptszAVList[0], _X("111"));
 
 	SDPProtocol_Packet_AddMedia(xhToken, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, nAVCount, 0, 9);
@@ -67,7 +81,6 @@ bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR*
 	SDPProtocol_Packet_OnlyRWFlag(xhToken);
 	SDPProtocol_Packet_RtcpComm(xhToken, true, false);
 
-	STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMedia = {};
 	st_SDPMedia.st_RTPMap.nChannel = 2;
 	st_SDPMedia.st_RTPMap.nSampleRate = 48000;
 	st_SDPMedia.st_FmtpAudio.nMinPTime = 10;
@@ -75,9 +88,10 @@ bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR*
 	_xstprintf(st_SDPMedia.st_RTPMap.tszCodecName, _X("opus"));
 	st_SDPMedia.bTransportCC = true;
 	SDPProtocol_Packet_AudioFmt(xhToken, 111, &st_SDPMedia, true);
+	*/
 	//VIDEO
 	_xstprintf(pptszAVList[0], _X("106"));
-	SDPProtocol_Packet_AddMedia(xhToken, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, nAVCount, 1, 9);
+	SDPProtocol_Packet_AddMedia(xhToken, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, nAVCount, 0, 9);
 	SDPProtocol_Packet_ClientInet(xhToken, _X("0.0.0.0"));
 	SDPProtocol_Packet_RtcpInet(xhToken, 9);
 	SDPProtocol_Packet_ICEUser(xhToken, _X("nzWE"), _X("xk/FvO+TXrJy6739etI/y0Kc"), true);
@@ -202,18 +216,12 @@ bool APPClient_WEBRTC_SRTPCreate(LPCXBTR lpszKEYBuffer, SRTPCORE_CLIENTINFO* pSt
 	nPos += SRTP_MASTER_KEY_SALT_LEN;
 	std::string m_StrServerSalt(reinterpret_cast<LPCXSTR>(lpszKEYBuffer + nPos), SRTP_MASTER_KEY_SALT_LEN);
 
-	std::string m_ClientKey = m_StrClientKey + m_StrClientSalt;
-	std::string m_ServerKey = m_StrServerKey + m_StrServerSalt;
+	m_ClientKey = m_StrClientKey + m_StrClientSalt;
+	m_ServerKey = m_StrServerKey + m_StrServerSalt;
 
 	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtp);
 	srtp_crypto_policy_set_aes_cm_128_hmac_sha1_80(&st_SRTPPolicy.rtcp);
 
-	st_SRTPPolicy.ssrc.value = 0;
-	st_SRTPPolicy.window_size = 8192;
-	st_SRTPPolicy.allow_repeat_tx = 1;
-	st_SRTPPolicy.next = NULL;
-
-	//初始化接受上下文
 	st_SRTPPolicy.ssrc.type = ssrc_any_inbound;
 	st_SRTPPolicy.key = (unsigned char*)m_ServerKey.c_str();
 
@@ -222,17 +230,11 @@ bool APPClient_WEBRTC_SRTPCreate(LPCXBTR lpszKEYBuffer, SRTPCORE_CLIENTINFO* pSt
 	{
 		return false;
 	}
-	st_SRTPPolicy.ssrc.type = ssrc_any_outbound;
-	st_SRTPPolicy.key = (unsigned char*)m_ClientKey.c_str();
-
-	if (srtp_err_status_ok != (nRet = srtp_create(&pSt_SRTPCore->st_SRTPSendCtx, &st_SRTPPolicy)))
-	{
-		return false;
-	}
 	return true;
 }
 bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 {
+	LPCXSTR lpszRTPClient = _X("client");
 	LPCXSTR lpszCertFile = _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\certificate.crt");
 	LPCXSTR lpszPrivateFile = _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\private.key");
 
@@ -241,6 +243,9 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 	{
 		return false;
 	}
+	RTPProtocol_Parse_Init(1);
+	RTPProtocol_Parse_Insert(lpszRTPClient);
+
 	XClient_OPenSsl_ConfigEx(xhSsl);
 
 	XCLIENT_SSLCERT_SRVINFO st_SslInfo = {};
@@ -249,6 +254,25 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 
 	XBYTE byKEYBuffer[128] = {};
 	XClient_OPenSsl_GetKeyEx(xhSsl, byKEYBuffer);
+	for (int i = 0; i < 60; i++)
+	{
+		printf("0x%02X, ", byKEYBuffer[i]);
+	}
+	printf("\n");
+
+	XCHAR tszRTPFile[MAX_PATH] = {};
+	XCHAR tsz264File[MAX_PATH] = {};
+	XCHAR tszFSizeFile[MAX_PATH] = {};
+
+	_xstprintf(tsz264File, _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\recv.h264"));
+	_xstprintf(tszRTPFile, _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\recv.rtp"));
+	_xstprintf(tszFSizeFile, _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\1.txt"));
+	FILE* pSt_264File = _xtfopen(tsz264File, "wb");
+	FILE* pSt_RTPFile = _xtfopen(tszRTPFile, "wb");
+	FILE* pSt_FSFile = _xtfopen(tszFSizeFile, "wb");
+
+	bool bKEYFrame = false;
+	XCHAR* ptszRTPBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	APPClient_WEBRTC_SRTPCreate(byKEYBuffer, &st_SRTPInfo);
 	while (true)
 	{
@@ -264,37 +288,77 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 			{
 				printf("stun protocol recved\n");
 			}
-			else if ((XBYTE)tszMSGBuffer[0] == 0x80)
+			else
 			{
 				int nRet = srtp_unprotect(st_SRTPInfo.st_SRTPRecvCtx, tszMSGBuffer, &nMSGLen);
 				if (srtp_err_status_ok == nRet)
 				{
-					printf("srtp protcol recved unprotocol ok\n");
+					//char tszFSizeBuffer[64] = {};
+					//int nFSize = sprintf(tszFSizeBuffer, "%d\r\n", nMSGLen);
+					//fwrite(tszFSizeBuffer, 1, nFSize, pSt_FSFile);
+					//fwrite(tszMSGBuffer, 1, nMSGLen, pSt_RTPFile);
+
+					RTPProtocol_Parse_Send(lpszRTPClient, tszMSGBuffer, nMSGLen);
+					while (true)
+					{
+						int nRTPLen = XENGINE_MEMORY_SIZE_MAX;
+						STREAMMEDIA_RTPPROTOCOL_HDR st_RTPHdr = {};
+						if (!RTPProtocol_Parse_Recv(lpszRTPClient, ptszRTPBuffer, &nRTPLen, &st_RTPHdr))
+						{
+							break;
+						}
+						if (106 == st_RTPHdr.enPayload)
+						{
+
+						}
+
+						if (!bKEYFrame)
+						{
+							XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+							AVHelp_Parse_NaluType(ptszRTPBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+							if ((ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType) || (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType))
+							{
+								bKEYFrame = true;
+								printf("ok\n");
+							}
+						}
+						
+						if (bKEYFrame)
+						{
+							fwrite(ptszRTPBuffer, 1, nRTPLen, pSt_264File);
+						}
+					}
 				}
 				else
 				{
-					printf("srtp protcol recved unprotocol failed\n");
+					printf("srtp protcol recved unprotocol failed:%d\n", nRet);
 				}
 			}
-			else
-			{
-				printf("unknow protocol recved\n");
-			}
+		}
+		else
+		{
+			printf("Recv error:%lX\n", XClient_GetLastError());
 		}
 	}
+	free(ptszRTPBuffer);
+	ptszRTPBuffer = NULL;
+	fclose(pSt_264File);
+	XClient_OPenSsl_CloseEx(xhSsl);
+	RTPProtocol_Parse_Destory();
 	return true;
 }
 
 int main()
 {
+	srtp_init();
 	int nMSGLen = 0;
 	XSOCKET hSocket;
 	XCHAR tszMSGBuffer[2048] = {};
-	//LPCXSTR lpszAPIUrl = _X("http://10.0.1.88:5600/rtc/v1/whep/?app=live&stream=livestream.flv");
-	LPCXSTR lpszAPIUrl = _X("http://app.xyry.org:1985/rtc/v1/whep/?app=live&stream=livestream");
+	//LPCXSTR lpszAPIUrl = _X("http://127.0.0.1:5600/rtc/v1/whep/?app=live&stream=livestream");
+	//LPCXSTR lpszAPIUrl = _X("http://app.xyry.org:1985/rtc/v1/whep/?app=live&stream=livestream");
+	LPCXSTR lpszAPIUrl = _X("http://10.0.3.154:1985/rtc/v1/whep/?app=live&stream=livestream");
 	LPCXSTR lpszFileCert = _X("");
 
-	srtp_init();
 	APPClient_WEBRTC_SDPPacket(lpszAPIUrl, lpszFileCert, tszMSGBuffer, &nMSGLen);
 
 	int nHTTPCode = 0;
@@ -310,7 +374,9 @@ int main()
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 
 	XClient_UDPSelect_Create(&hSocket);
-	XClient_UDPSelect_Connect(hSocket, "43.139.170.67", 8000);
+	XClient_UDPSelect_Connect(hSocket, "10.0.3.154", 8000);
+	//XClient_UDPSelect_Connect(hSocket, "43.139.170.67", 8000);
+	//XClient_UDPSelect_Connect(hSocket, "127.0.0.1", 5604);
 
 	std::thread pSTDThread_Stun(APPClient_WEBRTC_StunSend, hSocket, tszICEUser, tszICEPass);
 	pSTDThread_Stun.detach();
