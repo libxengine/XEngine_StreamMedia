@@ -200,8 +200,6 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack"));
 		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack pli"));
 
-		int nSPSLen = 0;
-		XCHAR tszSPSBuffer[MAX_PATH] = {};
 		STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMedia = {};
 
 		st_SDPMedia.st_FmtpVideo.nPacketMode = 1;

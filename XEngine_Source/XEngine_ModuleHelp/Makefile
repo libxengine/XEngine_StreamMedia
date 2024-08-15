@@ -18,7 +18,7 @@ MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE
 ifeq ($(MACRO_SRT_SUPPORT),1)
     LIB += -lsrt-gnutls
 endif
-ifeq ($(MACRO_SRT_SUPPORT),1)
+ifeq ($(MACRO_RTC_SUPPORT),1)
     LIB += -lsrtp2
 endif
 
