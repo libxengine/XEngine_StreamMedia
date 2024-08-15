@@ -155,7 +155,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 	return true;
 }
-bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo)
+bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo)
 {
 	XCHAR** pptszAVList;
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
@@ -202,8 +202,8 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
-		RTPProtocol_Packet_SetPType(tszSSrcStr, 96);
-		RTPProtocol_Packet_SetTime(tszSSrcStr, 30);
+		RTPProtocol_Packet_SetPType(tszSSrcStr, nAVIndex);
+		RTPProtocol_Packet_SetTime(tszSSrcStr, pSt_AVInfo->st_VideoInfo.nFrameRate);
 	}
 	else
 	{
@@ -217,7 +217,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
-		RTPProtocol_Packet_SetPType(tszSSrcStr, 111);
+		RTPProtocol_Packet_SetPType(tszSSrcStr, nAVIndex);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
@@ -312,11 +312,11 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 				STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMeida = {};
 				SDPProtocol_Parse_RTPMapVideo(&ppSt_ListAttr, nListCount, _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]), &st_SDPMeida);
 				//多个条件选择
-				if ((1 == st_SDPMeida.st_FmtpVideo.nPacketMode) && (0x42 == st_SDPMeida.st_FmtpVideo.tszLeaveId[0]) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "H264", 4)))
+				if ((1 == st_SDPMeida.st_FmtpVideo.nPacketMode) && (0x42 == st_SDPMeida.st_FmtpVideo.tszLeaveId[0]) && (0xe0 == st_SDPMeida.st_FmtpVideo.tszLeaveId[1]) && (0x1f == st_SDPMeida.st_FmtpVideo.tszLeaveId[2]) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "H264", 4)))
 				{
 					nVideoIndex = _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]);
 					st_SDPVideoInfo = st_SDPMeida;
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,找到了合适的视频信息索引:%s"), lpszClientAddr, ppSt_AVMedia[i]->pptszAVList[j]);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,找到了合适的视频信息索引:%s,帧率:%d"), lpszClientAddr, ppSt_AVMedia[i]->pptszAVList[j], st_AVInfo.st_VideoInfo.nFrameRate);
 				}
 			}
 		}
@@ -356,12 +356,12 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	if (nIndex1 >= 0 && nIndex2 >= 0)
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, nAudioIndex, &st_SDPAudioInfo);
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, nAudioIndex, &st_SDPAudioInfo, &st_AVInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo, &st_AVInfo);
 	}
 	else
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo, &st_AVInfo);
 	}
 	
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
