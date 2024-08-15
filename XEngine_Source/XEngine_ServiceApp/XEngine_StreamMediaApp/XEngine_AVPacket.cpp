@@ -293,13 +293,14 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("检测到推流:%s 过大的音频包:%d"), lpszClientAddr, nMsgLen);
 	}
+	int nStartCode = 0;
 	XBYTE byFrameType = 0;
 	if (0 == byAVType)
 	{
 		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
-		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType, &nStartCode);
 		//如果是关键帧
-		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_I == enFrameType)
 		{
 			byFrameType = 1;
 		}
@@ -512,7 +513,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				{
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, true);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
@@ -550,7 +551,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				if (0 == byAVType)
 				{
 					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
