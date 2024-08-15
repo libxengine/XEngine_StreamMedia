@@ -155,20 +155,20 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 	return true;
 }
-bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, XENGINE_PROTOCOL_AVINFO* pSt_AVInfo)
+bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo)
 {
 	XCHAR** pptszAVList;
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
 
 	if (bVideo)
 	{
-		_tcsxcpy(pptszAVList[0], _X("106"));
+		_xstprintf(pptszAVList[0], "%d", nAVIndex);
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("video"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 1, 9);
 		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
 	else
 	{
-		_tcsxcpy(pptszAVList[0], _X("111"));
+		_xstprintf(pptszAVList[0], "%d", nAVIndex);
 		SDPProtocol_Packet_AddMedia(xhPacket, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, 1, 0, 9);
 		SDPProtocol_Packet_ClientInet(xhPacket);
 	}
@@ -194,19 +194,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	{
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
-
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("106 H264/90000"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 transport-cc"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("106 nack pli"));
-
-		STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMedia = {};
-
-		st_SDPMedia.st_FmtpVideo.nPacketMode = 1;
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[0] = 0x42;
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[1] = 0xe0;
-		st_SDPMedia.st_FmtpVideo.tszLeaveId[2] = 0x1f;
-		SDPProtocol_Packet_VideoFmt(xhPacket, 106, &st_SDPMedia, true);
+		SDPProtocol_Packet_VideoFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
 
 		XCHAR tszSSrcStr[128] = {};
 		_xstprintf(tszSSrcStr, _X("2124085007"));
@@ -221,9 +209,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	{
 		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
-
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtpmap"), _X("111 opus/48000/2"));
-		SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("rtcp-fb"), _X("111 transport-cc"));
+		SDPProtocol_Packet_AudioFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
 
 		XCHAR tszSSrcStr[128] = {};
 		_xstprintf(tszSSrcStr, _X("2124085006"));
@@ -289,6 +275,53 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Parse_AttrBundle(&ppSt_ListAttr, nListCount, &nIndex1, &nIndex2);
 	SDPProtocol_Parse_AttrICEUser(&ppSt_ListAttr, nListCount, tszICEUser, tszICEPass);
 	SDPProtocol_Parse_AttrFinger(&ppSt_ListAttr, nListCount, tszAlgType, tszHMacStr);
+	//查找合适的视频和音频流索引信息
+	STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPAudioInfo = {};
+	STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPVideoInfo = {};
+
+	int nVideoIndex = 0;
+	int nAudioIndex = 0;
+	int nAVCount = 0;
+	STREAMMEDIA_SDPPROTOCOL_AVMEDIA** ppSt_AVMedia;
+	SDPProtocol_Parse_GetAVMedia(xhParse, &ppSt_AVMedia, &nAVCount);
+	for (int i = 0; i < nAVCount; i++)
+	{
+		LPCXSTR lpszAudioStr = _X("audio");
+		LPCXSTR lpszVideoStr = _X("video");
+		if (0 == _tcsxnicmp(lpszAudioStr, ppSt_AVMedia[i]->tszAVType, _tcsxlen(lpszAudioStr)))
+		{
+			//查找列表
+			for (int j = 0; j < ppSt_AVMedia[i]->nListCount; j++)
+			{
+				STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMeida = {};
+				SDPProtocol_Parse_RTPMapAudio(&ppSt_ListAttr, nListCount, _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]), &st_SDPMeida);
+				//多个条件选择
+				if ((2 == st_SDPMeida.st_RTPMap.nChannel) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "opus", 4)))
+				{
+					nAudioIndex = _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]);
+					st_SDPAudioInfo = st_SDPMeida;
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,找到了合适的音频信息索引:%s"), lpszClientAddr, ppSt_AVMedia[i]->pptszAVList[j]);
+				}
+			}
+		}
+		else if (0 == _tcsxnicmp(lpszVideoStr, ppSt_AVMedia[i]->tszAVType, _tcsxlen(lpszVideoStr)))
+		{
+			//查找列表
+			for (int j = 0; j < ppSt_AVMedia[i]->nListCount; j++)
+			{
+				STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMeida = {};
+				SDPProtocol_Parse_RTPMapVideo(&ppSt_ListAttr, nListCount, _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]), &st_SDPMeida);
+				//多个条件选择
+				if ((1 == st_SDPMeida.st_FmtpVideo.nPacketMode) && (0x42 == st_SDPMeida.st_FmtpVideo.tszLeaveId[0]) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "H264", 4)))
+				{
+					nVideoIndex = _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]);
+					st_SDPVideoInfo = st_SDPMeida;
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,找到了合适的视频信息索引:%s"), lpszClientAddr, ppSt_AVMedia[i]->pptszAVList[j]);
+				}
+			}
+		}
+	}
+
 	SDPProtocol_Parse_Destory(xhParse);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nListCount);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,请求的SDP信息属性解析完毕,总共解析了:%d 个属性"), lpszClientAddr, nListCount);
@@ -323,12 +356,12 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 
 	if (nIndex1 >= 0 && nIndex2 >= 0)
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, &st_AVInfo);
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, nAudioIndex, &st_SDPAudioInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
 	}
 	else
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, &st_AVInfo);
+		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
 	}
 	
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
