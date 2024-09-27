@@ -39,7 +39,7 @@ jobs:
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             
       - name: install library
-        run: brew install srt-devel srtp2-devel
+        run: brew install srt srtp
 
       # 设置依赖库的环境变量
       - name: Set up Dependency Environment Variables

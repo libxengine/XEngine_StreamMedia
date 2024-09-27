@@ -14,6 +14,12 @@ MODULE_QUEUE_PATH = ./XEngine_ModuleQueue
 
 APP_STREAMMEDIA_PATH = ./XEngine_ServiceApp/XEngine_StreamMediaApp
 
+ifeq ($(PLATFORM),linux)
+	FILEEXT = so
+else ifeq ($(PLATFORM),mac)
+	FILEEXT = dylib
+endif
+
 XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                           \
                   libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
 				  XEngine_StreamMediaApp.exe
