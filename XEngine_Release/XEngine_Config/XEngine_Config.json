@@ -1,6 +1,6 @@
 {
     "tszSMSUrl": "rtmp://app.xyry.org/live",
-    "tszIPAddr": "127.0.0.1",
+    "tszIPAddr": "10.0.1.88",
     "bDeamon": 0,
     "nRTMPPort": 1935,
     "nHttpPort": 5600,
@@ -21,9 +21,10 @@
     "XTime": {
         "nTimeCheck": 3,
         "nHTTPTimeout": 0,
-        "nXStreamTimeout": 0,
-        "nRTMPTimeout": 0,
-        "nJT1078Timeout": 0
+        "nXStreamTimeout": 3,
+        "nRTMPTimeout": 3,
+        "nJT1078Timeout": 3,
+        "nRTCTimeout":3
     },
     "XPull": {
         "XStream": {
@@ -48,7 +49,7 @@
             "tszICEPass": "3321308h8i6vt3769r6638l1409d50jz",
             "tszCertStr": "./XEngine_Key/server.crt",
             "tszKeyStr": "./XEngine_Key/server.key",
-            "tszCsrStr": "./XEngine_Key/server.csr"
+            "tszDerStr": "./XEngine_Key/server.der"
         },
         "SRT": {
             "bEnable": true
