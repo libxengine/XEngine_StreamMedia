@@ -16,10 +16,19 @@ MACRO_SRT_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE
 MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC | cut -d ' ' -f 3)
 
 ifeq ($(MACRO_SRT_SUPPORT),1)
-    LIB += -lsrt-gnutls
+	ifeq ($(PLATFORM),mac)
+		LIB += -lsrt
+	else
+		LIB += -lsrt-gnutls
+	endif
 endif
 ifeq ($(MACRO_RTC_SUPPORT),1)
-    LIB += -lsrtp2
+    
+	ifeq ($(PLATFORM),mac)
+		LIB += -lsrtp
+	else
+		LIB += -lsrtp2
+	endif
 endif
 
 ifeq ($(RELEASE),1)
