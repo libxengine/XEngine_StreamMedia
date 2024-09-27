@@ -42,6 +42,10 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		{
 			st_ServiceConfig.bDebug = true;
 		}
+		else if (0 == _tcsxcmp("-t", argv[i]))
+		{
+			bIsTest = true;
+		}
 	}
 
 	return true;
