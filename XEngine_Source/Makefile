@@ -21,10 +21,19 @@ XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                        
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)
 
+
 libjsoncpp.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRDPART_MODULE_JSONCPP)/libjsoncpp.$(FILEEXT) ../XEngine_Release/
+else
 	make -C $(THIRDPART_MODULE_JSONCPP) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 libXEngine_InfoReport.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRDPART_MODULE_REPORT)/libXEngine_InfoReport.$(FILEEXT) ../XEngine_Release/
+else
 	make -C $(THIRDPART_MODULE_REPORT) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 
 libXEngine_ModuleConfigure.so:
 	make -C $(MODULE_CONFIGURE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)

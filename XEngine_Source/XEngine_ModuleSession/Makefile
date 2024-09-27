@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
-LIB = 
+LIB = -lXEngine_BaseLib -lXEngine_SystemApi
 LIBEX = 
 OBJECTS = ModuleSession_PullStream.o ModuleSession_PushStream.o pch.o
 
@@ -16,8 +16,13 @@ ifeq ($(RELEASE),1)
 FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(UNICODE),1)
