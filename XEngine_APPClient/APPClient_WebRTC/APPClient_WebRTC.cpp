@@ -354,9 +354,9 @@ int main()
 	int nMSGLen = 0;
 	XSOCKET hSocket;
 	XCHAR tszMSGBuffer[2048] = {};
-	//LPCXSTR lpszAPIUrl = _X("http://127.0.0.1:5600/rtc/v1/whep/?app=live&stream=livestream");
+	LPCXSTR lpszAPIUrl = _X("http://127.0.0.1:5600/rtc/v1/whep/?app=live&stream=livestream");
 	//LPCXSTR lpszAPIUrl = _X("http://app.xyry.org:1985/rtc/v1/whep/?app=live&stream=livestream");
-	LPCXSTR lpszAPIUrl = _X("http://10.0.3.154:1985/rtc/v1/whep/?app=live&stream=livestream");
+	//LPCXSTR lpszAPIUrl = _X("http://10.0.3.154:1985/rtc/v1/whep/?app=live&stream=livestream");
 	LPCXSTR lpszFileCert = _X("");
 
 	APPClient_WEBRTC_SDPPacket(lpszAPIUrl, lpszFileCert, tszMSGBuffer, &nMSGLen);
@@ -374,9 +374,9 @@ int main()
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 
 	XClient_UDPSelect_Create(&hSocket);
-	XClient_UDPSelect_Connect(hSocket, "10.0.3.154", 8000);
+	//XClient_UDPSelect_Connect(hSocket, "10.0.3.154", 8000);
 	//XClient_UDPSelect_Connect(hSocket, "43.139.170.67", 8000);
-	//XClient_UDPSelect_Connect(hSocket, "127.0.0.1", 5604);
+	XClient_UDPSelect_Connect(hSocket, "127.0.0.1", 5604);
 
 	std::thread pSTDThread_Stun(APPClient_WEBRTC_StunSend, hSocket, tszICEUser, tszICEPass);
 	pSTDThread_Stun.detach();

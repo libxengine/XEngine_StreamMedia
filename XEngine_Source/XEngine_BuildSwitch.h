@@ -11,4 +11,4 @@
 //    History:
 *********************************************************************/
 #define _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT 0                       //SRT协议编译开关选项
-#define _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC 1                       //WEBRTC协议编译开关选项
+#define _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC 0                       //WEBRTC协议编译开关选项
