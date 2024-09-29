@@ -23,12 +23,7 @@ ifeq ($(MACRO_SRT_SUPPORT),1)
 	endif
 endif
 ifeq ($(MACRO_RTC_SUPPORT),1)
-    
-	ifeq ($(PLATFORM),mac)
-		LIB += -lsrtp
-	else
-		LIB += -lsrtp2
-	endif
+	LIB += -lsrtp2
 endif
 
 ifeq ($(RELEASE),1)
