@@ -95,5 +95,5 @@ jobs:
           cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
           cd XEngine_Release
           .\VSCopy_x86.bat
-          ls -al
+          ls
         shell: pwsh
