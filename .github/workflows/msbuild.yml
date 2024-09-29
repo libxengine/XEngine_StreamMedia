@@ -70,8 +70,10 @@ jobs:
           echo "XENGINE_LIB32=${{ github.workspace }}/libxengine/XEngine_Windows/x86" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "XENGINE_LIB64=${{ github.workspace }}/libxengine/XEngine_Windows/x64" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
+
       - name: Set code page
         run: chcp 65001
+        shell: pwsh
         
       # 配置 MSBuild 的路径，准备构建 VC++ 项目
       - name: Setup MSBuild
@@ -93,6 +95,7 @@ jobs:
       - name: Conditional Step for x86 Debug
         if: matrix.configuration == 'Debug' && matrix.platform == 'x86'
         run: |
+          set -x
           cp -r XEngine_Source/Debug/*.dll XEngine_Release/
           cp -r XEngine_Source/Debug/*.exe XEngine_Release/
           cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
