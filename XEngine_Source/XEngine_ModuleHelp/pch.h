@@ -12,6 +12,8 @@
 #include "framework.h"
 #include <tchar.h>
 #include <WinSock2.h>
+#else
+#include <sys/types.h>
 #endif
 #endif //PCH_H
 #include "../XEngine_BuildSwitch.h"
