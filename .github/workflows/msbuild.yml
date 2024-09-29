@@ -85,8 +85,8 @@ jobs:
           cp -r XEngine_Source/Release/*.exe XEngine_Release/
           cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
           cd XEngine_Release
-          ./VSCopy_x86.bat
-          ./XEngine_StreamMediaApp.exe -t
+          .\VSCopy_x86.bat
+          .\XEngine_StreamMediaApp.exe -t
         shell: pwsh
       - name: Conditional Step for x86 Debug
         if: matrix.configuration == 'Debug' && matrix.platform == 'x86'
@@ -95,6 +95,6 @@ jobs:
           cp -r XEngine_Source/Debug/*.exe XEngine_Release/
           cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
           cd XEngine_Release
-          ./VSCopy_x86.bat
-          ./XEngine_StreamMediaApp.exe -t
+          .\VSCopy_x86.bat
+          .\XEngine_StreamMediaApp.exe -t
         shell: pwsh
