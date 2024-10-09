@@ -19,6 +19,11 @@ typedef struct
 		__int64u nTime;
 		FILE* pSt_File;
 	}st_HLSFile;
+	struct  
+	{
+		XNETHANDLE xhAudioDecodec;
+		XNETHANDLE xhAudioEncodec;
+	}st_AVCodec;
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszSMSAddr[MAX_PATH];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
@@ -51,6 +56,9 @@ public:
 	bool ModuleSession_PushStream_HLSClose(LPCXSTR lpszClientAddr, XNETHANDLE* pxhToken);
 	bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime);
 	bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u *pInt_Time);
+public:
+	bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec);
+	bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
 private:
 	shared_mutex st_Locker;
 private:

@@ -40,3 +40,6 @@ EXPORTS
 	ModuleSession_PushStream_HLSClose
 	ModuleSession_PushStream_HLSTimeSet
 	ModuleSession_PushStream_HLSTimeGet
+
+	ModuleSession_PushStream_AudioCodecSet
+	ModuleSession_PushStream_AudioCodecGet
