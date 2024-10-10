@@ -191,6 +191,7 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
+#pragma comment(lib,"XEngine_AVCodec/XEngine_AudioCodec.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif
