@@ -25,6 +25,7 @@ copy /y "%XEngine_Lib64%\XEngine_StreamMedia\StreamMedia_RTPProtocol.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_StreamMedia\StreamMedia_RTCPProtocol.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_StreamMedia\StreamMedia_HLSProtocol.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_AVCodec\XEngine_AVHelp.dll" "./"
+copy /y "%XEngine_Lib64%\XEngine_AVCodec\XEngine_AudioCodec.dll" "./"
 
 copy /y "%XEngine_Lib64%\XEngine_AVCodec\avcodec-60.dll" "./"
 copy /y "%XEngine_Lib64%\XEngine_AVCodec\avdevice-60.dll" "./"

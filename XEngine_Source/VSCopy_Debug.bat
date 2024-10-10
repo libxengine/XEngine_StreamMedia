@@ -25,6 +25,7 @@ copy /y "D:\XEngine\XEngine_SourceCode\Debug\StreamMedia_RTPProtocol.dll" "./"
 copy /y "D:\XEngine\XEngine_SourceCode\Debug\StreamMedia_RTCPProtocol.dll" "./"
 copy /y "D:\XEngine\XEngine_SourceCode\Debug\StreamMedia_HLSProtocol.dll" "./"
 copy /y "D:\XEngine\XEngine_SourceCode\Debug\XEngine_AVHelp.dll" "./"
+copy /y "D:\XEngine\XEngine_SourceCode\Debug\XEngine_AudioCodec.dll" "./"
 
 copy /y "%XEngine_Lib32%\XEngine_AVCodec\avcodec-60.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_AVCodec\avdevice-60.dll" "./"
