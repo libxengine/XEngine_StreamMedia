@@ -71,20 +71,19 @@ vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libs
 #### Linux
 install srt library after Configure Xengine to Completed  
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
-Rockylinux:sudo dnf install srt-devel srtp2-devel  
 
 Linux use Makefile complie  
 UBUNTU22.04 x64 or RockyLinux 9 x64  
 
 ##### Compile Command
 execute command in XEngine_Source path   
-make complie  
-make FLAGS=InstallAll Install File  
-make FLAGS=CleanAll Clear Complie  
+make  
+make FLAGS=InstallAll  
+make FLAGS=CleanAll  
 
 #### MacOS
 install srt library after Configure Xengine to Completed  
-brew install libsrt srtp  
+brew install srt srtp  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command

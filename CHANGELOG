@@ -1,3 +1,42 @@
+XEngine_StreamMedia V2.9.0.1001
+
+增加:音频编解码器和重采样支持
+增加:webrtc心跳支持
+增加:rtc客户端发布流
+修改:插入推流会话管理当dtls连接成功
+修改:ssrc转字符串从int类型
+修改:会话模块获取sms地址
+修改:rtp转srtp包
+修改:rtc证书配置问题
+修改:rtcp接受协议解析支持
+修改:rtsp和webrtc仅音频和视频支持
+修正:消息发送不完整的问题
+修正:rtcp协议判断问题
+修正:webrtc自动选择媒体索引问题
+修正:没有退出当rtp的视频包头出问题的时候
+修正:mac编译问题
+修正:x-stream音频编码参数错误
+删除:没有使用的会话代码
+
+added:test start supported
+added:audio coder and resample support
+added:webrtc heart support
+added:rtc client publish stream
+modify:insert push session management after dtls handshake
+modify:ssrc to string from int for session module
+modify:get smsaddr for session module
+modify:rtp to srtp
+modify:rtc cert configure to der from csr
+modify:rtcp recv report parse support
+modify:rtsp and webrtc only audio or video support
+fixed:failed due to send message incomplete
+fixed:rtcp protocol judgment is incorrect
+fixed:webrtc auto choice media index
+fixed:not break header for  rtp packet of video
+fixed:build error on mac
+fixed:x-stream audio parameter set is incorrect
+delete:unused code
+=======================================================
 XEngine_StreamMedia V2.8.0.1001
 
 增加:支持srtcp和srtp处理数据了
