@@ -60,26 +60,30 @@ window Exection XEngine_WINEnv.bat
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3  
 
+#### sub module
+Due to the dependent sub-modules, after you checkout the warehouse, execute the following command in the warehouse directory to pull the sub-modules  
+git submodule init  
+git submodule update  
+
 #### Windows
 use vs open and complie,you need to install vcpkg and install depend library by vcpkg  
 vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libsrtp:x64-windows
 #### Linux
 install srt library after Configure Xengine to Completed  
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
-Rockylinux:sudo dnf install srt-devel srtp2-devel  
 
 Linux use Makefile complie  
 UBUNTU22.04 x64 or RockyLinux 9 x64  
 
 ##### Compile Command
 execute command in XEngine_Source path   
-make complie  
-make FLAGS=InstallAll Install File  
-make FLAGS=CleanAll Clear Complie  
+make  
+make FLAGS=InstallAll  
+make FLAGS=CleanAll  
 
 #### MacOS
 install srt library after Configure Xengine to Completed  
-brew install libsrt srtp  
+brew install srt srtp  
 Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
 
 ##### Compile Command

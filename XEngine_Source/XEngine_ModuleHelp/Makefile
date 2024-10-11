@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
-LIB = -lXEngine_OPenSsl
+LIB = -lXEngine_BaseLib -lXEngine_OPenSsl
 LIBEX = 
 OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o ModuleHelp_SRTPCore.o pch.o
 
@@ -16,18 +16,27 @@ MACRO_SRT_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE
 MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC | cut -d ' ' -f 3)
 
 ifeq ($(MACRO_SRT_SUPPORT),1)
-    LIB += -lsrt-gnutls
+	ifeq ($(PLATFORM),mac)
+		LIB += -lsrt
+	else
+		LIB += -lsrt-gnutls
+	endif
 endif
-ifeq ($(MACRO_SRT_SUPPORT),1)
-    LIB += -lsrtp2
+ifeq ($(MACRO_RTC_SUPPORT),1)
+	LIB += -lsrtp2
 endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(UNICODE),1)

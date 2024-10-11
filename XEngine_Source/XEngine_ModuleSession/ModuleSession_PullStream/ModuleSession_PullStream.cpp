@@ -512,9 +512,9 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCGet(LPCXSTR lpszClie
   类型：常量字符指针
   可空：N
   意思：输入要处理的客户端
- 参数.二：nSSrc
+ 参数.二：lpszSSRCStr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
   意思：输入要设置的SSRC
  参数.三：lpszCNameStr
@@ -537,7 +537,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCGet(LPCXSTR lpszClie
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, LPCXSTR lpszSSRCStr, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
 {
 	Session_IsErrorOccur = false;
 
@@ -553,17 +553,73 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpsz
 
 	if (bVideo)
 	{
-		stl_MapIterator->second->st_WEBRtc.nVSsrc = nSSrc;
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszVSSrcStr, lpszSSRCStr);
 		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszVideoCName, lpszCNameStr);
 		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszVideoLabel, lpszLabelStr);
 	}
 	else
 	{
-		stl_MapIterator->second->st_WEBRtc.nASsrc = nSSrc;
+		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszASSrcStr, lpszSSRCStr);
 		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszAudioCName, lpszCNameStr);
 		_tcsxcpy(stl_MapIterator->second->st_WEBRtc.tszAudioLabel, lpszLabelStr);
 	}
 	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSSrcGet
+函数功能：通过地址后去SSRC信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的客户端
+ 参数.二：ptszSSRCStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的SSRC
+ 参数.三：bVideo
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：视频还是音频的SSRC
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszSSRCStr, bool bVideo)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	bool bFound = false;
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			if (bVideo)
+			{
+				_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
+			}
+			else
+			{
+				_tcsxcpy(ptszSSRCStr, stl_MapIterator->second->st_WEBRtc.tszVSSrcStr);
+			}
+			bFound = true;
+			break;
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	
 	return true;
 }
 /********************************************************************
@@ -725,6 +781,52 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_RTCConnGet(LPCXSTR lpsz
 			{
 				bFound = true;
 				*pbConnect = stl_MapIterator->second->st_WEBRtc.bConnect;
+				break;
+			}
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_RTCSmsGet
+函数功能：获取RTC对应的SMS名称
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：ptszSMSAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的SMS地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_RTCSmsGet(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr)
+{
+	Session_IsErrorOccur = false;
+
+	bool bFound = false;
+	st_Locker.lock_shared();
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_MapIterator->second->enStreamType)
+		{
+			if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_WEBRtc.tszClientAddr, _tcsxlen(lpszClientAddr)))
+			{
+				bFound = true;
+				_tcsxcpy(ptszSMSAddr, stl_MapIterator->second->tszSMSAddr);
 				break;
 			}
 		}

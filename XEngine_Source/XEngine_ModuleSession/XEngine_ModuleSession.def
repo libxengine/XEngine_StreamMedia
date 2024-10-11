@@ -17,10 +17,12 @@ EXPORTS
 	ModuleSession_PullStream_RTCSet
 	ModuleSession_PullStream_RTCGet
 	ModuleSession_PullStream_RTCSSrcSet
+	ModuleSession_PullStream_RTCSSrcGet
 	ModuleSession_PullStream_RTCAddrSet
 	ModuleSession_PullStream_RTCAddrGet
 	ModuleSession_PullStream_RTCConnSet
 	ModuleSession_PullStream_RTCConnGet
+	ModuleSession_PullStream_RTCSmsGet
 
 	ModuleSession_PushStream_Create
 	ModuleSession_PushStream_Destroy
@@ -38,3 +40,6 @@ EXPORTS
 	ModuleSession_PushStream_HLSClose
 	ModuleSession_PushStream_HLSTimeSet
 	ModuleSession_PushStream_HLSTimeGet
+
+	ModuleSession_PushStream_AudioCodecSet
+	ModuleSession_PushStream_AudioCodecGet

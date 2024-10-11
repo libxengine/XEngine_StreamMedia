@@ -142,7 +142,7 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTPINProtect(XCHAR* ptszMSGBuffer
 
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
 	
-	int nRet = srtp_protect(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	int nRet = srtp_protect(st_SRTPCore.pSt_SRTPSendCtx, ptszMSGBuffer, pInt_MSGLen);
 	if (srtp_err_status_ok != nRet)
 	{
 		ModuleHelp_IsErrorOccur = true;
@@ -177,7 +177,7 @@ bool CModuleHelp_SRTPCore::ModuleHelp_SRTPCore_RTPUNProtect(XCHAR* ptszMSGBuffer
 
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_RTC
 
-	int nRet = srtp_unprotect(st_SRTPCore.pSt_SRTPRecvCtx, ptszMSGBuffer, pInt_MSGLen);
+	int nRet = srtp_unprotect(st_SRTPCore.pSt_SRTPSendCtx, ptszMSGBuffer, pInt_MSGLen);
 	if (srtp_err_status_ok != nRet)
 	{
 		ModuleHelp_IsErrorOccur = true;

@@ -14,6 +14,12 @@ MODULE_QUEUE_PATH = ./XEngine_ModuleQueue
 
 APP_STREAMMEDIA_PATH = ./XEngine_ServiceApp/XEngine_StreamMediaApp
 
+ifeq ($(PLATFORM),linux)
+	FILEEXT = so
+else ifeq ($(PLATFORM),mac)
+	FILEEXT = dylib
+endif
+
 XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                           \
                   libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
 				  XEngine_StreamMediaApp.exe
@@ -21,10 +27,19 @@ XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                        
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)
 
+
 libjsoncpp.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRDPART_MODULE_JSONCPP)/libjsoncpp.$(FILEEXT) ../XEngine_Release/
+else
 	make -C $(THIRDPART_MODULE_JSONCPP) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 libXEngine_InfoReport.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRDPART_MODULE_REPORT)/libXEngine_InfoReport.$(FILEEXT) ../XEngine_Release/
+else
 	make -C $(THIRDPART_MODULE_REPORT) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 
 libXEngine_ModuleConfigure.so:
 	make -C $(MODULE_CONFIGURE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)

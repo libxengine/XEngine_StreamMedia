@@ -794,3 +794,101 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpsz
 	st_Locker.unlock_shared();
 	return true;
 }
+/********************************************************************
+函数名称：ModuleSession_PushStream_AudioCodecSet
+函数功能：设置音频编解码器句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：xhAudioDecodec
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入解码器句柄
+ 参数.三：xhAudioEncodec
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入编码器句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_AVCodec.xhAudioEncodec = xhAudioEncodec;
+	stl_MapIterator->second->st_AVCodec.xhAudioDecodec = xhAudioDecodec;
+
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_AudioCodecGet
+函数功能：获取解码器句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pxhAudioDecodec
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出解码器句柄
+ 参数.三：pxhAudioEncodec
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出编码器句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*pxhAudioEncodec = stl_MapIterator->second->st_AVCodec.xhAudioEncodec;
+	*pxhAudioDecodec = stl_MapIterator->second->st_AVCodec.xhAudioDecodec;
+
+	st_Locker.unlock_shared();
+	return true;
+}

@@ -73,9 +73,13 @@ extern "C" bool ModuleSession_PullStream_RTCGet(LPCXSTR lpszClientAddr, XCHAR * 
 {
 	return m_PullStream.ModuleSession_PullStream_RTCGet(lpszClientAddr, ptszTokenStr, ptszICEUser, ptszICEPass, ptszHMacStr);
 }
-extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
+extern "C" bool ModuleSession_PullStream_RTCSSrcSet(LPCXSTR lpszClientAddr, LPCXSTR lpszSSRCStr, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo)
 {
-	return m_PullStream.ModuleSession_PullStream_RTCSSrcSet(lpszClientAddr, nSSrc, lpszCNameStr, lpszLabelStr, bVideo);
+	return m_PullStream.ModuleSession_PullStream_RTCSSrcSet(lpszClientAddr, lpszSSRCStr, lpszCNameStr, lpszLabelStr, bVideo);
+}
+extern "C" bool ModuleSession_PullStream_RTCSSrcGet(LPCXSTR lpszClientAddr, XCHAR* ptszSSRCStr, bool bVideo)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCSSrcGet(lpszClientAddr, ptszSSRCStr, bVideo);
 }
 extern "C" bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr)
 {
@@ -96,6 +100,10 @@ extern "C" bool ModuleSession_PullStream_RTCConnSet(LPCXSTR lpszClientAddr, bool
 extern "C" bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
 {
 	return m_PullStream.ModuleSession_PullStream_RTCConnGet(lpszClientAddr, pbConnect);
+}
+extern "C" bool ModuleSession_PullStream_RTCSmsGet(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_RTCSmsGet(lpszClientAddr, ptszSMSAddr);
 }
 /*********************************************************************************
 *                          推流导出会话模块                                      *
@@ -163,4 +171,12 @@ extern "C" bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __in
 extern "C" bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u * pInt_Time)
 {
 	return m_PushStream.ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, pInt_Time);
+}
+extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec)
+{
+	return m_PushStream.ModuleSession_PushStream_AudioCodecSet(lpszClientAddr, xhAudioDecodec, xhAudioEncodec);
+}
+extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec)
+{
+	return m_PushStream.ModuleSession_PushStream_AudioCodecGet(lpszClientAddr, pxhAudioDecodec, pxhAudioEncodec);
 }

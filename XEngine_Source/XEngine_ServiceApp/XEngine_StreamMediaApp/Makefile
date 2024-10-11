@@ -7,7 +7,14 @@ UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
 		 -L ../../XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Depend/XEngine_Module/XEngine_InfoReport
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXClient_Stream -lHelpComponents_XLog -lHelpComponents_Packets -lNetHelp_APIHelp -lNetHelp_XSocket -lRfcComponents_HttpProtocol -lRfcComponents_NatProtocol -lXEngine_AVHelp -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_SDPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol -lStreamMedia_RTCPProtocol \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
+	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl \
+	  -lXClient_Stream \
+	  -lHelpComponents_XLog -lHelpComponents_Packets \
+	  -lNetHelp_APIHelp -lNetHelp_XSocket \
+	  -lRfcComponents_HttpProtocol -lRfcComponents_NatProtocol \
+	  -lXEngine_AVHelp -lXEngine_AudioCodec \
+	  -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_SDPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol -lStreamMedia_RTCPProtocol \
       -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp -lXEngine_ModuleQueue \
 	  -ljsoncpp -lXEngine_InfoReport
 LIBEX = 
@@ -20,8 +27,13 @@ ifeq ($(RELEASE),1)
 FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(UNICODE),1)

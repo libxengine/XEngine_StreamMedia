@@ -65,6 +65,12 @@ window执行XEngine_WINEnv.bat 脚本
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
 
+#### sub module
+由于依赖的子模块,在你checkout仓库后,在仓库目录下执行下面的命令拉取子模块  
+git submodule init  
+git submodule update  
+如果github访问失败,你也可以clone该项目,在主目录下使用命令:git clone https://gitee.com/xengine/XEngine_OPenSource.git XEngine_Source/XEngine_Depend
+
 #### Windows
 
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
@@ -74,7 +80,6 @@ vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libs
 #### Linux
 配置完XEngine后需要安装srt库  
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
-Rockylinux:sudo dnf install srt-devel srtp2-devel
 
 Linux使用Makefile编译  
 UBUNTU22.04 或者 RockyLinux 9 x64均可
@@ -88,7 +93,7 @@ make FLAGS=CleanAll 清理编译
 
 #### MacOS
 配置完XEngine后需要安装srt库  
-brew install libsrt srtp  
+brew install srt srtp  
 使用makefile编译,控制台运行,需要mac 13以及以上版本
 
 ###### 编译命令

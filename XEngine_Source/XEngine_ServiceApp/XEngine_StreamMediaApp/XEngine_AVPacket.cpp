@@ -82,12 +82,11 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 }
 bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
+	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+
 	if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM == enClientType)
 	{
 		//XSTREAM推流
-		XENGINE_PROTOCOL_AVINFO st_AVInfo;
-		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -109,8 +108,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			st_AVInfo.st_VideoInfo.nVLen = nPos;
 			memset(st_AVInfo.st_VideoInfo.tszVInfo, '\0', sizeof(st_AVInfo.st_VideoInfo.tszVInfo));
 			memcpy(st_AVInfo.st_VideoInfo.tszVInfo, lpszMsgBuffer, nPos);
-
-			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		}
 		else
 		{
@@ -121,23 +118,16 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 				int nConfig = 0;
 				if (AVHelp_Parse_AACInfo((const XBYTE*)lpszMsgBuffer, nMsgLen, &st_AVInfo.st_AudioInfo.nChannel, &st_AVInfo.st_AudioInfo.nSampleRate, &nProfile, &nConfig))
 				{
-					st_AVInfo.st_AudioInfo.bEnable = true;
-					st_AVInfo.st_AudioInfo.nALen = 7;
-					st_AVInfo.st_AudioInfo.enAVCodec = 10;
-					st_AVInfo.st_AudioInfo.nSampleFmt = 16;
-					st_AVInfo.st_AudioInfo.nChannel = 1;
 					AVHelp_Packet_AACHdr((XBYTE*)st_AVInfo.st_AudioInfo.tszAInfo, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nChannel, 0);
 					ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 				}
 			}
+			ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		}
 	}
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enClientType)
 	{
 		//RTMP推流的所有开关选项都是一样的代码
-		XENGINE_PROTOCOL_AVINFO st_AVInfo;
-		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -170,9 +160,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT == enClientType)
 	{
 		//SRT推流
-		XENGINE_PROTOCOL_AVINFO st_AVInfo;
-		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -229,9 +216,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078 == enClientType)
 	{
 		//JT1078推流
-		XENGINE_PROTOCOL_AVINFO st_AVInfo;
-		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-
 		ModuleSession_PushStream_GetAVInfo(lpszClientAddr, &st_AVInfo);
 		if (0 == byAVType)
 		{
@@ -285,6 +269,36 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			}
 		}
 	}
+
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable && 0 != byAVType)
+	{
+		XNETHANDLE xhDecodec = 0;
+		XNETHANDLE xhEncodec = 0;
+		if (!AudioCodec_Stream_DeInit(&xhDecodec, ENUM_XENGINE_AVCODEC_AUDIO_TYPE_AAC))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频解码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
+			return false;
+		}
+		int nTmp = 0;
+		AudioCodec_Stream_SetResample(xhDecodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
+
+		st_AVInfo.st_AudioInfo.enAVCodec = ENUM_XENGINE_AVCODEC_AUDIO_TYPE_AAC;
+		if (!AudioCodec_Stream_EnInit(&xhEncodec, &st_AVInfo.st_AudioInfo))
+		{
+			AudioCodec_Stream_Destroy(xhDecodec);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频编码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
+			return false;
+		}
+		AudioCodec_Stream_SetResample(xhEncodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
+
+		if (!ModuleSession_PushStream_AudioCodecSet(lpszClientAddr, xhDecodec, xhEncodec))
+		{
+			AudioCodec_Stream_Destroy(xhDecodec);
+			AudioCodec_Stream_Destroy(xhEncodec);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,设置推流音频编解码器失败,错误:%lX"), lpszClientAddr, ModuleSession_GetLastError());
+			return false;
+		}
+	}
 	return true;
 }
 bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszRVBuffer, int* pInt_RVLen, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType)
@@ -293,13 +307,14 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("检测到推流:%s 过大的音频包:%d"), lpszClientAddr, nMsgLen);
 	}
+	int nStartCode = 0;
 	XBYTE byFrameType = 0;
 	if (0 == byAVType)
 	{
 		XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
-		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+		AVHelp_Parse_NaluType(lpszMsgBuffer, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType, &nStartCode);
 		//如果是关键帧
-		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+		if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_I == enFrameType)
 		{
 			byFrameType = 1;
 		}
@@ -512,7 +527,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				{
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, true);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
@@ -529,6 +544,47 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					{
 						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
 					}
+				}
+				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
+			}
+		}
+	}
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	{
+		//是否有客户端需要发送WEBRTC流
+		list<STREAMMEDIA_SESSIONCLIENT> stl_ListClient;
+		ModuleSession_PushStream_ClientList(lpszClientAddr, &stl_ListClient);
+		for (auto stl_ListIteratorClient = stl_ListClient.begin(); stl_ListIteratorClient != stl_ListClient.end(); ++stl_ListIteratorClient)
+		{
+			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_ListIteratorClient->enClientType)
+			{
+				int nPacketCount = 0;
+				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
+				XCHAR tszSSCRStr[MAX_PATH] = {};
+				
+				if (0 == byAVType)
+				{
+					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+					}
+				}
+				else
+				{
+					/*
+					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, false);
+					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					//发送数据,RTSP使用UDP发送
+					for (int i = 0; i < nPacketCount; i++)
+					{
+						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+					}
+					*/
 				}
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
 			}

@@ -100,6 +100,7 @@ using namespace std;
 //    History:
 *********************************************************************/
 extern bool bIsRun;
+extern bool bIsTest;
 extern XHANDLE xhLog;
 //HTTP服务器
 extern XHANDLE xhHttpSocket;
@@ -128,6 +129,7 @@ extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
 //WEBRTC网络
 extern XHANDLE xhRTCSocket;
+extern XHANDLE xhRTCHeart;
 extern XHANDLE xhRTCSsl;
 //HLS流
 extern XNETHANDLE xhHLSFile;
@@ -189,6 +191,7 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol.lib")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTCPProtocol.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
+#pragma comment(lib,"XEngine_AVCodec/XEngine_AudioCodec.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
 #endif

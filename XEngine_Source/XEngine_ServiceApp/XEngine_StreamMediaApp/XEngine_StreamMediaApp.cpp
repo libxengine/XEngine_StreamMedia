@@ -11,6 +11,7 @@
 //    History:
 *********************************************************************/
 bool bIsRun = false;
+bool bIsTest = false;
 XHANDLE xhLog = NULL;
 //HTTP服务器
 XHANDLE xhHttpSocket = NULL;
@@ -39,6 +40,7 @@ XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
 XHANDLE xhRTCSocket = NULL;
+XHANDLE xhRTCHeart = NULL;
 XHANDLE xhRTCSsl = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
@@ -76,6 +78,7 @@ void ServiceApp_Stop(int signo)
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);
@@ -146,6 +149,7 @@ int main(int argc, char** argv)
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	bIsRun = true;
+	int nRet = 0;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -159,8 +163,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	//pSt_VFile = _xtfopen("./1.ts", "wb");
-	//pSt_AFile = _xtfopen("./1.h264", "wb");
+	//pSt_VFile = _xtfopen("./1.h264", "wb");
+	//pSt_AFile = _xtfopen("./1.aac", "wb");
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
@@ -532,6 +536,7 @@ int main(int argc, char** argv)
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		OPenSsl_Server_ConfigEx(xhRTCSsl);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
 		
 		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
 		if (NULL == xhRTCSocket)
@@ -541,6 +546,21 @@ int main(int argc, char** argv)
 		}
 		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
+
+		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
+		{
+			xhRTCHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCHBLeave);
+			if (NULL == xhRTCHeart)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTC心跳管理服务没有启用!"));
+		}
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
@@ -557,7 +577,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
 	//发送信息报告
-	if (st_ServiceConfig.st_XReport.bEnable)
+	if (st_ServiceConfig.st_XReport.bEnable && !bIsTest)
 	{
 		if (InfoReport_APIMachine_Send(st_ServiceConfig.st_XReport.tszAPIUrl, st_ServiceConfig.st_XReport.tszServiceName))
 		{
@@ -586,13 +606,26 @@ int main(int argc, char** argv)
 
 	while (true)
 	{
+		if (bIsTest)
+		{
+			nRet = 0;
+			break;
+		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 XENGINE_SERVICEAPP_EXIT:
 	if (bIsRun)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("有服务启动失败,服务器退出..."));
+		if (bIsTest && 0 == nRet)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("服务启动完毕，测试程序退出..."));
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("有服务启动失败,服务器退出..."));
+		}
+		
 		bIsRun = false;
 		//销毁网络
 		NetCore_TCPXCore_DestroyEx(xhHttpSocket);
@@ -616,6 +649,7 @@ XENGINE_SERVICEAPP_EXIT:
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);
@@ -646,5 +680,5 @@ XENGINE_SERVICEAPP_EXIT:
 #ifdef _MSC_BUILD
 	WSACleanup();
 #endif
-	return 0;
+	return nRet;
 }
