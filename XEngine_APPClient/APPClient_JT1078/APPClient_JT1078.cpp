@@ -2,8 +2,9 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Client/XClient_Socket")
+#pragma comment(lib,"XEngine_AVCodec/XEngine_AVFrame")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp")
 #pragma comment(lib,"Ws2_32")
 #endif
@@ -13,12 +14,14 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/XClient_Define.h>
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVFrame_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVFrame_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include "../../XEngine_Source/XEngine_UserProtocol.h"
@@ -26,13 +29,13 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -lXEngine_BaseLib -lXEngine_OPenSsl -lXClient_Socket -lXEngine_AVHelp
+//g++ -std=c++17 -Wall -g APPClient_JT1078.cpp -o APPClient_JT1078.exe -lXEngine_BaseLib -lXEngine_Cryption -lXClient_Socket -lXEngine_AVFrame -lXEngine_AVHelp
 
 void XEngine_Device_StrtoBCD(LPCXSTR lpszPhoneCode, XBYTE* ptszBCD)
 {
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
-		OPenSsl_Codec_2BytesToBCD(&lpszPhoneCode[nPos], ptszBCD[i]);
+		Cryption_Codec_2BytesToBCD(&lpszPhoneCode[nPos], ptszBCD[i]);
 		nPos += 2;
 	}
 }
@@ -63,7 +66,7 @@ int main()
 	
 	int nSeq = 0;
 	XNETHANDLE xhToken = 0;
-	AVHelp_Parse_FrameInit(&xhToken, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264);
+	AVFrame_Frame_ParseInit(&xhToken, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264);
 
 	while (true)
 	{
@@ -81,8 +84,8 @@ int main()
 			}
 		}
 		int nListCount = 0;
-		AVHELP_FRAMEDATA** ppSt_Frame;
-		AVHelp_Parse_FrameGet(xhToken, tszRVBuffer, nRet, &ppSt_Frame, &nListCount);
+		AVFRAME_PARSEDATA** ppSt_Frame;
+		AVFrame_Frame_ParseGet(xhToken, tszRVBuffer, nRet, &ppSt_Frame, &nListCount);
 		for (int i = 0; i < nListCount; i++)
 		{
 			bool bFirst = true;
@@ -147,7 +150,7 @@ int main()
 
 				st_RTPPacket.wSerial = htons(nSeq++);
 				XEngine_Device_StrtoBCD(lpszPhone, st_RTPPacket.bySIMNumber);
-				BaseLib_OperatorTime_SetXTPTime(&st_RTPPacket.ullTimestamp);
+				BaseLib_Time_SetXTPTime(&st_RTPPacket.ullTimestamp);
 
 				int nPos = 0;
 				XCHAR tszMsgBuffer[2048];
@@ -168,12 +171,12 @@ int main()
 				nUseCount += nCpyCount;
 				nMsgCount -= nCpyCount;
 			}
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_Frame[i]->ptszMsgBuffer);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ppSt_Frame[i]->ptszMsgBuffer);
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_Frame, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_Frame, nListCount);
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}
-	AVHelp_Parse_FrameClose(xhToken);
+	AVFrame_Frame_ParseClose(xhToken);
 
 	WSACleanup();
 	return 0;

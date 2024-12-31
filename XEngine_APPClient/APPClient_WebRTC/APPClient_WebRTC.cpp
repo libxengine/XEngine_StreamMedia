@@ -5,8 +5,8 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Client/XClient_Socket")
-#pragma comment(lib,"XEngine_Client/XClient_OPenSsl")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_SDPProtocol")
 #pragma comment(lib,"XEngine_StreamMedia/StreamMedia_RTPProtocol")
@@ -25,12 +25,12 @@
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/XClient_Define.h>
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
-#include <XEngine_Include/XEngine_Client/SslClient_Define.h>
-#include <XEngine_Include/XEngine_Client/SslClient_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/SDPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Define.h>
@@ -69,7 +69,7 @@ bool APPClient_WEBRTC_SDPPacket(LPCXSTR lpszAPIUrl, LPCXSTR lpszFileCert, XCHAR*
 	
 	int nAVCount = 1;
 	XCHAR** pptszAVList;
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, nAVCount, 64);/*
+	BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, nAVCount, 64);/*
 	_xstprintf(pptszAVList[0], _X("111"));
 
 	SDPProtocol_Packet_AddMedia(xhToken, _X("audio"), _X("UDP/TLS/RTP/SAVPF"), &pptszAVList, nAVCount, 0, 9);
@@ -156,8 +156,8 @@ bool APPClient_WEBRTC_SDPParse(LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR* ptszIC
 	XCHAR tszAlgorithmVlu[MAX_PATH] = {};
 	SDPProtocol_Parse_AttrFinger(&ppSt_ListAttr, nAttrCount, tszAlgorithmKey, tszAlgorithmVlu);
 
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_AVMedia, nListCount);
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_AVMedia, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
 	SDPProtocol_Parse_Destory(xhParse);
 	return true;
 }
@@ -171,12 +171,12 @@ bool APPClient_WEBRTC_StunSend(XSOCKET hSocket, LPCXSTR lpszICEUser, LPCXSTR lps
 	XCHAR tszRandomStr[10] = {};
 
 	_xstprintf(tszICEUser, _X("%s:nzWE"), lpszICEUser);
-	BaseLib_OperatorHandle_CreateStr(tszRandomStr, 8, 0, 2);
+	BaseLib_Handle_CreateStr(tszRandomStr, 8, 0, 2);
 	NatProtocol_StunNat_BuildAttr(tszTmpBuffer, &nMSGLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszICEUser, 13);
 	NatProtocol_StunNat_BuildAttr(tszTmpBuffer + nMSGLen, &nMSGLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_ICE_CONTROLLING, tszRandomStr, 8);
 	NatProtocol_StunNat_BuildPriority(tszTmpBuffer + nMSGLen, &nMSGLen);
 
-	BaseLib_OperatorHandle_CreateStr(tszTokenStr, 12, 0, 2);
+	BaseLib_Handle_CreateStr(tszTokenStr, 12, 0, 2);
 	NatProtocol_StunNat_Packet(tszMSGBuffer, &nMSGLen, tszTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_REQUEST, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszTmpBuffer, true, lpszICEPass, true);
 
 	while (true)
@@ -238,7 +238,7 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 	LPCXSTR lpszCertFile = _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\certificate.crt");
 	LPCXSTR lpszPrivateFile = _X("D:\\XEngine_StreamMedia\\XEngine_APPClient\\Debug\\private.key");
 
-	XHANDLE xhSsl = XClient_OPenSsl_InitEx(ENUM_XCLIENT_SSL_TYPE_DTL_VERSION, false, lpszCertFile, NULL, lpszPrivateFile);
+	XHANDLE xhSsl = Cryption_Client_InitEx(XENGINE_CRYPTION_PROTOCOL_DTL, false, lpszCertFile, NULL, lpszPrivateFile);
 	if (NULL == xhSsl)
 	{
 		return false;
@@ -246,14 +246,13 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 	RTPProtocol_Parse_Init(1);
 	RTPProtocol_Parse_Insert(lpszRTPClient);
 
-	XClient_OPenSsl_ConfigEx(xhSsl);
+	Cryption_Client_ConfigEx(xhSsl);
 
-	XCLIENT_SSLCERT_SRVINFO st_SslInfo = {};
 	SRTPCORE_CLIENTINFO st_SRTPInfo = {};
-	XClient_OPenSsl_ConnectEx(xhSsl, hSocket, &st_SslInfo);
+	Cryption_Client_ConnectEx(xhSsl, hSocket);
 
 	XBYTE byKEYBuffer[128] = {};
-	XClient_OPenSsl_GetKeyEx(xhSsl, byKEYBuffer);
+	Cryption_Client_GetKeyEx(xhSsl, byKEYBuffer);
 	for (int i = 0; i < 60; i++)
 	{
 		printf("0x%02X, ", byKEYBuffer[i]);
@@ -343,7 +342,7 @@ bool APPClient_WEBRTC_Dlts(XSOCKET hSocket)
 	free(ptszRTPBuffer);
 	ptszRTPBuffer = NULL;
 	fclose(pSt_264File);
-	XClient_OPenSsl_CloseEx(xhSsl);
+	Cryption_Client_CloseEx(xhSsl);
 	RTPProtocol_Parse_Destory();
 	return true;
 }
@@ -371,7 +370,7 @@ int main()
 	XCHAR tszICEUser[128] = {};
 	XCHAR tszICEPass[128] = {};
 	APPClient_WEBRTC_SDPParse(ptszMSGBuffer, nMSGLen, tszICEUser, tszICEPass);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 
 	XClient_UDPSelect_Create(&hSocket);
 	//XClient_UDPSelect_Connect(hSocket, "10.0.3.154", 8000);
