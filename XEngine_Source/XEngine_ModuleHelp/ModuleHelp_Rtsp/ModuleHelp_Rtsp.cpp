@@ -459,7 +459,7 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetRTPAddr(LPCXSTR lpszClientID, XCHAR* p
 	XCHAR tszIPAddr[128] = {};
 	_tcsxcpy(tszIPAddr, lpszClientID);
 
-	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nPort);
+	APIAddr_IPAddr_SegAddr(tszIPAddr, &nPort);
 	if (bVideo)
 	{
 		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nVideoRTPPort);
@@ -506,7 +506,7 @@ bool CModuleHelp_Rtsp::ModuleHelp_Rtsp_GetRTCPAddr(LPCXSTR lpszClientID, XCHAR* 
 	}
 	int nPort = 0;
 	XCHAR tszIPAddr[128] = {};
-	BaseLib_OperatorIPAddr_SegAddr(tszIPAddr, &nPort);
+	APIAddr_IPAddr_SegAddr(tszIPAddr, &nPort);
 	if (bVideo)
 	{
 		_xstprintf(ptszADDRStr, _X("%s:%d"), tszIPAddr, stl_MapIterator->second.nVideoRTCPPort);

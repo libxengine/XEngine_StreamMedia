@@ -73,7 +73,7 @@ install srt library after Configure Xengine to Completed
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
 
 Linux use Makefile complie  
-UBUNTU22.04 x64 or RockyLinux 9 x64  
+UBUNTU22.04 or above  
 
 ##### Compile Command
 execute command in XEngine_Source path   

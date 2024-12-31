@@ -339,7 +339,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_GetInfo(STREAMMEDIA_PUB
 	st_Locker.lock_shared();
 
 	*pInt_ListCount = stl_MapPushStream.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ProtocolStream, stl_MapPushStream.size(), sizeof(STREAMMEDIA_PUBLISHINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_ProtocolStream, stl_MapPushStream.size(), sizeof(STREAMMEDIA_PUBLISHINFO));
 
 	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
 	for (int i = 0; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++, i++)
@@ -550,7 +550,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 	XCHAR tszFilePath[MAX_PATH] = {};
 	XCHAR tszFileName[MAX_PATH] = {};
 	//获得文件名和路径
-	BaseLib_OperatorString_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
+	BaseLib_String_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
 	SystemApi_File_CreateMutilFolder(tszFilePath);
 
 	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);

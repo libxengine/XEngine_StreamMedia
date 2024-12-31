@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
-LIB = -lXEngine_BaseLib -lXEngine_OPenSsl
+LIB = -lXEngine_BaseLib -lXEngine_Cryption -lNetHelp_APIAddr
 LIBEX = 
 OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o ModuleHelp_SRTPCore.o pch.o
 

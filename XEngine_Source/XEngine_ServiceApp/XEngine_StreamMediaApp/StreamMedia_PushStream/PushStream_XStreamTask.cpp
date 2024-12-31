@@ -41,11 +41,11 @@ XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					PushStream_XStreamTask_Handle(&st_ProtocolHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
-					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	return 0;
 }

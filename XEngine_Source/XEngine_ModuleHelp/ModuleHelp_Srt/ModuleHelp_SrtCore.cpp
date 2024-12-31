@@ -295,8 +295,8 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR*
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 	memset(tszSMSMode, '\0', sizeof(tszSMSMode));
 
-	BaseLib_OperatorString_GetKeyValue(stl_MapIterator->second.tszStreamBuffer + 4, _X(","), tszSMSAddr, tszSMSMode);
-	BaseLib_OperatorString_GetKeyValue(tszSMSAddr, _X("="), tszTmpStr, ptszSMSAddr);
+	BaseLib_String_GetKeyValue(stl_MapIterator->second.tszStreamBuffer + 4, _X(","), tszSMSAddr, tszSMSMode);
+	BaseLib_String_GetKeyValue(tszSMSAddr, _X("="), tszTmpStr, ptszSMSAddr);
 	
 	if (NULL != _tcsxstr(tszSMSMode, _X("publish")))
 	{

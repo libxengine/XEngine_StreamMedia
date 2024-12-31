@@ -37,11 +37,11 @@ XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 				if (HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
 				{
 					PushStream_JT1078Task_Handle(ppSt_PacketClient[i]->hSocket, ptszMsgBuffer, nMsgLen, tszHdrBuffer, nHDRLen);
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PacketClient, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_PacketClient, nListCount);
 	}
 	return 0;
 }
@@ -109,7 +109,7 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 			if (nMLen > 0)
 			{
 				XEngine_AVPacket_AVHdr(lpszClientAddr, ptszMsgBuffer, nMLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_JT1078);
-				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 			}
 		}
 	}

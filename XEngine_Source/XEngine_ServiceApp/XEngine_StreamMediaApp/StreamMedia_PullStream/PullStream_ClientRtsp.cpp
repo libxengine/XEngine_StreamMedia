@@ -39,7 +39,7 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 				nPos -= sizeof(uint32_t);
 			}
 			RTCPProtocol_Parse_Sdeser(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr, &ppSt_ListSdeser, &nListCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListSdeser, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_ListSdeser, nListCount);
 		}
 		/*
 		int nSDLen = 0;
@@ -51,7 +51,7 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 
 		nListCount = 1;
 		STREAMMEDIA_RTCPPROTOCOL_SDESINFO** ppSt_SDESList;
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_SDESList, nListCount, sizeof(STREAMMEDIA_RTCPPROTOCOL_SDESINFO));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_SDESList, nListCount, sizeof(STREAMMEDIA_RTCPPROTOCOL_SDESINFO));
 
 		memset(tszMSGBuffer, '\0', sizeof(tszMSGBuffer));
 		ppSt_SDESList[0]->enSDESType = ENUM_STREAMMEDIA_RTCPPROTOCOL_SDES_TYPE_CNAME;
@@ -60,7 +60,7 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 		_tcsxcpy(ppSt_SDESList[0]->tszMSGBuffer, XENGINE_NAME_STR);
 		RTCPProtocol_Packet_Sdeser(tszMSGBuffer, &nSDLen, &ppSt_SDESList, nListCount);
 		NetCore_UDPXCore_SendEx(xhVRTCPSocket, lpszClientAddr, tszMSGBuffer, nSDLen);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_SDESList, nListCount);*/
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_SDESList, nListCount);*/
 	}
 	return true;
 }
@@ -87,7 +87,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
+		BaseLib_String_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
 			st_RTSPResponse.nCode = 404;
@@ -119,7 +119,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
+		BaseLib_String_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
 			st_RTSPResponse.nCode = 404;
@@ -145,7 +145,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		SDPProtocol_Packet_Control(xhSDPToken, -1);
 		//配置视频属性
 		XCHAR** pptszAVList;
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, 64);
+		BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, 1, 64);
 		_tcsxcpy(pptszAVList[0], "96");
 
 		SDPProtocol_Packet_AddMedia(xhSDPToken, _X("video"), _X("RTP/AVP"), &pptszAVList, 1);
@@ -159,8 +159,8 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		st_SDPMediaVideo.st_FmtpVideo.tszLeaveId[1] = tszSPSBuffer[1];
 		st_SDPMediaVideo.st_FmtpVideo.tszLeaveId[2] = tszSPSBuffer[2];
 
-		OPenSsl_Codec_Base64((LPCXSTR)tszSPSBuffer, st_SDPMediaVideo.st_FmtpVideo.tszSPSBase, &nSPSLen, true);
-		OPenSsl_Codec_Base64((LPCXSTR)tszPPSBuffer, st_SDPMediaVideo.st_FmtpVideo.tszPPSBase, &nPPSLen, true);
+		Cryption_Codec_Base64((LPCXSTR)tszSPSBuffer, st_SDPMediaVideo.st_FmtpVideo.tszSPSBase, &nSPSLen, true);
+		Cryption_Codec_Base64((LPCXSTR)tszPPSBuffer, st_SDPMediaVideo.st_FmtpVideo.tszPPSBase, &nPPSLen, true);
 		
 		st_SDPMediaVideo.nTrackID = 0;
 		st_SDPMediaVideo.st_RTPMap.nSampleRate = 90000;
@@ -193,7 +193,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		SDPProtocol_Packet_Destory(xhSDPToken);
 		ModuleHelp_Rtsp_CreateClient(lpszClientAddr, 0, 1);
 		//创建SESSION
-		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.tszSession, 12);
+		BaseLib_Handle_CreateStr(st_RTSPResponse.tszSession, 12);
 		ModuleHelp_Rtsp_SetSession(lpszClientAddr, st_RTSPResponse.tszSession);
 
 		st_RTSPResponse.nPLen = nRVLen;
@@ -231,7 +231,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nARTPPort;
 			st_RTSPResponse.st_TransportInfo.st_ServerPorts.nRTCPPort = st_ServiceConfig.st_XPull.st_PullRtsp.nARTCPPort;
 		}
-		BaseLib_OperatorHandle_CreateStr(st_RTSPResponse.st_TransportInfo.tszSSRCStr, 8, 1);
+		BaseLib_Handle_CreateStr(st_RTSPResponse.st_TransportInfo.tszSSRCStr, 8, 1);
 		ModuleHelp_Rtsp_SetSsrc(lpszClientAddr, st_RTSPResponse.st_TransportInfo.tszSSRCStr, bVideo);
 
 		RTSPProtocol_REPPacket_Response(tszSDBuffer, &nSDLen, &st_RTSPResponse);
@@ -249,7 +249,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
+		BaseLib_String_GetKeyValue((*ppptszParamList)[1], "=", tszKeyStr, tszSMSAddr);
 
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
@@ -265,7 +265,7 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 		_tcsxcpy(st_RTSPResponse.tszSession, st_RTSPRequest.tszSession);
 
 		st_RTSPResponse.nRTPCount = 2;
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTSPResponse.ppSt_RTPInfo, 2, sizeof(RTSPPROTOCOL_RTPINFO));
+		BaseLib_Memory_Malloc((XPPPMEM)&st_RTSPResponse.ppSt_RTPInfo, 2, sizeof(RTSPPROTOCOL_RTPINFO));
 
 		XCHAR tszSSRCVideo[128] = {};
 		XCHAR tszSSRCAudio[128] = {};

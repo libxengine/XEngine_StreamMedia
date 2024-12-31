@@ -71,7 +71,7 @@ void ServiceApp_Stop(int signo)
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
 			NetCore_UDPSelect_Stop(xhRTCSocket);
-			OPenSsl_Server_StopEx(xhRTCSsl);
+			Cryption_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
@@ -230,7 +230,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhHttpSocket, Network_Callback_HttpLogin, Network_Callback_HttpRecv, Network_Callback_HttpLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册HTTP网络事件成功"));
 		//HTTP任务池
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListHTTPParam, st_ServiceConfig.st_XMax.nHTTPThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListHTTPParam, st_ServiceConfig.st_XMax.nHTTPThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nHTTPThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -289,7 +289,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhXStreamSocket, Network_Callback_XStreamLogin, Network_Callback_XStreamRecv, Network_Callback_XStreamLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册XStream推流网络事件成功"));
 		//启动任务池
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListCenterParam, st_ServiceConfig.st_XMax.nXStreamThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nXStreamThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -344,7 +344,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhRTMPSocket, Network_Callback_RTMPLogin, Network_Callback_RTMPRecv, Network_Callback_RTMPLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册RTMP端网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListRTMPParam, st_ServiceConfig.st_XMax.nRTMPThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListRTMPParam, st_ServiceConfig.st_XMax.nRTMPThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nRTMPThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -404,7 +404,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhJT1078Socket, Network_Callback_JT1078Login, Network_Callback_JT1078Recv, Network_Callback_JT1078Leave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,注册JT1078网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListJT1078Param, st_ServiceConfig.st_XMax.nJT1078Thread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListJT1078Param, st_ServiceConfig.st_XMax.nJT1078Thread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nJT1078Thread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -447,7 +447,7 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化SRT端流包管理器成功,最大线程:%d"), st_ServiceConfig.st_XMax.nSRTThread);
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListSRTParam, st_ServiceConfig.st_XMax.nSRTThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListSRTParam, st_ServiceConfig.st_XMax.nSRTThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceConfig.st_XMax.nSRTThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -529,13 +529,13 @@ int main(int argc, char** argv)
 
 	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 	{
-		xhRTCSsl = OPenSsl_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_OPENSSL_PROTOCOL_DTL_SERVER);
+		xhRTCSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
 		if (NULL == xhRTCSsl)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), OPenSsl_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		OPenSsl_Server_ConfigEx(xhRTCSsl);
+		Cryption_Server_ConfigEx(xhRTCSsl);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
 		
 		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
@@ -602,7 +602,7 @@ int main(int argc, char** argv)
 	}
 
 
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_OperatorVer_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_Version_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
 	while (true)
 	{
@@ -642,7 +642,7 @@ XENGINE_SERVICEAPP_EXIT:
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
 			NetCore_UDPSelect_Stop(xhRTCSocket);
-			OPenSsl_Server_StopEx(xhRTCSsl);
+			Cryption_Server_StopEx(xhRTCSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);

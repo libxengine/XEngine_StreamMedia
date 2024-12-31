@@ -82,7 +82,7 @@ vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libs
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
 
 Linux使用Makefile编译  
-UBUNTU22.04 或者 RockyLinux 9 x64均可
+UBUNTU22.04或者以上版本  
 
 ###### 编译命令
 

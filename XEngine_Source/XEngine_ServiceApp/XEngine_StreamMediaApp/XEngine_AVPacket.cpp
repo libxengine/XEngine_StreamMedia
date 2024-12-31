@@ -459,7 +459,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					ModuleSession_PushStream_HLSGetFile(lpszClientAddr, tszHLSFile);
 					ModuleSession_PushStream_HLSClose(lpszClientAddr, &xhSubFile);
 
-					BaseLib_OperatorString_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
+					BaseLib_String_GetSeparatorStr(tszHLSFile, _X("/"), tszFile, 2, false);
 					HLSProtocol_M3u8Packet_AddFile(xhHLSFile, xhSubFile, tszFile, double(nCalValue), false);
 					//打开新的
 #ifdef _MSC_BUILD
@@ -545,7 +545,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
 					}
 				}
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
+				BaseLib_Memory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
 			}
 		}
 	}
@@ -586,7 +586,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					}
 					*/
 				}
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
+				BaseLib_Memory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
 			}
 		}
 	}
