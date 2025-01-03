@@ -11,7 +11,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption \
 	  -lXClient_Stream \
 	  -lHelpComponents_XLog -lHelpComponents_Packets \
-	  -lNetHelp_APIHelp -lNetHelp_XSocket lNetHelp_APIAddr \
+	  -lNetHelp_APIHelp -lNetHelp_XSocket -lNetHelp_APIAddr \
 	  -lRfcComponents_HttpProtocol -lRfcComponents_NatProtocol \
 	  -lXEngine_AVHelp -lXEngine_AudioCodec \
 	  -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_SDPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol -lStreamMedia_RTCPProtocol \

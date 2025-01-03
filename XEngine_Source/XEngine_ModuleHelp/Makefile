@@ -62,6 +62,8 @@ else ifeq ($(PLATFORM),mac)
 	PLATVER = -D __MACOS__
 	PLATDIR = XEngine_Mac
 	FILEEXT = dylib
+	LOADHDR += -I /opt/homebrew/opt/srt/include -I /opt/homebrew/opt/srtp/include
+	LOADSO += -L /opt/homebrew/opt/srt/lib -L /opt/homebrew/opt/srtp/lib
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
