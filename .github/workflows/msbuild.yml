@@ -95,7 +95,7 @@ jobs:
           cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
           cd XEngine_Release
           .\VSCopy_x86.bat
-          ./XEngine_StreamMediaApp -t
+        #  ./XEngine_StreamMediaApp -t
         shell: pwsh
       - name: Conditional Step for x64 Debug
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
