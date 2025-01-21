@@ -46,6 +46,9 @@ jobs:
           chmod +x ./XEngine_LINEnv.sh
           sudo ./XEngine_LINEnv.sh -i 3
 
+    - name: install library
+      run: sudo apt install libsrt-gnutls-dev libsrtp2-dev -y
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
