@@ -116,6 +116,7 @@ jobs:
         with:
           name: XEngine_StreamMediaApp-x86_32-Windows
           path: XEngine_Release/
+          retention-days: 3
  
       - name: Upload folder as artifact with x64
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
@@ -123,3 +124,4 @@ jobs:
         with:
           name: XEngine_StreamMediaApp-x86_64-Windows
           path: XEngine_Release/
+          retention-days: 3
