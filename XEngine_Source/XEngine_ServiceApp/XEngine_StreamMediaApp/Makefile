@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17 -Wno-format-overflow
+CC = g++ -Wall -std=c++17
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 

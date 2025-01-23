@@ -18,6 +18,7 @@ jobs:
       matrix:
         include:
           - os: macos-13
+          - os: macos-14
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -81,7 +82,12 @@ jobs:
       - name: test
         run: |
             cd XEngine_Release
-            ./XEngine_StreamMediaApp -t
+            sudo launchctl limit core unlimited
+            sudo sysctl -w kern.corefile=coredump
+            ./XEngine_StreamMediaApp -t 
+            ls -al
+            lldb ./XEngine_StreamMediaApp ./coredump
+        continue-on-error: true 
 
       - name: Upload folder as artifact with mac x64
         if: matrix.os == 'macos-13'
