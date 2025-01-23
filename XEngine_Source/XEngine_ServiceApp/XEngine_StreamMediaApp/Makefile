@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17
+CC = g++ -Wall -std=c++20
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
@@ -50,6 +50,7 @@ ifeq ($(PLATFORM),linux)
 		PLATVER = -D __UBUNTU__
 		PLATDIR = XEngine_Linux/Ubuntu
 	endif
+	CC += -Wno-format-overflow
 	LIBEX = -lpthread -lrt -ldl
 	LOADBIN = -Wl,-rpath=./:/usr/local/ffmpeg-xengine/lib,--disable-new-dtags
 else ifeq ($(PLATFORM),mac)
