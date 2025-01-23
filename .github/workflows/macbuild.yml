@@ -73,15 +73,16 @@ jobs:
             make PLATFORM=mac 
             make PLATFORM=mac FLAGS=InstallAll
             make PLATFORM=mac FLAGS=CleanAll
+      - name: make release (srt bug on macos-arm64,not run)
+        run: |
+          #  cd XEngine_Source
+          #  make PLATFORM=mac RELEASE=1
+          #  make PLATFORM=mac FLAGS=InstallAll
+          #  make PLATFORM=mac FLAGS=CleanAll
       - name: test
         run: |
             cd XEngine_Release
-            ulimit -c unlimited
-            sudo sysctl -w kern.corefile=/cores/core.%P
-            ./XEngine_StreamMediaApp -t || true 
-            ls -l /cores  
-            LATEST_CORE=$(ls -t /cores/core.* | head -1)
-            lldb -c $LATEST_CORE -o 'bt all' -o 'exit'
+            ./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact with mac x64
         if: matrix.os == 'macos-13'
