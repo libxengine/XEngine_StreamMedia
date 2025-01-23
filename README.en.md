@@ -51,11 +51,11 @@ Play Stream:
 
 #### XEngine environment
 you have to install xengine before complie,You can refer to its Readme document  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine  
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine  
 
 #### fast to deployment
-git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git or git clone https://github.com/libxengine/libxengine.git  
 window Exection XEngine_WINEnv.bat  
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3  

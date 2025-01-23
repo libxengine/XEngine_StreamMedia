@@ -82,13 +82,12 @@ jobs:
       - name: test
         run: |
             cd XEngine_Release
-            sudo launchctl limit core unlimited
-            sudo sysctl -w kern.corefile=coredump
-            set +e
-            ./XEngine_StreamMediaApp -t 
-            ls -al
-            lldb ./XEngine_StreamMediaApp ./coredump
-            set -e 
+            ulimit -c unlimited
+            sudo sysctl -w kern.corefile=/cores/core.%P
+            ./XEngine_StreamMediaApp -t || true 
+            ls -l /cores  
+            LATEST_CORE=$(ls -t /cores/core.* | head -1)
+            lldb -c $LATEST_CORE -o 'bt all' -o 'exit'
 
       - name: Upload folder as artifact with mac x64
         if: matrix.os == 'macos-13'

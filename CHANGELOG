@@ -1,3 +1,25 @@
+XEngine_StreamMedia V2.10.0.1001
+
+增加:windows coredump支持
+更新:匹配XEngineV9版本支持
+更新:CI支持更多发布类型
+更新:依赖库
+更新:升级编译器版本
+优化:获取报告次数
+修改:vs2022的ansi字符集改为unicode字符集
+修正:其他语言系统乱码问题
+修正:编译选项的问题
+
+added:windows core-dump support
+update:match xengine v9.x support
+update:workflows more release support
+update:depend library
+update:compiler version to c++20 and c17
+improved:get report count
+modify:character-set to unicode from ansi on vs
+fixed:Garbled characters on other language system
+fixed:problem that build flags 
+=======================================================
 XEngine_StreamMedia V2.9.0.1001
 
 增加:音频编解码器和重采样支持
