@@ -18,7 +18,6 @@ jobs:
       matrix:
         include:
           - os: macos-13
-          - os: macos-14
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -58,7 +57,6 @@ jobs:
             ./XEngine_LINEnv.sh -i 0
 
             latest_tag=$(git ls-remote --tags --sort="v:refname" https://github.com/libxengine/libxengine.git | awk '{print $2}' | sed 's/refs\/tags\///' | tail -n 1)
-            
             wget https://github.com/libxengine/libxengine/releases/download/$latest_tag/XEngine_Mac_Arm64.zip
             unzip ./XEngine_Mac_Arm64.zip -d ./XEngine_Mac_Arm64
             cd XEngine_Mac_Arm64

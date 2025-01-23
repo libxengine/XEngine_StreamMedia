@@ -12,6 +12,7 @@
 #ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>
+#include <minidumpapiset.h>
 #else
 #include <unistd.h>
 #include <sys/wait.h>
@@ -201,4 +202,5 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AudioCodec.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"Dbghelp.lib")
 #endif
