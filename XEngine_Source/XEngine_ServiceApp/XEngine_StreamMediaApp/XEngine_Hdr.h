@@ -5,12 +5,14 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
+#include <locale.h>
 #include <thread>
 #include <list>
 #include <string>
 #ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>
+#include <minidumpapiset.h>
 #else
 #include <unistd.h>
 #include <sys/wait.h>
@@ -27,10 +29,14 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/NetCore_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
@@ -177,8 +183,10 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
-#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl.lib")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
@@ -194,4 +202,5 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AudioCodec.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"Dbghelp.lib")
 #endif

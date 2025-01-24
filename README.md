@@ -25,6 +25,11 @@ c c++ streammedia server
 6. 支持HTTP API管理接口
 7. 支持HTTP HOOK(planning)
 8. 支持全流媒体协议互转
+9. 支持视FILTER滤镜处理(planning)
+10. 支持视频AI效果处理(planning)
+11. 支持文本语言转录(planning)
+12. 支持录像(planning)
+13. 支持音视频重编解码(planning)
 
 推流协议:
 
@@ -55,12 +60,12 @@ c c++ streammedia server
 #### XEngine环境
 
 在编译之前必须安装XEngine,可以参考其Readme文档  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine
 
 #### 快速部署
 
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git 或者 git clone https://github.com/libxengine/libxengine.git  
 window执行XEngine_WINEnv.bat 脚本  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
@@ -82,7 +87,7 @@ vcpkg.exe install libsrt:x86-windows libsrt:x64-windows libsrtp:x86-windows libs
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
 
 Linux使用Makefile编译  
-UBUNTU22.04 或者 RockyLinux 9 x64均可
+UBUNTU22.04或者以上版本  
 
 ###### 编译命令
 

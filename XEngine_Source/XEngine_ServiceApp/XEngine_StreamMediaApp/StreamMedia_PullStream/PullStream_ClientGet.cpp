@@ -31,7 +31,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
+	BaseLib_String_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
 	
 	if (0 == _tcsxnicmp(lpszStreamPlay, tszVluBuffer, _tcsxlen(lpszStreamPlay)))
 	{
@@ -44,7 +44,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszSMSAddr);
+		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszSMSAddr);
 
 		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
@@ -55,7 +55,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			return false;
 		}
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
-		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[2], "=", tszKeyBuffer, tszVluBuffer);
+		BaseLib_String_GetKeyValue((*ppptszListHdr)[2], "=", tszKeyBuffer, tszVluBuffer);
 
 		ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 		if (0 == _tcsxnicmp(tszVluBuffer, "flv", 3))
@@ -72,7 +72,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
 				"Transfer-Encoding: chunked\r\n\r\n"
-				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
+				"%x\r\n"), BaseLib_Version_XTypeStr(), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
 			nSDLen += nRVLen;
 			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
@@ -139,7 +139,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
 				"Transfer-Encoding: chunked\r\n\r\n"
-				"%x\r\n"), BaseLib_OperatorVer_XTypeStr(), nRVLen);
+				"%x\r\n"), BaseLib_Version_XTypeStr(), nRVLen);
 			memcpy(tszSDBuffer + nSDLen, &st_AVInfo, nRVLen);
 			nSDLen += nRVLen;
 			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
@@ -160,7 +160,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Server: XEngine/%s\r\n"
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
-				"Transfer-Encoding: chunked\r\n\r\n"), BaseLib_OperatorVer_XTypeStr());
+				"Transfer-Encoding: chunked\r\n\r\n"), BaseLib_Version_XTypeStr());
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);

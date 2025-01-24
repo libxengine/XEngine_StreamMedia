@@ -35,7 +35,7 @@ XNETHANDLE xhVideo = 0;
 __int64u nTimeVideo = 0;
 FILE* pSt_File = NULL;
 
-void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* punStringY, int nYLen, uint8_t* punStringU, int nULen, uint8_t* punStringV, int nVLen, AVCOLLECT_TIMEINFO* pSt_TimeInfo, XPVOID lParam)
+void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* ptszAVBuffer, int nAVLen, AVCOLLECT_TIMEINFO* pSt_TimeInfo, XPVOID lParam)
 {
 	XCHAR* ptszMsgBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
 	XENGINE_PROTOCOLHDR st_ProtocolHdr;
@@ -54,24 +54,24 @@ void CALLBACK XEngine_AVCollect_CBVideo(uint8_t* punStringY, int nYLen, uint8_t*
 
 	int nListCount = 0;
 	AVCODEC_VIDEO_MSGBUFFER** ppSt_MSGBuffer;
-	VideoCodec_Stream_EnCodec(xhVideo, punStringY, punStringU, punStringV, nYLen, nULen, nVLen, &ppSt_MSGBuffer, &nListCount);
+	VideoCodec_Stream_EnCodec(xhVideo, ptszAVBuffer, nAVLen, &ppSt_MSGBuffer, &nListCount);
 	for (int i = 0; i < nListCount; i++)
 	{
 		nTimeVideo += (1000 / 24);
 		st_ProtocolData.byAVType = 0;
 		st_ProtocolData.nTimeStamp = nTimeVideo;
 		st_ProtocolData.byFrameType = ppSt_MSGBuffer[i]->st_VideoInfo.nFrameType;
-		st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nYLen;
+		st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nAVLen;
 
 		memcpy(ptszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_ProtocolData, sizeof(XENGINE_PROTOCOL_AVDATA));
-		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA), ppSt_MSGBuffer[i]->ptszYBuffer, ppSt_MSGBuffer[i]->nYLen);
-		XClient_TCPSelect_SendMsg(hSocket, ptszMsgBuffer, sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nYLen);
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ppSt_MSGBuffer[i]->ptszYBuffer);
+		memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA), ppSt_MSGBuffer[i]->ptszAVBuffer, ppSt_MSGBuffer[i]->nAVLen);
+		XClient_TCPSelect_SendMsg(hSocket, ptszMsgBuffer, sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_AVDATA) + ppSt_MSGBuffer[i]->nAVLen);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ppSt_MSGBuffer[i]->ptszAVBuffer);
 
-		printf("Time:%llu Size:%d Type:%d\n", nTimeVideo, ppSt_MSGBuffer[i]->nYLen, ppSt_MSGBuffer[i]->st_VideoInfo.nFrameType);
+		printf("Time:%llu Size:%d Type:%d\n", nTimeVideo, ppSt_MSGBuffer[i]->nAVLen, ppSt_MSGBuffer[i]->st_VideoInfo.nFrameType);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_MSGBuffer, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_MSGBuffer, nListCount);
 	free(ptszMsgBuffer);
 	ptszMsgBuffer = NULL;
 }
@@ -147,7 +147,7 @@ int XStream_Push()
 	_xtprintf("%d\n", st_ProtocolHdr.wReserve);
 	if (nLen > 0)
 	{
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	}
 
 	AVCollect_Video_Start(xhScreen);

@@ -291,7 +291,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetList(STREAMMEDIA_PUL
 	st_Locker.lock_shared();
 
 	*pInt_ListCount = stl_MapClient.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_PullList, stl_MapClient.size(), sizeof(STREAMMEDIA_PULLLISTINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_PullList, stl_MapClient.size(), sizeof(STREAMMEDIA_PULLLISTINFO));
 
 	auto stl_MapIterator = stl_MapClient.begin();
 	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)

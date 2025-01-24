@@ -22,6 +22,11 @@ feature:
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
 8. Support for the transfer of all streaming media protocols
+9. Support visual FILTER filter processing (planning)
+10. Support video AI effect processing (planning)
+11. Support text language transcription (planning)
+12. Support recording (planning)
+13. Support audio and video recoding (planning)
 
 Publish Stream:
 
@@ -51,11 +56,11 @@ Play Stream:
 
 #### XEngine environment
 you have to install xengine before complie,You can refer to its Readme document  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine  
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine  
 
 #### fast to deployment
-git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git or git clone https://github.com/libxengine/libxengine.git  
 window Exection XEngine_WINEnv.bat  
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3  
@@ -73,7 +78,7 @@ install srt library after Configure Xengine to Completed
 ubuntu:sudo apt install libsrt-gnutls-dev libsrtp2-dev  
 
 Linux use Makefile complie  
-UBUNTU22.04 x64 or RockyLinux 9 x64  
+UBUNTU22.04 or above  
 
 ##### Compile Command
 execute command in XEngine_Source path   

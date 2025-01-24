@@ -46,12 +46,12 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					XEngine_HTTPTask_Handle(&st_HTTPReqparam, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &pptszListHdr, nHCount);
 					//释放内存
-					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&pptszListHdr, nHCount);
+					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_Free((XPPPMEM)&pptszListHdr, nHCount);
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	return 0;
 }
@@ -86,7 +86,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
@@ -105,7 +105,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&pptszList, nListCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return false;
 	}
@@ -120,7 +120,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
 		//获得函数名
-		BaseLib_OperatorString_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
+		BaseLib_String_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
 
 		//获得函数名
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
@@ -145,7 +145,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			"Access-Control-Allow-Credentials: false\r\n"
 			"Access-Control-Request-Private-Network: true\r\n"
 			"Content-Length: 0\r\n"
-			"Server: %s/V%s\r\n\r\n"), XENGINE_NAME_STR, BaseLib_OperatorVer_XNumberStr());
+			"Server: %s/V%s\r\n\r\n"), XENGINE_NAME_STR, BaseLib_Version_XNumberStr());
 
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求OPTION方法成功"), lpszClientAddr);
@@ -155,6 +155,6 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		//可能是RTSP
 		PullStream_ClientRtsp_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen, &pptszList, nListCount, ppptszHDRList, nHDRCount);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszList, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&pptszList, nListCount);
 	return true;
 }

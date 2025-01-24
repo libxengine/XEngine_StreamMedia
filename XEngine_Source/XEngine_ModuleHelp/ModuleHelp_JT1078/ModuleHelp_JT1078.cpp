@@ -46,7 +46,7 @@ bool CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCH
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
-		OPenSsl_Codec_BCDTo2Bytes(bySIMNumber[i], &ptszMsgBuffer[nPos]);
+		Cryption_Codec_BCDTo2Bytes(bySIMNumber[i], &ptszMsgBuffer[nPos]);
 		nPos += 2;
 	}
 	return true;
@@ -81,7 +81,7 @@ bool CModuleHelp_JT1078::ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XB
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
-		OPenSsl_Codec_2BytesToBCD(&lpszMsgBuffer[i], pbySIMNumber[nPos]);
+		Cryption_Codec_2BytesToBCD(&lpszMsgBuffer[i], pbySIMNumber[nPos]);
 		nPos += 2;
 	}
 	return true;

@@ -32,7 +32,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
+	BaseLib_String_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
 	
 	if (0 == _tcsxnicmp(lpszAPIPublish, tszVluBuffer, _tcsxlen(lpszAPIPublish)))
 	{
@@ -40,7 +40,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
+		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
 		if (0 == _tcsxnicmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
 		{
 			int nListCount = 0;
@@ -50,7 +50,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取发布流信息成功,个数:%d"), lpszClientAddr, nListCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ProtocolStream, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_ProtocolStream, nListCount);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszAPIPull, tszVluBuffer, _tcsxlen(lpszAPIPull)))
@@ -59,7 +59,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
+		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
 		if (0 == _tcsxnicmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
 		{
 			int nListCount = 0;
@@ -69,7 +69,7 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP接口:%s,请求获取订阅流信息成功,个数:%d"), lpszClientAddr, nListCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PullList, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_PullList, nListCount);
 		}
 	}
 	return true;

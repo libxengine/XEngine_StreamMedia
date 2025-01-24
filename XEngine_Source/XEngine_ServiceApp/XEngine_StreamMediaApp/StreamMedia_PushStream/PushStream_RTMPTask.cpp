@@ -40,11 +40,11 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					PushStream_RTMPTask_Handle(&st_RTMPHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
-					BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	return 0;
 }
@@ -124,62 +124,62 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			st_AVInfo.st_AudioInfo.bEnable = true;
 			if (0 == _tcsxnicmp("duration", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.dlTime = dlValue;
 			}
 			else if (0 == _tcsxnicmp("fileSize", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.nSize = (__int64x)dlValue;
 			}
 			else if (0 == _tcsxnicmp("width", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_VideoInfo.nWidth = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("height", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_VideoInfo.nHeight = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("videocodecid", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_VideoInfo.enAVCodec = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("videodatarate", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_VideoInfo.nBitRate = (__int64x)dlValue;
 			}
 			else if (0 == _tcsxnicmp("framerate", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_VideoInfo.nFrameRate = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiocodecid", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.enAVCodec = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiodatarate", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nBitRate = (__int64x)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiosamplerate", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nSampleRate = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiosamplesize", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nSampleFmt = (int)dlValue;
 			}
 			else if (0 == _tcsxnicmp("audiochannels", st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer, _tcsxlen(st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer)))
 			{
-				BaseLib_OperatorEndain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
+				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nChannel = (int)dlValue;
 			}
 			//XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d,索引:%d,名称:%s"), lpszClientAddr, st_RTMPData.nCount, i, st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer);
@@ -187,7 +187,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 		XEngine_AVPacket_AVSetTime(lpszClientAddr, st_AVInfo.st_VideoInfo.nFrameRate, st_AVInfo.st_AudioInfo.nSampleRate);
 		ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
+		BaseLib_Memory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d"), lpszClientAddr, st_RTMPData.nCount);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND == pSt_RTMPHdr->byTypeID)
@@ -215,11 +215,11 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 			_xstprintf(tszSMSAddr, _X("%s/%s"), st_RTMPCommand.ppSt_CMDObject[1]->tszMsgBuffer, st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
 
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nObCount = 0;
 			st_RTMPCommand.nProCount = 2;
-			BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
 
 			st_RTMPCommand.nCMDId = 0;
 			strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONPUBLISH);
@@ -241,14 +241,14 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			ModuleSession_PushStream_Create(lpszClientAddr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 			XEngine_AVPacket_AVCreate(lpszClientAddr);
 			//释放内存
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
 			//准备返回数据
 			st_RTMPCommand.nProCount = 4;
-			BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
 
 			strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
 
@@ -277,11 +277,11 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_CREATE, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_CREATE)))
 		{
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 
 			st_RTMPCommand.nObCount = 1;
-			BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount, sizeof(XENGINE_RTMPCMDOBJECT));
+			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount, sizeof(XENGINE_RTMPCMDOBJECT));
 
 			strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_RESULT);
 
@@ -295,8 +295,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_UNPUBLISH, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_UNPUBLISH)))
 		{
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
 			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
@@ -312,8 +312,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 				}
 			}
 			
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
@@ -344,8 +344,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			ModuleHelp_Rtmp_GetSession(lpszClientAddr, tszLiveName);
 			_xstprintf(tszSMSAddr, _X("%s/%s"), tszLiveName, st_RTMPCommand.ppSt_CMDObject[0]->tszMsgBuffer);
 
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
@@ -360,7 +360,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 			//状态,有没有这个流
 			st_RTMPCommand.nProCount = 3;
-			BaseLib_OperatorMemory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
 
 			strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
 
@@ -414,8 +414,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else
 		{
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount);
+			BaseLib_Memory_Free((XPPPMEM)&st_RTMPCommand.ppSt_CMDObject, st_RTMPCommand.nObCount);
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;

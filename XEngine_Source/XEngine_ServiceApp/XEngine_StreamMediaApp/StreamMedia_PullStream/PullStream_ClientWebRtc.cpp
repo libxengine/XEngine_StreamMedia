@@ -44,7 +44,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		}
 		else
 		{
-			bool bRet = OPenSsl_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen);
+			bool bRet = Cryption_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen);
 			if (nSDLen > 0)
 			{
 				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
@@ -53,7 +53,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			if (bRet)
 			{
 				XBYTE tszKEYBuffer[MAX_PATH] = {};
-				OPenSsl_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
+				Cryption_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
 
 				XCHAR tszSMSName[128] = {};
@@ -98,12 +98,12 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 				break;
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_ListAttr, nAttrCount);
 
 		int nPort = 0;
 		XCHAR tszIPPort[128] = {};
 		_tcsxcpy(tszIPPort, lpszClientAddr);
-		BaseLib_OperatorIPAddr_SegAddr(tszIPPort, &nPort);
+		APIAddr_IPAddr_SegAddr(tszIPPort, &nPort);
 
 		NatProtocol_StunNat_BuildAttr(tszRVBuffer, &nRVLen, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_USERNAME, tszUserStr, _tcsxlen(tszUserStr));
 		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
@@ -139,7 +139,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			int nListCount = 0;
 			RTCPPROTOCOL_RTCPRECVER** ppSt_ListRecvInfo;
 			RTCPProtocol_Parse_Recver(tszRVBuffer + nPos, nRVLen - nPos, &st_RTCPHdr, &ppSt_ListRecvInfo, &nListCount);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListRecvInfo, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_ListRecvInfo, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTCP协议处理成功,请求处理的协议:%d"), lpszClientAddr, st_RTCPHdr.byPT);
 		}
 		else
@@ -158,7 +158,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo)
 {
 	XCHAR** pptszAVList;
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
+	BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
 
 	if (bVideo)
 	{
@@ -179,7 +179,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	XBYTE tszDigestStr[MAX_PATH] = {};
 	XCHAR tszDigestHex[MAX_PATH] = {};
 	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
-	OPenSsl_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszDerStr, tszDigestStr, &nDLen, true, XENGINE_OPENSSL_API_DIGEST_SHA256);
+	Cryption_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszDerStr, tszDigestStr, &nDLen, true, ENUM_XENGINE_CRYPTION_DIGEST_SHA256);
 	for (int i = 0; i < nDLen; i++)
 	{
 		int nRet = _xstprintf(tszDigestHex + nPos, _X("%02X"), tszDigestStr[i]);
@@ -198,7 +198,7 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 
 		XCHAR tszSSrcStr[128] = {};
 		_xstprintf(tszSSrcStr, _X("2124085007"));
-		//BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
@@ -213,14 +213,14 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 
 		XCHAR tszSSrcStr[128] = {};
 		_xstprintf(tszSSrcStr, _X("2124085006"));
-		//BaseLib_OperatorHandle_CreateStr(tszSSrcStr, 8, 1);
+		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
 		RTPProtocol_Packet_SetPType(tszSSrcStr, nAVIndex);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
-	BaseLib_OperatorMemory_Free((XPPPMEM)&pptszAVList, 1);
+	BaseLib_Memory_Free((XPPPMEM)&pptszAVList, 1);
 	return true;
 }
 bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
@@ -237,9 +237,9 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
 	XCHAR tszSMSAddr[128] = {};
-	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr, _X("app="), _X("&"));
+	BaseLib_String_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr, _X("app="), _X("&"));
 	_tcsxcat(tszSMSAddr, _X("/"));
-	BaseLib_OperatorString_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr + _tcsxlen(tszSMSAddr), _X("stream="), NULL);
+	BaseLib_String_GetStartEnd(pSt_HTTPParam->tszHttpUri, tszSMSAddr + _tcsxlen(tszSMSAddr), _X("stream="), NULL);
 	//查找流是否存在
 	XCHAR tszPushAddr[128] = {};
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
@@ -323,7 +323,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	}
 
 	SDPProtocol_Parse_Destory(xhParse);
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListAttr, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ListAttr, nListCount);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,请求的SDP信息属性解析完毕,总共解析了:%d 个属性"), lpszClientAddr, nListCount);
 
 	SDPProtocol_Packet_Create(&xhPacket);
@@ -346,7 +346,7 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	XCHAR tszHDRStr[MAX_PATH] = {};
 	XCHAR tszUserStr[MAX_PATH] = {};
 
-	BaseLib_OperatorHandle_CreateStr(tszTokenStr, 10);
+	BaseLib_Handle_CreateStr(tszTokenStr, 10);
 	_xstprintf(tszUserStr, _X("%s:%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, tszICEUser);
 	_xstprintf(tszHDRStr, _X("Location: /rtc/v1/whip/?action=delete&token=%s&app=live&stream=livestream.flv&session=%s\r\n"), tszTokenStr, tszUserStr);
 

@@ -91,7 +91,7 @@ XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 				}
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSst_ListAddr, nListCount);
 	}
 	free(ptszMsgBuffer);
 	ptszMsgBuffer = NULL;

@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17 -fPIC
+CC = g++ -Wall -std=c++20 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
-LIB = -lXEngine_BaseLib -lXEngine_OPenSsl
+LIB = -lXEngine_BaseLib -lXEngine_Cryption -lNetHelp_APIAddr
 LIBEX = 
 OBJECTS = ModuleHelp_JT1078.o ModuleHelp_SrtCore.o ModuleHelp_Rtsp.o ModuleHelp_Rtmp.o ModuleHelp_SRTPCore.o pch.o
 
@@ -62,6 +62,8 @@ else ifeq ($(PLATFORM),mac)
 	PLATVER = -D __MACOS__
 	PLATDIR = XEngine_Mac
 	FILEEXT = dylib
+	LOADHDR += -I /opt/homebrew/opt/srt/include -I /opt/homebrew/opt/srtp/include
+	LOADSO += -L /opt/homebrew/opt/srt/lib -L /opt/homebrew/opt/srtp/lib
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
