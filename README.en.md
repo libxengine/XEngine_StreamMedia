@@ -22,6 +22,11 @@ feature:
 6. Support HTTP API Management interface
 7. Support HTTP HOOK(planning)
 8. Support for the transfer of all streaming media protocols
+9. Support visual FILTER filter processing (planning)
+10. Support video AI effect processing (planning)
+11. Support text language transcription (planning)
+12. Support recording (planning)
+13. Support audio and video recoding (planning)
 
 Publish Stream:
 

@@ -25,6 +25,11 @@ c c++ streammedia server
 6. 支持HTTP API管理接口
 7. 支持HTTP HOOK(planning)
 8. 支持全流媒体协议互转
+9. 支持视FILTER滤镜处理(planning)
+10. 支持视频AI效果处理(planning)
+11. 支持文本语言转录(planning)
+12. 支持录像(planning)
+13. 支持音视频重编解码(planning)
 
 推流协议:
 
