@@ -279,8 +279,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频解码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
 			return false;
 		}
-		int nTmp = 0;
-		AudioCodec_Stream_SetResample(xhDecodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
 
 		st_AVInfo.st_AudioInfo.enAVCodec = ENUM_XENGINE_AVCODEC_AUDIO_TYPE_AAC;
 		if (!AudioCodec_Stream_EnInit(&xhEncodec, &st_AVInfo.st_AudioInfo))
@@ -289,7 +287,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频编码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
 			return false;
 		}
-		AudioCodec_Stream_SetResample(xhEncodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
 
 		if (!ModuleSession_PushStream_AudioCodecSet(lpszClientAddr, xhDecodec, xhEncodec))
 		{
