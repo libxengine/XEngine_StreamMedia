@@ -145,7 +145,7 @@ jobs:
         if: matrix.configuration == 'Release' && matrix.platform == 'x86'
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-x86_32-Windows
+          name: XEngine_StreamMediaApp-Windows_x86_32
           path: XEngine_Release/
           retention-days: 1
  
@@ -153,13 +153,13 @@ jobs:
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-x86_64-Windows
+          name: XEngine_StreamMediaApp-Windows_x86_64
           path: XEngine_Release/
           retention-days: 1
       - name: Upload folder as artifact with ARM64
         if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-Arm64-Windows
+          name: XEngine_StreamMediaApp-Windows_Arm64
           path: XEngine_Release/
           retention-days: 1

@@ -218,3 +218,4 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"../../Release/XEngine_InfoReport")
 #endif
 #endif
+#endif

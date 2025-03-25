@@ -15,10 +15,19 @@ jobs:
         with:
           fetch-depth: 0 
 
-      - name: Download ubuntubuild
+      - name: Download x86_64 ubuntubuild
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: ubuntubuild.yml
+          workflow: ubuntux86_64_build.yml
+          workflow_conclusion: success
+          check_artifacts: false
+          skip_unpack: true
+          if_no_artifact_found: fail
+          path: ./XRelease/
+      - name: Download Arm64 ubuntubuild
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: UbuntuArm64_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
