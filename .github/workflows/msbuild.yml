@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Debug ,Release]
-        platform: [x86 ,x64]
+        platform: [x86 ,x64 ,ARM64]
 
     runs-on: windows-latest
 
@@ -62,6 +62,14 @@ jobs:
             ./vcpkg.exe install libsrt:x64-windows libsrtp:x64-windows
             ./vcpkg.exe integrate install
         shell: pwsh
+      - name: vcpkg install (ARM64)
+        if: matrix.platform == 'ARM64'  
+        run: |
+            cd vcpkg
+            ./bootstrap-vcpkg.bat
+            ./vcpkg.exe install libsrt:Arm64-windows libsrtp:Arm64-windows
+            ./vcpkg.exe integrate install
+        shell: pwsh
 
       - name: Set up Dependency x86_64 Environment
         if: matrix.platform == 'x64'
@@ -82,6 +90,20 @@ jobs:
 
           echo "XENGINE_INCLUDE=${{ github.workspace }}/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "XENGINE_LIB32=${{ github.workspace }}/XEngine_Windows/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: pwsh
+      - name: Set up Dependency ARM64 Environment
+        if: matrix.platform == 'ARM64'
+        run: |
+          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/libxengine/libxengine/releases/latest" -Headers @{"Accept"="application/vnd.github.v3+json"}
+          $latest_tag = $response.tag_name
+          Write-Host "Latest Tag: $latest_tag"
+    
+          $url = "https://github.com/libxengine/libxengine/releases/download/$latest_tag/XEngine_Windows_Arm64.zip"
+          Invoke-WebRequest -Uri $url -OutFile "XEngine_Windows_Arm64.zip"
+          Expand-Archive -Path ./XEngine_Windows_Arm64.zip -DestinationPath ./XEngine_Windows -Force
+
+          echo "XENGINE_INCLUDE=${{ github.workspace }}/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "XENGINE_LIBARM64=${{ github.workspace }}/XEngine_Windows/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
 
       - name: Setup MSBuild
@@ -109,6 +131,15 @@ jobs:
           cd XEngine_Release
           .\VSCopy_x64.bat
         shell: pwsh
+      - name: Conditional Step for ARM64 Release
+        if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
+        run: |
+          cp -r XEngine_Source/ARM64/Release/*.dll XEngine_Release/
+          cp -r XEngine_Source/ARM64/Release/*.exe XEngine_Release/
+          cp -r XEngine_Source/VSCopy_Arm64.bat XEngine_Release/
+          cd XEngine_Release
+          .\VSCopy_Arm64.bat
+        shell: pwsh
 
       - name: Upload folder as artifact with x86
         if: matrix.configuration == 'Release' && matrix.platform == 'x86'
@@ -123,5 +154,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: XEngine_StreamMediaApp-x86_64-Windows
+          path: XEngine_Release/
+          retention-days: 1
+      - name: Upload folder as artifact with ARM64
+        if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: XEngine_StreamMediaApp-Arm64-Windows
           path: XEngine_Release/
           retention-days: 1

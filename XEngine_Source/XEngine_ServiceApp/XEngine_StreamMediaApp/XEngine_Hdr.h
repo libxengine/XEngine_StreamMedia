@@ -145,41 +145,11 @@ extern XENGINE_SERVICECONFIG st_ServiceConfig;
 extern FILE* pSt_VFile;
 extern FILE* pSt_AFile;
 
+
 //连接库
 #ifdef _MSC_BUILD
-#ifdef _WIN64
-#ifdef _DEBUG
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleConfigure.lib")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol.lib")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
-#pragma comment(lib,"../../x64/Debug/XEngine_ModuleQueue")
-#pragma comment(lib,"../../x64/Debug/XEngine_InfoReport")
-#else
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure.lib")
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol.lib")
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
-#pragma comment(lib,"../../x64/Release/XEngine_ModuleQueue")
-#pragma comment(lib,"../../x64/Release/XEngine_InfoReport")
-#endif
-#else
-#ifdef _DEBUG
-#pragma comment(lib,"../../Debug/XEngine_ModuleConfigure.lib")
-#pragma comment(lib,"../../Debug/XEngine_ModuleProtocol.lib")
-#pragma comment(lib,"../../Debug/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
-#pragma comment(lib,"../../Debug/XEngine_ModuleQueue")
-#pragma comment(lib,"../../Debug/XEngine_InfoReport")
-#else
-#pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
-#pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
-#pragma comment(lib,"../../Release/XEngine_ModuleSession.lib")
-#pragma comment(lib,"../../Release/XEngine_ModuleHelp")
-#pragma comment(lib,"../../Release/XEngine_ModuleQueue")
-#pragma comment(lib,"../../Release/XEngine_InfoReport")
-#endif
-#endif
+#pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"Dbghelp.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
@@ -201,6 +171,50 @@ extern FILE* pSt_AFile;
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AVHelp.lib")
 #pragma comment(lib,"XEngine_AVCodec/XEngine_AudioCodec.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
-#pragma comment(lib,"Ws2_32.lib")
-#pragma comment(lib,"Dbghelp.lib")
+#ifdef _DEBUG
+#ifdef _M_X64
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
+#pragma comment(lib,"../../x64/Debug/XEngine_ModuleQueue")
+#pragma comment(lib,"../../x64/Debug/XEngine_InfoReport")
+#elif _M_ARM64
+#pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleHelp")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleQueue")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_InfoReport")
+#elif _M_IX86
+#pragma comment(lib,"../../Debug/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../Debug/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../Debug/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
+#pragma comment(lib,"../../Debug/XEngine_ModuleQueue")
+#pragma comment(lib,"../../Debug/XEngine_InfoReport")
+#endif
+#else
+#ifdef _M_X64
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
+#pragma comment(lib,"../../x64/Release/XEngine_ModuleQueue")
+#pragma comment(lib,"../../x64/Release/XEngine_InfoReport")
+#elif _M_ARM64
+#pragma comment(lib,"../../ARM64/Release/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../ARM64/Release/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../ARM64/Release/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../ARM64/Release/XEngine_ModuleHelp")
+#pragma comment(lib,"../../ARM64/Release/XEngine_ModuleQueue")
+#pragma comment(lib,"../../ARM64/Release/XEngine_InfoReport")
+#elif _M_IX86
+#pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
+#pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
+#pragma comment(lib,"../../Release/XEngine_ModuleSession.lib")
+#pragma comment(lib,"../../Release/XEngine_ModuleHelp")
+#pragma comment(lib,"../../Release/XEngine_ModuleQueue")
+#pragma comment(lib,"../../Release/XEngine_InfoReport")
+#endif
 #endif
