@@ -37,18 +37,19 @@ jobs:
         with:
           repository: libxengine/XEngine_OPenSource
           path: XEngine_Source/XEngine_Depend
-          
+
       - name: install system package
         run: |
-            dnf update -y
+            dnf update
             dnf install gcc g++ make git jq unzip -y
-            dnf install libsrtp-devel libsrt-devel -y
       # 设置依赖库的环境变量
       - name: Set up Dependency rocky linux Environment
         run: |
             cd libxengine
             chmod 777 *
             ./XEngine_LINEnv.sh -i 0
+            dnf install libsrtp-devel srt-devel -y
+            
       - name: install xengine library
         run: |           
             latest_tag=$(curl -s https://api.github.com/repos/libxengine/libxengine/releases/latest | jq -r .tag_name)
