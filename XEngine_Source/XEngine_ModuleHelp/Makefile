@@ -19,7 +19,12 @@ ifeq ($(MACRO_SRT_SUPPORT),1)
 	ifeq ($(PLATFORM),mac)
 		LIB += -lsrt
 	else
-		LIB += -lsrt-gnutls
+		ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
+			LIB += -lsrt
+		else
+			LIB += -lsrt-gnutls
+		endif
+		
 	endif
 endif
 ifeq ($(MACRO_RTC_SUPPORT),1)
