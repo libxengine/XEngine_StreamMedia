@@ -349,41 +349,74 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
-			//RTMP拉流端
-			XENGINE_RTMPUSERCONTROL st_RTMPControl;
-			memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPUSERCONTROL));
-
-			st_RTMPControl.nControlID = XENGINE_STREAMMEDIA_RTMP_CONTROL_STREAMBEGIN;
-			st_RTMPControl.nValue32 = 1;
-			//流开始
-			RTMPProtocol_Help_PKTUserControl(ptszSDBuffer, &nSDLen, &st_RTMPControl);
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
-			//状态,有没有这个流
-			st_RTMPCommand.nProCount = 3;
-			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
-
-			strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
-
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->tszKeyBuffer, "level");
-			st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
-			st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.nMLen = 6;
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.tszMsgBuffer, "status");
-
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->tszKeyBuffer, "code");
-			st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
-			st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.nMLen = 23;
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.tszMsgBuffer, "NetStream.Publish.Start");
-
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->tszKeyBuffer, "description");
-			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
-			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = 10;
-			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, "Start live");
-			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 			//发送RTMP包头
-			if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+				//RTMP拉流端
+				XENGINE_RTMPUSERCONTROL st_RTMPControl;
+				memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPUSERCONTROL));
+
+				st_RTMPControl.nControlID = XENGINE_STREAMMEDIA_RTMP_CONTROL_STREAMBEGIN;
+				st_RTMPControl.nValue32 = 1;
+				//流开始
+				RTMPProtocol_Help_PKTUserControl(ptszSDBuffer, &nSDLen, &st_RTMPControl);
+				XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+				//状态,有没有这个流
+				st_RTMPCommand.nProCount = 3;
+				BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+
+				strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
+
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->tszKeyBuffer, "level");
+				st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.nMLen = 6;
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.tszMsgBuffer, "status");
+
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->tszKeyBuffer, "code");
+				st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.nMLen = 23;
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.tszMsgBuffer, "NetStream.Publish.Start");
+
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->tszKeyBuffer, "description");
+				st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = 10;
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, "Start live");
+
+				RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
+				XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+			}
+			else
+			{
+				st_RTMPCommand.nProCount = 4;
+				BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+
+				strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
+
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->tszKeyBuffer, "level");
+				st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.nMLen = 5;
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.tszMsgBuffer, "error");
+
+				LPCXSTR lpszCMDString = _X("NetStream.Play.StreamNotFound");
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->tszKeyBuffer, "code");
+				st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.nMLen = _tcsxlen(lpszCMDString);
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.tszMsgBuffer, lpszCMDString);
+
+				LPCXSTR lpszCMDDescription = _X("The stream does not exist");
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->tszKeyBuffer, "description");
+				st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = _tcsxlen(lpszCMDDescription);
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, lpszCMDDescription);
+
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[3]->tszKeyBuffer, "details");
+				st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+				st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.nMLen = _tcsxlen(tszSMSAddr);
+				_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.tszMsgBuffer, tszSMSAddr);
+
+				RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 3, &st_RTMPCommand);
+				XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,流没有找到,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
 				return false;
 			}
 			//配置头
