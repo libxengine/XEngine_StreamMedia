@@ -68,13 +68,13 @@ jobs:
             cd ..
 
             cd XEngine_Release
-            ./XEngine_ProxyServiceApp -t
+            ./XEngine_StreamMediaApp -t
             chown -R $(id -u):$(id -g) .
             chmod -R a+r .  '
 
       - name: Upload folder as artifact with RockyLinux
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_ProxyServiceApp-RockyLinux_9_Arm64
+          name: XEngine_StreamMediaApp-RockyLinux_9_Arm64
           path: XEngine_Release/
           retention-days: 1
