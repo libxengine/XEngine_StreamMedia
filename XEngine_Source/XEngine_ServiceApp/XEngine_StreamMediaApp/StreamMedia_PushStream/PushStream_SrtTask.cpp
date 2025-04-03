@@ -101,8 +101,8 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 
 	if (0x1b == byAVType)
 	{
@@ -141,9 +141,7 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 
-	free(ptszRVBuffer);
-	free(ptszSDBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
 	return true;
 }

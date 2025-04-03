@@ -77,8 +77,8 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 	int nSDLen = 0;
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszDeviceNumber[128];
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 	memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
@@ -136,10 +136,8 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 			}
 		}
 	}
-	free(ptszSDBuffer);
-	free(ptszRVBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("JT1078:%s,开始推送数据,设备ID：%s,通道:%d,大小:%d"), lpszClientAddr, tszDeviceNumber, pSt_RTPHdr->byChannel, nMsgLen);
 	return true;
 }

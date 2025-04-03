@@ -108,6 +108,7 @@ using namespace std;
 extern bool bIsRun;
 extern bool bIsTest;
 extern XHANDLE xhLog;
+extern XHANDLE xhMemoryPool;
 //HTTP服务器
 extern XHANDLE xhHttpSocket;
 extern XHANDLE xhHttpHeart;
@@ -144,8 +145,6 @@ extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
 extern FILE* pSt_VFile;
 extern FILE* pSt_AFile;
-
-
 //连接库
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")

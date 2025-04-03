@@ -37,6 +37,7 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 				//得到一个指定客户端的完整数据包
 				if (RTMPProtocol_Parse_Recv(ppSst_ListAddr[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_RTMPHdr))
 				{
+					printf("%s = %d,%d\n", ppSst_ListAddr[i]->tszClientAddr, ppSst_ListAddr[i]->nPktCount, j);
 					//在另外一个函数里面处理数据
 					PushStream_RTMPTask_Handle(&st_RTMPHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
@@ -48,15 +49,15 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 	}
 	return 0;
 }
+
 bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
 	int nPMLen = 0;
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszMSGBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 	if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_CONNREQ == pSt_RTMPHdr->byTypeID)
 	{
 		XBYTE byVersion = 0;
@@ -488,11 +489,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 	
-	free(ptszRVBuffer);
-	free(ptszSDBuffer);
-	free(ptszMSGBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
-	ptszMSGBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszMSGBuffer);
 	return true;
 }

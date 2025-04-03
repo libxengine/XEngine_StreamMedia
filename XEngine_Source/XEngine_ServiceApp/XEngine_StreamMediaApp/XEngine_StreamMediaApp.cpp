@@ -13,6 +13,7 @@
 bool bIsRun = false;
 bool bIsTest = false;
 XHANDLE xhLog = NULL;
+XHANDLE xhMemoryPool = NULL;
 //HTTP服务器
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
@@ -96,6 +97,7 @@ void ServiceApp_Stop(int signo)
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		
+		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{
@@ -228,6 +230,14 @@ int main(int argc, char** argv)
 	signal(SIGTERM, ServiceApp_Stop);
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化信号量成功"));
+
+	xhMemoryPool = ManagePool_Memory_Create();
+	if (NULL == xhMemoryPool)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化内存池失败,错误：%lX"), ManagePool_GetLastError());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化内存池成功"));
 	//启动HTTP服务相关代码
 	if (st_ServiceConfig.nHttpPort > 0)
 	{
@@ -695,6 +705,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 
+		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{
