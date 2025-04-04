@@ -139,14 +139,25 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	Json::Value st_PullTs = st_Pull["TS"];
 
 	pSt_ServerConfig->st_XPull.st_PullXStream.bEnable = st_PullXStream["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullXStream.bPrePull = st_PullXStream["bPrePull"].asBool();
+
 	pSt_ServerConfig->st_XPull.st_PullRtmp.bEnable = st_PullRtmp["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullRtmp.bPrePull = st_PullRtmp["bPrePull"].asBool();
+
 	pSt_ServerConfig->st_XPull.st_PullFlv.bEnable = st_PullFlv["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullFlv.bPrePull = st_PullFlv["bPrePull"].asBool();
+
 	pSt_ServerConfig->st_XPull.st_PullHls.bEnable = st_PullHls["bEnable"].asBool();
-	pSt_ServerConfig->st_XPull.st_PullWebRtc.bEnable = st_PullWebRtc["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullHls.bPrePull = st_PullHls["bPrePull"].asBool();
+
 	pSt_ServerConfig->st_XPull.st_PullSrt.bEnable = st_PullSrt["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullSrt.bPrePull = st_PullSrt["bPrePull"].asBool();
+
 	pSt_ServerConfig->st_XPull.st_PullTs.bEnable = st_Pull["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullTs.bPrePull = st_Pull["bPrePull"].asBool();
 
 	pSt_ServerConfig->st_XPull.st_PullRtsp.bEnable = st_PullRtsp["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullRtsp.bPrePull = st_PullRtsp["bPrePull"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nVRTPPort = st_PullRtsp["nVRTPPort"].asInt();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nVRTCPPort = st_PullRtsp["nVRTCPPort"].asInt();
 	pSt_ServerConfig->st_XPull.st_PullRtsp.nARTPPort = st_PullRtsp["nARTPPort"].asInt();
@@ -156,6 +167,8 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XPull.st_PullHls.nTime = st_PullHls["nTime"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullHls.tszHLSPath, st_PullHls["tszHLSPath"].asCString());
 
+	pSt_ServerConfig->st_XPull.st_PullWebRtc.bEnable = st_PullWebRtc["bEnable"].asBool();
+	pSt_ServerConfig->st_XPull.st_PullWebRtc.bPrePull = st_PullWebRtc["bPrePull"].asBool();
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszICEUser, st_PullWebRtc["tszICEUser"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszICEPass, st_PullWebRtc["tszICEPass"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XPull.st_PullWebRtc.tszCertStr, st_PullWebRtc["tszCertStr"].asCString());

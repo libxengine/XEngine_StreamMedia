@@ -58,33 +58,40 @@ typedef struct tag_XEngine_ServiceConfig
 		struct  
 		{
 			bool bEnable;
+			bool bPrePull;
 		}st_PullXStream;
 		struct  
 		{
 			bool bEnable;
+			bool bPrePull;
 		}st_PullRtmp;
 		struct
 		{
 			bool bEnable;
+			bool bPrePull;
 		}st_PullFlv;
 		struct
 		{
 			XCHAR tszHLSPath[MAX_PATH];
 			int nTime;
 			bool bEnable;
+			bool bPrePull;
 			bool bClear;
 		}st_PullHls;
 		struct
 		{
 			bool bEnable;
+			bool bPrePull;
 		}st_PullSrt;
 		struct
 		{
 			bool bEnable;
+			bool bPrePull;
 		}st_PullTs;
 		struct  
 		{
 			bool bEnable;
+			bool bPrePull;
 			int nVRTPPort;
 			int nVRTCPPort;
 			int nARTPPort;
@@ -98,6 +105,7 @@ typedef struct tag_XEngine_ServiceConfig
 			XCHAR tszKeyStr[MAX_PATH];
 			XCHAR tszDerStr[MAX_PATH];
 			bool bEnable;
+			bool bPrePull;
 		}st_PullWebRtc;
 	}st_XPull;
 	struct

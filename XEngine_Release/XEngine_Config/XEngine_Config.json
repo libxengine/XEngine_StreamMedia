@@ -28,23 +28,28 @@
     },
     "XPull": {
         "XStream": {
-            "bEnable": true
+            "bEnable": true,
+            "bPrePull": true
         },
         "RTMP": {
-            "bEnable": true
+            "bEnable": true,
+            "bPrePull": false
         },
         "FLV": {
-            "bEnable": true
+            "bEnable": true,
+            "bPrePull": false
         },
         "RTSP": {
             "bEnable": true,
+            "bPrePull": true,
             "nVRTPPort": 56001,
             "nVRTCPPort": 56002,
             "nARTPPort": 56003,
             "nARTCPPort": 56004
         },
         "RTC": {
-            "bEnable": true,
+            "bEnable": false,
+            "bPrePull": false,
             "tszICEUser": "xengine",
             "tszICEPass": "3321308h8i6vt3769r6638l1409d50jz",
             "tszCertStr": "./XEngine_Key/server.crt",
@@ -52,13 +57,16 @@
             "tszDerStr": "./XEngine_Key/server.der"
         },
         "SRT": {
-            "bEnable": true
+            "bEnable": true,
+            "bPrePull": true
         },
         "TS": {
-            "bEnable": true
+            "bEnable": true,
+            "bPrePull": true
         },
         "HLS": {
             "bEnable": false,
+            "bPrePull": true,
             "bClear": false,
             "nTime": 15,
             "tszHLSPath": "./XEngine_File"
@@ -71,7 +79,7 @@
         "LogLeave": 17
     },
     "XReport":{
-        "bEnable":true,
+        "bEnable":false,
         "tszServiceName":"XEngine_StreamMedia",
         "tszAPIUrl":"http://app.xyry.org:5501/api?function=machine"
     }
