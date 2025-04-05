@@ -212,22 +212,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		BaseLib_Memory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
 		//如果启用了预拉流
-		if (st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull)
-		{
-			XCHAR tszSMSAddr[MAX_PATH] = {};
-			ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
-
-			int nListCount = 0;
-			STREAMMEDIA_PULLLISTINFO** ppSt_PullList;
-			ModuleSession_PullStream_GetList(&ppSt_PullList, &nListCount, tszSMSAddr);
-			for (int i = 0; i < nListCount; i++)
-			{
-				PushStream_RTMPTask_Play(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer);
-				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
-			}
-			BaseLib_Memory_Free((XPPPMEM)&ppSt_PullList, nListCount);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,预发布流通知成功,个数:%d"), lpszClientAddr, nListCount);
-		}
+		XEngine_AVPacket_AVPrePlay(lpszClientAddr, ptszSDBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d"), lpszClientAddr, st_RTMPData.nCount);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND == pSt_RTMPHdr->byTypeID)

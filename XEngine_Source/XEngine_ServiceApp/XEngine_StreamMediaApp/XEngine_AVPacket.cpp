@@ -80,6 +80,31 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 	}
 	return true;
 }
+bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enPushType)
+{
+	XCHAR tszSMSAddr[MAX_PATH] = {};
+	ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
+	//获得所有预拉流客户端
+	int nListCount = 0;
+	STREAMMEDIA_PULLLISTINFO** ppSt_PullList;
+	ModuleSession_PullStream_GetList(&ppSt_PullList, &nListCount, tszSMSAddr);
+	for (int i = 0; i < nListCount; i++)
+	{
+		//rtmp预拉流
+		if (st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enPushType)
+		{
+			//判断客户端
+			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == ppSt_PullList[i]->enStreamType)
+			{
+				PushStream_RTMPTask_Play(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+		}
+	}
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_PullList, nListCount);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,预发布流通知成功,个数:%d"), lpszClientAddr, nListCount);
+	return true;
+}
 bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
