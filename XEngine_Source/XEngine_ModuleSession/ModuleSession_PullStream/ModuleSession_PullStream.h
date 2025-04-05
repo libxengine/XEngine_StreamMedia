@@ -17,12 +17,13 @@ public:
 	~CModuleSession_PullStream();
 public:
 	bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
+	bool ModuleSession_PullStream_SetPushAddr(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr);
 	bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
 	bool ModuleSession_PullStream_GetPushAddr(LPCXSTR lpszClientAddr, XCHAR* ptszPushAddr);
 	bool ModuleSession_PullStream_GetStreamType(LPCXSTR lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE* penStreamType);
 	bool ModuleSession_PullStream_Delete(LPCXSTR lpszClientAddr);
 	bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
-	bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
+	bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount, LPCXSTR lpszSMSAddr = NULL);
 public:
 	bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize);
 	bool ModuleSession_PullStream_FLVTagGet(LPCXSTR lpszClientAddr, int* pInt_TagSize);

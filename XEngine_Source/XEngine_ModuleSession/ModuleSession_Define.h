@@ -41,6 +41,7 @@ typedef struct
 		XCHAR tszAudioCName[MAX_PATH];
 		XCHAR tszAudioLabel[MAX_PATH];
 	}st_WEBRtc;
+	XCHAR tszClientAddr[MAX_PATH];
 	XCHAR tszSMSAddr[MAX_PATH];
 	XCHAR tszPushAddr[MAX_PATH];
 	int nFLVTag;
@@ -83,6 +84,25 @@ extern "C" XLONG ModuleSession_GetLastError(int *pInt_SysError = NULL);
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszSMSAddr, LPCXSTR lpszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType);
+/********************************************************************
+函数名称：ModuleSession_PullStream_SetPushAddr
+函数功能：设置客户端的推流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszPushAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入推流地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PullStream_SetPushAddr(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr);
 /********************************************************************
 函数名称：ModuleSession_PullStream_GetSMSAddr
 函数功能：获取客户端绑定的流ID
@@ -181,12 +201,17 @@ extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr);
   类型：整数型指针
   可空：N
   意思：输出列表个数
+ 参数.三：lpszSMSAddr
+  In/Out：Out
+  类型：常量字符指针
+  可空：Y
+  意思：可以查找指定流媒体ID的拉流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount);
+extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount, LPCXSTR lpszSMSAddr = NULL);
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
 函数名称：ModuleSession_PullStream_FLVTagSet

@@ -4,6 +4,7 @@ EXPORTS
 	ModuleSession_GetLastError
 
 	ModuleSession_PullStream_Insert
+	ModuleSession_PullStream_SetPushAddr
 	ModuleSession_PullStream_GetSMSAddr
 	ModuleSession_PullStream_GetPushAddr
 	ModuleSession_PullStream_GetStreamType
