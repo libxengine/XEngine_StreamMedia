@@ -35,17 +35,27 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, XSOCKET hSocket)
 	{
 		XCHAR tszPushAddr[128];
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
-		if (!st_ServiceConfig.st_XPull.st_PullSrt.bPrePull)
+
+		bool bSMSFound = false;
+		//得到推流地址
+		if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
-			//得到推流地址
-			if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			bSMSFound = true;
+		}
+		else
+		{
+			if (!st_ServiceConfig.st_XPull.st_PullSrt.bPrePull)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
 				return false;
 			}
+			bSMSFound = false;
 		}
 		ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
-		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+		if (bSMSFound)
+		{
+			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,拉取流成功,拉流地址：%s,类型:拉流端"), lpszClientAddr, tszSMSAddr);
 	}
 	return true;

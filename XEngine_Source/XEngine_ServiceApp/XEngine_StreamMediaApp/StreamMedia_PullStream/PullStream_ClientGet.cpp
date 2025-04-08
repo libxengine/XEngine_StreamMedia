@@ -192,10 +192,15 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 		}
 		else if (0 == _tcsxnicmp(tszVluBuffer, "ts", 2))
 		{
-			if (!st_ServiceConfig.st_XPull.st_PullTs.bPrePull)
+			bool bSMSFound = false;
+
+			if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 			{
-				//TS流,需要预拉流
-				if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+				bSMSFound = true;
+			}
+			else
+			{
+				if (!st_ServiceConfig.st_XPull.st_PullTs.bPrePull)
 				{
 					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
 					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -203,6 +208,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 					return false;
 				}
+				bSMSFound = false;
 			}
 			
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS;
@@ -217,7 +223,10 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			if (bSMSFound)
+			{
+				ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			}
 		}
 		else
 		{

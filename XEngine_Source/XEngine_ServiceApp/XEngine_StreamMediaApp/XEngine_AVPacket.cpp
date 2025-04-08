@@ -109,6 +109,16 @@ bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, XCH
 				PullStream_ClientGet_XStreamPlay(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
 				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
 			}
+			if (st_ServiceConfig.st_XPull.st_PullTs.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == ppSt_PullList[i]->enStreamType)
+			{
+				ModuleSession_PushStream_ClientInsert(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullSrt.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == ppSt_PullList[i]->enStreamType)
+			{
+				ModuleSession_PushStream_ClientInsert(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
 		}
 	}
 	BaseLib_Memory_Free((XPPPMEM)&ppSt_PullList, nListCount);
