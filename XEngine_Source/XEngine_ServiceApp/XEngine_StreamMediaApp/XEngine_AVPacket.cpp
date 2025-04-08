@@ -80,7 +80,7 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 	}
 	return true;
 }
-bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enPushType)
+bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enPushType)
 {
 	XCHAR tszSMSAddr[MAX_PATH] = {};
 	ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
@@ -91,12 +91,17 @@ bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, ENU
 	for (int i = 0; i < nListCount; i++)
 	{
 		//rtmp预拉流
-		if (st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enPushType)
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enPushType)
 		{
 			//判断客户端
-			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == ppSt_PullList[i]->enStreamType)
+			if (st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == ppSt_PullList[i]->enStreamType)
 			{
-				PushStream_RTMPTask_Play(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer);
+				PushStream_RTMPTask_Play(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullFlv.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == ppSt_PullList[i]->enStreamType)
+			{
+				PullStream_ClientGet_FLVPlay(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
 				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
 			}
 		}

@@ -48,7 +48,7 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 	}
 	return 0;
 }
-bool PushStream_RTMPTask_Play(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer)
+bool PushStream_RTMPTask_Play(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer)
 {
 	int nHLen = 0;
 	int nPLen = 0;
@@ -212,7 +212,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		BaseLib_Memory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
 		//如果启用了预拉流
-		XEngine_AVPacket_AVPrePlay(lpszClientAddr, ptszSDBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+		XEngine_AVPacket_AVPrePlay(lpszClientAddr, ptszSDBuffer, ptszRVBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d"), lpszClientAddr, st_RTMPData.nCount);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND == pSt_RTMPHdr->byTypeID)
@@ -455,7 +455,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			//配置头
 			if (bSMSFound)
 			{
-				PushStream_RTMPTask_Play(lpszClientAddr, tszPushAddr, ptszSDBuffer);
+				PushStream_RTMPTask_Play(lpszClientAddr, tszPushAddr, ptszSDBuffer, ptszRVBuffer);
 			}
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
 			return true;
