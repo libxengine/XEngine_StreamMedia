@@ -11,5 +11,6 @@
 //    History:
 *********************************************************************/
 bool PullStream_ClientGet_FLVPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer);
+bool PullStream_ClientGet_XStreamPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer);
 //任务处理相关函数,处理包的内容
 bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount);

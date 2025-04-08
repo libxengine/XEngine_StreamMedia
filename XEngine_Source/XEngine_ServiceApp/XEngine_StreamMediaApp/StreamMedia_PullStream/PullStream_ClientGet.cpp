@@ -59,6 +59,23 @@ bool PullStream_ClientGet_FLVPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, 
 	ModuleSession_PushStream_ClientInsert(lpszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
 	return true;
 }
+bool PullStream_ClientGet_XStreamPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer)
+{
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+	//拷贝头
+	ModuleSession_PushStream_GetAVInfo(lpszPushAddr, &st_AVInfo);
+	nRVLen = sizeof(XENGINE_PROTOCOL_AVINFO);
+	nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+	memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+	nSDLen += nRVLen;
+	memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+	nSDLen += 2;
+	XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	ModuleSession_PushStream_ClientInsert(lpszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM);
+	return true;
+}
 bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount)
 {
 	int nRVLen = 0;
@@ -155,14 +172,8 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				bSMSFound = false;
 			}
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM;
-			XENGINE_PROTOCOL_AVINFO st_AVInfo;
-
-			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+			
 			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-
-			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
-
-			nRVLen = sizeof(XENGINE_PROTOCOL_AVINFO);
 			//返回数据,为HTTP CHUNKED
 			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
 				"Connection: Close\r\n"
@@ -170,17 +181,14 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Server: XEngine/%s\r\n"
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
-				"Transfer-Encoding: chunked\r\n\r\n"
-				"%x\r\n"), BaseLib_Version_XTypeStr(), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, &st_AVInfo, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
-
+				"Transfer-Encoding: chunked\r\n\r\n"), BaseLib_Version_XTypeStr());
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-
+		
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			if (bSMSFound)
+			{
+				PullStream_ClientGet_XStreamPlay(lpszClientAddr, tszPushAddr, tszSDBuffer, tszRVBuffer);
+			}
 		}
 		else if (0 == _tcsxnicmp(tszVluBuffer, "ts", 2))
 		{
@@ -219,7 +227,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的数据类型不支持:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 			return false;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据成功:%s"), lpszClientAddr, tszVluBuffer);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据类型:%s,地址:%s 成功"), lpszClientAddr, tszVluBuffer, tszSMSAddr);
 	}
 	else if (0 == _tcsxnicmp(lpszStreamStop, tszVluBuffer, _tcsxlen(lpszStreamStop)))
 	{
