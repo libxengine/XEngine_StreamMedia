@@ -51,6 +51,7 @@ typedef struct tag_XEngine_ServiceConfig
 		int nMaxSize;                         //最大日志大小
 		int nMaxCount;                        //最大日志个数
 		int nLogLeave;                        //日志等级
+		int nLogType;                         //输出类型
 	}st_XLog;
 	//拉流服务配置,启动越多,服务器性能越差
 	struct  
