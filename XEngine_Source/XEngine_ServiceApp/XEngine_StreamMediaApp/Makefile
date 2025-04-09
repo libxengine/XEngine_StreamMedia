@@ -29,10 +29,10 @@ DEBUG =
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
-		DEBUG = -g 
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
-		DEBUG = -g -pg 
+		DEBUG = -g -pg -D _DEBUG
 	endif
 endif
 

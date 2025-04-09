@@ -33,11 +33,11 @@
         },
         "RTMP": {
             "bEnable": true,
-            "bPrePull": false
+            "bPrePull": true
         },
         "FLV": {
             "bEnable": true,
-            "bPrePull": false
+            "bPrePull": true
         },
         "RTSP": {
             "bEnable": true,
@@ -76,10 +76,11 @@
         "LogFile": "./XEngine_XLog/XEngine_StreamMediaApp.Log",
         "MaxSize": 1024000,
         "MaxCount": 10,
-        "LogLeave": 17
+        "LogLeave": 17,
+        "LogType": 32
     },
     "XReport":{
-        "bEnable":false,
+        "bEnable":true,
         "tszServiceName":"XEngine_StreamMedia",
         "tszAPIUrl":"http://app.xyry.org:5501/api?function=machine"
     }

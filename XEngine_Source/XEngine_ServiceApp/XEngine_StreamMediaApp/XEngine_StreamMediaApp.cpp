@@ -467,7 +467,6 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
-
 	if (!ModuleHelp_SrtCore_Init())
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
@@ -534,7 +533,7 @@ int main(int argc, char** argv)
 #else
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRTP协议编译选项被禁用,无法使用SRTP协议"));
 #endif
-	
+
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);
@@ -621,6 +620,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
+#ifdef _DEBUG
 	//发送信息报告
 	if (st_ServiceConfig.st_XReport.bEnable && !bIsTest)
 	{
@@ -638,7 +638,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
 	}
-
+#endif
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_Version_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
