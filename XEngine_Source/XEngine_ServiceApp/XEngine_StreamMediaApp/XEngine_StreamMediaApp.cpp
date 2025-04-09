@@ -13,6 +13,7 @@
 bool bIsRun = false;
 bool bIsTest = false;
 XHANDLE xhLog = NULL;
+XHANDLE xhMemoryPool = NULL;
 //HTTP服务器
 XHANDLE xhHttpSocket = NULL;
 XHANDLE xhHttpHeart = NULL;
@@ -96,6 +97,7 @@ void ServiceApp_Stop(int signo)
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 		
+		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{
@@ -221,13 +223,21 @@ int main(int argc, char** argv)
 		goto XENGINE_SERVICEAPP_EXIT;
 	}
 	//设置日志打印级别
-	HelpComponents_XLog_SetLogPriority(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO);
+	HelpComponents_XLog_SetLogPriority(xhLog, st_ServiceConfig.st_XLog.nLogType);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化日志系统成功"));
 
 	signal(SIGINT, ServiceApp_Stop);
 	signal(SIGTERM, ServiceApp_Stop);
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化信号量成功"));
+
+	xhMemoryPool = ManagePool_Memory_Create();
+	if (NULL == xhMemoryPool)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化内存池失败,错误：%lX"), ManagePool_GetLastError());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化内存池成功"));
 	//启动HTTP服务相关代码
 	if (st_ServiceConfig.nHttpPort > 0)
 	{
@@ -457,7 +467,6 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动JT1078处理线程池成功,线程个数:%d"), st_ServiceConfig.st_XMax.nJT1078Thread);
 	}
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
-
 	if (!ModuleHelp_SrtCore_Init())
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化SRT服务失败,错误：%lX"), ModuleHelp_GetLastError());
@@ -524,7 +533,7 @@ int main(int argc, char** argv)
 #else
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,SRTP协议编译选项被禁用,无法使用SRTP协议"));
 #endif
-	
+
 	if (st_ServiceConfig.st_XPull.st_PullRtsp.bEnable)
 	{
 		xhVRTPSocket = NetCore_UDPXCore_StartEx(st_ServiceConfig.st_XPull.st_PullRtsp.nVRTPPort, 1);
@@ -611,6 +620,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
+#ifndef _DEBUG
 	//发送信息报告
 	if (st_ServiceConfig.st_XReport.bEnable && !bIsTest)
 	{
@@ -628,7 +638,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
 	}
-
+#endif
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动,服务运行中,XEngine版本:%s,服务版本:%s,发行次数;%d。。。"), BaseLib_Version_XNumberStr(), st_ServiceConfig.st_XVer.pStl_ListVer->front().c_str(), st_ServiceConfig.st_XVer.pStl_ListVer->size());
 
@@ -695,6 +705,7 @@ XENGINE_SERVICEAPP_EXIT:
 		ModuleHelp_SRTPCore_Destory();
 		HLSProtocol_M3u8Packet_Delete(xhHLSFile);
 
+		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		if (NULL != pSt_AFile)
 		{

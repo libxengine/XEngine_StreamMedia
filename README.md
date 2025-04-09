@@ -30,6 +30,7 @@ c c++ streammedia server
 11. 支持文本语言转录(planning)
 12. 支持录像(planning)
 13. 支持音视频重编解码(planning)
+14. 支持预拉流
 
 推流协议:
 

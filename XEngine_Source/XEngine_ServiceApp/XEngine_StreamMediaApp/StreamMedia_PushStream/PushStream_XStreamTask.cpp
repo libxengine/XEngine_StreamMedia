@@ -53,8 +53,8 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 	
 	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT == pSt_ProtocolHdr->unOperatorType)
 	{
@@ -130,9 +130,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 		XEngine_Network_Send(lpszClientAddr, (LPCXSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_XSTREAM);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("XStream推流端:%s,主协议错误,协议：%x 不支持"), lpszClientAddr, pSt_ProtocolHdr->unOperatorType);
 	}
-	free(ptszRVBuffer);
-	free(ptszSDBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
 	return true;
 }

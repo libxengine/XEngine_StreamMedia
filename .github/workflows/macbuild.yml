@@ -80,8 +80,7 @@ jobs:
             make PLATFORM=mac FLAGS=InstallAll
             make PLATFORM=mac FLAGS=CleanAll
 
-      - name: test  (srt bug on macos-arm64,not run)
-        if: matrix.os == 'macos-13'
+      - name: test  (srt bug on macos,not run)
         run: |
             cd XEngine_Release
             ./XEngine_StreamMediaApp -t
@@ -90,13 +89,13 @@ jobs:
         if: matrix.os == 'macos-13'
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-x86_64-Mac
+          name: XEngine_StreamMediaApp-Mac_x86_64
           path: XEngine_Release/
-          retention-days: 3
+          retention-days: 1
       - name: Upload folder as artifact with mac arm
         if: matrix.os == 'macos-14'
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-Arm64-Mac
+          name: XEngine_StreamMediaApp-Mac_Arm64
           path: XEngine_Release/
-          retention-days: 3
+          retention-days: 1

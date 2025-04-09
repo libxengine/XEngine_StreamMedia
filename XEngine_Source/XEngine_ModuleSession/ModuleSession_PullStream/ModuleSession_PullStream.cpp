@@ -62,13 +62,62 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClie
     memset(pSt_PullStream, '\0', sizeof(STREAMMEDIA_PULLLISTINFO));
 
 	pSt_PullStream->enStreamType = enStreamType;
-    _tcsxcpy(pSt_PullStream->tszSMSAddr, lpszSMSAddr);
-	_tcsxcpy(pSt_PullStream->tszPushAddr, lpszPushAddr);
-
+	if (NULL != lpszSMSAddr)
+	{
+		_tcsxcpy(pSt_PullStream->tszSMSAddr, lpszSMSAddr);
+	}
+	if (NULL != lpszPushAddr)
+	{
+		_tcsxcpy(pSt_PullStream->tszPushAddr, lpszPushAddr);
+	}
+	_tcsxcpy(pSt_PullStream->tszClientAddr, lpszClientAddr);
+	
     st_Locker.lock();
     stl_MapClient.insert(make_pair(lpszClientAddr, pSt_PullStream));
     st_Locker.unlock();
     return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PullStream_SetPushAddr
+函数功能：设置客户端的推流地址
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszPushAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入推流地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PullStream::ModuleSession_PullStream_SetPushAddr(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	//查找最小
+	auto stl_MapIterator = stl_MapClient.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapClient.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(stl_MapIterator->second->tszPushAddr, lpszPushAddr);
+	st_Locker.unlock_shared();
+	return true;
 }
 /********************************************************************
 函数名称：ModuleSession_PullStream_Delete
@@ -279,26 +328,45 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_GetStreamType(LPCXSTR l
   类型：整数型指针
   可空：N
   意思：输出列表个数
+ 参数.三：lpszSMSAddr
+  In/Out：Out
+  类型：常量字符指针
+  可空：Y
+  意思：可以查找指定流媒体ID的拉流地址
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PullStream::ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount)
+bool CModuleSession_PullStream::ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount, LPCXSTR lpszSMSAddr)
 {
 	Session_IsErrorOccur = false;
 
+	list<STREAMMEDIA_PULLLISTINFO> stl_ListPullInfo;
+
 	st_Locker.lock_shared();
-
-	*pInt_ListCount = stl_MapClient.size();
-	BaseLib_Memory_Malloc((XPPPMEM)pppSt_PullList, stl_MapClient.size(), sizeof(STREAMMEDIA_PULLLISTINFO));
-
 	auto stl_MapIterator = stl_MapClient.begin();
 	for (int i = 0; stl_MapIterator != stl_MapClient.end(); stl_MapIterator++, i++)
 	{
-		(*pppSt_PullList)[i] = stl_MapIterator->second;
+		if (NULL != lpszSMSAddr)
+		{
+			if ((0 != _tcsxnicmp(lpszSMSAddr, stl_MapIterator->second->tszSMSAddr, _tcsxlen(lpszSMSAddr))) && (_tcsxlen(stl_MapIterator->second->tszPushAddr) == 0))
+			{
+				continue;
+			}
+		}
+		stl_ListPullInfo.push_back(*stl_MapIterator->second);
 	}
 	st_Locker.unlock_shared();
+
+	*pInt_ListCount = stl_ListPullInfo.size();
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_PullList, stl_ListPullInfo.size(), sizeof(STREAMMEDIA_PULLLISTINFO));
+	auto stl_ListIterator = stl_ListPullInfo.begin();
+	for (size_t i = 0; i < stl_ListPullInfo.size(); i++)
+	{
+		*(*pppSt_PullList)[i] = *stl_ListIterator;
+	}
+	stl_ListPullInfo.clear();
 	return true;
 }
 /********************************************************************

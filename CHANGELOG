@@ -1,3 +1,23 @@
+XEngine_StreamMedia V2.11.0.1001
+
+增加:预拉流的协议支持
+增加:更多系统发布版本支持
+更新:xengine 最新版本匹配
+更新:三方库
+修改:推流的数据使用了内存池技术
+修改:当debug模式的时候不报告信息
+修复:日志输出错误增加日志类型支持
+修复:当拉流请求的时候现在可以正常响应成功失败了
+
+added:pre pull stream support for xstream ts srt rtmp flv
+added:more release system supported
+update:xengine newer version supported
+update:depend library
+modify:use memory pool for memory of push stream
+modify:does not report info when debug start
+fixed:log print error and log type support
+fixed:reply error when strema not found for rtmp and flv and xstream with play
+=======================================================
 XEngine_StreamMedia V2.10.0.1001
 
 增加:windows coredump支持

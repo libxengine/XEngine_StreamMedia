@@ -10,6 +10,72 @@
 //    Purpose:     拉流任务处理函数
 //    History:
 *********************************************************************/
+bool PullStream_ClientGet_FLVPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer)
+{
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+	//拷贝头
+	FLVProtocol_Packet_FrameHdr(lpszPushAddr, ptszRVBuffer, &nRVLen);
+	nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+	memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+	nSDLen += nRVLen;
+	memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+	nSDLen += 2;
+	XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	//标签信息
+	int nTagSize = 0;
+	ModuleSession_PushStream_GetAVInfo(lpszPushAddr, &st_AVInfo);
+	FLVProtocol_Packet_FrameScript(lpszPushAddr, ptszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
+	nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+	memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+	nSDLen += nRVLen;
+	memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+	nSDLen += 2;
+	XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	//发送音视频信息
+	if (st_AVInfo.st_VideoInfo.bEnable)
+	{
+		FLVProtocol_Packet_FrameAVCConfigure(lpszPushAddr, ptszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
+		nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+		memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+		nSDLen += nRVLen;
+		memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+		nSDLen += 2;
+		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	}
+
+	if (st_AVInfo.st_AudioInfo.bEnable)
+	{
+		FLVProtocol_Packet_FrameAACConfigure(lpszPushAddr, ptszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
+		nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+		memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+		nSDLen += nRVLen;
+		memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+		nSDLen += 2;
+		XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	}
+	ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+	ModuleSession_PushStream_ClientInsert(lpszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV);
+	return true;
+}
+bool PullStream_ClientGet_XStreamPlay(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer)
+{
+	int nRVLen = 0;
+	int nSDLen = 0;
+	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+	//拷贝头
+	ModuleSession_PushStream_GetAVInfo(lpszPushAddr, &st_AVInfo);
+	nRVLen = sizeof(XENGINE_PROTOCOL_AVINFO);
+	nSDLen = _xstprintf(ptszSDBuffer, _X("%x\r\n"), nRVLen);
+	memcpy(ptszSDBuffer + nSDLen, ptszRVBuffer, nRVLen);
+	nSDLen += nRVLen;
+	memcpy(ptszSDBuffer + nSDLen, _X("\r\n"), 2);
+	nSDLen += 2;
+	XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+	ModuleSession_PushStream_ClientInsert(lpszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM);
+	return true;
+}
 bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int nListCount)
 {
 	int nRVLen = 0;
@@ -45,25 +111,31 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
 		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszSMSAddr);
-
-		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
-		{
-			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
-			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
-			return false;
-		}
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 		BaseLib_String_GetKeyValue((*ppptszListHdr)[2], "=", tszKeyBuffer, tszVluBuffer);
 
 		ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 		if (0 == _tcsxnicmp(tszVluBuffer, "flv", 3))
 		{
-			int nTagSize = 0;
+			bool bSMSFound = false;
+			if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			{
+				bSMSFound = true;
+			}
+			else
+			{
+				if (!st_ServiceConfig.st_XPull.st_PullFlv.bPrePull)
+				{
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
+					return false;
+				}
+				bSMSFound = false;
+			}
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV;
-			//拷贝数据
-			FLVProtocol_Packet_FrameHdr(tszPushAddr, tszRVBuffer, &nRVLen);
+			
 			//返回数据,为HTTP CHUNKED
 			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
 				"Connection: Close\r\n"
@@ -71,66 +143,37 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Server: XEngine/%s\r\n"
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
-				"Transfer-Encoding: chunked\r\n\r\n"
-				"%x\r\n"), BaseLib_Version_XTypeStr(), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
+				"Transfer-Encoding: chunked\r\n\r\n"), BaseLib_Version_XTypeStr());
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			//发送脚本信息
-			XENGINE_PROTOCOL_AVINFO st_AVInfo;
-
-			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-			memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
-			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 			
-			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
-			FLVProtocol_Packet_FrameScript(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
-			nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
-			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			//发送音视频信息
-			if (st_AVInfo.st_VideoInfo.bEnable)
-			{
-				FLVProtocol_Packet_FrameAVCConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
-				nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
-				memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-				nSDLen += nRVLen;
-				memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-				nSDLen += 2;
-				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			}
-
-			if (st_AVInfo.st_AudioInfo.bEnable)
-			{
-				FLVProtocol_Packet_FrameAACConfigure(tszPushAddr, tszRVBuffer, &nRVLen, &st_AVInfo, &nTagSize);
-				nSDLen = _xstprintf(tszSDBuffer, _X("%x\r\n"), nRVLen);
-				memcpy(tszSDBuffer + nSDLen, tszRVBuffer, nRVLen);
-				nSDLen += nRVLen;
-				memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-				nSDLen += 2;
-				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-			}
-
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
-			ModuleSession_PullStream_FLVTagSet(lpszClientAddr, nTagSize);
+			if (bSMSFound)
+			{
+				PullStream_ClientGet_FLVPlay(lpszClientAddr, tszPushAddr, tszSDBuffer, tszRVBuffer);
+			}
 		}
 		else if (0 == _tcsxnicmp(tszVluBuffer, "xstream", 7))
 		{
+			bool bSMSFound = false;
+			if (st_ServiceConfig.st_XPull.st_PullXStream.bPrePull)
+			{
+				bSMSFound = true;
+			}
+			else
+			{
+				if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+				{
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
+					return false;
+				}
+				bSMSFound = false;
+			}
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM;
-			XENGINE_PROTOCOL_AVINFO st_AVInfo;
-
-			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
+			
 			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-
-			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
-
-			nRVLen = sizeof(XENGINE_PROTOCOL_AVINFO);
 			//返回数据,为HTTP CHUNKED
 			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
 				"Connection: Close\r\n"
@@ -138,20 +181,36 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 				"Server: XEngine/%s\r\n"
 				"Access-Control-Allow-Origin: *\r\n"
 				"Access-Control-Allow-Credentials: true\r\n"
-				"Transfer-Encoding: chunked\r\n\r\n"
-				"%x\r\n"), BaseLib_Version_XTypeStr(), nRVLen);
-			memcpy(tszSDBuffer + nSDLen, &st_AVInfo, nRVLen);
-			nSDLen += nRVLen;
-			memcpy(tszSDBuffer + nSDLen, _X("\r\n"), 2);
-			nSDLen += 2;
-
+				"Transfer-Encoding: chunked\r\n\r\n"), BaseLib_Version_XTypeStr());
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-
+		
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			if (bSMSFound)
+			{
+				PullStream_ClientGet_XStreamPlay(lpszClientAddr, tszPushAddr, tszSDBuffer, tszRVBuffer);
+			}
 		}
 		else if (0 == _tcsxnicmp(tszVluBuffer, "ts", 2))
 		{
+			bool bSMSFound = false;
+
+			if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			{
+				bSMSFound = true;
+			}
+			else
+			{
+				if (!st_ServiceConfig.st_XPull.st_PullTs.bPrePull)
+				{
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
+					return false;
+				}
+				bSMSFound = false;
+			}
+			
 			enStreamType = ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS;
 			//返回数据,为HTTP CHUNKED
 			nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
@@ -164,7 +223,10 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, enStreamType);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			if (bSMSFound)
+			{
+				ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, enStreamType);
+			}
 		}
 		else
 		{
@@ -174,7 +236,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的数据类型不支持:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
 			return false;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据成功:%s"), lpszClientAddr, tszVluBuffer);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("拉流端:%s,请求拉流数据类型:%s,地址:%s 成功"), lpszClientAddr, tszVluBuffer, tszSMSAddr);
 	}
 	else if (0 == _tcsxnicmp(lpszStreamStop, tszVluBuffer, _tcsxlen(lpszStreamStop)))
 	{

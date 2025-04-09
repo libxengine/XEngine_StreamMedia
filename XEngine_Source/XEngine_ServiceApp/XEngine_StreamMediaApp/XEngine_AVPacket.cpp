@@ -80,6 +80,51 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 	}
 	return true;
 }
+bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enPushType)
+{
+	XCHAR tszSMSAddr[MAX_PATH] = {};
+	ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
+	//获得所有预拉流客户端
+	int nListCount = 0;
+	STREAMMEDIA_PULLLISTINFO** ppSt_PullList;
+	ModuleSession_PullStream_GetList(&ppSt_PullList, &nListCount, tszSMSAddr);
+	for (int i = 0; i < nListCount; i++)
+	{
+		//rtmp预拉流
+		if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP == enPushType)
+		{
+			//判断客户端
+			if (st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP == ppSt_PullList[i]->enStreamType)
+			{
+				PushStream_RTMPTask_Play(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullFlv.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_FLV == ppSt_PullList[i]->enStreamType)
+			{
+				PullStream_ClientGet_FLVPlay(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullXStream.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_XSTREAM == ppSt_PullList[i]->enStreamType)
+			{
+				PullStream_ClientGet_XStreamPlay(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ptszSDBuffer, ptszRVBuffer);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullTs.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS == ppSt_PullList[i]->enStreamType)
+			{
+				ModuleSession_PushStream_ClientInsert(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_TS);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+			if (st_ServiceConfig.st_XPull.st_PullSrt.bPrePull && ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT == ppSt_PullList[i]->enStreamType)
+			{
+				ModuleSession_PushStream_ClientInsert(ppSt_PullList[i]->tszClientAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+				ModuleSession_PullStream_SetPushAddr(ppSt_PullList[i]->tszClientAddr, lpszClientAddr);
+			}
+		}
+	}
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_PullList, nListCount);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,预发布流通知成功,个数:%d"), lpszClientAddr, nListCount);
+	return true;
+}
 bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XBYTE byAVType, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enClientType)
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
@@ -279,8 +324,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频解码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
 			return false;
 		}
-		int nTmp = 0;
-		AudioCodec_Stream_SetResample(xhDecodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
 
 		st_AVInfo.st_AudioInfo.enAVCodec = ENUM_XENGINE_AVCODEC_AUDIO_TYPE_AAC;
 		if (!AudioCodec_Stream_EnInit(&xhEncodec, &st_AVInfo.st_AudioInfo))
@@ -289,7 +332,6 @@ bool XEngine_AVPacket_AVHdr(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int n
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("推流端:%s,初始化音频编码器失败,错误:%lX"), lpszClientAddr, AudioCodec_GetLastError());
 			return false;
 		}
-		AudioCodec_Stream_SetResample(xhEncodec, &nTmp, st_AVInfo.st_AudioInfo.nSampleRate, st_AVInfo.st_AudioInfo.nSampleRate, ENUM_AVCODEC_AUDIO_SAMPLEFMT_S16, ENUM_AVCODEC_AUDIO_SAMPLEFMT_FLTP, st_AVInfo.st_AudioInfo.nChannel, st_AVInfo.st_AudioInfo.nChannel);
 
 		if (!ModuleSession_PushStream_AudioCodecSet(lpszClientAddr, xhDecodec, xhEncodec))
 		{

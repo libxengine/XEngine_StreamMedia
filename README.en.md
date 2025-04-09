@@ -27,6 +27,7 @@ feature:
 11. Support text language transcription (planning)
 12. Support recording (planning)
 13. Support audio and video recoding (planning)
+14. Support pre-pull stream
 
 Publish Stream:
 

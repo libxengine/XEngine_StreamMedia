@@ -35,6 +35,10 @@ extern "C" bool ModuleSession_PullStream_Insert(LPCXSTR lpszClientAddr, LPCXSTR 
 {
 	return m_PullStream.ModuleSession_PullStream_Insert(lpszClientAddr, lpszSMSAddr, lpszPushAddr, enStreamType);
 }
+extern "C" bool ModuleSession_PullStream_SetPushAddr(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr)
+{
+	return m_PullStream.ModuleSession_PullStream_SetPushAddr(lpszClientAddr, lpszPushAddr);
+}
 extern "C" bool ModuleSession_PullStream_GetSMSAddr(LPCXSTR lpszClientAddr, XCHAR * ptszSMSAddr)
 {
 	return m_PullStream.ModuleSession_PullStream_GetSMSAddr(lpszClientAddr, ptszSMSAddr);
@@ -51,9 +55,9 @@ extern "C" bool ModuleSession_PullStream_PublishDelete(LPCXSTR lpszClientAddr)
 {
 	return m_PullStream.ModuleSession_PullStream_PublishDelete(lpszClientAddr);
 }
-extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount)
+extern "C" bool ModuleSession_PullStream_GetList(STREAMMEDIA_PULLLISTINFO*** pppSt_PullList, int* pInt_ListCount, LPCXSTR lpszSMSAddr)
 {
-	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount);
+	return m_PullStream.ModuleSession_PullStream_GetList(pppSt_PullList, pInt_ListCount, lpszSMSAddr);
 }
 //////////////////////////////////////////////////////////////////////////
 extern "C" bool ModuleSession_PullStream_FLVTagSet(LPCXSTR lpszClientAddr, int nTagSize)

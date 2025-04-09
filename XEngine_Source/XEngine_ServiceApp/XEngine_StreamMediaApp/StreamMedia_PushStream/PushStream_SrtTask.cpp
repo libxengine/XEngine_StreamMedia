@@ -35,14 +35,27 @@ bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, XSOCKET hSocket)
 	{
 		XCHAR tszPushAddr[128];
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
+
+		bool bSMSFound = false;
 		//得到推流地址
-		if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+		if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
-			return false;
+			bSMSFound = true;
+		}
+		else
+		{
+			if (!st_ServiceConfig.st_XPull.st_PullSrt.bPrePull)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("SRT客户端：%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+				return false;
+			}
+			bSMSFound = false;
 		}
 		ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
-		ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+		if (bSMSFound)
+		{
+			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_SRT);
+		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("SRT客户端：%s,拉取流成功,拉流地址：%s,类型:拉流端"), lpszClientAddr, tszSMSAddr);
 	}
 	return true;
@@ -101,8 +114,8 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 
 	if (0x1b == byAVType)
 	{
@@ -141,9 +154,7 @@ bool PushStream_SrtTask_ThreadProcess(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuf
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 
-	free(ptszRVBuffer);
-	free(ptszSDBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
 	return true;
 }

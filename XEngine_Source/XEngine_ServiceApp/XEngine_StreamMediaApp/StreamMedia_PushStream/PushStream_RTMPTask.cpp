@@ -48,15 +48,38 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 	}
 	return 0;
 }
+bool PushStream_RTMPTask_Play(LPCXSTR lpszClientAddr, LPCXSTR lpszPushAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer)
+{
+	int nHLen = 0;
+	int nPLen = 0;
+	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
+
+	ModuleSession_PushStream_GetAVInfo(lpszPushAddr, &st_AVInfo);
+	RTMPProtocol_Packet_FrameAVScript(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+	nHLen += nPLen;
+	if (st_AVInfo.st_VideoInfo.bEnable)
+	{
+		RTMPProtocol_Packet_FrameAVCConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+		nHLen += nPLen;
+	}
+	if (st_AVInfo.st_AudioInfo.bEnable)
+	{
+		RTMPProtocol_Packet_FrameAACConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
+		nHLen += nPLen;
+	}
+	//返回数据,
+	XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+	ModuleSession_PushStream_ClientInsert(lpszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
+	return true;
+}
 bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
 	int nPMLen = 0;
-	XCHAR* ptszRVBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszSDBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	XCHAR* ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
-	
+	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+	XCHAR* ptszMSGBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 	if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_CONNREQ == pSt_RTMPHdr->byTypeID)
 	{
 		XBYTE byVersion = 0;
@@ -188,6 +211,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XEngine_AVPacket_AVSetTime(lpszClientAddr, st_AVInfo.st_VideoInfo.nFrameRate, st_AVInfo.st_AudioInfo.nSampleRate);
 		ModuleSession_PushStream_SetAVInfo(lpszClientAddr, &st_AVInfo);
 		BaseLib_Memory_Free((XPPPMEM)&st_RTMPData.ppSt_CMDProperty, st_RTMPData.nCount);
+		//如果启用了预拉流
+		XEngine_AVPacket_AVPrePlay(lpszClientAddr, ptszSDBuffer, ptszRVBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d"), lpszClientAddr, st_RTMPData.nCount);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND == pSt_RTMPHdr->byTypeID)
@@ -333,6 +358,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		}
 		else if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_PLAY)))
 		{
+			bool bSMSFound = false;
 			XCHAR tszSMSAddr[2048];
 			XCHAR tszLiveName[MAX_PATH];
 			XCHAR tszPushAddr[MAX_PATH];
@@ -349,6 +375,50 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			memset(st_RTMPCommand.tszCMDName, '\0', sizeof(st_RTMPCommand.tszCMDName));
 			st_RTMPCommand.nProCount = 0;
 			st_RTMPCommand.nObCount = 0;
+			//查找流
+			if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+			{
+				bSMSFound = true;
+			}
+			else
+			{
+				bSMSFound = false;
+				//不存在,看看是否支持预拉流
+				if (!st_ServiceConfig.st_XPull.st_PullRtmp.bPrePull)
+				{
+					st_RTMPCommand.nProCount = 4;
+					BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
+
+					strcpy(st_RTMPCommand.tszCMDName, XENGINE_STREAMMEDIA_RTMP_COMMAND_ONSTATUS);
+
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->tszKeyBuffer, "level");
+					st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+					st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.nMLen = 5;
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[0]->st_CMDOBJect.tszMsgBuffer, "error");
+
+					LPCXSTR lpszCMDString = _X("NetStream.Play.StreamNotFound");
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->tszKeyBuffer, "code");
+					st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+					st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.nMLen = (XSHOT)_tcsxlen(lpszCMDString);
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[1]->st_CMDOBJect.tszMsgBuffer, lpszCMDString);
+
+					LPCXSTR lpszCMDDescription = _X("The stream does not exist");
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->tszKeyBuffer, "description");
+					st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+					st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = (XSHOT)_tcsxlen(lpszCMDDescription);
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, lpszCMDDescription);
+
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[3]->tszKeyBuffer, "details");
+					st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
+					st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.nMLen = (XSHOT)_tcsxlen(tszSMSAddr);
+					_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[3]->st_CMDOBJect.tszMsgBuffer, tszSMSAddr);
+
+					RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 3, &st_RTMPCommand);
+					XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,流没有找到,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+					return false;
+				}
+			}
 			//RTMP拉流端
 			XENGINE_RTMPUSERCONTROL st_RTMPControl;
 			memset(&st_RTMPControl, '\0', sizeof(XENGINE_RTMPUSERCONTROL));
@@ -358,7 +428,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			//流开始
 			RTMPProtocol_Help_PKTUserControl(ptszSDBuffer, &nSDLen, &st_RTMPControl);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
-			//状态,有没有这个流
+			//状态
 			st_RTMPCommand.nProCount = 3;
 			BaseLib_Memory_Malloc((XPPPMEM)&st_RTMPCommand.ppSt_CMDProperty, st_RTMPCommand.nProCount, sizeof(XENGINE_RTMPCMDPROPERTY));
 
@@ -378,39 +448,17 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.byType = XENGINE_STREAMMEDIA_RTMP_PLTYPE_AFM0_STRING;
 			st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.nMLen = 10;
 			_tcsxcpy(st_RTMPCommand.ppSt_CMDProperty[2]->st_CMDOBJect.tszMsgBuffer, "Start live");
+
 			RTMPProtocol_Help_PKTCommand(ptszSDBuffer, &nSDLen, 5, &st_RTMPCommand);
 			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
-			//发送RTMP包头
-			if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的参数不正确:%s,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
-				return false;
-			}
+
 			//配置头
-			int nHLen = 0;
-			int nPLen = 0;
-			XENGINE_PROTOCOL_AVINFO st_AVInfo;
-			memset(&st_AVInfo, '\0', sizeof(XENGINE_PROTOCOL_AVINFO));
-
-			ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
-
-			RTMPProtocol_Packet_FrameAVScript(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
-			nHLen += nPLen;
-			if (st_AVInfo.st_VideoInfo.bEnable)
+			if (bSMSFound)
 			{
-				RTMPProtocol_Packet_FrameAVCConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
-				nHLen += nPLen;
+				PushStream_RTMPTask_Play(lpszClientAddr, tszPushAddr, ptszSDBuffer, ptszRVBuffer);
 			}
-			if (st_AVInfo.st_AudioInfo.bEnable)
-			{
-				RTMPProtocol_Packet_FrameAACConfigure(ptszSDBuffer + nHLen, &nPLen, &st_AVInfo);
-				nHLen += nPLen;
-			}
-			//返回数据,
-			XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nHLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
-
 			ModuleSession_PullStream_Insert(lpszClientAddr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
-			ModuleSession_PushStream_ClientInsert(tszPushAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTMP);
+			return true;
 		}
 		else
 		{
@@ -455,11 +503,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,接受推流数据,数据大小:%d"), lpszClientAddr, nMsgLen);
 	}
 	
-	free(ptszRVBuffer);
-	free(ptszSDBuffer);
-	free(ptszMSGBuffer);
-	ptszRVBuffer = NULL;
-	ptszSDBuffer = NULL;
-	ptszMSGBuffer = NULL;
+	ManagePool_Memory_Free(xhMemoryPool, ptszRVBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszSDBuffer);
+	ManagePool_Memory_Free(xhMemoryPool, ptszMSGBuffer);
 	return true;
 }
