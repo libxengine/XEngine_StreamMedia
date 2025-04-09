@@ -83,6 +83,7 @@ jobs:
       - name: test  (srt bug on macos,not run)
         run: |
             cd XEngine_Release
+            ./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact with mac x64
         if: matrix.os == 'macos-13'
