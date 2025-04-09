@@ -620,7 +620,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,HLS(M3U8)文件流被设置为禁用"));
 	}
-#ifdef _DEBUG
+#ifndef _DEBUG
 	//发送信息报告
 	if (st_ServiceConfig.st_XReport.bEnable && !bIsTest)
 	{
