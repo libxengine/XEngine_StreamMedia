@@ -1,3 +1,9 @@
+XEngine_StreamMedia V2.11.1.1001
+
+修正:rtmp推流CSID处理不正确导致推流不正确的问题
+
+fixed:rmtp stream push failed 
+=======================================================
 XEngine_StreamMedia V2.11.0.1001
 
 增加:预拉流的协议支持
