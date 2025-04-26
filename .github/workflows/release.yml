@@ -85,7 +85,7 @@ jobs:
           build=$(echo $latest_tag | cut -d '.' -f 4)
 
           new_minor=$((patch + 1))
-          new_version="$major.$minor.$new_minor.$build"
+          new_version="$major.$new_minor.$patch.$build"
           echo "New version: $new_version"
           echo "new_tag=$new_version" >> $GITHUB_OUTPUT
           echo "prev_tag=$latest_tag" >> $GITHUB_OUTPUT
