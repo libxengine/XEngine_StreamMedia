@@ -15,37 +15,37 @@ jobs:
         with:
           fetch-depth: 0 
 
-      - name: Download x86_64 ubuntu build
+      - name: Download ubuntu build
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: ubuntux86_64_build.yml
+          workflow: ubuntu_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
           if_no_artifact_found: fail
           path: ./XRelease/
-      - name: Download Arm64 ubuntu build
+      - name: Download debian build
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: UbuntuArm64_build.yml
+          workflow: debian_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
           if_no_artifact_found: fail
           path: ./XRelease/
-      - name: Download x86_64 rockylinux build
+      - name: Download fedora build
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: RockyX86_64_build.yml
+          workflow: fedora_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
           if_no_artifact_found: fail
           path: ./XRelease/
-      - name: Download Arm64 rockylinux build
+      - name: Download Rocky build
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: RockyArm64_build.yml
+          workflow: Rocky_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
