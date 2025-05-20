@@ -77,7 +77,7 @@ jobs:
             chmod 777 *
             sudo ./XEngine_LINEnv.sh -i 3
       - name: Set up Dependency ubuntu24.04 Arm64 Environment
-        if: matrix.os == 'ubuntu-22.04-arm'
+        if: matrix.os == 'ubuntu-24.04-arm'
         run: |
             latest_tag=$(curl -s https://api.github.com/repos/libxengine/libxengine/releases/latest | jq -r .tag_name)
             wget https://github.com/libxengine/libxengine/releases/download/$latest_tag/XEngine_UBuntu_24.04_Arm64.zip
