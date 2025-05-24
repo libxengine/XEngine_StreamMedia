@@ -61,21 +61,12 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_OPENFILE;
 		return false;
 	}
-	size_t nCount = 0;
-	XCHAR tszMsgBuffer[4096];
-	while (1)
-	{
-		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
-		if (nRet <= 0)
-		{
-			break;
-		}
-		nCount += nRet;
-	}
+	XCHAR tszMsgBuffer[8192] = {};
+	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 	//开始解析配置文件
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
-	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;
@@ -84,7 +75,6 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	_tcsxcpy(pSt_ServerConfig->tszSMSUrl, st_JsonRoot["tszSMSUrl"].asCString());
 	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
-
 	pSt_ServerConfig->nRTMPPort = st_JsonRoot["nRTMPPort"].asInt();
 	pSt_ServerConfig->nHttpPort = st_JsonRoot["nHttpPort"].asInt();
 	pSt_ServerConfig->nXStreamPort = st_JsonRoot["nXStreamPort"].asInt();
@@ -137,7 +127,6 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	Json::Value st_PullWebRtc = st_Pull["RTC"];
 	Json::Value st_PullSrt = st_Pull["SRT"];
 	Json::Value st_PullTs = st_Pull["TS"];
-
 	pSt_ServerConfig->st_XPull.st_PullXStream.bEnable = st_PullXStream["bEnable"].asBool();
 	pSt_ServerConfig->st_XPull.st_PullXStream.bPrePull = st_PullXStream["bPrePull"].asBool();
 
