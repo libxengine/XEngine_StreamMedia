@@ -1,9 +1,5 @@
 CC = g++ -Wall -std=c++20
-PLATFORM = linux
 PLATVER = 
-PLATDIR = 
-RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
 		 -L ../../XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Depend/XEngine_Module/XEngine_InfoReport
@@ -24,8 +20,8 @@ OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o PullStream_ClientWebRtc
           XEngine_AVPacket.o XEngine_Configure.o XEngine_HttpTask.o XEngine_Network.o XEngine_StreamMediaApp.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
-DEBUG = 
+FLAGS = -c -D _RELEASE
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
@@ -37,18 +33,16 @@ else
 endif
 
 ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
+override UNICODE := -D __UNICODE__
 else
-UNICODE = 
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		PLATDIR = XEngine_Linux/Centos
 	else
 		PLATVER = -D __UBUNTU__
-		PLATDIR = XEngine_Linux/Ubuntu
 	endif
 	CC += -Wno-format-overflow
 	LIBEX = -lpthread -lrt -ldl
@@ -56,7 +50,6 @@ ifeq ($(PLATFORM),linux)
 else ifeq ($(PLATFORM),mac)
 	CC += -Wno-deprecated-declarations
 	PLATVER = -D __MACOS__
-	PLATDIR = XEngine_Mac
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
 endif

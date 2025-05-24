@@ -1,11 +1,7 @@
 CC = g++ -Wall -std=c++20 -fPIC
-PLATFORM = linux
 PLATVER = 
-PLATDIR = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = 
 LIB = -lXEngine_BaseLib -lXEngine_Cryption -lNetHelp_APIAddr
@@ -32,31 +28,29 @@ ifeq ($(MACRO_RTC_SUPPORT),1)
 endif
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
-DEBUG = 
+FLAGS = -c -D _RELEASE
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
-		DEBUG = -g 
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
-		DEBUG = -g -pg 
+		DEBUG = -g -pg -D _DEBUG
 	endif
 endif
 
 ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
+override UNICODE := -D __UNICODE__
 else
-UNICODE = 
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		PLATDIR = XEngine_Linux/Centos
 	else
 		PLATVER = -D __UBUNTU__
-		PLATDIR = XEngine_Linux/Ubuntu
 	endif
 	FILEEXT = so
 	LIBFLAG = -shared
@@ -65,7 +59,6 @@ ifeq ($(PLATFORM),linux)
 else ifeq ($(PLATFORM),mac)
 	CC += -Wno-deprecated-declarations
 	PLATVER = -D __MACOS__
-	PLATDIR = XEngine_Mac
 	FILEEXT = dylib
 	LOADHDR += -I /opt/homebrew/opt/srt/include -I /opt/homebrew/opt/srtp/include
 	LOADSO += -L /opt/homebrew/opt/srt/lib -L /opt/homebrew/opt/srtp/lib
