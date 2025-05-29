@@ -13,8 +13,8 @@
 
 typedef struct  
 {
-	XCHAR tszLiveName[MAX_PATH];
-	XCHAR tszURLStr[MAX_PATH];
+	XCHAR tszLiveName[XPATH_MAX];
+	XCHAR tszURLStr[XPATH_MAX];
 }RTMPPROTOCOL_CLIENTINFO;
 
 class CModuleHelp_Rtmp

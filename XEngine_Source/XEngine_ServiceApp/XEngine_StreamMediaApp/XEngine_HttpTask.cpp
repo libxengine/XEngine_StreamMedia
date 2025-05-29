@@ -10,7 +10,7 @@
 //    Purpose:     HTTP任务处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
@@ -46,7 +46,7 @@ XHTHREAD CALLBACK XEngine_HTTPTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					XEngine_HTTPTask_Handle(&st_HTTPReqparam, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &pptszListHdr, nHCount);
 					//释放内存
-					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 					BaseLib_Memory_Free((XPPPMEM)&pptszListHdr, nHCount);
 				}
 			}
@@ -77,7 +77,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	XCHAR tszAPIType[MAX_PATH] = {};
+	XCHAR tszAPIType[XPATH_MAX] = {};
 	HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIType);
 	//得到URL参数个数
 	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszList, &nListCount, tszUrlName);

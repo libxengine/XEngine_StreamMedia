@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct tag_XEngine_ServiceConfig
 {
-	XCHAR tszSMSUrl[MAX_PATH];                //流媒体服务器地址
+	XCHAR tszSMSUrl[XPATH_MAX];                //流媒体服务器地址
 	XCHAR tszIPAddr[128];                     //本机IP地址,根据需要配置
 	bool bDeamon;                             //是否以守护进程启动,LINUX有效
 	bool bDebug;                              //是否使用DEBUG
@@ -47,7 +47,7 @@ typedef struct tag_XEngine_ServiceConfig
 	}st_XTime;                                //次数*时间=超时
 	struct
 	{
-		XCHAR tszLogFile[MAX_PATH];
+		XCHAR tszLogFile[XPATH_MAX];
 		int nMaxSize;                         //最大日志大小
 		int nMaxCount;                        //最大日志个数
 		int nLogLeave;                        //日志等级
@@ -73,7 +73,7 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullFlv;
 		struct
 		{
-			XCHAR tszHLSPath[MAX_PATH];
+			XCHAR tszHLSPath[XPATH_MAX];
 			int nTime;
 			bool bEnable;
 			bool bPrePull;
@@ -100,18 +100,18 @@ typedef struct tag_XEngine_ServiceConfig
 		}st_PullRtsp;
 		struct  
 		{
-			XCHAR tszICEUser[MAX_PATH];
-			XCHAR tszICEPass[MAX_PATH];
-			XCHAR tszCertStr[MAX_PATH];
-			XCHAR tszKeyStr[MAX_PATH];
-			XCHAR tszDerStr[MAX_PATH];
+			XCHAR tszICEUser[XPATH_MAX];
+			XCHAR tszICEPass[XPATH_MAX];
+			XCHAR tszCertStr[XPATH_MAX];
+			XCHAR tszKeyStr[XPATH_MAX];
+			XCHAR tszDerStr[XPATH_MAX];
 			bool bEnable;
 			bool bPrePull;
 		}st_PullWebRtc;
 	}st_XPull;
 	struct
 	{
-		XCHAR tszAPIUrl[MAX_PATH];
+		XCHAR tszAPIUrl[XPATH_MAX];
 		XCHAR tszServiceName[128];
 		bool bEnable;
 	}st_XReport;

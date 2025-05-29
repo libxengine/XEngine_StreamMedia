@@ -82,8 +82,8 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 	int nSDLen = 0;
 	XCHAR tszRVBuffer[4096];
 	XCHAR tszSDBuffer[4096];
-	XCHAR tszKeyBuffer[MAX_PATH];
-	XCHAR tszVluBuffer[MAX_PATH];
+	XCHAR tszKeyBuffer[XPATH_MAX];
+	XCHAR tszVluBuffer[XPATH_MAX];
 	LPCXSTR lpszStreamPlay = _X("play");
 	LPCXSTR lpszStreamStop = _X("stop");
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
@@ -102,8 +102,8 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 	if (0 == _tcsxnicmp(lpszStreamPlay, tszVluBuffer, _tcsxlen(lpszStreamPlay)))
 	{
 		//播放流:http://127.0.0.1:5600/api?stream=play&sms=live/qyt&type=flv
-		XCHAR tszPushAddr[MAX_PATH];
-		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszPushAddr[XPATH_MAX];
+		XCHAR tszSMSAddr[XPATH_MAX];
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
@@ -241,8 +241,8 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 	else if (0 == _tcsxnicmp(lpszStreamStop, tszVluBuffer, _tcsxlen(lpszStreamStop)))
 	{
 		//停止拉流,:http://127.0.0.1:5600/api?stream=stop
-		XCHAR tszSMSAddr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
+		XCHAR tszSMSAddr[XPATH_MAX];
+		XCHAR tszPushAddr[XPATH_MAX];
 
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));

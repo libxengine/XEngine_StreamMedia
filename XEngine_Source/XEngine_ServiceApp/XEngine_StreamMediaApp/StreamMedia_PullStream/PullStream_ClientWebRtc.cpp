@@ -52,7 +52,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			
 			if (bRet)
 			{
-				XBYTE tszKEYBuffer[MAX_PATH] = {};
+				XBYTE tszKEYBuffer[XPATH_MAX] = {};
 				Cryption_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
 
@@ -158,7 +158,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo)
 {
 	XCHAR** pptszAVList;
-	BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, 1, MAX_PATH);
+	BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, 1, XPATH_MAX);
 
 	if (bVideo)
 	{
@@ -176,8 +176,8 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	SDPProtocol_Packet_ICEUser(xhPacket, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass);
 
 	int nDLen = 0;
-	XBYTE tszDigestStr[MAX_PATH] = {};
-	XCHAR tszDigestHex[MAX_PATH] = {};
+	XBYTE tszDigestStr[XPATH_MAX] = {};
+	XCHAR tszDigestHex[XPATH_MAX] = {};
 	int nPos = _xstprintf(tszDigestHex, _X("sha-256 "));
 	Cryption_Api_Digest(st_ServiceConfig.st_XPull.st_PullWebRtc.tszDerStr, tszDigestStr, &nDLen, true, ENUM_XENGINE_CRYPTION_DIGEST_SHA256);
 	for (int i = 0; i < nDLen; i++)
@@ -265,10 +265,10 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	int nIndex1 = -1;
 	int nIndex2 = -1;
 	int nListCount = 0;
-	XCHAR tszICEUser[MAX_PATH] = {};
-	XCHAR tszICEPass[MAX_PATH] = {};
-	XCHAR tszAlgType[MAX_PATH] = {};
-	XCHAR tszHMacStr[MAX_PATH] = {};
+	XCHAR tszICEUser[XPATH_MAX] = {};
+	XCHAR tszICEPass[XPATH_MAX] = {};
+	XCHAR tszAlgType[XPATH_MAX] = {};
+	XCHAR tszHMacStr[XPATH_MAX] = {};
 	STREAMMEDIA_SDPPROTOCOL_ATTR** ppSt_ListAttr;
 	SDPProtocol_Parse_GetAttr(xhParse, &ppSt_ListAttr, &nListCount);
 
@@ -342,9 +342,9 @@ bool PullStream_ClientWebRtc_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, 
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-lite"));
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
 
-	XCHAR tszTokenStr[MAX_PATH] = {};
-	XCHAR tszHDRStr[MAX_PATH] = {};
-	XCHAR tszUserStr[MAX_PATH] = {};
+	XCHAR tszTokenStr[XPATH_MAX] = {};
+	XCHAR tszHDRStr[XPATH_MAX] = {};
+	XCHAR tszUserStr[XPATH_MAX] = {};
 
 	BaseLib_Handle_CreateStr(tszTokenStr, 10);
 	_xstprintf(tszUserStr, _X("%s:%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEUser, tszICEUser);

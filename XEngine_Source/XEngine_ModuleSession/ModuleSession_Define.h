@@ -18,7 +18,7 @@ typedef struct
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 	int nClientCount;
 }STREAMMEDIA_PUBLISHINFO;
@@ -26,24 +26,24 @@ typedef struct
 {
 	struct  
 	{
-		XCHAR tszTokenStr[MAX_PATH];
-		XCHAR tszICEUser[MAX_PATH];
-		XCHAR tszICEPass[MAX_PATH];
-		XCHAR tszHMacStr[MAX_PATH];
+		XCHAR tszTokenStr[XPATH_MAX];
+		XCHAR tszICEUser[XPATH_MAX];
+		XCHAR tszICEPass[XPATH_MAX];
+		XCHAR tszHMacStr[XPATH_MAX];
 		XCHAR tszClientAddr[128];
 		bool bConnect;
 
 		XCHAR tszVSSrcStr[128];
-		XCHAR tszVideoCName[MAX_PATH];
-		XCHAR tszVideoLabel[MAX_PATH];
+		XCHAR tszVideoCName[XPATH_MAX];
+		XCHAR tszVideoLabel[XPATH_MAX];
 		
 		XCHAR tszASSrcStr[128];
-		XCHAR tszAudioCName[MAX_PATH];
-		XCHAR tszAudioLabel[MAX_PATH];
+		XCHAR tszAudioCName[XPATH_MAX];
+		XCHAR tszAudioLabel[XPATH_MAX];
 	}st_WEBRtc;
-	XCHAR tszClientAddr[MAX_PATH];
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszPushAddr[MAX_PATH];
+	XCHAR tszClientAddr[XPATH_MAX];
+	XCHAR tszSMSAddr[XPATH_MAX];
+	XCHAR tszPushAddr[XPATH_MAX];
 	int nFLVTag;
 
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;

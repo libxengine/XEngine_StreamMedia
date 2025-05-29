@@ -26,12 +26,12 @@ bool XEngine_AVPacket_AVCreate(LPCXSTR lpszClientAddr)
 
 		if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
 		{
-			XCHAR tszSMSAddr[MAX_PATH] = {};
+			XCHAR tszSMSAddr[XPATH_MAX] = {};
 			if (ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr))
 			{
 				XNETHANDLE xhSub = 0;
-				XCHAR tszHLSFile[MAX_PATH] = {};
-				XCHAR tszTSFile[MAX_PATH] = {};
+				XCHAR tszHLSFile[XPATH_MAX] = {};
+				XCHAR tszTSFile[XPATH_MAX] = {};
 
 				_xstprintf(tszHLSFile, _X("%s/%s.m3u8"), st_ServiceConfig.st_XPull.st_PullHls.tszHLSPath, tszSMSAddr);
 #ifdef _MSC_BUILD
@@ -82,7 +82,7 @@ bool XEngine_AVPacket_AVSetTime(LPCXSTR lpszClientAddr, int nVideoParament, int 
 }
 bool XEngine_AVPacket_AVPrePlay(LPCXSTR lpszClientAddr, XCHAR* ptszSDBuffer, XCHAR* ptszRVBuffer, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enPushType)
 {
-	XCHAR tszSMSAddr[MAX_PATH] = {};
+	XCHAR tszSMSAddr[XPATH_MAX] = {};
 	ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
 	//获得所有预拉流客户端
 	int nListCount = 0;
@@ -471,8 +471,8 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 
 		int nPATLen = 0;
 		int nPMTLen = 0;
-		XBYTE tszPATBuffer[MAX_PATH] = {};
-		XBYTE tszPMTBuffer[MAX_PATH] = {};
+		XBYTE tszPATBuffer[XPATH_MAX] = {};
+		XBYTE tszPMTBuffer[XPATH_MAX] = {};
 		//如果是关键帧
 		if (1 == byFrameType)
 		{
@@ -490,10 +490,10 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				if (nCalValue >= XUINT(st_ServiceConfig.st_XPull.st_PullHls.nTime))
 				{
 					XNETHANDLE xhSubFile = 0;
-					XCHAR tszTSFile[MAX_PATH] = {};
-					XCHAR tszHLSFile[MAX_PATH] = {};
-					XCHAR tszFile[MAX_PATH] = {};
-					XCHAR tszSMSAddr[MAX_PATH] = {};
+					XCHAR tszTSFile[XPATH_MAX] = {};
+					XCHAR tszHLSFile[XPATH_MAX] = {};
+					XCHAR tszFile[XPATH_MAX] = {};
+					XCHAR tszSMSAddr[XPATH_MAX] = {};
 
 					ModuleSession_PushStream_GetAddrForAddr(lpszClientAddr, tszSMSAddr);
 					ModuleSession_PushStream_HLSTimeSet(lpszClientAddr, __int64u(nTimeEnd));
@@ -562,7 +562,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			{
 				int nPacketCount = 0;
 				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
-				XCHAR tszSSCRStr[MAX_PATH] = {};
+				XCHAR tszSSCRStr[XPATH_MAX] = {};
 				XCHAR tszADDRStr[128] = {};
 
 				if (0 == byAVType)
@@ -602,7 +602,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			{
 				int nPacketCount = 0;
 				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
-				XCHAR tszSSCRStr[MAX_PATH] = {};
+				XCHAR tszSSCRStr[XPATH_MAX] = {};
 				
 				if (0 == byAVType)
 				{

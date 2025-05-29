@@ -10,7 +10,7 @@
 //    Purpose:     X推流任务处理代码
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
@@ -41,7 +41,7 @@ XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					PushStream_XStreamTask_Handle(&st_ProtocolHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
-					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 				}
 			}
 		}
@@ -89,7 +89,7 @@ bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REQDESTROY == pSt_ProtocolHdr->unOperatorCode)
 		{
-			XCHAR tszSMSAddr[MAX_PATH];
+			XCHAR tszSMSAddr[XPATH_MAX];
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
 			XEngine_AVPacket_AVDelete(lpszClientAddr);

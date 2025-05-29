@@ -288,9 +288,9 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_GetStreamID(XSOCKET hSocket, XCHAR*
 		return false;
 	}
 	//#!::h=live/livestream,m=publish
-	XCHAR tszTmpStr[MAX_PATH];
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszSMSMode[MAX_PATH];
+	XCHAR tszTmpStr[XPATH_MAX];
+	XCHAR tszSMSAddr[XPATH_MAX];
+	XCHAR tszSMSMode[XPATH_MAX];
 
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 	memset(tszSMSMode, '\0', sizeof(tszSMSMode));
@@ -488,7 +488,7 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Leave(XSOCKET hSocket)
 //////////////////////////////////////////////////////////////////////////
 //                             线程函数
 //////////////////////////////////////////////////////////////////////////
-XHTHREAD CALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK CModuleHelp_SrtCore::ModuleHelp_SrtCore_Thread(XPVOID lParam)
 {
 #if 1 == _XENGINE_STREAMMEDIA_BUILDSWITCH_SRT
 	CModuleHelp_SrtCore* pClass_This = (CModuleHelp_SrtCore*)lParam;

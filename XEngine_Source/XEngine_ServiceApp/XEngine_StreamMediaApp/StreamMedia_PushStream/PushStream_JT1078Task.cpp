@@ -10,7 +10,7 @@
 //    Purpose:     JT1078流处理器
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
@@ -31,8 +31,8 @@ XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 				int nMsgLen = 0;
 				int nHDRLen = 0;
 				XCHAR* ptszMsgBuffer;
-				XCHAR tszHdrBuffer[MAX_PATH];
-				memset(tszHdrBuffer, '\0', MAX_PATH);
+				XCHAR tszHdrBuffer[XPATH_MAX];
+				memset(tszHdrBuffer, '\0', XPATH_MAX);
 
 				if (HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
 				{
@@ -75,7 +75,7 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	XCHAR tszDeviceNumber[128];
 	XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
 	XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);

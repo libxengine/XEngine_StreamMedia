@@ -14,7 +14,7 @@ typedef struct
 {
 	struct  
 	{
-		XCHAR tszFileName[MAX_PATH];
+		XCHAR tszFileName[XPATH_MAX];
 		XNETHANDLE xhToken;
 		__int64u nTime;
 		FILE* pSt_File;
@@ -25,7 +25,7 @@ typedef struct
 		XNETHANDLE xhAudioEncodec;
 	}st_AVCodec;
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 
 	unique_ptr<mutex> st_ClientLocker;

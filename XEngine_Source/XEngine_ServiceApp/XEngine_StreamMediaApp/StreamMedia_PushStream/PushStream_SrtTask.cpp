@@ -13,7 +13,7 @@
 bool PushStream_SrtTask_Connct(LPCXSTR lpszClientAddr, XSOCKET hSocket)
 {
 	bool bPublish = false;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 
 	if (!ModuleHelp_SrtCore_GetStreamID(hSocket, tszSMSAddr, &bPublish))
@@ -71,7 +71,7 @@ bool PushStream_SrtTask_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR 
 	return true;
 }
 
-XHTHREAD CALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK PushStream_SRTTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;

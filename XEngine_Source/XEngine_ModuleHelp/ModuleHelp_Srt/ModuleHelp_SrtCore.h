@@ -13,7 +13,7 @@
 typedef struct  
 {
 	XCHAR tszStreamBuffer[512];
-	XCHAR tszClientAddr[MAX_PATH];
+	XCHAR tszClientAddr[XPATH_MAX];
 
 	int nIDLen;
 	XSOCKET hSocket;
@@ -38,7 +38,7 @@ protected:
 	bool ModuleHelp_SrtCore_Recv(XSOCKET hSocket);
 	bool ModuleHelp_SrtCore_Leave(XSOCKET hSocket);
 protected:
-	static XHTHREAD CALLBACK ModuleHelp_SrtCore_Thread(XPVOID lParam);
+	static XHTHREAD XCALLBACK ModuleHelp_SrtCore_Thread(XPVOID lParam);
 private:
 	bool bRun = false;
 	int hSRTEPoll = 0;

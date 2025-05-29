@@ -547,8 +547,8 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 		st_Locker.unlock_shared();
 		return false;
 	}
-	XCHAR tszFilePath[MAX_PATH] = {};
-	XCHAR tszFileName[MAX_PATH] = {};
+	XCHAR tszFilePath[XPATH_MAX] = {};
+	XCHAR tszFileName[XPATH_MAX] = {};
 	//获得文件名和路径
 	BaseLib_String_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
 	SystemApi_File_CreateMutilFolder(tszFilePath);
@@ -704,7 +704,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSClose(LPCXSTR lpszCl
 	{
 		fclose(stl_MapIterator->second->st_HLSFile.pSt_File);
 	}
-	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', MAX_PATH);
+	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', XPATH_MAX);
 	st_Locker.unlock_shared();
 	return true;
 }

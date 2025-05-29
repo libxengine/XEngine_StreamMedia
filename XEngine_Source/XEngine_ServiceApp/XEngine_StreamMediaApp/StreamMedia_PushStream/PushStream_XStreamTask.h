@@ -11,6 +11,6 @@
 //    History:
 *********************************************************************/
 //任务处理池,用来获取一个完整包
-XHTHREAD CALLBACK PushStream_XStreamTask_Thread(XPVOID lParam);
+XHTHREAD XCALLBACK PushStream_XStreamTask_Thread(XPVOID lParam);
 //任务处理相关函数,处理包的内容
 bool PushStream_XStreamTask_Handle(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);

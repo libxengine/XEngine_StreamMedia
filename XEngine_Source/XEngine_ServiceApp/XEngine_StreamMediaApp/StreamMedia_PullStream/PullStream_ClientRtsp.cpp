@@ -80,9 +80,9 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	if (ENUM_RTSPPROTOCOL_METHOD_TYPE_OPTIONS == st_RTSPRequest.enMethod)
 	{
 		//OPTIONS rtsp://10.0.1.89:554/480p.264 RTSP/1.0
-		XCHAR tszKeyStr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszKeyStr[XPATH_MAX];
+		XCHAR tszPushAddr[XPATH_MAX];
+		XCHAR tszSMSAddr[XPATH_MAX];
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
 		memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
@@ -110,9 +110,9 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_DESCRIBE == st_RTSPRequest.enMethod)
 	{
 		//DESCRIBE rtsp://10.0.1.89:554/480p.264 RTSP/1.0
-		XCHAR tszKeyStr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszKeyStr[XPATH_MAX];
+		XCHAR tszPushAddr[XPATH_MAX];
+		XCHAR tszSMSAddr[XPATH_MAX];
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
 		
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
@@ -240,9 +240,9 @@ bool PullStream_ClientRtsp_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	}
 	else if (ENUM_RTSPPROTOCOL_METHOD_TYPE_PLAY == st_RTSPRequest.enMethod)
 	{
-		XCHAR tszKeyStr[MAX_PATH];
-		XCHAR tszPushAddr[MAX_PATH];
-		XCHAR tszSMSAddr[MAX_PATH];
+		XCHAR tszKeyStr[XPATH_MAX];
+		XCHAR tszPushAddr[XPATH_MAX];
+		XCHAR tszSMSAddr[XPATH_MAX];
 		XENGINE_PROTOCOL_AVINFO st_AVInfo;
 
 		memset(tszPushAddr, '\0', sizeof(tszPushAddr));
