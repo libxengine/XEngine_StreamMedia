@@ -45,6 +45,22 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		{
 			bIsTest = true;
 		}
+		else if (0 == _tcsxcmp("-l", argv[i]))
+		{
+			LPCXSTR lpszLogLevel = argv[++i];
+			if (0 == _tcsxcmp("debug", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DETAIL;
+			}
+			else if (0 == _tcsxcmp("detail", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DETAIL;
+			}
+			else if (0 == _tcsxcmp("info", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
+			}
+		}
 	}
 
 	return true;
