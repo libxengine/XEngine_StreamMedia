@@ -79,8 +79,8 @@ using namespace std;
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Define.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Error.h"
-#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
-#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"

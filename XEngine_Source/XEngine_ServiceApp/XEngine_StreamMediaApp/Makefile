@@ -2,7 +2,7 @@ CC = g++ -Wall -std=c++20
 PLATVER = 
 LOADHDR = -I ./ 
 LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
-		 -L ../../XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Depend/XEngine_Module/XEngine_InfoReport
+		 -L ../../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption \
 	  -lXClient_Stream \

@@ -2,8 +2,8 @@ CC = g++ -Wall -std=c++20 -fPIC
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp
-LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp
+LOADHDR = -I ./ -I ../XEngine_DependLibrary/XEngine_Module/jsoncpp
+LOADSO = -L ../XEngine_DependLibrary/XEngine_Module/jsoncpp
 LIB = -ljsoncpp
 LIBEX = 
 OBJECTS = ModuleProtocol_Packet.o ModuleProtocol_Parse.o pch.o
