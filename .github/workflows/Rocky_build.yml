@@ -67,6 +67,7 @@ jobs:
         run: |
             dnf clean all
             dnf makecache
+            dnf distro-sync -y
             dnf update -y
             dnf install gcc g++ make git jq unzip wget -y
       - name: install xengine library
