@@ -570,40 +570,76 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTSP拉流服务被禁用"));
 	}
-
-	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	//webrtc 拉流服务
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable && (st_ServiceConfig.nRTCWhepPort > 0))
 	{
 		xhRTCSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
 		if (NULL == xhRTCSsl)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动拉流WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		Cryption_Server_ConfigEx(xhRTCSsl);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载拉流RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
 		
-		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
+		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCWhepPort);
 		if (NULL == xhRTCSocket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCPort, errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动拉流WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCWhepPort, errno);
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
 		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动拉流WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCWhepPort);
 
 		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
 		{
 			xhRTCHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCHBLeave);
 			if (NULL == xhRTCHeart)
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化拉流RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化拉流RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTC心跳管理服务没有启用!"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,拉流RTC心跳管理服务没有启用!"));
+		}
+	}
+	//webrtc 推流
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable && (st_ServiceConfig.nRTCWhipPort > 0))
+	{
+		xhRTCSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
+		if (NULL == xhRTCSsl)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动推流WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		Cryption_Server_ConfigEx(xhRTCSsl);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载推流RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
+
+		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCWhipPort);
+		if (NULL == xhRTCSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动推流WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCWhipPort, errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动推流WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCWhipPort);
+
+		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
+		{
+			xhRTCHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCHBLeave);
+			if (NULL == xhRTCHeart)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化推流RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化推流RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,推流RTC心跳管理服务没有启用!"));
 		}
 	}
 

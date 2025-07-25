@@ -202,7 +202,7 @@ bool PushStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 		SDPProtocol_Packet_AudioFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
 	}
-	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
+	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCWhipPort);
 	BaseLib_Memory_Free((XPPPMEM)&pptszAVList, 1);
 	return true;
 }

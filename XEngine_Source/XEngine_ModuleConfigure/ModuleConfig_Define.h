@@ -24,7 +24,8 @@ typedef struct tag_XEngine_ServiceConfig
 	int nXStreamPort;                         //X流协议服务
 	int nJT1078Port;                          //JT1078协议流支持
 	int nSrtPort;                             //srt协议端口
-	int nRTCPort;                             //webrtc推拉流端口
+	int nRTCWhepPort;                         //webrtc 拉流端口
+	int nRTCWhipPort;                         //webrtc 推流端口
 	struct
 	{
 		int nMaxClient;                       //最大客户端个数
