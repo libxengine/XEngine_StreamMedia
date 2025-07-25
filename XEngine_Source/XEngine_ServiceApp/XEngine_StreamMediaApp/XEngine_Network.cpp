@@ -159,12 +159,22 @@ void XCALLBACK Network_Callback_AudioRTCPRecv(LPCXSTR lpszClientAddr, XSOCKET hS
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTCP音频客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
 //WEBRTC
-void XCALLBACK Network_Callback_RTCRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void XCALLBACK Network_Callback_RTCWhepRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	PullStream_ClientProtocol_Handle(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("STUN客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
 }
-void XCALLBACK Network_Callback_RTCHBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void XCALLBACK Network_Callback_RTCWhipRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	PushStream_ClientProtocol_Handle(lpszClientAddr, hSocket, lpszRecvMsg, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("STUN客户端：%s，发送数据大小:%d 给服务器"), lpszClientAddr, nMsgLen);
+}
+void XCALLBACK Network_Callback_RTCWhepLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端：%s，离开了服务器"), lpszClientAddr);
+}
+void XCALLBACK Network_Callback_RTCWhipLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Network_Close(lpszClientAddr, hSocket, true, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端：%s，离开了服务器"), lpszClientAddr);
@@ -334,7 +344,19 @@ bool XEngine_Network_Send(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMs
 		XCHAR tszIPPort[128] = {};
 		_tcsxcpy(tszIPPort, lpszClientAddr);
 		APIAddr_IPAddr_SegAddr(tszIPPort, &nPort);
-		if (!NetCore_UDPSelect_Send(xhRTCSocket, lpszMsgBuffer, nMsgLen, tszIPPort, nPort))
+		if (!NetCore_UDPSelect_Send(xhRTCWhipSocket, lpszMsgBuffer, nMsgLen, tszIPPort, nPort))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC服务端:%s,发送数据失败,大小:%d，错误:%lX"), lpszClientAddr, nMsgLen, NetCore_GetLastError());
+			return false;
+		}
+	}
+	else if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == enClientType)
+	{
+		int nPort = 0;
+		XCHAR tszIPPort[128] = {};
+		_tcsxcpy(tszIPPort, lpszClientAddr);
+		APIAddr_IPAddr_SegAddr(tszIPPort, &nPort);
+		if (!NetCore_UDPSelect_Send(xhRTCWhepSocket, lpszMsgBuffer, nMsgLen, tszIPPort, nPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC服务端:%s,发送数据失败,大小:%d，错误:%lX"), lpszClientAddr, nMsgLen, NetCore_GetLastError());
 			return false;

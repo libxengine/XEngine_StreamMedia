@@ -136,9 +136,12 @@ extern XHANDLE xhVRTCPSocket;
 extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
 //WEBRTC网络
-extern XHANDLE xhRTCSocket;
-extern XHANDLE xhRTCHeart;
-extern XHANDLE xhRTCSsl;
+extern XHANDLE xhRTCWhepSocket;
+extern XHANDLE xhRTCWhepHeart;
+extern XHANDLE xhRTCWhepSsl;
+extern XHANDLE xhRTCWhipSocket;
+extern XHANDLE xhRTCWhipHeart;
+extern XHANDLE xhRTCWhipSsl;
 //HLS流
 extern XNETHANDLE xhHLSFile;
 //配置文件

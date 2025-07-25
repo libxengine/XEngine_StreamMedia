@@ -44,16 +44,16 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		}
 		else
 		{
-			bool bRet = Cryption_Server_AcceptMemoryEx(xhRTCSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen);
+			bool bRet = Cryption_Server_AcceptMemoryEx(xhRTCWhepSsl, hSocket, lpszClientAddr, tszSDBuffer, &nSDLen, lpszMsgBuffer, nMsgLen);
 			if (nSDLen > 0)
 			{
-				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+				XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 			}
 			
 			if (bRet)
 			{
 				XBYTE tszKEYBuffer[XPATH_MAX] = {};
-				Cryption_Server_GetKeyEx(xhRTCSsl, lpszClientAddr, tszKEYBuffer);
+				Cryption_Server_GetKeyEx(xhRTCWhepSsl, lpszClientAddr, tszKEYBuffer);
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
 
 				XCHAR tszSMSName[128] = {};
@@ -111,8 +111,8 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
 		//更新绑定的地址
 		ModuleSession_PullStream_RTCAddrSet(tszUserStr, lpszClientAddr);
-		SocketOpt_HeartBeat_ActiveAddrEx(xhRTCHeart, tszUserStr);            //激活一次心跳
-		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+		SocketOpt_HeartBeat_ActiveAddrEx(xhRTCWhepHeart, tszUserStr);            //激活一次心跳
+		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
 	else if (((XBYTE)lpszMsgBuffer[0] >> 6) == 2)
@@ -352,7 +352,7 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 
 	ModuleSession_PullStream_Insert(tszUserStr, tszSMSAddr, tszPushAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
-	SocketOpt_HeartBeat_InsertAddrEx(xhRTCHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
+	SocketOpt_HeartBeat_InsertAddrEx(xhRTCWhepHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 
 	if (nIndex1 >= 0 && nIndex2 >= 0)
 	{
