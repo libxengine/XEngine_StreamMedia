@@ -15,7 +15,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -ljsoncpp -lXEngine_InfoReport
 LIBEX = 
 OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o PullStream_ClientWebRtc.o \
-          PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o \
+          PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o PushStream_ClientWebRtc.o \
 		  StreamMedia_HTTPApi.o \
           XEngine_AVPacket.o XEngine_Configure.o XEngine_HttpTask.o XEngine_Network.o XEngine_StreamMediaApp.o
 
@@ -72,6 +72,8 @@ PushStream_RTMPTask.o:./StreamMedia_PushStream/PushStream_RTMPTask.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_RTMPTask.cpp
 PushStream_SrtTask.o:./StreamMedia_PushStream/PushStream_SrtTask.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_SrtTask.cpp
+PushStream_ClientWebRtc.o:./StreamMedia_PushStream/PushStream_ClientWebRtc.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_PushStream/PushStream_ClientWebRtc.cpp
 
 StreamMedia_HTTPApi.o:./StreamMedia_HTTPApi/StreamMedia_HTTPApi.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StreamMedia_HTTPApi/StreamMedia_HTTPApi.cpp

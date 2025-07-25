@@ -77,8 +77,10 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	st_HDRParam.nHttpCode = 200; //HTTP CODE码
 	st_HDRParam.bIsClose = true; //收到回复后就关闭
 
-	XCHAR tszAPIType[XPATH_MAX] = {};
-	HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIType);
+	XCHAR tszAPIType[128] = {};
+	XCHAR tszAPIVer[128] = {};
+	XCHAR tszAPIName[128] = {};
+	HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIType, tszAPIVer, tszAPIName);
 	//得到URL参数个数
 	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszList, &nListCount, tszUrlName);
 	if (nListCount < 1)
@@ -114,7 +116,14 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	{
 		if (0 == _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 		{
-			PullStream_ClientWebRtc_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+			if (0 == _tcsxnicmp(tszAPIName, "whip", 4))
+			{
+				PushStream_ClientWhip_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+			}
+			else
+			{
+				PullStream_ClientWhep_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+			}
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))

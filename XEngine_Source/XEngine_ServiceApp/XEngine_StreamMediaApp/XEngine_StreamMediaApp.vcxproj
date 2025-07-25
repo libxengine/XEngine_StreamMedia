@@ -228,6 +228,7 @@
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientGet.cpp" />
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientRtsp.cpp" />
     <ClCompile Include="StreamMedia_PullStream\PullStream_ClientWebRtc.cpp" />
+    <ClCompile Include="StreamMedia_PushStream\PushStream_ClientWebRtc.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_SrtTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_XStreamTask.cpp" />
     <ClCompile Include="StreamMedia_PushStream\PushStream_JT1078Task.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientGet.h" />
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientRtsp.h" />
     <ClInclude Include="StreamMedia_PullStream\PullStream_ClientWebRtc.h" />
+    <ClInclude Include="StreamMedia_PushStream\PushStream_ClientWebRtc.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_SrtTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_XStreamTask.h" />
     <ClInclude Include="StreamMedia_PushStream\PushStream_JT1078Task.h" />

@@ -91,6 +91,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
+#include "./StreamMedia_PushStream/PushStream_ClientWebRtc.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
 #include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
 #include "./StreamMedia_PullStream/PullStream_ClientWebRtc.h"

@@ -10,24 +10,24 @@
 //    Purpose:     WEBRTC拉流服务
 //    History:
 *********************************************************************/
-bool PullStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PushStream_ClientProtocol_Dtls(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// DTLS有可能以多种不同的记录层类型开头，这里检查它是否是handshake(0x16)
 	return ((nMSGLen >= 13) && (lpszMSGBuffer[0] == 0x16));
 }
-bool PullStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
+bool PushStream_ClientProtocol_Stun(LPCXSTR lpszMSGBuffer, int nMSGLen)
 {
 	// STUN消息的类型字段（前两位为00）以及魔术cookie字段
 	return (nMSGLen >= 20) && ((lpszMSGBuffer[0] & 0xC0) == 0x00) && (lpszMSGBuffer[4] == 0x21) && (lpszMSGBuffer[5] == 0x12) && ((XBYTE)lpszMSGBuffer[6] == 0xA4) && (lpszMSGBuffer[7] == 0x42);
 }
-bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
 	XCHAR tszRVBuffer[2048] = {};
 	XCHAR tszSDBuffer[2048] = {};
 
-	if (PullStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
+	if (PushStream_ClientProtocol_Dtls(lpszMsgBuffer, nMsgLen))
 	{
 		nSDLen = 2048;
 		bool bConnect = false;
@@ -78,7 +78,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			}
 		}
 	}
-	else if (PullStream_ClientProtocol_Stun(lpszMsgBuffer, nMsgLen))
+	else if (PushStream_ClientProtocol_Stun(lpszMsgBuffer, nMsgLen))
 	{
 		int nAttrCount = 0;
 		RFCCOMPONENTS_NATATTR** ppSt_ListAttr;
@@ -155,7 +155,7 @@ bool PullStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 	return true;
 }
-bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo, XENGINE_PROTOCOL_AVINFO *pSt_AVInfo)
+bool PushStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo)
 {
 	XCHAR** pptszAVList;
 	BaseLib_Memory_Malloc((XPPPMEM)&pptszAVList, 1, XPATH_MAX);
@@ -192,38 +192,21 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("setup"), _X("passive"));
 	if (bVideo)
 	{
-		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 		SDPProtocol_Packet_VideoFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
-
-		XCHAR tszSSrcStr[128] = {};
-		_xstprintf(tszSSrcStr, _X("2124085007"));
-		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
-		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
-		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
-		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
-		RTPProtocol_Packet_SetPType(tszSSrcStr, nAVIndex);
-		RTPProtocol_Packet_SetTime(tszSSrcStr, pSt_AVInfo->st_VideoInfo.nFrameRate);
 	}
 	else
 	{
-		SDPProtocol_Packet_OnlyRWFlag(xhPacket, true);
+		SDPProtocol_Packet_OnlyRWFlag(xhPacket);
 		SDPProtocol_Packet_RtcpComm(xhPacket, true, true);
 		SDPProtocol_Packet_AudioFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
-
-		XCHAR tszSSrcStr[128] = {};
-		_xstprintf(tszSSrcStr, _X("2124085006"));
-		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
-		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
-		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
-		RTPProtocol_Packet_Insert(tszSSrcStr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_AAC);
-		RTPProtocol_Packet_SetPType(tszSSrcStr, nAVIndex);
 	}
 	SDPProtocol_Packet_OptionalCandidate(xhPacket, st_ServiceConfig.tszIPAddr, st_ServiceConfig.nRTCPort);
 	BaseLib_Memory_Free((XPPPMEM)&pptszAVList, 1);
 	return true;
 }
-bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
+bool PushStream_ClientWhip_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
 	int nRVLen = 0;
 	int nSDLen = 0;
@@ -243,15 +226,14 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	//查找流是否存在
 	XCHAR tszPushAddr[128] = {};
 	XENGINE_PROTOCOL_AVINFO st_AVInfo = {};
-	if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
+	if (ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 	{
-		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "stream name not found");
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "stream is published");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求拉流的地址:%s 不正确,没有找到,错误:%lX"), lpszClientAddr, tszSMSAddr, ModuleSession_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBRTC:%s,请求推流的地址:%s 不正确,此流已经在推送"), lpszClientAddr, tszSMSAddr);
 		return false;
 	}
-	ModuleSession_PushStream_GetAVInfo(tszPushAddr, &st_AVInfo);
 	//解析SDP
 	if (!SDPProtocol_Parse_Create(&xhParse, lpszMsgBuffer, nMsgLen))
 	{
@@ -295,12 +277,13 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 			{
 				STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMeida = {};
 				SDPProtocol_Parse_RTPMapAudio(&ppSt_ListAttr, nListCount, _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]), &st_SDPMeida);
-				//多个条件选择
+				//推流一般只有一个
 				if ((2 == st_SDPMeida.st_RTPMap.nChannel) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "opus", 4)))
 				{
 					nAudioIndex = _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]);
 					st_SDPAudioInfo = st_SDPMeida;
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,找到了合适的音频信息索引:%s"), lpszClientAddr, ppSt_AVMedia[i]->pptszAVList[j]);
+					break;
 				}
 			}
 		}
@@ -311,7 +294,7 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 			{
 				STREAMMEDIA_SDPPROTOCOL_MEDIAINFO st_SDPMeida = {};
 				SDPProtocol_Parse_RTPMapVideo(&ppSt_ListAttr, nListCount, _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]), &st_SDPMeida);
-				//多个条件选择
+				
 				if ((1 == st_SDPMeida.st_FmtpVideo.nPacketMode) && (0x42 == st_SDPMeida.st_FmtpVideo.tszLeaveId[0]) && (0xe0 == st_SDPMeida.st_FmtpVideo.tszLeaveId[1]) && (0x1f == st_SDPMeida.st_FmtpVideo.tszLeaveId[2]) && (0 == _tcsxnicmp(st_SDPMeida.st_RTPMap.tszCodecName, "H264", 4)))
 				{
 					nVideoIndex = _ttxoi(ppSt_AVMedia[i]->pptszAVList[j]);
@@ -338,9 +321,8 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	{
 		SDPProtocol_Packet_Bundle(xhPacket, 0, -1);
 	}
-	SDPProtocol_Packet_OptionalRange(xhPacket);
 	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("ice-lite"));
-	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS live/livestream"));
+	SDPProtocol_Packet_OptionalAddAttr(xhPacket, _X("msid-semantic"), _X("WMS *"));
 
 	XCHAR tszTokenStr[XPATH_MAX] = {};
 	XCHAR tszHDRStr[XPATH_MAX] = {};
@@ -356,20 +338,20 @@ bool PullStream_ClientWhep_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 
 	if (nIndex1 >= 0 && nIndex2 >= 0)
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, nAudioIndex, &st_SDPAudioInfo, &st_AVInfo);
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo, &st_AVInfo);
+		PushStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, false, nAudioIndex, &st_SDPAudioInfo);
+		PushStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
 	}
 	else
 	{
-		PullStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo, &st_AVInfo);
+		PushStream_ClientWebRtc_SDKPacket(xhPacket, tszUserStr, true, nVideoIndex, &st_SDPVideoInfo);
 	}
-	
+
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 
 	st_HDRParam.nHttpCode = 201;
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,WHEP协议拉流请求成功"), lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,Whip协议推流请求成功"), lpszClientAddr);
 	return true;
 }
