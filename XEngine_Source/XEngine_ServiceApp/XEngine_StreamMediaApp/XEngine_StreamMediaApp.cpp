@@ -93,6 +93,7 @@ void ServiceApp_Stop(int signo)
 		RTMPProtocol_Parse_Destory();
 		FLVProtocol_Parse_Destory();
 		HLSProtocol_TSParse_Destory();
+		RTPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);
@@ -244,6 +245,13 @@ int main(int argc, char** argv)
 		goto XENGINE_SERVICEAPP_EXIT;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化内存池成功"));
+
+	if (!RTPProtocol_Parse_Init(1))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTP包解析器失败,错误：%lX"), RTPProtocol_GetLastError());
+		return false;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTP包解析器成功"));
 	//启动HTTP服务相关代码
 	if (st_ServiceConfig.nHttpPort > 0)
 	{
@@ -740,6 +748,7 @@ XENGINE_SERVICEAPP_EXIT:
 		RTMPProtocol_Parse_Destory();
 		FLVProtocol_Parse_Destory();
 		HLSProtocol_TSParse_Destory();
+		RTPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);

@@ -22,6 +22,9 @@ typedef struct
 	struct  
 	{
 		XCHAR tszClientAddr[XPATH_MAX];
+		XCHAR tszRTPStr[128];
+		int nIndexVideo;
+		int nIndexAudio;
 		bool bConnect;
 	}st_RTCInfo;
 	struct  
@@ -69,6 +72,8 @@ public:
 	bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);
 	bool ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect);
 	bool ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
+	bool ModuleSession_PushStream_RTCIndexSet(LPCXSTR lpszClientUser, int nVideoIndex, int nAudioIndex);
+	bool ModuleSession_PushStream_RTCIndexGet(LPCXSTR lpszClientAddr, int* pInt_VideoIndex, int* pInt_AudioIndex);
 private:
 	shared_mutex st_Locker;
 private:

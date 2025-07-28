@@ -54,12 +54,18 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			{
 				XBYTE tszKEYBuffer[XPATH_MAX] = {};
 				Cryption_Server_GetKeyEx(xhRTCWhipSsl, lpszClientAddr, tszKEYBuffer);
+				//创建SRTPCore
 				ModuleHelp_SRTPCore_Create(tszKEYBuffer);
-
-				XCHAR tszSMSName[128] = {};
-				XCHAR tszSMSAddr[128] = {};
+				//创建RTC会话
 				ModuleSession_PushStream_RTCConnSet(lpszClientAddr, true);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功,绑定的地址:%s,绑定的名称:%s"), lpszClientAddr, tszSMSAddr, tszSMSName);
+				//创建RTC会话
+				int nIndexVideo = 0;
+				int nIndexAudio = 0;
+				ModuleSession_PushStream_RTCIndexGet(lpszClientAddr, &nIndexVideo, &nIndexAudio);
+				RTPProtocol_Parse_Insert(lpszClientAddr, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_UNKNOW);
+				RTPProtocol_Parse_SetLink(lpszClientAddr, nIndexVideo, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264);
+				RTPProtocol_Parse_SetLink(lpszClientAddr, nIndexAudio, ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_OPUS);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功,视频索引:%d,音频索引:%d"), lpszClientAddr, nIndexVideo, nIndexAudio);
 			}
 			else
 			{
@@ -98,8 +104,8 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		NatProtocol_StunNat_BuildMapAddress(tszRVBuffer + nRVLen, &nRVLen, tszIPPort, nPort, true);
 		nSDLen = nRVLen;
 		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
-		//更新绑定的地址
 		SocketOpt_HeartBeat_ActiveAddrEx(xhRTCWhipHeart, tszUserStr);            //激活一次心跳
+		//更新绑定地址
 		ModuleSession_PushStream_RTCAddrSet(tszUserStr, lpszClientAddr);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
@@ -133,8 +139,36 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		}
 		else
 		{
+			nRVLen = nMsgLen;
+			memcpy(tszRVBuffer, lpszMsgBuffer, nMsgLen);
+			if (!ModuleHelp_SRTPCore_RTPUNProtect(tszRVBuffer, &nRVLen))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTP协议解密失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, ModuleHelp_GetLastError());
+				return false;
+			}
 			//RTP
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的RTP协议处理成功"), lpszClientAddr);
+			if (!RTPProtocol_Parse_Send(lpszClientAddr, tszRVBuffer, nRVLen))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,RTP协议解析失败,大小:%d,错误码:%lX"), lpszClientAddr, nMsgLen, RTCPProtocol_GetLastError());
+				return false;
+			}
+			STREAMMEDIA_RTPPROTOCOL_HDR st_RTPHdr = {};
+			while (RTPProtocol_Parse_Recv(lpszClientAddr, tszRVBuffer, &nMsgLen, &st_RTPHdr))
+			{
+				if (st_RTPHdr.enPayload == ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_H264)
+				{
+
+				}
+				else if (st_RTPHdr.enPayload == ENUM_STREAMMEDIA_RTPPROTOCOL_PAYLOAD_TYPE_OPUS)
+				{
+
+				}
+				else
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("RTC客户端:%s,发送了未知的RTP协议类型:%d"), lpszClientAddr, st_RTPHdr.enPayload);
+				}
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTC客户端:%s,%d,请求的RTP协议处理成功"), lpszClientAddr, nMsgLen);
 		}
 	}
 	else
@@ -343,6 +377,7 @@ bool PushStream_ClientWhip_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	SDPProtocol_Packet_Destory(xhPacket);
 
 	ModuleSession_PushStream_Create(tszUserStr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+	ModuleSession_PushStream_RTCIndexSet(tszUserStr, nVideoIndex, nAudioIndex);
 	ModuleSession_PushStream_SetAVInfo(tszUserStr, &st_AVInfo);
 	SocketOpt_HeartBeat_InsertAddrEx(xhRTCWhipHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 

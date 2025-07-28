@@ -48,3 +48,5 @@ EXPORTS
 	ModuleSession_PushStream_RTCConnGet
 	ModuleSession_PushStream_RTCAddrSet
 	ModuleSession_PushStream_RTCAddrGet
+	ModuleSession_PushStream_RTCIndexSet
+	ModuleSession_PushStream_RTCIndexGet

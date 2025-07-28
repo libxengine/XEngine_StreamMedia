@@ -200,3 +200,11 @@ extern "C" bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHA
 {
 	return m_PushStream.ModuleSession_PushStream_RTCAddrGet(lpszClientAddr, ptszClientUser);
 }
+extern "C" bool ModuleSession_PushStream_RTCIndexSet(LPCXSTR lpszClientUser, int nVideoIndex, int nAudioIndex)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCIndexSet(lpszClientUser, nVideoIndex, nAudioIndex);
+}
+extern "C" bool ModuleSession_PushStream_RTCIndexGet(LPCXSTR lpszClientAddr, int* pInt_VideoIndex, int* pInt_AudioIndex)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCIndexGet(lpszClientAddr, pInt_VideoIndex, pInt_AudioIndex);
+}
