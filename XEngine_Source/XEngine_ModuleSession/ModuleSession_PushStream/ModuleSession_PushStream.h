@@ -21,6 +21,11 @@ typedef struct
 	}st_HLSFile;
 	struct  
 	{
+		XCHAR tszClientAddr[XPATH_MAX];
+		bool bConnect;
+	}st_RTCInfo;
+	struct  
+	{
 		XNETHANDLE xhAudioDecodec;
 		XNETHANDLE xhAudioEncodec;
 	}st_AVCodec;
@@ -59,6 +64,11 @@ public:
 public:
 	bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec);
 	bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
+public:
+	bool ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr);
+	bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);
+	bool ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect);
+	bool ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
 private:
 	shared_mutex st_Locker;
 private:

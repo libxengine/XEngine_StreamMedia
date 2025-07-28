@@ -184,3 +184,19 @@ extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, X
 {
 	return m_PushStream.ModuleSession_PushStream_AudioCodecGet(lpszClientAddr, pxhAudioDecodec, pxhAudioEncodec);
 }
+extern "C" bool ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCConnSet(lpszClientAddr, bConnect);
+}
+extern "C" bool ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCConnGet(lpszClientAddr, pbConnect);
+}
+extern "C" bool ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCAddrSet(lpszClientUser, lpszClientAddr);
+}
+extern "C" bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser)
+{
+	return m_PushStream.ModuleSession_PushStream_RTCAddrGet(lpszClientAddr, ptszClientUser);
+}

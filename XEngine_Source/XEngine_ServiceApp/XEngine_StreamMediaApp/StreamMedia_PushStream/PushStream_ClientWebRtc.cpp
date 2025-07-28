@@ -32,7 +32,7 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		nSDLen = 2048;
 		bool bConnect = false;
 
-		if (!ModuleSession_PullStream_RTCConnGet(lpszClientAddr, &bConnect))
+		if (!ModuleSession_PushStream_RTCConnGet(lpszClientAddr, &bConnect))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,请求的DTLS协议处理失败,地址不存在"), lpszClientAddr);
 			return false;
@@ -58,18 +58,7 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 
 				XCHAR tszSMSName[128] = {};
 				XCHAR tszSMSAddr[128] = {};
-				if (!ModuleSession_PullStream_RTCSmsGet(lpszClientAddr, tszSMSName))
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,握手成功,处理SMS地址失败,诶有找到"), lpszClientAddr);
-					return false;
-				}
-				if (!ModuleSession_PushStream_FindStream(tszSMSName, tszSMSAddr))
-				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTC客户端:%s,握手成功,处理SMS地址失败,诶有找到"), lpszClientAddr);
-					return false;
-				}
-				ModuleSession_PullStream_RTCConnSet(lpszClientAddr, true);
-				ModuleSession_PushStream_ClientInsert(tszSMSAddr, lpszClientAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+				ModuleSession_PushStream_RTCConnSet(lpszClientAddr, true);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的DTLS握手协议处理成功,绑定的地址:%s,绑定的名称:%s"), lpszClientAddr, tszSMSAddr, tszSMSName);
 			}
 			else
@@ -110,8 +99,8 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 		nSDLen = nRVLen;
 		NatProtocol_StunNat_Packet(tszSDBuffer, &nSDLen, (LPCXSTR)st_NatClient.byTokenStr, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_CLASS_RESPONSE, RFCCOMPONENTS_NATCLIENT_PROTOCOL_STUN_ATTR_MAPPED_ADDRESS, tszRVBuffer, true, st_ServiceConfig.st_XPull.st_PullWebRtc.tszICEPass, true);
 		//更新绑定的地址
-		ModuleSession_PullStream_RTCAddrSet(tszUserStr, lpszClientAddr);
 		SocketOpt_HeartBeat_ActiveAddrEx(xhRTCWhipHeart, tszUserStr);            //激活一次心跳
+		ModuleSession_PushStream_RTCAddrSet(tszUserStr, lpszClientAddr);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTC客户端:%s,请求的STUN协议处理成功,请求的用户:%s"), lpszClientAddr, tszUserStr);
 	}
@@ -355,11 +344,10 @@ bool PushStream_ClientWhip_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 
 	ModuleSession_PushStream_Create(tszUserStr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
 	ModuleSession_PushStream_SetAVInfo(tszUserStr, &st_AVInfo);
-	ModuleSession_PullStream_RTCSet(tszUserStr, tszTokenStr, tszICEUser, tszICEPass, tszHMacStr);
 	SocketOpt_HeartBeat_InsertAddrEx(xhRTCWhipHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 
 	st_HDRParam.nHttpCode = 201;
-	_xstprintf(st_HDRParam.tszMimeType, _X("sdp"));
+	_xstprintf(st_HDRParam.tszMimeType, _X("application/sdp"));
 	HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRStr);
 	XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBRTC:%s,Whip协议推流请求成功"), lpszClientAddr);
