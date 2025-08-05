@@ -46,6 +46,7 @@ XHANDLE xhRTCWhepSsl = NULL;
 XHANDLE xhRTCWhipSocket = NULL;
 XHANDLE xhRTCWhipHeart = NULL;
 XHANDLE xhRTCWhipSsl = NULL;
+std::unique_ptr<std::thread> pSTD_RTCThread = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
 //配置文件
@@ -207,8 +208,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	//pSt_VFile = _xtfopen("./1.h264", "wb");
-	//pSt_AFile = _xtfopen("./1.aac", "wb");
+	pSt_VFile = _xtfopen("./1.h264", "wb");
+	pSt_AFile = _xtfopen("./1.opus", "wb");
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
@@ -655,6 +656,7 @@ int main(int argc, char** argv)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,推流RTC心跳管理服务没有启用!"));
 		}
+		pSTD_RTCThread = std::make_unique<std::thread>(PushStream_ClientProtocol_Thread);
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)

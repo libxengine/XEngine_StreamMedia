@@ -569,7 +569,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				{
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, true);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, nRTPVIndex, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
@@ -580,7 +580,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				{
 					ModuleHelp_Rtsp_GetSsrc(stl_ListIteratorClient->tszClientID, tszSSCRStr, false);
 					ModuleHelp_Rtsp_GetRTPAddr(stl_ListIteratorClient->tszClientID, tszADDRStr, false);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, nRTPAIndex, lpszMsgBuffer, nMsgLen, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
@@ -607,7 +607,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 				if (0 == byAVType)
 				{
 					ModuleSession_PullStream_RTCSSrcGet(stl_ListIteratorClient->tszClientID, tszSSCRStr, true);
-					RTPProtocol_Packet_Packet(tszSSCRStr, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
+					RTPProtocol_Packet_Packet(tszSSCRStr, 0, lpszMsgBuffer + nStartCode, nMsgLen - nStartCode, &ppSt_RTPPacket, &nPacketCount);
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{

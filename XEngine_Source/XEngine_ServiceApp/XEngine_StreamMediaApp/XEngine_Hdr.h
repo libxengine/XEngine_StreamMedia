@@ -142,6 +142,7 @@ extern XHANDLE xhRTCWhepSsl;
 extern XHANDLE xhRTCWhipSocket;
 extern XHANDLE xhRTCWhipHeart;
 extern XHANDLE xhRTCWhipSsl;
+extern std::unique_ptr<std::thread> pSTD_RTCThread;
 //HLS流
 extern XNETHANDLE xhHLSFile;
 //配置文件
@@ -149,6 +150,11 @@ extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
 extern FILE* pSt_VFile;
 extern FILE* pSt_AFile;
+
+//固定值
+static int nRTPVIndex = 96;
+static int nRTPAIndex = 98;
+
 //连接库
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")

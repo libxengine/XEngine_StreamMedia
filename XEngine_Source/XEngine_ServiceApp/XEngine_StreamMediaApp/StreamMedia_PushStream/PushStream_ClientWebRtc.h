@@ -11,5 +11,6 @@
 //    History:
 *********************************************************************/
 bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen);
+bool PushStream_ClientProtocol_Thread();
 bool PushStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID, bool bVideo, int nAVIndex, STREAMMEDIA_SDPPROTOCOL_MEDIAINFO* pSt_SDPMediaInfo);
 bool PushStream_ClientWhip_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
