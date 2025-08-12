@@ -771,6 +771,14 @@ XENGINE_SERVICEAPP_EXIT:
 
 		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
+
+		if (NULL != pSTD_RTCThread)
+		{
+			if (pSTD_RTCThread->joinable())
+			{
+				pSTD_RTCThread->join();
+			}
+		}
 		if (NULL != pSt_AFile)
 		{
 			fclose(pSt_AFile);

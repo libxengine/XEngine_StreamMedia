@@ -180,11 +180,14 @@ bool PushStream_ClientProtocol_Thread()
 		RTPProtocol_Parse_GetPool(1, &ppSt_ListAddr, &nListCount);
 		for (int i = 0; i < nListCount; i++)
 		{
+			int nVideoIndex = 0;
+			int nAudioIndex = 0;
+			ModuleSession_PushStream_RTCIndexGet(ppSt_ListAddr[i]->tszClientAddr, &nVideoIndex, &nAudioIndex);
 			while (true)
 			{
 				STREAMMEDIA_RTPPROTOCOL_HDR st_RTPHdr = {};
 				int nMSGLen = 0;
-				st_RTPHdr.nPayID = 96;
+				st_RTPHdr.nPayID = nVideoIndex;
 				XCHAR* ptszMSGBuffer = NULL;
 				if (!RTPProtocol_Parse_Recv(ppSt_ListAddr[i]->tszClientAddr, &ptszMSGBuffer, &nMSGLen, &st_RTPHdr))
 				{
@@ -197,7 +200,7 @@ bool PushStream_ClientProtocol_Thread()
 			{
 				STREAMMEDIA_RTPPROTOCOL_HDR st_RTPHdr = {};
 				int nMSGLen = 0;
-				st_RTPHdr.nPayID = 111;
+				st_RTPHdr.nPayID = nAudioIndex;
 				XCHAR* ptszMSGBuffer = NULL;
 				if (!RTPProtocol_Parse_Recv(ppSt_ListAddr[i]->tszClientAddr, &ptszMSGBuffer, &nMSGLen, &st_RTPHdr))
 				{
