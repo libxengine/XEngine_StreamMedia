@@ -1,6 +1,6 @@
 {
     "tszSMSUrl": "rtmp://app.xyry.org/live",
-    "tszIPAddr": "10.0.4.69",
+    "tszIPAddr": "127.0.0.1",
     "bDeamon": 0,
     "nRTMPPort": 1935,
     "nHttpPort": 5600,
