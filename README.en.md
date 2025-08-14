@@ -35,7 +35,7 @@ Publish Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
 | SRT      | H264      | AAC      | Completed   |
-| WEBRTC   | H264      | OPUS     | Not Start   |
+| WEBRTC   | H264      | OPUS     | Processing  |
 | GB28181  | H264      | AAC      | Not Start   |
 | JT1078   | H264      | AAC      | Completed   |
 | XStream  | H264      | AAC      | Completed   |

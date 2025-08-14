@@ -3,7 +3,7 @@ name: macos build workflows
 on:
   push:
     branches:
-      - 'develop'
+      - develop
     paths:
       - 'XEngine_Source/**'
       - 'XEngine_Release/**'
@@ -80,6 +80,8 @@ jobs:
       - name: test  (srt bug on macos,not run)
         run: |
             cd XEngine_Release
+            brew install llvm
+            lldb --batch -o "run" -o "bt all" -- ./XEngine_StreamMediaApp -t
             ./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact with mac x64

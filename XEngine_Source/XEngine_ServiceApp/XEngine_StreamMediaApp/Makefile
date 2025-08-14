@@ -6,6 +6,7 @@ LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption \
 	  -lXClient_Stream \
+	  -lXEngine_SystemApi \
 	  -lHelpComponents_XLog -lHelpComponents_Packets \
 	  -lNetHelp_APIHelp -lNetHelp_XSocket -lNetHelp_APIAddr \
 	  -lRfcComponents_HttpProtocol -lRfcComponents_NatProtocol \
