@@ -216,8 +216,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	pSt_VFile = _xtfopen("./1.h264", "wb");
-	pSt_AFile = _xtfopen("./1.opus", "wb");
+	//pSt_VFile = _xtfopen("./1.h264", "wb");
+	//pSt_AFile = _xtfopen("./1.opus", "wb");
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
@@ -743,14 +743,14 @@ XENGINE_SERVICEAPP_EXIT:
 			NetCore_UDPSelect_Stop(xhRTCWhipSocket);
 			Cryption_Server_StopEx(xhRTCWhepSsl);
 			Cryption_Server_StopEx(xhRTCWhipSsl);
+			SocketOpt_HeartBeat_DestoryEx(xhRTCWhepHeart);
+			SocketOpt_HeartBeat_DestoryEx(xhRTCWhipHeart);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
-		SocketOpt_HeartBeat_DestoryEx(xhRTCWhepHeart);
-		SocketOpt_HeartBeat_DestoryEx(xhRTCWhipHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);

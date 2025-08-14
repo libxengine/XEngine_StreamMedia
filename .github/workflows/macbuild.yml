@@ -73,7 +73,7 @@ jobs:
       - name: make release
         run: |
             cd XEngine_Source
-            make PLATFORM=mac RELEASE=1
+            make PLATFORM=mac RELEASE=0
             make PLATFORM=mac FLAGS=InstallAll
             make PLATFORM=mac FLAGS=CleanAll
 
