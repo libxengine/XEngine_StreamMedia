@@ -81,12 +81,8 @@ jobs:
         run: |
             cd XEngine_Release
             brew install llvm
-            lldb -- ./XEngine_StreamMediaApp -t <<EOF
-            run
-            bt all
-            quit
-            EOF
-            # ./XEngine_StreamMediaApp -t
+            lldb --batch -o "run" -o "bt all" -- ./XEngine_StreamMediaApp -t
+            #./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact with mac x64
         if: matrix.os == 'macos-13'
