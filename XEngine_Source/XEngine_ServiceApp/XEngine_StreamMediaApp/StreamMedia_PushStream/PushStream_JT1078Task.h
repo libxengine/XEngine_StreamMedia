@@ -10,6 +10,6 @@
 //    Purpose:     JT1078流处理器
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK PushStream_JT1078Task_Thread(XPVOID lParam);
+XHTHREAD XCALLBACK PushStream_JT1078Task_Thread(XPVOID lParam);
 bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen, LPCXSTR lpszHDRBuffer, int nHDRLen);
 bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_RTPPACKETHDR* pSt_RTPHdr, XENGINE_RTPPACKETTAIL* pSt_RTPTail);

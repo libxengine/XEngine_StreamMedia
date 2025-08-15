@@ -79,8 +79,8 @@ using namespace std;
 #include "../../XEngine_ModuleHelp/ModuleHelp_Error.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Define.h"
 #include "../../XEngine_ModuleQueue/ModuleQueue_Error.h"
-#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
-#include "../../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
@@ -91,6 +91,7 @@ using namespace std;
 #include "./StreamMedia_PushStream/PushStream_JT1078Task.h"
 #include "./StreamMedia_PushStream/PushStream_RTMPTask.h"
 #include "./StreamMedia_PushStream/PushStream_SrtTask.h"
+#include "./StreamMedia_PushStream/PushStream_ClientWebRtc.h"
 #include "./StreamMedia_PullStream/PullStream_ClientGet.h"
 #include "./StreamMedia_PullStream/PullStream_ClientRtsp.h"
 #include "./StreamMedia_PullStream/PullStream_ClientWebRtc.h"
@@ -135,9 +136,13 @@ extern XHANDLE xhVRTCPSocket;
 extern XHANDLE xhARTPSocket;
 extern XHANDLE xhARTCPSocket;
 //WEBRTC网络
-extern XHANDLE xhRTCSocket;
-extern XHANDLE xhRTCHeart;
-extern XHANDLE xhRTCSsl;
+extern XHANDLE xhRTCWhepSocket;
+extern XHANDLE xhRTCWhepHeart;
+extern XHANDLE xhRTCWhepSsl;
+extern XHANDLE xhRTCWhipSocket;
+extern XHANDLE xhRTCWhipHeart;
+extern XHANDLE xhRTCWhipSsl;
+extern std::unique_ptr<std::thread> pSTD_RTCThread;
 //HLS流
 extern XNETHANDLE xhHLSFile;
 //配置文件
@@ -145,6 +150,11 @@ extern XENGINE_SERVICECONFIG st_ServiceConfig;
 //调试
 extern FILE* pSt_VFile;
 extern FILE* pSt_AFile;
+
+//固定值
+static int nRTPVIndex = 96;
+static int nRTPAIndex = 98;
+
 //连接库
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")

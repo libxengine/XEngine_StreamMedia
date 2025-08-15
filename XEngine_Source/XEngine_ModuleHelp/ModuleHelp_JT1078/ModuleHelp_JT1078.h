@@ -20,5 +20,10 @@ public:
 public:
 	bool ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR* ptszMsgBuffer);
 	bool ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XBYTE* pbySIMNumber);
+protected:
+	void ModuleHelp_JT1078_2BytesToBCD(LPCXSTR lpszSource, XBYTE& chBCD);
+	void ModuleHelp_JT1078_BCDTo2Bytes(XBYTE chBCD, XCHAR* ptszDest);
+	int ModuleHelp_JT1078_BCDToInt(XBYTE chBCD);
+	XBYTE ModuleHelp_JT1078_IntToBCD(XBYTE uszInt);
 private:
 };

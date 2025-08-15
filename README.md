@@ -38,7 +38,7 @@ c c++ streammedia server
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | 已完成   |
 | SRT      | H264      | AAC      | 已完成   |
-| WEBRTC   | H264      | OPUS     | 未开始   |
+| WEBRTC   | H264      | OPUS     | 进行中   |
 | GB28181  | H264      | AAC      | 未开始   |
 | JT1078   | H264      | AAC      | 已完成   |
 | XStream  | H264      | AAC      | 已完成   |
@@ -75,7 +75,7 @@ macos执行:./XEngine_LINEnv.sh -i 3
 由于依赖的子模块,在你checkout仓库后,在仓库目录下执行下面的命令拉取子模块  
 git submodule init  
 git submodule update  
-如果github访问失败,你也可以clone该项目,在主目录下使用命令:git clone https://gitee.com/xengine/XEngine_OPenSource.git XEngine_Source/XEngine_Depend
+如果github访问失败,你也可以clone该项目,在主目录下使用命令:git clone https://gitee.com/xengine/XEngine_OPenSource.git XEngine_Source/XEngine_DependLibrary
 
 #### Windows
 

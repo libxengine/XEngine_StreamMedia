@@ -70,7 +70,7 @@ typedef enum
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 }XENGINE_PROTOCOLSTREAM;
 //////////////////////////////////////////////////////////////////////////设备协议RTP
 typedef struct

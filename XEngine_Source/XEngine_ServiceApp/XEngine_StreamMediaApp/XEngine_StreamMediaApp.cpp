@@ -40,9 +40,13 @@ XHANDLE xhVRTCPSocket = NULL;
 XHANDLE xhARTPSocket = NULL;
 XHANDLE xhARTCPSocket = NULL;
 //WEBRTC网络
-XHANDLE xhRTCSocket = NULL;
-XHANDLE xhRTCHeart = NULL;
-XHANDLE xhRTCSsl = NULL;
+XHANDLE xhRTCWhepSocket = NULL;
+XHANDLE xhRTCWhepHeart = NULL;
+XHANDLE xhRTCWhepSsl = NULL;
+XHANDLE xhRTCWhipSocket = NULL;
+XHANDLE xhRTCWhipHeart = NULL;
+XHANDLE xhRTCWhipSsl = NULL;
+std::unique_ptr<std::thread> pSTD_RTCThread = NULL;
 //HLS流
 XNETHANDLE xhHLSFile = 0;
 //配置文件
@@ -71,15 +75,18 @@ void ServiceApp_Stop(int signo)
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPSelect_Stop(xhRTCSocket);
-			Cryption_Server_StopEx(xhRTCSsl);
+			NetCore_UDPSelect_Stop(xhRTCWhipSocket);
+			NetCore_UDPSelect_Stop(xhRTCWhepSocket);
+			Cryption_Server_StopEx(xhRTCWhipSsl);
+			Cryption_Server_StopEx(xhRTCWhepSsl);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
-		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCWhipHeart);
+		SocketOpt_HeartBeat_DestoryEx(xhRTCWhepHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);
@@ -87,6 +94,7 @@ void ServiceApp_Stop(int signo)
 		RTMPProtocol_Parse_Destory();
 		FLVProtocol_Parse_Destory();
 		HLSProtocol_TSParse_Destory();
+		RTPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);
@@ -99,6 +107,14 @@ void ServiceApp_Stop(int signo)
 		
 		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
+
+		if (NULL != pSTD_RTCThread)
+		{
+			if (pSTD_RTCThread->joinable())
+			{
+				pSTD_RTCThread->join();
+			}
+		}
 		if (NULL != pSt_AFile)
 		{
 			fclose(pSt_AFile);
@@ -147,7 +163,7 @@ static int ServiceApp_Deamon()
 LONG WINAPI Coredump_ExceptionFilter(EXCEPTION_POINTERS* pExceptionPointers)
 {
 	static int i = 0;
-	XCHAR tszFileStr[MAX_PATH] = {};
+	XCHAR tszFileStr[XPATH_MAX] = {};
 	XCHAR tszTimeStr[128] = {};
 	BaseLib_Time_TimeToStr(tszTimeStr);
 	_xstprintf(tszFileStr, _X("./XEngine_Coredump/dumpfile_%s_%d.dmp"), tszTimeStr, i++);
@@ -201,7 +217,7 @@ int main(int argc, char** argv)
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
 	//pSt_VFile = _xtfopen("./1.h264", "wb");
-	//pSt_AFile = _xtfopen("./1.aac", "wb");
+	//pSt_AFile = _xtfopen("./1.opus", "wb");
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{
@@ -238,6 +254,13 @@ int main(int argc, char** argv)
 		goto XENGINE_SERVICEAPP_EXIT;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化内存池成功"));
+
+	if (!RTPProtocol_Parse_Init(1))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTP包解析器失败,错误：%lX"), RTPProtocol_GetLastError());
+		goto XENGINE_SERVICEAPP_EXIT;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTP包解析器成功"));
 	//启动HTTP服务相关代码
 	if (st_ServiceConfig.nHttpPort > 0)
 	{
@@ -570,41 +593,78 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTSP拉流服务被禁用"));
 	}
-
-	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
+	//webrtc 拉流服务
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable && (st_ServiceConfig.nRTCWhepPort > 0))
 	{
-		xhRTCSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
-		if (NULL == xhRTCSsl)
+		xhRTCWhepSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
+		if (NULL == xhRTCWhepSsl)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动拉流WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		Cryption_Server_ConfigEx(xhRTCSsl);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
+		Cryption_Server_ConfigEx(xhRTCWhepSsl);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载拉流RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
 		
-		xhRTCSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCPort);
-		if (NULL == xhRTCSocket)
+		xhRTCWhepSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCWhepPort);
+		if (NULL == xhRTCWhepSocket)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCPort, errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动拉流WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCWhepPort, errno);
 			goto XENGINE_SERVICEAPP_EXIT;
 		}
-		NetCore_UDPSelect_RegisterCallBack(xhRTCSocket, Network_Callback_RTCRecv);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCPort);
+		NetCore_UDPSelect_RegisterCallBack(xhRTCWhepSocket, Network_Callback_RTCWhepRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动拉流WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCWhepPort);
 
 		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
 		{
-			xhRTCHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCHBLeave);
-			if (NULL == xhRTCHeart)
+			xhRTCWhepHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCWhepLeave);
+			if (NULL == xhRTCWhepHeart)
 			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化拉流RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
 				goto XENGINE_SERVICEAPP_EXIT;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化拉流RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
 		}
 		else
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,RTC心跳管理服务没有启用!"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,拉流RTC心跳管理服务没有启用!"));
 		}
+	}
+	//webrtc 推流
+	if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable && (st_ServiceConfig.nRTCWhipPort > 0))
+	{
+		xhRTCWhipSsl = Cryption_Server_InitEx(st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, NULL, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr, false, false, XENGINE_CRYPTION_PROTOCOL_DTL);
+		if (NULL == xhRTCWhipSsl)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动推流WEBRTC-DTLS安全网络,错误：%lX"), Cryption_GetLastError());
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		Cryption_Server_ConfigEx(xhRTCWhipSsl);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,加载推流RTC证书成功:%s,%s"), st_ServiceConfig.st_XPull.st_PullWebRtc.tszCertStr, st_ServiceConfig.st_XPull.st_PullWebRtc.tszKeyStr);
+
+		xhRTCWhipSocket = NetCore_UDPSelect_Start(st_ServiceConfig.nRTCWhipPort);
+		if (NULL == xhRTCWhipSocket)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,启动推流WEBRTC网络端口:%d 失败,错误：%d"), st_ServiceConfig.nRTCWhipPort, errno);
+			goto XENGINE_SERVICEAPP_EXIT;
+		}
+		NetCore_UDPSelect_RegisterCallBack(xhRTCWhipSocket, Network_Callback_RTCWhipRecv);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,启动推流WEBRTC端口:%d 成功"), st_ServiceConfig.nRTCWhipPort);
+
+		if (st_ServiceConfig.st_XTime.nRTCTimeout > 0)
+		{
+			xhRTCWhipHeart = SocketOpt_HeartBeat_InitEx(st_ServiceConfig.st_XTime.nRTCTimeout, st_ServiceConfig.st_XTime.nTimeCheck, Network_Callback_RTCWhipLeave);
+			if (NULL == xhRTCWhipHeart)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化推流RTC心跳管理服务失败,错误：%lX"), NetCore_GetLastError());
+				goto XENGINE_SERVICEAPP_EXIT;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化推流RTC心跳管理服务成功,检测时间:%d"), st_ServiceConfig.st_XTime.nRTCTimeout);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中,推流RTC心跳管理服务没有启用!"));
+		}
+		pSTD_RTCThread = std::make_unique<std::thread>(PushStream_ClientProtocol_Thread);
 	}
 
 	if (st_ServiceConfig.st_XPull.st_PullHls.bEnable)
@@ -625,7 +685,7 @@ int main(int argc, char** argv)
 	if (st_ServiceConfig.st_XReport.bEnable && !bIsTest)
 	{
 		__int64x nTimeCount = 0;
-		if (InfoReport_APIMachine_Send(st_ServiceConfig.st_XReport.tszAPIUrl, st_ServiceConfig.st_XReport.tszServiceName))
+		if (InfoReport_APIMachine_Send(st_ServiceConfig.st_XReport.tszAPIUrl, st_ServiceConfig.st_XReport.tszServiceName, &nTimeCount))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,报告次数:%lld"), st_ServiceConfig.st_XReport.tszAPIUrl, nTimeCount);
 		}
@@ -679,15 +739,18 @@ XENGINE_SERVICEAPP_EXIT:
 		}
 		if (st_ServiceConfig.st_XPull.st_PullWebRtc.bEnable)
 		{
-			NetCore_UDPSelect_Stop(xhRTCSocket);
-			Cryption_Server_StopEx(xhRTCSsl);
+			NetCore_UDPSelect_Stop(xhRTCWhepSocket);
+			NetCore_UDPSelect_Stop(xhRTCWhipSocket);
+			Cryption_Server_StopEx(xhRTCWhepSsl);
+			Cryption_Server_StopEx(xhRTCWhipSsl);
+			SocketOpt_HeartBeat_DestoryEx(xhRTCWhepHeart);
+			SocketOpt_HeartBeat_DestoryEx(xhRTCWhipHeart);
 		}
 		//销毁心跳
 		SocketOpt_HeartBeat_DestoryEx(xhHttpHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhXStreamHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhRTMPHeart);
 		SocketOpt_HeartBeat_DestoryEx(xhJT1078Heart);
-		SocketOpt_HeartBeat_DestoryEx(xhRTCHeart);
 		//销毁包管理器
 		HttpProtocol_Server_DestroyEx(xhHttpPacket);
 		HelpComponents_Datas_Destory(xhXStreamPacket);
@@ -695,6 +758,7 @@ XENGINE_SERVICEAPP_EXIT:
 		RTMPProtocol_Parse_Destory();
 		FLVProtocol_Parse_Destory();
 		HLSProtocol_TSParse_Destory();
+		RTPProtocol_Parse_Destory();
 		//销毁线程池
 		ManagePool_Thread_NQDestroy(xhHttpPool);
 		ManagePool_Thread_NQDestroy(xhXStreamPool);
@@ -707,6 +771,14 @@ XENGINE_SERVICEAPP_EXIT:
 
 		ManagePool_Memory_Destory(xhMemoryPool);
 		HelpComponents_XLog_Destroy(xhLog);
+
+		if (NULL != pSTD_RTCThread)
+		{
+			if (pSTD_RTCThread->joinable())
+			{
+				pSTD_RTCThread->join();
+			}
+		}
 		if (NULL != pSt_AFile)
 		{
 			fclose(pSt_AFile);

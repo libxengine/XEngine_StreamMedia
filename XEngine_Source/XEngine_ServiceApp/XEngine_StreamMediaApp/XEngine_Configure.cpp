@@ -14,7 +14,6 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 {
 	LPCXSTR lpszServiceCfg = _X("./XEngine_Config/XEngine_Config.json");
 	LPCXSTR lpszServiceVersion = _X("./XEngine_Config/XEngine_Version.json");
-
 	if (!ModuleConfigure_Json_File(lpszServiceCfg, &st_ServiceConfig))
 	{
 		printf("解析配置文件失败,ModuleConfigure_Json_File：%lX", ModuleConfigure_GetLastError());
@@ -29,22 +28,38 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 
 	for (int i = 0; i < argc; i++)
 	{
-		if ((0 == _tcsxcmp("-h", argv[i])) || (0 == _tcsxcmp("-H", argv[i])))
+		if ((0 == _tcsxicmp("-h", argv[i])) || (0 == _tcsxicmp("-H", argv[i])))
 		{
 			XEngine_Configure_Help();
 			return false;
 		}
-		else if (0 == _tcsxcmp("-d", argv[i]))
+		else if (0 == _tcsxicmp("-d", argv[i]))
 		{
 			st_ServiceConfig.bDeamon = _ttxoi(argv[i + 1]);
 		}
-		else if (0 == _tcsxcmp("-b", argv[i]))
+		else if (0 == _tcsxicmp("-b", argv[i]))
 		{
 			st_ServiceConfig.bDebug = true;
 		}
-		else if (0 == _tcsxcmp("-t", argv[i]))
+		else if (0 == _tcsxicmp("-t", argv[i]))
 		{
 			bIsTest = true;
+		}
+		else if (0 == _tcsxicmp("-l", argv[i]))
+		{
+			LPCXSTR lpszLogLevel = argv[++i];
+			if (0 == _tcsxicmp("debug", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DETAIL;
+			}
+			else if (0 == _tcsxicmp("detail", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DETAIL;
+			}
+			else if (0 == _tcsxicmp("info", lpszLogLevel))
+			{
+				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
+			}
 		}
 	}
 

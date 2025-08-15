@@ -14,18 +14,26 @@ typedef struct
 {
 	struct  
 	{
-		XCHAR tszFileName[MAX_PATH];
+		XCHAR tszFileName[XPATH_MAX];
 		XNETHANDLE xhToken;
 		__int64u nTime;
 		FILE* pSt_File;
 	}st_HLSFile;
 	struct  
 	{
+		XCHAR tszClientAddr[XPATH_MAX];
+		XCHAR tszRTPStr[128];
+		int nIndexVideo;
+		int nIndexAudio;
+		bool bConnect;
+	}st_RTCInfo;
+	struct  
+	{
 		XNETHANDLE xhAudioDecodec;
 		XNETHANDLE xhAudioEncodec;
 	}st_AVCodec;
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 
 	unique_ptr<mutex> st_ClientLocker;
@@ -59,6 +67,13 @@ public:
 public:
 	bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec);
 	bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
+public:
+	bool ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr);
+	bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);
+	bool ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect);
+	bool ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
+	bool ModuleSession_PushStream_RTCIndexSet(LPCXSTR lpszClientUser, int nVideoIndex, int nAudioIndex);
+	bool ModuleSession_PushStream_RTCIndexGet(LPCXSTR lpszClientAddr, int* pInt_VideoIndex, int* pInt_AudioIndex);
 private:
 	shared_mutex st_Locker;
 private:

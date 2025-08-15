@@ -10,7 +10,7 @@
 //    Purpose:     RTMP流处理协议
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 {
 	//任务池是编号1开始的.
 	int nThreadPos = *(int*)lParam;
@@ -40,7 +40,7 @@ XHTHREAD CALLBACK PushStream_RTMPTask_Thread(XPVOID lParam)
 					//在另外一个函数里面处理数据
 					PushStream_RTMPTask_Handle(&st_RTMPHdr, ppSst_ListAddr[i]->tszClientAddr, ptszMsgBuffer, nMsgLen);
 					//释放内存
-					BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBuffer);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 				}
 			}
 		}
@@ -217,10 +217,10 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_COMMAND == pSt_RTMPHdr->byTypeID)
 	{
-		XCHAR tszCMDBuffer[MAX_PATH];
+		XCHAR tszCMDBuffer[XPATH_MAX];
 		XENGINE_RTMPCOMMAND st_RTMPCommand;
 
-		memset(tszCMDBuffer, '\0', MAX_PATH);
+		memset(tszCMDBuffer, '\0', XPATH_MAX);
 		memset(&st_RTMPCommand, '\0', sizeof(XENGINE_RTMPCOMMAND));
 
 		RTMPProtocol_Help_ParseCommand(&st_RTMPCommand, lpszMsgBuffer, nMsgLen);
@@ -360,8 +360,8 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		{
 			bool bSMSFound = false;
 			XCHAR tszSMSAddr[2048];
-			XCHAR tszLiveName[MAX_PATH];
-			XCHAR tszPushAddr[MAX_PATH];
+			XCHAR tszLiveName[XPATH_MAX];
+			XCHAR tszPushAddr[XPATH_MAX];
 
 			memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 			memset(tszLiveName, '\0', sizeof(tszLiveName));

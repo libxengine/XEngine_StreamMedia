@@ -3,7 +3,7 @@ name: CodeQL Advanced
 on:
   push:
     branches: 
-      - 'develop'
+      - develop
     paths:
       - 'XEngine_Source/**'
       - 'XEngine_Release/**'
@@ -39,6 +39,9 @@ jobs:
       run: |
           git submodule init
           git submodule update
+
+    - name: Set TERM variable
+      run: echo "TERM=xterm" >> $GITHUB_ENV
 
     - name: Set up Dependency Environment
       run: |

@@ -16,8 +16,8 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 	int nSDLen = 0;
 	XCHAR tszRVBuffer[4096];
 	XCHAR tszSDBuffer[4096];
-	XCHAR tszKeyBuffer[MAX_PATH];
-	XCHAR tszVluBuffer[MAX_PATH];
+	XCHAR tszKeyBuffer[XPATH_MAX];
+	XCHAR tszVluBuffer[XPATH_MAX];
 	LPCXSTR lpszAPIPublish = _X("publish");
 	LPCXSTR lpszAPIPull = _X("pull");
 	LPCXSTR lpszAPIGet = _X("get");

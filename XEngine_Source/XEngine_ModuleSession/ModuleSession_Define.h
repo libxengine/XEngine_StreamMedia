@@ -18,7 +18,7 @@ typedef struct
 typedef struct
 {
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
-	XCHAR tszSMSAddr[MAX_PATH];
+	XCHAR tszSMSAddr[XPATH_MAX];
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
 	int nClientCount;
 }STREAMMEDIA_PUBLISHINFO;
@@ -26,24 +26,24 @@ typedef struct
 {
 	struct  
 	{
-		XCHAR tszTokenStr[MAX_PATH];
-		XCHAR tszICEUser[MAX_PATH];
-		XCHAR tszICEPass[MAX_PATH];
-		XCHAR tszHMacStr[MAX_PATH];
+		XCHAR tszTokenStr[XPATH_MAX];
+		XCHAR tszICEUser[XPATH_MAX];
+		XCHAR tszICEPass[XPATH_MAX];
+		XCHAR tszHMacStr[XPATH_MAX];
 		XCHAR tszClientAddr[128];
 		bool bConnect;
 
 		XCHAR tszVSSrcStr[128];
-		XCHAR tszVideoCName[MAX_PATH];
-		XCHAR tszVideoLabel[MAX_PATH];
+		XCHAR tszVideoCName[XPATH_MAX];
+		XCHAR tszVideoLabel[XPATH_MAX];
 		
 		XCHAR tszASSrcStr[128];
-		XCHAR tszAudioCName[MAX_PATH];
-		XCHAR tszAudioLabel[MAX_PATH];
+		XCHAR tszAudioCName[XPATH_MAX];
+		XCHAR tszAudioLabel[XPATH_MAX];
 	}st_WEBRtc;
-	XCHAR tszClientAddr[MAX_PATH];
-	XCHAR tszSMSAddr[MAX_PATH];
-	XCHAR tszPushAddr[MAX_PATH];
+	XCHAR tszClientAddr[XPATH_MAX];
+	XCHAR tszSMSAddr[XPATH_MAX];
+	XCHAR tszPushAddr[XPATH_MAX];
 	int nFLVTag;
 
 	ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE enStreamType;
@@ -843,3 +843,127 @@ extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, X
 备注：
 *********************************************************************/
 extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCConnSet
+函数功能：设置RTC连接状态
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：bConnect
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入连接状态
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCConnGet
+函数功能：获取RTC连接状态
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pbConnect
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出连接状态
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCAddrSet
+函数功能：设置RTC的数据通信地址
+ 参数.一：lpszClientUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的用户
+ 参数.二：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入绑定的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCAddrGet
+函数功能：获取地址绑定的用户
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：ptszClientUser
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出绑定的用户
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCIndexSet
+函数功能：设置RTP包媒体索引
+ 参数.一：lpszClientUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：nVideoIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入RTP的包视频索引
+ 参数.三：nAudioIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入RTP的包音频索引
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCIndexSet(LPCXSTR lpszClientUser, int nVideoIndex, int nAudioIndex);
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCIndexGet
+函数功能：获取RTP包媒体索引
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pInt_VideoIndex
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出RTP的包视频索引
+ 参数.三：pInt_AudioIndex
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出RTP的包音频索引
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleSession_PushStream_RTCIndexGet(LPCXSTR lpszClientAddr, int* pInt_VideoIndex, int* pInt_AudioIndex);

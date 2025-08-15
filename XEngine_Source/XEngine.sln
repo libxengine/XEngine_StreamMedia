@@ -38,11 +38,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_StreamMediaApp", "X
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_ModuleQueue", "XEngine_ModuleQueue\XEngine_ModuleQueue.vcxproj", "{9FF6FA78-456E-4A7E-86B1-17E4DB5403C9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Depend", "XEngine_Depend", "{6A753FB6-282E-4E86-91BB-BE97618B65A4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_DependLibrary", "XEngine_DependLibrary", "{6A753FB6-282E-4E86-91BB-BE97618B65A4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_Depend\XEngine_Module\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_DependLibrary\XEngine_Module\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngine_Depend\XEngine_Module\XEngine_InfoReport\XEngine_InfoReport.vcxproj", "{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngine_DependLibrary\XEngine_Module\XEngine_InfoReport\XEngine_InfoReport.vcxproj", "{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
 	EndProjectSection

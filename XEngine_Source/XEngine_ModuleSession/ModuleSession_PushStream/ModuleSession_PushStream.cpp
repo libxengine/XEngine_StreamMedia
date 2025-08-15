@@ -547,8 +547,8 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 		st_Locker.unlock_shared();
 		return false;
 	}
-	XCHAR tszFilePath[MAX_PATH] = {};
-	XCHAR tszFileName[MAX_PATH] = {};
+	XCHAR tszFilePath[XPATH_MAX] = {};
+	XCHAR tszFileName[XPATH_MAX] = {};
 	//获得文件名和路径
 	BaseLib_String_GetFileAndPath(lpszTSFile, tszFilePath, tszFileName);
 	SystemApi_File_CreateMutilFolder(tszFilePath);
@@ -704,7 +704,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSClose(LPCXSTR lpszCl
 	{
 		fclose(stl_MapIterator->second->st_HLSFile.pSt_File);
 	}
-	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', MAX_PATH);
+	memset(stl_MapIterator->second->st_HLSFile.tszFileName, '\0', XPATH_MAX);
 	st_Locker.unlock_shared();
 	return true;
 }
@@ -889,6 +889,308 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecGet(LPCXSTR l
 	*pxhAudioEncodec = stl_MapIterator->second->st_AVCodec.xhAudioEncodec;
 	*pxhAudioDecodec = stl_MapIterator->second->st_AVCodec.xhAudioDecodec;
 
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCAddrSet
+函数功能：设置RTC的数据通信地址
+ 参数.一：lpszClientUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的用户
+ 参数.二：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入绑定的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientUser);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	_tcsxcpy(stl_MapIterator->second->st_RTCInfo.tszClientAddr, lpszClientAddr);
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCAddrGet
+函数功能：获取地址绑定的用户
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的地址
+ 参数.二：ptszClientUser
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出绑定的用户
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser)
+{
+	Session_IsErrorOccur = false;
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_RTCInfo.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			bFound = true;
+			_tcsxcpy(ptszClientUser, stl_MapIterator->first.c_str());
+			break;
+		}
+	}
+	st_Locker.unlock_shared();
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCConnSet
+函数功能：设置RTC连接状态
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：bConnect
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入连接状态
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCConnSet(LPCXSTR lpszClientAddr, bool bConnect)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_RTCInfo.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			bFound = true;
+			stl_MapIterator->second->st_RTCInfo.bConnect = bConnect;
+			break;
+		}
+	}
+	st_Locker.unlock_shared();
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCConnGet
+函数功能：获取RTC连接状态
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pbConnect
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出连接状态
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect)
+{
+	Session_IsErrorOccur = false;
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_RTCInfo.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	*pbConnect = stl_MapIterator->second->st_RTCInfo.bConnect;
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCIndexSet
+函数功能：设置RTP包媒体索引
+ 参数.一：lpszClientUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：nVideoIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入RTP的包视频索引
+ 参数.三：nAudioIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入RTP的包音频索引
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCIndexSet(LPCXSTR lpszClientUser, int nVideoIndex, int nAudioIndex)
+{
+	Session_IsErrorOccur = false;
+	if (NULL == lpszClientUser)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientUser);
+	if (stl_MapIterator == stl_MapPushStream.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_RTCInfo.nIndexVideo = nVideoIndex;
+	stl_MapIterator->second->st_RTCInfo.nIndexAudio = nAudioIndex;
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：ModuleSession_PushStream_RTCIndexGet
+函数功能：获取RTP包媒体索引
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pInt_VideoIndex
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出RTP的包视频索引
+ 参数.三：pInt_AudioIndex
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出RTP的包音频索引
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CModuleSession_PushStream::ModuleSession_PushStream_RTCIndexGet(LPCXSTR lpszClientAddr, int* pInt_VideoIndex, int* pInt_AudioIndex)
+{
+	Session_IsErrorOccur = false;
+	if (NULL == lpszClientAddr)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//是否存在
+	st_Locker.lock_shared();
+	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.begin();
+	for (; stl_MapIterator != stl_MapPushStream.end(); stl_MapIterator++)
+	{
+		if (0 == _tcsxnicmp(lpszClientAddr, stl_MapIterator->second->st_RTCInfo.tszClientAddr, _tcsxlen(lpszClientAddr)))
+		{
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	if (NULL != pInt_VideoIndex)
+	{
+		*pInt_VideoIndex = stl_MapIterator->second->st_RTCInfo.nIndexVideo;
+	}
+	if (NULL != pInt_AudioIndex)
+	{
+		*pInt_AudioIndex = stl_MapIterator->second->st_RTCInfo.nIndexAudio;
+	}
 	st_Locker.unlock_shared();
 	return true;
 }

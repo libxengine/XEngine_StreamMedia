@@ -1,3 +1,27 @@
+XEngine_StreamMedia V2.12.0.1001
+
+added:webrtc push stream test code
+added:configure log level support
+added:ci rocky linux 10 support
+update:depend library
+improved:make file build flags
+modify:bcd codec support
+modify:start parameter are not case sensitive
+modify:Move submodule XEngine_Depend to XEngine_DependLibrary
+fixed:configure parse failed
+fixed:report info not time count
+
+增加:webrtc 推流测试服务代码
+增加:配置日志级别支持
+增加:CI的rockylinux10系统支持
+更新:依赖库
+优化:构建编译脚本选项
+修改:bcd编码支持
+修改:启动参数不区分大小写
+修改:移动子模块目录到新的文件夹
+修正:配置解析错误
+修正:报告信息没有统计的问题
+=======================================================
 XEngine_StreamMedia V2.11.1.1001
 
 修正:rtmp推流CSID处理不正确导致推流不正确的问题

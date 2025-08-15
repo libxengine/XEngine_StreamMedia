@@ -3,7 +3,7 @@ name: cpp check workflows
 on:
   push:
     branches: 
-      - 'develop'
+      - develop
     paths:
       - 'XEngine_Source/**'
       - 'XEngine_Release/**'

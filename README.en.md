@@ -35,7 +35,7 @@ Publish Stream:
 | -------- | --------- | -------- | -------- |
 | RTMP     | H264      | AAC      | Completed   |
 | SRT      | H264      | AAC      | Completed   |
-| WEBRTC   | H264      | OPUS     | Not Start   |
+| WEBRTC   | H264      | OPUS     | Processing  |
 | GB28181  | H264      | AAC      | Not Start   |
 | JT1078   | H264      | AAC      | Completed   |
 | XStream  | H264      | AAC      | Completed   |
@@ -67,7 +67,7 @@ Linux Exection:sudo ./XEngine_LINEnv.sh -i 3
 Macos Exection:./XEngine_LINEnv.sh -i 3  
 
 #### sub module
-Due to the dependent sub-modules, after you checkout the warehouse, execute the following command in the warehouse directory to pull the sub-modules  
+Due to the dependent sub-modules, after you checkout the resprepository, execute the following command in the resprepository directory to pull the sub-modules  
 git submodule init  
 git submodule update  
 

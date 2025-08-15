@@ -46,7 +46,7 @@ bool CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCH
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
-		Cryption_Codec_BCDTo2Bytes(bySIMNumber[i], &ptszMsgBuffer[nPos]);
+		ModuleHelp_JT1078_BCDTo2Bytes(bySIMNumber[i], &ptszMsgBuffer[nPos]);
 		nPos += 2;
 	}
 	return true;
@@ -81,8 +81,124 @@ bool CModuleHelp_JT1078::ModuleHelp_JT1078_StringToBCD(LPCXSTR lpszMsgBuffer, XB
 	}
 	for (int i = 0, nPos = 0; i < 6; i++)
 	{
-		Cryption_Codec_2BytesToBCD(&lpszMsgBuffer[i], pbySIMNumber[nPos]);
+		ModuleHelp_JT1078_2BytesToBCD(&lpszMsgBuffer[i], pbySIMNumber[nPos]);
 		nPos += 2;
 	}
 	return true;
+}
+//////////////////////////////////////////////////////////////////////////
+//                             保护函数
+//////////////////////////////////////////////////////////////////////////
+/********************************************************************
+函数名称：ModuleHelp_JT1078_2BytesToBCD
+函数功能：两个字符转BCD编码
+ 参数.一：lpszSource
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入一段要编码的数据
+ 参数.二：chBCD
+  In/Out：Out
+  类型：无符号字符
+  可空：N
+  意思：输出编码好的数据
+返回值
+  类型：无
+  意思：
+备注：
+*********************************************************************/
+void CModuleHelp_JT1078::ModuleHelp_JT1078_2BytesToBCD(LPCXSTR lpszSource, XBYTE& chBCD)
+{
+    ModuleHelp_IsErrorOccur = false;
+
+    XBYTE uszBsd;
+    uszBsd = lpszSource[0] - '0';
+    uszBsd = uszBsd << 4;
+    chBCD |= uszBsd;
+    uszBsd = lpszSource[1] - '0';
+    uszBsd = uszBsd & 0x0f;
+    chBCD |= uszBsd;
+}
+/********************************************************************
+函数名称：ModuleHelp_JT1078_BCDTo2Bytes
+函数功能：BCD编码转字符
+ 参数.一：chBCD
+  In/Out：In
+  类型：无符号字符
+  可空：N
+  意思：输入要解码的BCD字符
+ 参数.二：ptszDest
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出解码后的字符串
+返回值
+  类型：无
+  意思：
+备注：
+*********************************************************************/
+void CModuleHelp_JT1078::ModuleHelp_JT1078_BCDTo2Bytes(XBYTE chBCD, XCHAR* ptszDest)
+{
+    ModuleHelp_IsErrorOccur = false;
+
+    XBYTE uszBsd;
+
+    uszBsd = chBCD & 0x0f;
+    ptszDest[1] = uszBsd + '0';
+    uszBsd = chBCD & 0xf0;
+    uszBsd = uszBsd >> 4;
+    ptszDest[0] = uszBsd + '0';
+}
+/********************************************************************
+函数名称：ModuleHelp_JT1078_BCDToInt
+函数功能：BCD编码转整数型
+ 参数.一：chBCD
+  In/Out：In
+  类型：无符号字符
+  可空：N
+  意思：输入要解码的BCD字符
+返回值
+  类型：整数型
+  意思：输出解码数据
+备注：
+*********************************************************************/
+int CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToInt(XBYTE chBCD)
+{
+    ModuleHelp_IsErrorOccur = false;
+
+    XBYTE uszBsd1, uszBsd2, uszBsd3;
+
+    uszBsd1 = chBCD & 0x0f;
+    uszBsd2 = chBCD & 0xf0;
+    uszBsd2 = uszBsd2 >> 4;
+    uszBsd3 = uszBsd2 * 10 + uszBsd1;
+    return uszBsd3;
+}
+/********************************************************************
+函数名称：ModuleHelp_JT1078_IntToBCD
+函数功能：将00-99的整数存放成1个字节的BCD
+ 参数.一：uszInt
+  In/Out：In
+  类型：无符号字符
+  可空：N
+  意思：输入要编码的整数
+返回值
+  类型：无符号字符
+  意思：输出编码数据
+备注：
+*********************************************************************/
+XBYTE CModuleHelp_JT1078::ModuleHelp_JT1078_IntToBCD(XBYTE uszInt)
+{
+    ModuleHelp_IsErrorOccur = false;
+
+    XBYTE usBCD;
+    XBYTE nRet;
+
+    nRet = 0;
+    usBCD = uszInt / 10;
+    usBCD = usBCD << 4;
+    nRet |= usBCD;
+    usBCD = uszInt % 10;
+    nRet |= usBCD;
+    return nRet;
 }

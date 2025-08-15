@@ -1,13 +1,14 @@
 {
     "tszSMSUrl": "rtmp://app.xyry.org/live",
-    "tszIPAddr": "10.0.1.88",
+    "tszIPAddr": "127.0.0.1",
     "bDeamon": 0,
     "nRTMPPort": 1935,
     "nHttpPort": 5600,
     "nXStreamPort": 5601,
     "nJT1078Port": 5602,
     "nSrtPort": 5603,
-    "nRTCPort": 5604,
+    "nRTCWhepPort": 5604,
+    "nRTCWhipPort": 5605,
     "XMax": {
         "nMaxClient": 10000,
         "nMaxQueue": 10000,
@@ -48,7 +49,7 @@
             "nARTCPPort": 56004
         },
         "RTC": {
-            "bEnable": false,
+            "bEnable": true,
             "bPrePull": false,
             "tszICEUser": "xengine",
             "tszICEPass": "3321308h8i6vt3769r6638l1409d50jz",
