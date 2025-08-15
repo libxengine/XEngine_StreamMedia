@@ -258,7 +258,7 @@ int main(int argc, char** argv)
 	if (!RTPProtocol_Parse_Init(1))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中,初始化RTP包解析器失败,错误：%lX"), RTPProtocol_GetLastError());
-		return false;
+		goto XENGINE_SERVICEAPP_EXIT;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中,初始化RTP包解析器成功"));
 	//启动HTTP服务相关代码
