@@ -561,7 +561,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTSP == stl_ListIteratorClient->enClientType)
 			{
 				int nPacketCount = 0;
-				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
+				XENGINE_MSGBUFFER** ppSt_RTPPacket;
 				XCHAR tszSSCRStr[XPATH_MAX] = {};
 				XCHAR tszADDRStr[128] = {};
 
@@ -573,7 +573,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
-						NetCore_UDPXCore_SendEx(xhVRTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+						NetCore_UDPXCore_SendEx(xhVRTPSocket, tszADDRStr, ppSt_RTPPacket[i]->unData.tszMSGBuffer, ppSt_RTPPacket[i]->nMSGLen);
 					}
 				}
 				else
@@ -584,7 +584,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
-						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen);
+						NetCore_UDPXCore_SendEx(xhARTPSocket, tszADDRStr, ppSt_RTPPacket[i]->unData.tszMSGBuffer, ppSt_RTPPacket[i]->nMSGLen);
 					}
 				}
 				BaseLib_Memory_Free((XPPPMEM)&ppSt_RTPPacket, nPacketCount);
@@ -601,7 +601,7 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 			if (ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC == stl_ListIteratorClient->enClientType)
 			{
 				int nPacketCount = 0;
-				STREAMMEDIA_RTPPROTOCOL_PACKET** ppSt_RTPPacket;
+				XENGINE_MSGBUFFER** ppSt_RTPPacket;
 				XCHAR tszSSCRStr[XPATH_MAX] = {};
 				
 				if (0 == byAVType)
@@ -611,8 +611,8 @@ bool XEngine_AVPacket_AVFrame(XCHAR* ptszSDBuffer, int* pInt_SDLen, XCHAR* ptszR
 					//发送数据,RTSP使用UDP发送
 					for (int i = 0; i < nPacketCount; i++)
 					{
-						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->tszMsgBuffer, &ppSt_RTPPacket[i]->nMsgLen);
-						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->tszMsgBuffer, ppSt_RTPPacket[i]->nMsgLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
+						ModuleHelp_SRTPCore_RTPINProtect(ppSt_RTPPacket[i]->unData.tszMSGBuffer, &ppSt_RTPPacket[i]->nMSGLen);
+						XEngine_Network_Send(stl_ListIteratorClient->tszClientID, ppSt_RTPPacket[i]->unData.tszMSGBuffer, ppSt_RTPPacket[i]->nMSGLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 					}
 				}
 				else
