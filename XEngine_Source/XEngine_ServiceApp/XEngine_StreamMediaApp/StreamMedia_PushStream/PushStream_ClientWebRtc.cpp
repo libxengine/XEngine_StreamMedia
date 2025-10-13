@@ -182,6 +182,11 @@ bool PushStream_ClientProtocol_Thread()
 		{
 			int nVideoIndex = 0;
 			int nAudioIndex = 0;
+			int nRVLen = 0;
+			int nSDLen = 0;
+			XCHAR* ptszRVBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+			XCHAR* ptszSDBuffer = (XCHAR*)ManagePool_Memory_Alloc(xhMemoryPool, XENGINE_MEMORY_SIZE_MAX);
+
 			ModuleSession_PushStream_RTCIndexGet(ppSt_ListAddr[i]->tszClientAddr, &nVideoIndex, &nAudioIndex);
 			while (true)
 			{
@@ -193,6 +198,28 @@ bool PushStream_ClientProtocol_Thread()
 				{
 					break;
 				}
+
+				int nPos = 0;
+				int nNALLen = 0;
+				int nFIXLen = 0;
+				XENGINE_AVCODEC_VIDEOFRAMETYPE enFrameType;
+
+				AVHelp_Parse_NaluHdr(ptszMSGBuffer, nMSGLen, &nNALLen, &nFIXLen);
+				AVHelp_Parse_NaluType(ptszMSGBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+				//如果是AUD单元,跳过AUD
+				if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_AUD == enFrameType)
+				{
+					nPos = nNALLen;
+					//重新获取
+					AVHelp_Parse_NaluType(ptszMSGBuffer + nPos, ENUM_XENGINE_AVCODEC_VIDEO_TYPE_H264, &enFrameType);
+				}
+				//如果是关键帧
+				if (ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_PPS == enFrameType || ENUM_XENGINE_AVCODEC_VIDEO_FRAMETYPE_SEI == enFrameType)
+				{
+					XEngine_AVPacket_AVHdr(ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + nPos, nMSGLen - nPos, 0, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+				}
+				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + nPos, nMSGLen - nPos, 0);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受视频推流数据,数据大小:%d,帧类型:%d,跳过AUD:%d"), ppSt_ListAddr[i]->tszClientAddr, nMSGLen, enFrameType, nPos);
 				//fwrite(ptszMSGBuffer, 1, nMSGLen, pSt_VFile);
 				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 			}
@@ -206,7 +233,11 @@ bool PushStream_ClientProtocol_Thread()
 				{
 					break;
 				}
-				//fwrite(ptszMSGBuffer, 1, nRVLen, pSt_AFile);
+				//OPUS
+				//XEngine_AVPacket_AVHdr(ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer, nMSGLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+				//XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + 7, nMSGLen - 7, 1);
+				//XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), ppSt_ListAddr[i]->tszClientAddr, nMSGLen);
+				fwrite(ptszMSGBuffer, 1, nRVLen, pSt_AFile);
 				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 			}
 		}
@@ -412,9 +443,11 @@ bool PushStream_ClientWhip_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LP
 	SDPProtocol_Packet_GetPacket(xhPacket, tszRVBuffer, &nRVLen);
 	SDPProtocol_Packet_Destory(xhPacket);
 
-	ModuleSession_PushStream_Create(tszUserStr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PULL_RTC);
+	ModuleSession_PushStream_Create(tszUserStr, tszSMSAddr, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTC);
 	ModuleSession_PushStream_RTCIndexSet(tszUserStr, nVideoIndex, nAudioIndex);
 	ModuleSession_PushStream_SetAVInfo(tszUserStr, &st_AVInfo);
+
+	XEngine_AVPacket_AVCreate(tszUserStr);
 	SocketOpt_HeartBeat_InsertAddrEx(xhRTCWhipHeart, tszUserStr);     //需要加入心跳,不然没法知道超时
 
 	st_HDRParam.nHttpCode = 201;

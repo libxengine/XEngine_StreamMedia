@@ -176,11 +176,11 @@ extern "C" bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __in
 {
 	return m_PushStream.ModuleSession_PushStream_HLSTimeGet(lpszClientAddr, pInt_Time);
 }
-extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec)
+extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XHANDLE xhAudioDecodec, XHANDLE xhAudioEncodec)
 {
 	return m_PushStream.ModuleSession_PushStream_AudioCodecSet(lpszClientAddr, xhAudioDecodec, xhAudioEncodec);
 }
-extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec)
+extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XHANDLE* pxhAudioDecodec, XHANDLE* pxhAudioEncodec)
 {
 	return m_PushStream.ModuleSession_PushStream_AudioCodecGet(lpszClientAddr, pxhAudioDecodec, pxhAudioEncodec);
 }

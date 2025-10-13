@@ -817,7 +817,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpsz
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec)
+bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XHANDLE xhAudioDecodec, XHANDLE xhAudioEncodec)
 {
 	Session_IsErrorOccur = false;
 
@@ -866,7 +866,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecSet(LPCXSTR l
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec)
+bool CModuleSession_PushStream::ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XHANDLE* pxhAudioDecodec, XHANDLE* pxhAudioEncodec)
 {
 	Session_IsErrorOccur = false;
 
