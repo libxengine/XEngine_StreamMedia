@@ -11,3 +11,4 @@ EXPORTS
 	ModuleProtocol_Packet_HTTPPullGet
 
 	ModuleProtocol_Parse_HTTPForward
+	ModuleProtocol_Parse_HTTPParseAuth

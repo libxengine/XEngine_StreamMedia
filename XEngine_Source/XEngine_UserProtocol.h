@@ -61,6 +61,10 @@ typedef enum
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_REPPULL 0x3008      
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_STATPUSH 0x3009   //推流端状态推送协议
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_SMS_STATPULL 0x300A   //拉流端状态推送协议
+/************************************************************************/
+/*                            HTTP错误定义                              */
+/************************************************************************/
+#define ERROR_SMS_PROTOCOL_UNAUTHORIZE  0x001                             //未验证
 ///////////////////////////////////////////////////////////////////////////
 //                          导出的数据结构
 ///////////////////////////////////////////////////////////////////////////

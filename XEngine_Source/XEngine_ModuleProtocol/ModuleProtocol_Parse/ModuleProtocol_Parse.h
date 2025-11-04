@@ -18,5 +18,6 @@ public:
 	~CModuleProtocol_Parse();
 public:
 	bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR* ptszAVUrl);
+	bool ModuleProtocol_Parse_HTTPParseAuth(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_USERAUTHEX* pSt_UserAuth);
 private:
 };

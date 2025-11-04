@@ -218,3 +218,27 @@ extern "C" bool ModuleProtocol_Packet_HTTPPullGet(XCHAR* ptszMsgBuffer, int* pIn
 备注：
 *********************************************************************/
 extern "C" bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR * ptszAVUrl = NULL);
+/********************************************************************
+函数名称：ModuleProtocol_Parse_HTTPParseAuth
+函数功能：用户验证解析协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的缓冲区
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pSt_UserAuth
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool ModuleProtocol_Parse_HTTPParseAuth(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_USERAUTHEX* pSt_UserAuth);

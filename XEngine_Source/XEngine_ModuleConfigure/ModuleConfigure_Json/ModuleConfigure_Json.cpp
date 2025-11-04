@@ -177,6 +177,19 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XLog.nLogLeave = st_JsonXLog["LogLeave"].asInt();
 	pSt_ServerConfig->st_XLog.nLogType = st_JsonXLog["LogType"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XLog.tszLogFile, st_JsonXLog["LogFile"].asCString());
+	//接口验证
+	if (st_JsonRoot["XVerification"].empty() || (5 != st_JsonRoot["XVerification"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_VERIFICATION;
+		return false;
+	}
+	Json::Value st_JsonXVerification = st_JsonRoot["XVerification"];
+	pSt_ServerConfig->st_XVerification.bEnable = st_JsonXVerification["bEnable"].asBool();
+	pSt_ServerConfig->st_XVerification.nVType = st_JsonXVerification["nVerType"].asInt();
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszUserName, st_JsonXVerification["tszUser"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszUserPass, st_JsonXVerification["tszPass"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszAPIUrl, st_JsonXVerification["tszAPIUrl"].asCString());
 	//信息报告
 	if (st_JsonRoot["XReport"].empty() || (3 != st_JsonRoot["XReport"].size()))
 	{
