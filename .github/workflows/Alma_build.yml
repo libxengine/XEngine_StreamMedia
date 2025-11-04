@@ -1,22 +1,22 @@
-name: rocky build workflows
+name: alma build workflows
 
 on:
   push:
-    branches: 
-      - develop
+    branches:
+      - 'develop'
     paths:
       - 'XEngine_Source/**'
       - 'XEngine_Release/**'
       - '.github/**'
-  
+
 permissions:
   contents: read
-  
+
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: rockylinux/rockylinux:${{ matrix.version }}
+      image: almalinux:${{ matrix.version }}
       options: --platform ${{ matrix.platform }}
     strategy:
       matrix:
@@ -32,12 +32,12 @@ jobs:
             artifact: x86-64
             version: 10
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-24.04-arm 
             platform: linux/arm64
             artifact: Arm64
             version: 9
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-24.04-arm 
             platform: linux/arm64
             artifact: Arm64
             version: 10
@@ -45,9 +45,7 @@ jobs:
     steps:
       - name: Checkout main repository code
         uses: actions/checkout@v4
-        with:
-          ref: 'develop'
-        
+
       - name: Checkout dependency repository (xengine)
         uses: actions/checkout@v4
         with:
@@ -62,11 +60,13 @@ jobs:
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV
-                  
+
       - name: install system package
         run: |
             dnf update -y
             dnf install gcc g++ make git jq unzip wget -y
+            dnf install libsrtp-devel srt-devel -y
+
       - name: install xengine library
         run: |
             latest_tag=$(curl -s https://api.github.com/repos/libxengine/libxengine/releases/latest | jq -r .tag_name)
@@ -76,28 +76,21 @@ jobs:
             
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
-      - name: install depend library
-        run: dnf install libsrtp-devel srt-devel -y
 
       - name: make
-        run: | 
+        run: |
             cd XEngine_Source
-            make
-            make FLAGS=InstallAll
-            make FLAGS=CleanAll
-
             make RELEASE=1
             make FLAGS=InstallAll
             make FLAGS=CleanAll
-
+            cd ..
       - name: test
         run: |
             cd XEngine_Release
             ./XEngine_StreamMediaApp -t
 
-      - name: Upload folder as artifact with RockyLinux
+      - name: Upload folder as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: XEngine_StreamMediaApp-RockyLinux_${{ matrix.version }}_${{ matrix.artifact }}
+          name: XEngine_StreamMediaApp-AlmaLinux_${{ matrix.version }}_${{ matrix.artifact }}
           path: XEngine_Release/
-          retention-days: 1
