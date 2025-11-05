@@ -56,7 +56,9 @@ jobs:
         run: echo "TERM=xterm" >> $GITHUB_ENV
         
       - name: install system package
-        run: apt install libsrt-gnutls-dev libsrtp2-dev -y
+        run: |
+            apt update -y
+            apt install gcc g++ make git jq unzip curl wget -y
 
       - name: install xengine library
         run: |
@@ -67,6 +69,10 @@ jobs:
             
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
+
+      - name: install system package
+        run: apt install libsrt-gnutls-dev libsrtp2-dev -y
+        
       - name: make
         run: |
             cd XEngine_Source
