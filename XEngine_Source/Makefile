@@ -43,7 +43,7 @@ else
 endif
 libXEngine_Verification.so:
 ifeq ($(FLAGS), InstallAll)
-	cp $(THIRDPART_MODULE_VERIFICATION)/libXEngine_InfoReport.$(FILEEXT) ../XEngine_Release/
+	cp $(THIRDPART_MODULE_VERIFICATION)/libXEngine_Verification.$(FILEEXT) ../XEngine_Release/
 else
 	make -C $(THIRDPART_MODULE_VERIFICATION) PLATFORM=$(PLATFORM) UNICODE=$(UNICODE) RELEASE=$(RELEASE) $(FLAGS)
 endif
