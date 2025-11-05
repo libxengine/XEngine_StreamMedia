@@ -186,7 +186,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszList, &nListCount, tszUrlName);
 	if (nListCount < 1)
 	{
-		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_REQUEST_PARAMETER, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		BaseLib_Memory_Free((XPPPMEM)&pptszList, nListCount);
@@ -205,7 +205,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 
 	if (0 != _tcsxnicmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)) && 0 != _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 	{
-		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 400, "Bad Request,parament is incorrent");
+		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_REQUEST_PARAMETER, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 		BaseLib_Memory_Free((XPPPMEM)&pptszList, nListCount);

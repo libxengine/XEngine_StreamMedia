@@ -64,7 +64,10 @@ typedef enum
 /************************************************************************/
 /*                            HTTP错误定义                              */
 /************************************************************************/
-#define ERROR_SMS_PROTOCOL_UNAUTHORIZE  0x001                             //未验证
+#define ERROR_SMS_PROTOCOL_UNAUTHORIZE  0x001                              //未验证
+#define ERROR_SMS_PROTOCOL_REQUEST_PARAMETER 0x002                         //请求参数错误
+#define ERROR_SMS_PROTOCOL_NOTFOUND 0x003                                  //流未找到
+#define ERROR_SMS_PROTOCOL_NOTSUPPORT 0x004                                //不支持的操作
 ///////////////////////////////////////////////////////////////////////////
 //                          导出的数据结构
 ///////////////////////////////////////////////////////////////////////////
