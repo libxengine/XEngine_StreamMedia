@@ -5,6 +5,7 @@ LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../
 		 -L ../../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_Verification
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption \
+	  -lXClient_APIHelp \
 	  -lXEngine_SystemApi \
 	  -lHelpComponents_XLog -lHelpComponents_Packets \
 	  -lNetHelp_APIHelp -lNetHelp_XSocket -lNetHelp_APIAddr \

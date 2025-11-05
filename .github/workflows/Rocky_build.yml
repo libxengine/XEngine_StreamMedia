@@ -76,6 +76,7 @@ jobs:
             
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
+            
       - name: install depend library
         run: dnf install libsrtp-devel srt-devel -y
 

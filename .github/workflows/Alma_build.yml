@@ -65,7 +65,6 @@ jobs:
         run: |
             dnf update -y
             dnf install gcc g++ make git jq unzip wget -y
-            dnf install libsrtp-devel srt-devel -y
 
       - name: install xengine library
         run: |
@@ -77,6 +76,9 @@ jobs:
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
 
+      - name: install depend library
+        run: dnf install libsrtp-devel srt-devel -y
+        
       - name: make
         run: |
             cd XEngine_Source
