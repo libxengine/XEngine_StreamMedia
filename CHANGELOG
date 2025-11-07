@@ -1,3 +1,19 @@
+XEngine_StreamMedia V2.13.0.1001
+
+ci:增加了centos alma系统支持
+增加:http验证功能支持
+更新:依赖库
+修改:启动参数不区分大小写
+修改:统一Http错误码
+修正:某些时候配置读取问题
+
+ci:add alma and centos and debian 13 system support
+added:http basic and digest verification
+update:depend library
+modify:start parameter does not case sensitive
+modify:Unify HTTP error code definitions
+fixed:sometime configure read memory leak
+=======================================================
 XEngine_StreamMedia V2.12.0.1001
 
 added:webrtc push stream test code

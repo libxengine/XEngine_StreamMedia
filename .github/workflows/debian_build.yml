@@ -58,6 +58,7 @@ jobs:
       - name: install system package
         run: |
             apt update -y
+            apt upgrade -y
             apt install gcc g++ make git jq unzip curl wget -y
 
       - name: install xengine library
