@@ -231,7 +231,6 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	{
 		//获得函数名
 		BaseLib_String_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
-
 		//获得函数名
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
 		if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
