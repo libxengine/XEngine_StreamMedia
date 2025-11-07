@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: debian:bookworm
+      image: debian:${{ matrix.name }}
       options: --platform ${{ matrix.platform }}
     strategy:
       matrix:
