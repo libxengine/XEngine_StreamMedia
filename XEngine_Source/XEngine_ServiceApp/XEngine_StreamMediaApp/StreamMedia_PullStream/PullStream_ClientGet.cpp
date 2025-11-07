@@ -126,7 +126,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			{
 				if (!st_ServiceConfig.st_XPull.st_PullFlv.bPrePull)
 				{
-					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_NOTFOUND, "not found");
 					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
@@ -163,7 +163,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			{
 				if (!ModuleSession_PushStream_FindStream(tszSMSAddr, tszPushAddr))
 				{
-					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_NOTFOUND, "not found");
 					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
@@ -202,7 +202,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 			{
 				if (!st_ServiceConfig.st_XPull.st_PullTs.bPrePull)
 				{
-					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+					ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_NOTFOUND, "not found");
 					HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 					XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的URL参数不正确:%s,可能流不存在,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
@@ -230,7 +230,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 		}
 		else
 		{
-			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 500, "not support");
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_NOTSUPPORT, "not support");
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求拉流的数据类型不支持:%s,错误:%lX"), lpszClientAddr, tszVluBuffer, ModuleSession_GetLastError());
@@ -249,7 +249,7 @@ bool PullStream_ClientGet_Handle(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr,
 
 		if (!ModuleSession_PullStream_GetPushAddr(lpszClientAddr, tszPushAddr))
 		{
-			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, 404, "not found");
+			ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_NOTFOUND, "not found");
 			HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Network_Send(lpszClientAddr, tszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_HTTP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("拉流端:%s,请求停止拉流失败,获取绑定推流地址失败,错误:%lX"), lpszClientAddr, ModuleSession_GetLastError());

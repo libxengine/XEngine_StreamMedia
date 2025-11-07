@@ -271,8 +271,8 @@ void XEngine_Network_Close(LPCXSTR lpszClientAddr, XSOCKET hSocket, bool bHeart,
 		{
 			HLSProtocol_M3u8Packet_Delete(xhHLSFile, xhHLSToken, st_ServiceConfig.st_XPull.st_PullHls.bClear);
 		}
-		XNETHANDLE xhDecodec = 0;
-		XNETHANDLE xhEncodec = 0;
+		XHANDLE xhDecodec = 0;
+		XHANDLE xhEncodec = 0;
 		if (ModuleSession_PushStream_AudioCodecGet(lpszClientAddr, &xhDecodec, &xhEncodec))
 		{
 			AudioCodec_Stream_Destroy(xhDecodec);

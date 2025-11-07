@@ -62,3 +62,7 @@ extern "C" bool ModuleProtocol_Parse_HTTPForward(LPCXSTR lpszMsgBuffer, int nMsg
 {
 	return m_ProtocolParse.ModuleProtocol_Parse_HTTPForward(lpszMsgBuffer, nMsgLen, ptszAVUrl);
 }
+extern "C" bool ModuleProtocol_Parse_HTTPParseAuth(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_USERAUTHEX* pSt_UserAuth)
+{
+	return m_ProtocolParse.ModuleProtocol_Parse_HTTPParseAuth(lpszMsgBuffer, nMsgLen, pSt_UserAuth);
+}

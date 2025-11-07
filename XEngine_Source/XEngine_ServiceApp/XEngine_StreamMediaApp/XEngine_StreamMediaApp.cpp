@@ -217,7 +217,7 @@ int main(int argc, char** argv)
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
 	//pSt_VFile = _xtfopen("./1.h264", "wb");
-	//pSt_AFile = _xtfopen("./1.opus", "wb");
+	pSt_AFile = _xtfopen("./1.opus", "wb");
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{

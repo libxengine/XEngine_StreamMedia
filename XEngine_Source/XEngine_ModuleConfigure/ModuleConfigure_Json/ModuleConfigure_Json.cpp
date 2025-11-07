@@ -177,6 +177,19 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_File(LPCXSTR lpszConfigFile, XE
 	pSt_ServerConfig->st_XLog.nLogLeave = st_JsonXLog["LogLeave"].asInt();
 	pSt_ServerConfig->st_XLog.nLogType = st_JsonXLog["LogType"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XLog.tszLogFile, st_JsonXLog["LogFile"].asCString());
+	//接口验证
+	if (st_JsonRoot["XVerification"].empty() || (5 != st_JsonRoot["XVerification"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_VERIFICATION;
+		return false;
+	}
+	Json::Value st_JsonXVerification = st_JsonRoot["XVerification"];
+	pSt_ServerConfig->st_XVerification.bEnable = st_JsonXVerification["bEnable"].asBool();
+	pSt_ServerConfig->st_XVerification.nVType = st_JsonXVerification["nVerType"].asInt();
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszUserName, st_JsonXVerification["tszUser"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszUserPass, st_JsonXVerification["tszPass"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XVerification.tszAPIUrl, st_JsonXVerification["tszAPIUrl"].asCString());
 	//信息报告
 	if (st_JsonRoot["XReport"].empty() || (3 != st_JsonRoot["XReport"].size()))
 	{
@@ -229,21 +242,12 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_Versions(LPCXSTR lpszConfigFile
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_OPENFILE;
 		return false;
 	}
-	size_t nCount = 0;
-	XCHAR tszMsgBuffer[4096];
-	while (1)
-	{
-		size_t nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
-		if (nRet <= 0)
-		{
-			break;
-		}
-		nCount += nRet;
-	}
+	XCHAR tszMsgBuffer[8192] = {};
+	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 	//开始解析配置文件
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
-	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_MODULE_CONFIGURE_JSON_PARSE;

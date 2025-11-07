@@ -31,6 +31,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
 #include <XEngine_Include/XEngine_Core/Cryption_Define.h>
 #include <XEngine_Include/XEngine_Core/Cryption_Error.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Define.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
@@ -59,9 +61,9 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/RTPProtocol_Error.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Define.h>
 #include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Error.h>
-#include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AudioCodec_Define.h>
+#include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
@@ -81,6 +83,8 @@ using namespace std;
 #include "../../XEngine_ModuleQueue/ModuleQueue_Error.h"
 #include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
 #include "../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_Verification/Verification_Define.h"
+#include "../../XEngine_DependLibrary/XEngine_Module/XEngine_Verification/Verification_Error.h"
 //加载自己的头文件
 #include "XEngine_Configure.h"
 #include "XEngine_Network.h"
@@ -163,6 +167,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Cryption.lib")
+#pragma comment(lib,"XEngine_Client/XClient_APIHelp.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr.lib")
@@ -188,6 +193,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Debug/XEngine_ModuleQueue")
 #pragma comment(lib,"../../x64/Debug/XEngine_InfoReport")
+#pragma comment(lib,"../../x64/Debug/XEngine_Verification")
 #elif _M_ARM64
 #pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleProtocol.lib")
@@ -195,6 +201,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../ARM64/Debug/XEngine_ModuleQueue")
 #pragma comment(lib,"../../ARM64/Debug/XEngine_InfoReport")
+#pragma comment(lib,"../../ARM64/Debug/XEngine_Verification")
 #elif _M_IX86
 #pragma comment(lib,"../../Debug/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Debug/XEngine_ModuleProtocol.lib")
@@ -202,6 +209,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../Debug/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Debug/XEngine_ModuleQueue")
 #pragma comment(lib,"../../Debug/XEngine_InfoReport")
+#pragma comment(lib,"../../Debug/XEngine_Verification")
 #endif
 #else
 #ifdef _M_X64
@@ -211,6 +219,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../x64/Release/XEngine_ModuleQueue")
 #pragma comment(lib,"../../x64/Release/XEngine_InfoReport")
+#pragma comment(lib,"../../x64/Release/XEngine_Verification")
 #elif _M_ARM64
 #pragma comment(lib,"../../ARM64/Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../ARM64/Release/XEngine_ModuleProtocol.lib")
@@ -218,6 +227,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../ARM64/Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../ARM64/Release/XEngine_ModuleQueue")
 #pragma comment(lib,"../../ARM64/Release/XEngine_InfoReport")
+#pragma comment(lib,"../../ARM64/Release/XEngine_Verification")
 #elif _M_IX86
 #pragma comment(lib,"../../Release/XEngine_ModuleConfigure.lib")
 #pragma comment(lib,"../../Release/XEngine_ModuleProtocol.lib")
@@ -225,6 +235,7 @@ static int nRTPAIndex = 98;
 #pragma comment(lib,"../../Release/XEngine_ModuleHelp")
 #pragma comment(lib,"../../Release/XEngine_ModuleQueue")
 #pragma comment(lib,"../../Release/XEngine_InfoReport")
+#pragma comment(lib,"../../Release/XEngine_Verification")
 #endif
 #endif
 #endif

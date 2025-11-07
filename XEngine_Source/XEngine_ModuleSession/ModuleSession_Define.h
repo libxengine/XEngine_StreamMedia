@@ -818,7 +818,7 @@ extern "C" bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __in
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec);
+extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XHANDLE xhAudioDecodec, XHANDLE xhAudioEncodec);
 /********************************************************************
 函数名称：ModuleSession_PushStream_AudioCodecGet
 函数功能：获取解码器句柄
@@ -842,7 +842,7 @@ extern "C" bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, X
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
+extern "C" bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XHANDLE* pxhAudioDecodec, XHANDLE* pxhAudioEncodec);
 /********************************************************************
 函数名称：ModuleSession_PushStream_RTCConnSet
 函数功能：设置RTC连接状态

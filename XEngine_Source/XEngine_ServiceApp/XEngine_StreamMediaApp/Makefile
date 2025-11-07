@@ -2,10 +2,10 @@ CC = g++ -Wall -std=c++20
 PLATVER = 
 LOADHDR = -I ./ 
 LOADSO = -L ../../XEngine_ModuleConfigure -L ../../XEngine_ModuleProtocol -L ../../XEngine_ModuleSession -L ../../XEngine_ModuleHelp  -L ../../XEngine_ModuleQueue \
-		 -L ../../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport
+		 -L ../../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport -L ../../XEngine_DependLibrary/XEngine_Module/XEngine_Verification
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption \
-	  -lXClient_Stream \
+	  -lXClient_APIHelp \
 	  -lXEngine_SystemApi \
 	  -lHelpComponents_XLog -lHelpComponents_Packets \
 	  -lNetHelp_APIHelp -lNetHelp_XSocket -lNetHelp_APIAddr \
@@ -13,7 +13,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm \
 	  -lXEngine_AVHelp -lXEngine_AudioCodec \
 	  -lStreamMedia_FLVProtocol -lStreamMedia_RTMPProtocol -lStreamMedia_SDPProtocol -lStreamMedia_HLSProtocol -lStreamMedia_RTSPProtocol -lStreamMedia_RTPProtocol -lStreamMedia_RTCPProtocol \
       -lXEngine_ModuleConfigure -lXEngine_ModuleProtocol -lXEngine_ModuleSession -lXEngine_ModuleHelp -lXEngine_ModuleQueue \
-	  -ljsoncpp -lXEngine_InfoReport
+	  -ljsoncpp -lXEngine_InfoReport -lXEngine_Verification
 LIBEX = 
 OBJECTS = PullStream_ClientGet.o PullStream_ClientRtsp.o PullStream_ClientWebRtc.o \
           PushStream_JT1078Task.o PushStream_RTMPTask.o PushStream_XStreamTask.o PushStream_SrtTask.o PushStream_ClientWebRtc.o \

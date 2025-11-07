@@ -29,8 +29,8 @@ typedef struct
 	}st_RTCInfo;
 	struct  
 	{
-		XNETHANDLE xhAudioDecodec;
-		XNETHANDLE xhAudioEncodec;
+		XHANDLE xhAudioDecodec;
+		XHANDLE xhAudioEncodec;
 	}st_AVCodec;
 	XENGINE_PROTOCOL_AVINFO st_AVInfo;
 	XCHAR tszSMSAddr[XPATH_MAX];
@@ -65,8 +65,8 @@ public:
 	bool ModuleSession_PushStream_HLSTimeSet(LPCXSTR lpszClientAddr, __int64u nTime);
 	bool ModuleSession_PushStream_HLSTimeGet(LPCXSTR lpszClientAddr, __int64u *pInt_Time);
 public:
-	bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XNETHANDLE xhAudioDecodec, XNETHANDLE xhAudioEncodec);
-	bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XNETHANDLE* pxhAudioDecodec, XNETHANDLE* pxhAudioEncodec);
+	bool ModuleSession_PushStream_AudioCodecSet(LPCXSTR lpszClientAddr, XHANDLE xhAudioDecodec, XHANDLE xhAudioEncodec);
+	bool ModuleSession_PushStream_AudioCodecGet(LPCXSTR lpszClientAddr, XHANDLE* pxhAudioDecodec, XHANDLE* pxhAudioEncodec);
 public:
 	bool ModuleSession_PushStream_RTCAddrSet(LPCXSTR lpszClientUser, LPCXSTR lpszClientAddr);
 	bool ModuleSession_PushStream_RTCAddrGet(LPCXSTR lpszClientAddr, XCHAR* ptszClientUser);

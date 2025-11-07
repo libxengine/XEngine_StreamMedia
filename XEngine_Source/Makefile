@@ -5,6 +5,7 @@ FLAGS=
 #要编译的模块
 THIRDPART_MODULE_JSONCPP = ./XEngine_DependLibrary/XEngine_Module/jsoncpp
 THIRDPART_MODULE_REPORT = ./XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport
+THIRDPART_MODULE_VERIFICATION = ./XEngine_DependLibrary/XEngine_Module/XEngine_Verification
 
 MODULE_CONFIGURE_PATH = ./XEngine_ModuleConfigure
 MODULE_HELP_PATH = ./XEngine_ModuleHelp
@@ -20,7 +21,7 @@ else ifeq ($(PLATFORM),mac)
 	FILEEXT = dylib
 endif
 
-XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                           \
+XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so libXEngine_Verification.so          \
                   libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
 				  XEngine_StreamMediaApp.exe
 
@@ -39,6 +40,12 @@ ifeq ($(FLAGS), InstallAll)
 	cp $(THIRDPART_MODULE_REPORT)/libXEngine_InfoReport.$(FILEEXT) ../XEngine_Release/
 else
 	make -C $(THIRDPART_MODULE_REPORT) PLATFORM=$(PLATFORM) UNICODE=$(UNICODE) RELEASE=$(RELEASE) $(FLAGS)
+endif
+libXEngine_Verification.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRDPART_MODULE_VERIFICATION)/libXEngine_Verification.$(FILEEXT) ../XEngine_Release/
+else
+	make -C $(THIRDPART_MODULE_VERIFICATION) PLATFORM=$(PLATFORM) UNICODE=$(UNICODE) RELEASE=$(RELEASE) $(FLAGS)
 endif
 
 libXEngine_ModuleConfigure.so:

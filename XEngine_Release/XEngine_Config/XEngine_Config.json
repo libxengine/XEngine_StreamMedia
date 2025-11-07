@@ -80,6 +80,13 @@
         "LogLeave": 17,
         "LogType": 32
     },
+    "XVerification": {
+        "bEnable": false,
+        "tszUser": "xengine",
+        "tszPass": "123123aa",
+        "tszAPIUrl": "",
+        "nVerType": 2
+    },
     "XReport":{
         "bEnable":true,
         "tszServiceName":"XEngine_StreamMedia",
