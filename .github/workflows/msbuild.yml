@@ -24,12 +24,12 @@ jobs:
 
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: 'develop'
         
       - name: Checkout dependency repository (xengine)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: libxengine/libxengine
           path: libxengine
@@ -41,7 +41,7 @@ jobs:
         shell: pwsh
 
       - name: vcpkg dependency repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: microsoft/vcpkg
           path: vcpkg     
@@ -107,7 +107,7 @@ jobs:
         shell: pwsh
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Build Solution
         run: msbuild XEngine_Source/XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
@@ -143,7 +143,7 @@ jobs:
 
       - name: Upload folder as artifact with x86
         if: matrix.configuration == 'Release' && matrix.platform == 'x86'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: XEngine_StreamMediaApp-Windows_x86_32
           path: XEngine_Release/
@@ -151,14 +151,14 @@ jobs:
  
       - name: Upload folder as artifact with x64
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: XEngine_StreamMediaApp-Windows_x86_64
           path: XEngine_Release/
           retention-days: 1
       - name: Upload folder as artifact with ARM64
         if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: XEngine_StreamMediaApp-Windows_Arm64
           path: XEngine_Release/
