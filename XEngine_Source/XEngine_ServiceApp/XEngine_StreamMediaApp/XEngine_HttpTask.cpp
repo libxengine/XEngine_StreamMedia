@@ -203,7 +203,7 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	memset(tszKey, '\0', sizeof(tszKey));
 	memset(tszValue, '\0', sizeof(tszValue));
 
-	if (0 != _tcsxnicmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)) && 0 != _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
+	if (0 != _tcsxncmp(lpszFuncName, tszUrlName, _tcsxlen(lpszFuncName)) && 0 != _tcsxncmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 	{
 		ModuleProtocol_Packet_Comm(tszRVBuffer, &nRVLen, NULL, ERROR_SMS_PROTOCOL_REQUEST_PARAMETER, "Bad Request,parament is incorrent");
 		HttpProtocol_Server_SendMsgEx(xhHttpPacket, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -213,11 +213,11 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 		return false;
 	}
 	//获得方法
-	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
+	if (0 == _tcsxncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
-		if (0 == _tcsxnicmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
+		if (0 == _tcsxncmp(lpszFunRtc, tszAPIType, _tcsxlen(lpszFunRtc)))
 		{
-			if (0 == _tcsxnicmp(tszAPIName, "whip", 4))
+			if (0 == _tcsxncmp(tszAPIName, "whip", 4))
 			{
 				PushStream_ClientWhip_Handle(pSt_HTTPParam, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 			}
@@ -227,23 +227,23 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 			}
 		}
 	}
-	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
+	else if (0 == _tcsxncmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
 		//获得函数名
 		BaseLib_String_GetKeyValue(pptszList[0], "=", tszKey, tszValue);
 		//获得函数名
 		//http://app.xyry.org:5501/api?function=forward&url=http://app.xyry.org
-		if (0 == _tcsxnicmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
+		if (0 == _tcsxncmp(lpszFunctionStr, tszKey, _tcsxlen(lpszFunctionStr)))
 		{
 			HTTPApi_Management_Task(lpszClientAddr, &pptszList, nListCount);
 		}
-		else if (0 == _tcsxnicmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
+		else if (0 == _tcsxncmp(lpszStreamStr, tszKey, _tcsxlen(lpszStreamStr)))
 		{
 			//如果是拉流请求
 			PullStream_ClientGet_Handle(lpszClientAddr, &pptszList, nListCount);
 		}
 	}
-	else if (0 == _tcsxnicmp(lpszMethodOPtion, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOPtion)))
+	else if (0 == _tcsxncmp(lpszMethodOPtion, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOPtion)))
 	{
 		nSDLen = _xstprintf(tszSDBuffer, _X("HTTP/1.1 200 OK\r\n"
 			"Connection: Close\r\n"
