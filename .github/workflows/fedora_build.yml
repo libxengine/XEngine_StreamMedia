@@ -24,6 +24,11 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             platform: linux/amd64
+            fedora-version: 43
+            artifact: x86-64
+          - arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
             fedora-version: 42
             artifact: x86-64
           - arch: amd64
