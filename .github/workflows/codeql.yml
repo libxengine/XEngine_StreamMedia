@@ -1,0 +1,39 @@
+name: CodeQL Advanced
+
+on:
+  push:
+    branches: 
+      - develop
+    paths:
+      - 'XEngine_Source/**'
+
+jobs:
+  analyze:
+    name: Analyze C++
+    runs-on: ubuntu-24.04
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      with:
+          ref: 'develop'
+
+    - name: Set TERM variable
+      run: echo "TERM=xterm" >> $GITHUB_ENV
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: c-cpp
+        build-mode: none
+        queries: security-extended
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:c-cpp"
