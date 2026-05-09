@@ -3,13 +3,14 @@ name: CodeQL Advanced
 on:
   push:
     branches: 
-      - develop
+      - 'develop'
     paths:
       - 'XEngine_Source/**'
+      - 'XEngine_Release/**'
+      - '.github/**'
 
 jobs:
   analyze:
-    name: Analyze C++
     runs-on: ubuntu-24.04
     permissions:
       security-events: write
@@ -17,23 +18,57 @@ jobs:
       actions: read
       contents: read
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: c-cpp
+          build-mode: manual
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
       with:
           ref: 'develop'
 
+    - name: Checkout dependency repository (xengine)
+      uses: actions/checkout@v6
+      with:
+        repository: libxengine/libxengine
+        path: libxengine
+
+    - name: sub module checkout (opensource)
+      run: |
+          git submodule init
+          git submodule update
+
     - name: Set TERM variable
       run: echo "TERM=xterm" >> $GITHUB_ENV
+
+    - name: Set up Dependency Environment
+      run: |
+          cd libxengine
+          chmod +x ./XEngine_LINEnv.sh
+          sudo ./XEngine_LINEnv.sh -i 3
+
+    - name: make pre
+      run: | 
+          cd XEngine_Source
+          make BUILDTYPE=1
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
       with:
-        languages: c-cpp
-        build-mode: none
-        queries: security-extended
+        languages: ${{ matrix.language }}
+        build-mode: manual 
+        queries: security-and-quality
+        
+    - name: make check
+      run: | 
+          cd XEngine_Source
+          make BUILDTYPE=2
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
-        category: "/language:c-cpp"
+        category: "/language:${{ matrix.language }}"

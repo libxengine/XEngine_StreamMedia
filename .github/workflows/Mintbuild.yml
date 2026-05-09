@@ -1,0 +1,76 @@
+name: MintLinux build workflows
+
+on:
+  push:
+    branches:
+      - 'develop'
+    paths:
+      - 'XEngine_Source/**'
+      - 'XEngine_Release/**'
+      - '.github/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: ${{ matrix.name }}
+      options: --platform ${{ matrix.platform }}
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+            artifact: x86-64
+            name: linuxmintd/mint22-amd64
+            version: 22
+
+    steps:
+      - name: Checkout main repository code
+        uses: actions/checkout@v6
+
+      - name: Checkout dependency repository (xengine)
+        uses: actions/checkout@v6
+        with:
+          repository: libxengine/libxengine
+          path: libxengine
+
+      - name: sub module checkout (opensource)
+        uses: actions/checkout@v6
+        with:
+          repository: libxengine/XEngine_OPenSource
+          path: XEngine_Source/XEngine_DependLibrary
+
+      - name: install library
+        run: sudo apt install libsrt-gnutls-dev libsrtp2-dev -y
+
+      - name: Set TERM variable
+        run: echo "TERM=xterm" >> $GITHUB_ENV
+
+      - name: Set up Dependency ubuntu24.04 Environment
+        run: |
+            cd libxengine
+            chmod 777 *
+            sudo ./XEngine_LINEnv.sh -i 3
+
+      - name: make
+        run: |
+            cd XEngine_Source
+            make RELEASE=1
+            make FLAGS=InstallAll
+            make FLAGS=CleanAll
+            cd ..
+      - name: test
+        run: |
+            cd XEngine_Release
+            ./XEngine_StreamMediaApp -t
+
+      - name: Upload folder as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: XEngine_StreamMediaApp-MintLinux_${{ matrix.version }}_x86-64
+          path: XEngine_Release/
+          retention-days: 1
