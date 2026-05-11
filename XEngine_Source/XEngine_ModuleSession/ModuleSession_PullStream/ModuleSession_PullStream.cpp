@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ModuleSession_PullStream.h"
+#include <new>
 /********************************************************************
 //    Created:     2023/06/05  16:11:53
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_PullStream\ModuleSession_PullStream.cpp
@@ -52,7 +53,7 @@ bool CModuleSession_PullStream::ModuleSession_PullStream_Insert(LPCXSTR lpszClie
 {
     Session_IsErrorOccur = false;
 
-	STREAMMEDIA_PULLLISTINFO* pSt_PullStream = new STREAMMEDIA_PULLLISTINFO;
+	STREAMMEDIA_PULLLISTINFO* pSt_PullStream = new(std::nothrow) STREAMMEDIA_PULLLISTINFO;
 	if (NULL == pSt_PullStream)
 	{
 		Session_IsErrorOccur = true;
