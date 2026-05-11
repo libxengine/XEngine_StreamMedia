@@ -555,9 +555,18 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 
 	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
 	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
-	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
+	int nFileHandle = _open(lpszTSFile, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
+	if (nFileHandle < 0)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_HLSFile.pSt_File = _fdopen(nFileHandle, "wb");
 	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
 	{
+		_close(nFileHandle);
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
 		st_Locker.unlock_shared();
