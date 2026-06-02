@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "ModuleSession_PushStream.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 /********************************************************************
 //    Created:     2023/06/04  20:19:13
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_PushStream\ModuleSession_PushStream.cpp
@@ -555,9 +558,19 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 
 	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
 	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
-	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
+
+	int nFileFD = open(lpszTSFile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	if (nFileFD < 0)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second->st_HLSFile.pSt_File = fdopen(nFileFD, "wb");
 	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
 	{
+		close(nFileFD);
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
 		st_Locker.unlock_shared();
