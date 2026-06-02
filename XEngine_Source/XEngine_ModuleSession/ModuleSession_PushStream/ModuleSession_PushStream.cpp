@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ModuleSession_PushStream.h"
+#include <new>
 /********************************************************************
 //    Created:     2023/06/04  20:19:13
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_PushStream\ModuleSession_PushStream.cpp
@@ -54,7 +55,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 		return false;
 	}
 	//申请内存
-	PUSHSTREAM_PACKET* pSt_Packet = new PUSHSTREAM_PACKET;
+	PUSHSTREAM_PACKET* pSt_Packet = new(std::nothrow) PUSHSTREAM_PACKET;
 	if (NULL == pSt_Packet)
 	{
 		Session_IsErrorOccur = true;
