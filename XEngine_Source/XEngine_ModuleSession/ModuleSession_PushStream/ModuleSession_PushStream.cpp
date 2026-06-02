@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "ModuleSession_PushStream.h"
-#include <new>
 /********************************************************************
 //    Created:     2023/06/04  20:19:13
 //    File Name:   D:\XEngine_StreamMedia\XEngine_Source\XEngine_ModuleSession\ModuleSession_PushStream\ModuleSession_PushStream.cpp
@@ -556,18 +555,9 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 
 	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
 	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
-	int nFileHandle = _open(lpszTSFile, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
-	if (nFileHandle < 0)
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	stl_MapIterator->second->st_HLSFile.pSt_File = _fdopen(nFileHandle, "wb");
+	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
 	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
 	{
-		_close(nFileHandle);
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_FILE;
 		st_Locker.unlock_shared();
@@ -1126,7 +1116,6 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_RTCIndexSet(LPCXSTR lps
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return false;
 	}
-	bool bFound = false;
 	//是否存在
 	st_Locker.lock_shared();
 	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientUser);
