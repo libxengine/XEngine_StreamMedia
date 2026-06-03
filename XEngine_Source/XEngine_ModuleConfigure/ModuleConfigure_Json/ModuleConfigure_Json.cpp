@@ -261,7 +261,7 @@ bool CModuleConfigure_Json::ModuleConfigure_Json_Versions(LPCXSTR lpszConfigFile
 		return false;
 	}
 	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
-	pSt_ServerConfig->st_XVer.pStl_ListVer = new list<string>;
+	pSt_ServerConfig->st_XVer.pStl_ListVer = new (std::nothrow) list<string>;
 	if (NULL == pSt_ServerConfig->st_XVer.pStl_ListVer)
 	{
 		Config_IsErrorOccur = true;

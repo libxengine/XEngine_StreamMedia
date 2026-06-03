@@ -21,6 +21,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <new>
 #include <unordered_map>
 #include <shared_mutex>
 using namespace std;

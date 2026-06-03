@@ -1,6 +1,7 @@
 RELEASE = 0
 UNICODE = 0
 PLATFORM=linux
+BUILDTYPE=0
 FLAGS= 
 #要编译的模块
 THIRDPART_MODULE_JSONCPP = ./XEngine_DependLibrary/XEngine_Module/jsoncpp
@@ -21,9 +22,22 @@ else ifeq ($(PLATFORM),mac)
 	FILEEXT = dylib
 endif
 
-XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so libXEngine_Verification.so          \
-                  libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
+
+# 第三方库模块
+MODULES_THIRD = libjsoncpp.so libXEngine_InfoReport.so libXEngine_Verification.so 
+# 业务模块 + 应用
+MODULES_APP = libXEngine_ModuleConfigure.so libXEngine_ModuleHelp.so libXEngine_ModuleProtocol.so libXEngine_ModuleSession.so libXEngine_ModuleQueue.so       \
 				  XEngine_StreamMediaApp.exe
+
+
+# 根据 BUILDTYPE 决定编译目标
+ifeq ($(BUILDTYPE),0)
+	XENGINE_MODULES = $(MODULES_THIRD) $(MODULES_APP)
+else ifeq ($(BUILDTYPE),1)
+	XENGINE_MODULES = $(MODULES_THIRD)
+else ifeq ($(BUILDTYPE),2)
+	XENGINE_MODULES = $(MODULES_APP)
+endif
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)

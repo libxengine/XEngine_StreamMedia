@@ -54,7 +54,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_Create(LPCXSTR lpszClie
 		return false;
 	}
 	//申请内存
-	PUSHSTREAM_PACKET* pSt_Packet = new PUSHSTREAM_PACKET;
+	PUSHSTREAM_PACKET* pSt_Packet = new(std::nothrow) PUSHSTREAM_PACKET;
 	if (NULL == pSt_Packet)
 	{
 		Session_IsErrorOccur = true;
@@ -1116,7 +1116,6 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_RTCIndexSet(LPCXSTR lps
 		Session_dwErrorCode = ERROR_STREAMMEDIA_MODULE_SESSION_PARAMENT;
 		return false;
 	}
-	bool bFound = false;
 	//是否存在
 	st_Locker.lock_shared();
 	unordered_map<xstring, PUSHSTREAM_PACKET*>::iterator stl_MapIterator = stl_MapPushStream.find(lpszClientUser);

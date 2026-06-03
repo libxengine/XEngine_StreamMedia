@@ -34,14 +34,14 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 
 	BaseLib_String_GetKeyValue((*ppptszListHdr)[0], "=", tszKeyBuffer, tszVluBuffer);
 	
-	if (0 == _tcsxnicmp(lpszAPIPublish, tszVluBuffer, _tcsxlen(lpszAPIPublish)))
+	if (0 == _tcsxncmp(lpszAPIPublish, tszVluBuffer, _tcsxlen(lpszAPIPublish)))
 	{
 		//获取发布流:http://127.0.0.1:5600?api?function=publish&method=get
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
 		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
-		if (0 == _tcsxnicmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
+		if (0 == _tcsxncmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
 		{
 			int nListCount = 0;
 			STREAMMEDIA_PUBLISHINFO** ppSt_ProtocolStream;
@@ -53,14 +53,14 @@ bool HTTPApi_Management_Task(LPCXSTR lpszClientAddr, XCHAR*** ppptszListHdr, int
 			BaseLib_Memory_Free((XPPPMEM)&ppSt_ProtocolStream, nListCount);
 		}
 	}
-	else if (0 == _tcsxnicmp(lpszAPIPull, tszVluBuffer, _tcsxlen(lpszAPIPull)))
+	else if (0 == _tcsxncmp(lpszAPIPull, tszVluBuffer, _tcsxlen(lpszAPIPull)))
 	{
 		//获取订阅流:http://127.0.0.1:5600/api?function=pull&method=get
 		memset(tszKeyBuffer, '\0', sizeof(tszKeyBuffer));
 		memset(tszVluBuffer, '\0', sizeof(tszVluBuffer));
 
 		BaseLib_String_GetKeyValue((*ppptszListHdr)[1], "=", tszKeyBuffer, tszVluBuffer);
-		if (0 == _tcsxnicmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
+		if (0 == _tcsxncmp(lpszAPIGet, tszVluBuffer, _tcsxlen(lpszAPIGet)))
 		{
 			int nListCount = 0;
 			STREAMMEDIA_PULLLISTINFO** ppSt_PullList;
