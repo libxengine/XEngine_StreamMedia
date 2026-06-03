@@ -1,3 +1,21 @@
+XEngine_StreamMedia V2.14.0.1001
+
+ci:增加AI代理工作流
+ci:增加mint编译
+ci:删除了多余的翻译和检查
+更新:升级vs编译器版本
+更新:依赖库
+修改:某些安全检查代码
+修改:http api不区分名称大小写
+
+ci:add agentic workflows for issue triage and auto fix
+ci:add mint build and delete translator and codeql to pr
+ci:delete cppcheck.yml and update codeql.yml
+update:vs to 2026 version
+update:depend library
+modify:security code
+modify:does not case-sensitive for HTTP API function names
+=======================================================
 XEngine_StreamMedia V2.13.0.1001
 
 ci:增加了centos alma系统支持
