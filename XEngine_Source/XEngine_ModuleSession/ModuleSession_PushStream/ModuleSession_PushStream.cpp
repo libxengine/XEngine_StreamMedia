@@ -555,7 +555,7 @@ bool CModuleSession_PushStream::ModuleSession_PushStream_HLSInsert(LPCXSTR lpszC
 
 	_tcsxcpy(stl_MapIterator->second->st_HLSFile.tszFileName, lpszTSFile);
 	stl_MapIterator->second->st_HLSFile.xhToken = xhToken;
-	stl_MapIterator->second->st_HLSFile.pSt_File = _xtfopen(lpszTSFile, _X("wb"));
+	stl_MapIterator->second->st_HLSFile.pSt_File = _xfopenA(lpszTSFile, _X("wb"));
 	if (NULL == stl_MapIterator->second->st_HLSFile.pSt_File)
 	{
 		Session_IsErrorOccur = true;
