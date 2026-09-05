@@ -63,7 +63,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_StreamMedia/RTCPProtocol_Error.h>
 #include <XEngine_Include/XEngine_AVCodec/VideoCodec_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AudioCodec_Define.h>
-#include <XEngine_Include/XEngine_AVCodec/AVCollect_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Define.h>
 #include <XEngine_Include/XEngine_AVCodec/AVHelp_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
