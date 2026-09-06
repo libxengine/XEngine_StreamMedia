@@ -42,7 +42,9 @@ jobs:
           path: XEngine_Source/XEngine_DependLibrary
 
       - name: install library
-        run: sudo apt install libsrt-gnutls-dev libsrtp2-dev -y
+        run: |
+          sudo apt update
+          sudo apt install libsrt-gnutls-dev libsrtp2-dev -y
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV
