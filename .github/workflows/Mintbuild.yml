@@ -16,17 +16,14 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: ${{ matrix.name }}
-      options: --platform ${{ matrix.platform }}
+      image: ${{ matrix.name }}/${{ matrix.version }}-${{ matrix.arch }}:latest
     strategy:
       matrix:
         include:
           - arch: amd64
             runner: ubuntu-24.04
-            platform: linux/amd64
-            artifact: x86-64
-            name: linuxmintd/mint22-amd64
-            version: 22
+            name: linuxmintd
+            version: mint22
 
     steps:
       - name: Checkout main repository code
