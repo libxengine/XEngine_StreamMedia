@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 
 
       - name: Download ubuntu build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: ubuntu_build.yml
           workflow_conclusion: success
@@ -25,7 +25,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download Mint build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: Mintbuild.yml
           workflow_conclusion: success
@@ -34,7 +34,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download debian build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: debian_build.yml
           workflow_conclusion: success
@@ -43,7 +43,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download fedora build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: fedora_build.yml
           workflow_conclusion: success
@@ -52,7 +52,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download Rocky build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: Rocky_build.yml
           workflow_conclusion: success
@@ -61,7 +61,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download Alma build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: Alma_build.yml
           workflow_conclusion: success
@@ -70,7 +70,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download CentOS build
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: Centos_build.yml
           workflow_conclusion: success
@@ -79,7 +79,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download macbuild
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: macbuild.yml
           workflow_conclusion: success
@@ -88,7 +88,7 @@ jobs:
           if_no_artifact_found: fail
           path: ./XRelease/
       - name: Download msbuild
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v24
         with:
           workflow: msbuild.yml
           workflow_conclusion: success
