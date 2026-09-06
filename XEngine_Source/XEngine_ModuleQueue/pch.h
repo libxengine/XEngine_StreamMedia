@@ -12,7 +12,6 @@
 #include "framework.h"
 #include <tchar.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,3 +41,5 @@ using namespace std;
 *********************************************************************/
 extern bool Queue_IsErrorOccur;
 extern XLONG Queue_dwErrorCode;
+
+#endif //PCH_H

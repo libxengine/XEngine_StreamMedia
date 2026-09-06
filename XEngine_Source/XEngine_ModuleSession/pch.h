@@ -12,7 +12,6 @@
 #include "framework.h"
 #include <tchar.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,3 +59,5 @@ extern XLONG Session_dwErrorCode;
 #pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
 #endif
+
+#endif //PCH_H

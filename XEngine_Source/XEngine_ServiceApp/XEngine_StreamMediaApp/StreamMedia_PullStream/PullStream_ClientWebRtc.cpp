@@ -197,8 +197,8 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_VideoFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
 
 		XCHAR tszSSrcStr[128] = {};
-		_xstprintf(tszSSrcStr, _X("2124085007"));
-		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
+		//_xstprintf(tszSSrcStr, _X("2124085007"));   // lgtm[cpp/commented-out-code]
+		BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("video-666q08to"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("video-666q08to"));
 		RTPProtocol_Packet_Insert(tszSSrcStr);
@@ -212,8 +212,8 @@ bool PullStream_ClientWebRtc_SDKPacket(XNETHANDLE xhPacket, LPCXSTR lpszClientID
 		SDPProtocol_Packet_AudioFmt(xhPacket, nAVIndex, pSt_SDPMediaInfo, true);
 
 		XCHAR tszSSrcStr[128] = {};
-		_xstprintf(tszSSrcStr, _X("2124085006"));
-		//BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
+		//_xstprintf(tszSSrcStr, _X("2124085006"));  // lgtm[cpp/commented-out-code]
+		BaseLib_Handle_CreateStr(tszSSrcStr, 8, 1);
 		SDPProtocol_Packet_CName(xhPacket, _ttxoll(tszSSrcStr), _X("79a9722580589zr5"), _X("audio-23z8fj2g"));
 		ModuleSession_PullStream_RTCSSrcSet(lpszClientID, tszSSrcStr, _X("79a9722580589zr5"), _X("audio-23z8fj2g"), false);
 		RTPProtocol_Packet_Insert(tszSSrcStr);

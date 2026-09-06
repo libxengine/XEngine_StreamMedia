@@ -202,8 +202,6 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 		st_Locker.unlock_shared();
 		return false;
 	}
-	//int nSRTEvent = SRT_EPOLL_OUT | SRT_EPOLL_ERR;
-	//srt_epoll_add_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
 
 	int nRet = 0;
 	int nSendCount = 0;
@@ -239,8 +237,6 @@ bool CModuleHelp_SrtCore::ModuleHelp_SrtCore_Send(LPCXSTR lpszClientAddr, LPCXST
 		}
 	}
 	st_Locker.unlock_shared();
-	//nSRTEvent = SRT_EPOLL_IN | SRT_EPOLL_ERR;
-	//srt_epoll_update_usock(hSRTEPoll, hSRTSocket, &nSRTEvent);
 #endif
 	return true;
 }

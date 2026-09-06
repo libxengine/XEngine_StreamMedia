@@ -15,7 +15,6 @@
 #else
 #include <sys/types.h>
 #endif
-#endif //PCH_H
 #include "../XEngine_BuildSwitch.h"
 #include <string.h>
 #include <errno.h>
@@ -64,3 +63,5 @@ extern XLONG ModuleHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr")
 #pragma comment(lib,"Ws2_32")
 #endif
+
+#endif //PCH_H

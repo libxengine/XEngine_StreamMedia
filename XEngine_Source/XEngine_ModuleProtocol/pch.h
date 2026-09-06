@@ -12,7 +12,6 @@
 #include "framework.h"
 #include <tchar.h>
 #endif
-#endif //PCH_H
 #include <list>
 #include <json/json.h>
 #include <errno.h>
@@ -57,3 +56,5 @@ extern XLONG ModuleProtocol_dwErrorCode;
 #endif
 #endif
 #endif
+
+#endif //PCH_H

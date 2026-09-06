@@ -147,6 +147,7 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 				return false;
 			}
 			/*
+			//写入文件测试
 			fwrite(tszRVBuffer, 1, nRVLen, pSt_VFile);
 
 			XCHAR tszFileSize[64] = {};
@@ -220,7 +221,7 @@ bool PushStream_ClientProtocol_Thread()
 				}
 				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + nPos, nMSGLen - nPos, 0);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受视频推流数据,数据大小:%d,帧类型:%d,跳过AUD:%d"), ppSt_ListAddr[i]->tszClientAddr, nMSGLen, enFrameType, nPos);
-				//fwrite(ptszMSGBuffer, 1, nMSGLen, pSt_VFile);
+				//fwrite(ptszMSGBuffer, 1, nMSGLen, pSt_VFile);     // lgtm[cpp/commented-out-code]
 				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 			}
 			while (true)
@@ -234,10 +235,10 @@ bool PushStream_ClientProtocol_Thread()
 					break;
 				}
 				//OPUS
-				//XEngine_AVPacket_AVHdr(ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer, nMSGLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
-				//XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + 7, nMSGLen - 7, 1);
-				//XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), ppSt_ListAddr[i]->tszClientAddr, nMSGLen);
-				fwrite(ptszMSGBuffer, 1, nRVLen, pSt_AFile);
+				XEngine_AVPacket_AVHdr(ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer, nMSGLen, 1, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_SRT);
+				XEngine_AVPacket_AVFrame(ptszSDBuffer, &nSDLen, ptszRVBuffer, &nRVLen, ppSt_ListAddr[i]->tszClientAddr, ptszMSGBuffer + 7, nMSGLen - 7, 1);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("SRT推流端：%s,接受音频推流数据,数据大小:%d"), ppSt_ListAddr[i]->tszClientAddr, nMSGLen);
+				// fwrite(ptszMSGBuffer, 1, nRVLen, pSt_AFile);   // lgtm[cpp/commented-out-code]
 				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 			}
 		}
