@@ -153,7 +153,7 @@ bool PushStream_ClientProtocol_Handle(LPCXSTR lpszClientAddr, XSOCKET hSocket, L
 			XCHAR tszFileSize[64] = {};
 			int nRet = _xstprintf(tszFileSize, _X("%d\r\n"), nRVLen);
 			fwrite(tszFileSize, 1, nRet, pSt_AFile);
-			*/
+			*/ // lgtm[cpp/commented-out-code]
 			//RTP
 			if (!RTPProtocol_Parse_Send(lpszClientAddr, tszRVBuffer, nRVLen))
 			{

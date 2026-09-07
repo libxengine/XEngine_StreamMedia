@@ -62,7 +62,7 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 		RTCPProtocol_Packet_Sdeser(tszMSGBuffer, &nSDLen, &ppSt_SDESList, nListCount);
 		NetCore_UDPXCore_SendEx(xhVRTCPSocket, lpszClientAddr, tszMSGBuffer, nSDLen);
 		BaseLib_Memory_Free((XPPPMEM)&ppSt_SDESList, nListCount);
-		*/
+		*/ // lgtm[cpp/commented-out-code]
 	}
 	return true;
 }
