@@ -24,6 +24,11 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             platform: linux/amd64
+            fedora-version: 44
+            artifact: x86-64
+          - arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
             fedora-version: 43
             artifact: x86-64
           - arch: amd64
@@ -31,24 +36,19 @@ jobs:
             platform: linux/amd64
             fedora-version: 42
             artifact: x86-64
-          - arch: amd64
-            runner: ubuntu-24.04
-            platform: linux/amd64
-            fedora-version: 41
-            artifact: x86-64
 
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Checkout dependency repository (xengine)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: libxengine/libxengine
           path: libxengine
 
       - name: sub module checkout (opensource)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: libxengine/XEngine_OPenSource
           path: XEngine_Source/XEngine_DependLibrary
@@ -88,7 +88,7 @@ jobs:
             ./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: XEngine_XEngine_StreamMediaAppProxyServiceApp-Fedora_${{ matrix.fedora-version }}_${{ matrix.artifact }}
           path: XEngine_Release/

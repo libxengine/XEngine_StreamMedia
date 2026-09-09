@@ -1,3 +1,19 @@
+XEngine_StreamMedia V2.15.0.1001
+
+ci:mint系统错误修正
+ci:更新fedora 44支持并且删除了41
+更新:依赖库
+修改:统一vs 的运行库
+修改:codeql 扫描的问题修正
+修改:使用安全的文件创建打开函数
+
+ci:fix mint system is incorrect
+ci:update fedora 44 support and delete 41
+update:depend library
+modify:vs c runtime unified
+modify:codeql scan problem fix
+modify:use safe open file function
+=======================================================
 XEngine_StreamMedia V2.14.0.1001
 
 ci:增加AI代理工作流

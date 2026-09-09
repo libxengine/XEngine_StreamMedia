@@ -4,7 +4,7 @@ FILEEXT =
 LIBFLAG = 
 LOADHDR = -I ./ 
 LOADSO = 
-LIB = -lXEngine_BaseLib -lXEngine_SystemApi
+LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXEngine_SystemApi
 LIBEX = 
 OBJECTS = ModuleSession_PullStream.o ModuleSession_PushStream.o pch.o
 

@@ -216,8 +216,8 @@ int main(int argc, char** argv)
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceConfig, '\0', sizeof(XENGINE_SERVICECONFIG));
 
-	//pSt_VFile = _xtfopen("./1.h264", "wb");
-	//pSt_AFile = _xtfopen("./1.opus", "wb");
+	//pSt_VFile = _xtfopen("./1.h264", "wb"); // lgtm[cpp/commented-out-code]
+	//pSt_AFile = _xtfopen("./1.opus", "wb"); // lgtm[cpp/commented-out-code]
 	//初始化参数
 	if (!XEngine_Configure_Parament(argc, argv))
 	{

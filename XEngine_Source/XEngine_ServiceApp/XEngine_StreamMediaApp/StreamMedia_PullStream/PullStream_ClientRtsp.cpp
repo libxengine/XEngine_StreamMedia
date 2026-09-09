@@ -28,7 +28,7 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 		{
 			//是SDES
 			st_RTCPHdr = {};
-			int nListCount = 0;
+			int nSdesCount = 0;
 			STREAMMEDIA_RTCPPROTOCOL_SDESINFO** ppSt_ListSdeser;
 
 			RTCPProtocol_Parse_Header(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr);
@@ -38,10 +38,11 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 			{
 				nPos -= sizeof(uint32_t);
 			}
-			RTCPProtocol_Parse_Sdeser(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr, &ppSt_ListSdeser, &nListCount);
-			BaseLib_Memory_Free((XPPPMEM)&ppSt_ListSdeser, nListCount);
+			RTCPProtocol_Parse_Sdeser(lpszMsgBuffer + nPos, nMsgLen - nPos, &st_RTCPHdr, &ppSt_ListSdeser, &nSdesCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_ListSdeser, nSdesCount);
 		}
 		/*
+		// 发送一个SR包和一个SDES包,测试
 		int nSDLen = 0;
 		XCHAR tszMSGBuffer[1024] = {};
 		RTCPPROTOCOL_RTCPSENDER st_SendInfo = {};
@@ -60,7 +61,8 @@ bool PullStream_ClientRtsp_RTCPProcess(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 		_tcsxcpy(ppSt_SDESList[0]->tszMSGBuffer, XENGINE_NAME_STR);
 		RTCPProtocol_Packet_Sdeser(tszMSGBuffer, &nSDLen, &ppSt_SDESList, nListCount);
 		NetCore_UDPXCore_SendEx(xhVRTCPSocket, lpszClientAddr, tszMSGBuffer, nSDLen);
-		BaseLib_Memory_Free((XPPPMEM)&ppSt_SDESList, nListCount);*/
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_SDESList, nListCount);
+		*/ // lgtm[cpp/commented-out-code]
 	}
 	return true;
 }

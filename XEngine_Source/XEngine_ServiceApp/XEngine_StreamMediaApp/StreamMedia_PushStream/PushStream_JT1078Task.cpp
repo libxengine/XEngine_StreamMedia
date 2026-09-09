@@ -83,7 +83,9 @@ bool PushStream_JT1078Task_Handle(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer,
 	memset(tszSMSAddr, '\0', sizeof(tszSMSAddr));
 	memset(tszDeviceNumber, '\0', sizeof(tszDeviceNumber));
 
-	ModuleHelp_JT1078_BCDToString(pSt_RTPHdr->bySIMNumber, tszDeviceNumber);
+	std::array<XBYTE, 6> bySIMNumber;
+	memcpy(bySIMNumber.data(), pSt_RTPHdr->bySIMNumber, 6);
+	ModuleHelp_JT1078_BCDToString(bySIMNumber, tszDeviceNumber);
 	_xstprintf(tszSMSAddr, _X("live/%s_%d"), tszDeviceNumber, pSt_RTPHdr->byChannel);
 
 	XCHAR tszPushAddr[128];

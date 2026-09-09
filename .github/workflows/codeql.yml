@@ -27,12 +27,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
           ref: 'develop'
 
     - name: Checkout dependency repository (xengine)
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: libxengine/libxengine
         path: libxengine

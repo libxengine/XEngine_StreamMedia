@@ -38,8 +38,6 @@ public:
 	bool ModuleSession_PullStream_RTCConnGet(LPCXSTR lpszClientAddr, bool* pbConnect);
 
 	bool ModuleSession_PullStream_RTCSmsGet(LPCXSTR lpszClientAddr, XCHAR* ptszSMSAddr);
-	//bool ModuleSession_PullStream_RTCSHandshakeSet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
-	//bool ModuleSession_PullStream_RTCSHandshakeGet(LPCXSTR lpszClientAddr, __int64x nSSrc, LPCXSTR lpszCNameStr, LPCXSTR lpszLabelStr, bool bVideo = true);
 private:
 	shared_mutex st_Locker;
 private:

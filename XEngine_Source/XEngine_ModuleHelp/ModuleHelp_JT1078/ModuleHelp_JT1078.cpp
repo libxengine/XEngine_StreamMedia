@@ -34,7 +34,7 @@ CModuleHelp_JT1078::~CModuleHelp_JT1078()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR* ptszMsgBuffer)
+bool CModuleHelp_JT1078::ModuleHelp_JT1078_BCDToString(const std::array<XBYTE, 6>& bySIMNumber, XCHAR* ptszMsgBuffer)
 {
 	ModuleHelp_IsErrorOccur = false;
 

@@ -104,7 +104,6 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 		memset(&st_RTMPServer, '\0', sizeof(XENGINE_RTMPCONNECT));
 
 		RTMPProtocol_Help_ParseConnect(&byVersion, &st_RTMPServer, &st_RTMPClient, lpszMsgBuffer, nMsgLen);
-		//XEngine_Network_Send(lpszClientAddr, ptszSDBuffer, nSDLen, ENUM_XENGINE_STREAMMEDIA_CLIENT_TYPE_PUSH_RTMP);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求连接确认成功,推流时间:%d"), lpszClientAddr, st_RTMPServer.nTime);
 	}
 	else if (XENGINE_STREAMMEDIA_RTMP_MSGTYPE_SETCHUNK == pSt_RTMPHdr->byTypeID)
@@ -205,7 +204,7 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 				APIHelp_Endain_ToR64Hex(st_RTMPData.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer, (__int64u*)&dlValue, true);
 				st_AVInfo.st_AudioInfo.nChannel = (int)dlValue;
 			}
-			//XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d,索引:%d,名称:%s"), lpszClientAddr, st_RTMPData.nCount, i, st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,请求数据协议解析成功,数据列表个数:%d,索引:%d,名称:%s"), lpszClientAddr, st_RTMPData.nCount, i, st_RTMPData.ppSt_CMDProperty[i]->tszKeyBuffer);
 		}
 		_tcsxcpy(st_AVInfo.tszPktName, "Lavf59.27.100");
 		XEngine_AVPacket_AVSetTime(lpszClientAddr, st_AVInfo.st_VideoInfo.nFrameRate, st_AVInfo.st_AudioInfo.nSampleRate);
@@ -225,15 +224,15 @@ bool PushStream_RTMPTask_Handle(XENGINE_RTMPHDR* pSt_RTMPHdr, LPCXSTR lpszClient
 
 		RTMPProtocol_Help_ParseCommand(&st_RTMPCommand, lpszMsgBuffer, nMsgLen);
 		_tcsxcpy(tszCMDBuffer, st_RTMPCommand.tszCMDName);
-		/*
+		
 		for (int i = 0; i < st_RTMPCommand.nProCount; i++)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求命令协议解析成功,属性个数:%d,索引:%d,命令:%s,Key:s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDProperty[i]->tszKeyBuffer, st_RTMPCommand.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,请求命令协议解析成功,属性个数:%d,索引:%d,命令:%s,Key:s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDProperty[i]->tszKeyBuffer, st_RTMPCommand.ppSt_CMDProperty[i]->st_CMDOBJect.tszMsgBuffer);
 		}
 		for (int i = 0; i < st_RTMPCommand.nObCount; i++)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("RTMP推流端：%s,请求命令协议解析成功,对象个数:%d,索引:%d,命令:%s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDObject[i]->tszMsgBuffer);
-		}*/
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s,请求命令协议解析成功,对象个数:%d,索引:%d,命令:%s,Value:%s"), lpszClientAddr, st_RTMPCommand.nProCount, i, st_RTMPCommand.tszCMDName, st_RTMPCommand.ppSt_CMDObject[i]->tszMsgBuffer);
+		}
 		if (0 == _tcsxnicmp(XENGINE_STREAMMEDIA_RTMP_COMMAND_PUBLISH, st_RTMPCommand.tszCMDName, strlen(XENGINE_STREAMMEDIA_RTMP_COMMAND_PUBLISH)))
 		{
 			XCHAR tszSMSAddr[2048];

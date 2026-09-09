@@ -37,7 +37,7 @@ extern "C" XLONG ModuleHelp_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                         导出的JT1078帮助函数                         */
 /************************************************************************/
-extern "C" bool ModuleHelp_JT1078_BCDToString(XBYTE bySIMNumber[6], XCHAR * ptszMsgBuffer)
+extern "C" bool ModuleHelp_JT1078_BCDToString(const std::array<XBYTE, 6>& bySIMNumber, XCHAR * ptszMsgBuffer)
 {
 	return m_HelpJT1078.ModuleHelp_JT1078_BCDToString(bySIMNumber, ptszMsgBuffer);
 }

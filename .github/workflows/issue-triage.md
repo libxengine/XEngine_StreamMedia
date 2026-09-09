@@ -7,18 +7,21 @@ engine:
   id: copilot
   env:
     COPILOT_PROVIDER_BASE_URL: "https://ark.cn-beijing.volces.com/api/v3"
-    COPILOT_MODEL: doubao-seed-2-0-code-preview-260215
-    COPILOT_PROVIDER_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    COPILOT_PROVIDER_BEARER_TOKEN: ${{ secrets.OPENAI_API_KEY }}
+    COPILOT_MODEL: doubao-seed-evolving
     COPILOT_PROVIDER_TYPE: openai
+    COPILOT_PROVIDER_WIRE_API: responses
+
+features:
+  dangerously-disable-sandbox-agent: "controlled environment for issue triage automation"
+sandbox:
+  agent: false
+strict: false
 
 network:
   allowed:
     - defaults
     - ark.cn-beijing.volces.com
-
-sandbox:
-  agent: false
-strict: false
 
 tools:
   github:
@@ -28,6 +31,7 @@ permissions:
   issues: read
   contents: read
   pull-requests: read
+  copilot-requests: write
 
 safe-outputs:
   threat-detection: false
@@ -60,7 +64,7 @@ safe-outputs:
    - `duplicate`：与已有 Issue 重复
    - `invalid`：信息不完整或无效
 
-3. 根据用户的提问语言按照用户语言回复一条友好的评论，包含：
+3. 使用用户提问的语言回复一条友好的评论，包含：
    - 感谢用户提交 Issue
    - 说明你打的标签和原因
    - 如果是 bug，请用户补充：复现步骤、环境信息、错误日志

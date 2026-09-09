@@ -75,7 +75,6 @@ bool XEngine_HTTPTask_Handle(RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, LPCXSTR
 	if (st_ServiceConfig.st_XVerification.bEnable)
 	{
 		int nVType = 0;
-		RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
 		st_HDRParam.nHttpCode = 401;
 		st_HDRParam.bIsClose = true;

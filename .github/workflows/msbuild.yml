@@ -21,15 +21,14 @@ jobs:
         platform: [x86 ,x64 ,ARM64]
 
     runs-on: windows-2025-vs2026
-
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: 'develop'
         
       - name: Checkout dependency repository (xengine)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: libxengine/libxengine
           path: libxengine
@@ -41,7 +40,7 @@ jobs:
         shell: pwsh
 
       - name: vcpkg dependency repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: microsoft/vcpkg
           path: vcpkg     
@@ -143,7 +142,7 @@ jobs:
 
       - name: Upload folder as artifact with x86
         if: matrix.configuration == 'Release' && matrix.platform == 'x86'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: XEngine_StreamMediaApp-Windows_x86_32
           path: XEngine_Release/
@@ -151,14 +150,14 @@ jobs:
  
       - name: Upload folder as artifact with x64
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: XEngine_StreamMediaApp-Windows_x86_64
           path: XEngine_Release/
           retention-days: 1
       - name: Upload folder as artifact with ARM64
         if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: XEngine_StreamMediaApp-Windows_Arm64
           path: XEngine_Release/
