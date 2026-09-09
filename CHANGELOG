@@ -2,6 +2,7 @@ XEngine_StreamMedia V2.15.0.1001
 
 ci:mint系统错误修正
 ci:更新fedora 44支持并且删除了41
+ci:更新MACOS系统为26版本
 更新:依赖库
 修改:统一vs 的运行库
 修改:codeql 扫描的问题修正
@@ -9,6 +10,7 @@ ci:更新fedora 44支持并且删除了41
 
 ci:fix mint system is incorrect
 ci:update fedora 44 support and delete 41
+ci:update macos system to 26 version build
 update:depend library
 modify:vs c runtime unified
 modify:codeql scan problem fix
