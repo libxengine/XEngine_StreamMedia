@@ -31,12 +31,6 @@ jobs:
       with:
           ref: 'develop'
 
-    - name: Checkout dependency repository (xengine)
-      uses: actions/checkout@v7
-      with:
-        repository: libxengine/libxengine
-        path: libxengine
-
     - name: sub module checkout (opensource)
       run: |
           git submodule init
