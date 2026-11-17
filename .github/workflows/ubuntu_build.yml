@@ -39,6 +39,9 @@ jobs:
             git submodule init
             git submodule update
 
+      - name: install library
+        run: sudo apt install libsrt-gnutls-dev libsrtp2-dev -y
+
       - name: Set up Dependency ubuntu26.04 x86-64 Environment
         if: matrix.os == 'ubuntu-26.04'
         run: |

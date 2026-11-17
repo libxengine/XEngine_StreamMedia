@@ -48,7 +48,7 @@ jobs:
       - name: install system package
         run: |
             zypper --non-interactive update -y
-            zypper install -y gcc gcc-c++ make git jq unzip wget
+            zypper install -y gcc gcc-c++ make git jq unzip wget srt-devel libsrtp2-devel
 
       - name: install xengine library
         run: |
