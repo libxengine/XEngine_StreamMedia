@@ -74,11 +74,11 @@ jobs:
       - name: test
         run: |
             cd XEngine_Release
-            ./XEngine_MQServiceApp -t
+            ./XEngine_StreamMediaApp -t
 
       - name: Upload folder as artifact
         uses: actions/upload-artifact@v7
         with:
-          name: XEngine_MQServiceApp-OPenSuse_${{ matrix.version }}_${{ matrix.artifact }}
+          name: XEngine_StreamMediaApp-OPenSuse_${{ matrix.version }}_${{ matrix.artifact }}
           path: XEngine_Release/
           retention-days: 1

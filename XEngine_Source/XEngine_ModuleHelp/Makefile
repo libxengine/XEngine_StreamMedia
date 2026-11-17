@@ -14,13 +14,16 @@ MACRO_RTC_SUPPORT := $(shell gcc -E -dM ../XEngine_BuildSwitch.h | grep _XENGINE
 ifeq ($(MACRO_SRT_SUPPORT),1)
 	ifeq ($(PLATFORM),mac)
 		LIB += -lsrt
+	else ifeq ($(PLATFORM),freebsd)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
+		LIB += -lsrt
 	else
 		ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 			LIB += -lsrt
 		else
 			LIB += -lsrt-gnutls
 		endif
-		
 	endif
 endif
 ifeq ($(MACRO_RTC_SUPPORT),1)
@@ -65,6 +68,13 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM),freebsd)
+	PLATVER = -D __FREEBSD__
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX += -lrt -ldl -lpthread
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+	CC = clang++ -Wall -std=c++20 -fPIC
 endif
 
 

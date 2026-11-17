@@ -70,12 +70,12 @@ jobs:
             cd XEngine_Release
             ARCH=$(uname -m)
             if [ "$ARCH" != "arm64" ]; then
-              ./XEngine_MQServiceApp -t
+              ./XEngine_StreamMediaApp -t
             fi
 
       - name: Upload folder as artifact
         uses: actions/upload-artifact@v7
         with:
-          name: XEngine_MQServiceApp-Ubuntu_22.04_x86-64
+          name: XEngine_StreamMediaApp-Ubuntu_22.04_x86-64
           path: XEngine_Release/
           retention-days: 1
