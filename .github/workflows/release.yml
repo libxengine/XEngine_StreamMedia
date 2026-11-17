@@ -24,10 +24,19 @@ jobs:
           skip_unpack: true
           if_no_artifact_found: fail
           path: ./XRelease/
-      - name: Download Mint build
+      - name: Download opensuse build
         uses: dawidd6/action-download-artifact@v24
         with:
-          workflow: Mintbuild.yml
+          workflow: suse_build.yml
+          workflow_conclusion: success
+          check_artifacts: false
+          skip_unpack: true
+          if_no_artifact_found: fail
+          path: ./XRelease/
+      - name: Download freebsd build
+        uses: dawidd6/action-download-artifact@v24
+        with:
+          workflow: freebsd_build.yml
           workflow_conclusion: success
           check_artifacts: false
           skip_unpack: true
