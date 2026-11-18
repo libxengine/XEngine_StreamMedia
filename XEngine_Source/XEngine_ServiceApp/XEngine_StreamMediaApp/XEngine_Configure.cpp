@@ -47,7 +47,11 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		}
 		else if (0 == _tcsxcmp("-l", argv[i]))
 		{
-			LPCXSTR lpszLogLevel = argv[++i];
+			if ((i + 1) >= argc)
+			{
+				return false;
+			}
+			LPCXSTR lpszLogLevel = argv[i + 1];
 			if (0 == _tcsxcmp("debug", lpszLogLevel))
 			{
 				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DETAIL;
@@ -60,6 +64,8 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 			{
 				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
 			}
+			i++;
+			continue;
 		}
 	}
 
