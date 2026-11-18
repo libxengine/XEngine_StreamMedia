@@ -71,6 +71,8 @@ else ifeq ($(PLATFORM),mac)
 else ifeq ($(PLATFORM),freebsd)
 	PLATVER = -D __FREEBSD__
 	FILEEXT = so
+	LOADHDR += -I /usr/local/include
+	LOADSO += -L /usr/local/lib
 	LIBFLAG = -shared
 	LIBEX += -lrt -ldl -lpthread
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
