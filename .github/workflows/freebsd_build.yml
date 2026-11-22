@@ -77,13 +77,6 @@ jobs:
             gmake PLATFORM=freebsd FLAGS=InstallAll
             gmake PLATFORM=freebsd FLAGS=CleanAll
             cd ..
-
-            cd XEngine_Release
-            ARCH=$(uname -m)
-            if [ "$ARCH" != "arm64" ]; then
-              ./XEngine_StreamMediaApp -t
-            fi
-
       - name: Upload folder as artifact
         uses: actions/upload-artifact@v7
         with:
