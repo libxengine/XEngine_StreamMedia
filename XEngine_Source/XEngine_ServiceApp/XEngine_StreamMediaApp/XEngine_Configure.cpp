@@ -26,7 +26,8 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 	}
 	st_ServiceConfig.bDebug = true;
 
-	for (int i = 0; i < argc; i++)
+	int i = 0;
+	while (i < argc)
 	{
 		if ((0 == _tcsxcmp("-h", argv[i])) || (0 == _tcsxcmp("-H", argv[i])))
 		{
@@ -35,15 +36,25 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 		}
 		else if (0 == _tcsxcmp("-d", argv[i]))
 		{
+			if ((i + 1) >= argc)
+			{
+				return false;
+			}
 			st_ServiceConfig.bDeamon = _ttxoi(argv[i + 1]);
+			i += 2;
+			continue;
 		}
 		else if (0 == _tcsxcmp("-b", argv[i]))
 		{
 			st_ServiceConfig.bDebug = true;
+			i++;
+			continue;
 		}
 		else if (0 == _tcsxcmp("-t", argv[i]))
 		{
 			bIsTest = true;
+			i++;
+			continue;
 		}
 		else if (0 == _tcsxcmp("-l", argv[i]))
 		{
@@ -64,9 +75,10 @@ bool XEngine_Configure_Parament(int argc, char** argv)
 			{
 				st_ServiceConfig.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
 			}
-			i++;
+			i += 2;
 			continue;
 		}
+		i++;
 	}
 
 	return true;
