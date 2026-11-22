@@ -81,10 +81,10 @@ void XCALLBACK Network_Callback_RTMPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket
 	if (!RTMPProtocol_Parse_Send(lpszClientAddr, lpszRecvMsg, nMsgLen))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("RTMP推流端：%s，投递包失败，大小：%d，错误：%lX"), lpszClientAddr, nMsgLen, RTMPProtocol_GetLastError());
-		SocketOpt_HeartBeat_ForceOutAddrEx(xhJT1078Heart, lpszClientAddr);
+		SocketOpt_HeartBeat_ForceOutAddrEx(xhRTMPHeart, lpszClientAddr);
 		return;
 	}
-	SocketOpt_HeartBeat_ActiveAddrEx(xhJT1078Heart, lpszClientAddr);
+	SocketOpt_HeartBeat_ActiveAddrEx(xhRTMPHeart, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("RTMP推流端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
 void XCALLBACK Network_Callback_RTMPLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)

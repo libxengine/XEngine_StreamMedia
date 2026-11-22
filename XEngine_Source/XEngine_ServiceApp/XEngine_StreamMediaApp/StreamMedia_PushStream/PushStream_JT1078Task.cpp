@@ -31,8 +31,7 @@ XHTHREAD XCALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 				int nMsgLen = 0;
 				int nHDRLen = 0;
 				XCHAR* ptszMsgBuffer;
-				XCHAR tszHdrBuffer[XPATH_MAX];
-				memset(tszHdrBuffer, '\0', XPATH_MAX);
+				XCHAR tszHdrBuffer[XPATH_MAX] = {};
 
 				if (HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
 				{
@@ -63,10 +62,6 @@ bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nM
 
 		XSocket_Api_GetAddress(hSocket, tszClientAddr, false);
 		PushStream_JT1078Task_Handle(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
-	}
-	else
-	{
-		
 	}
 	return true;
 }
