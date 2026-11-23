@@ -31,8 +31,7 @@ XHTHREAD XCALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 				int nMsgLen = 0;
 				int nHDRLen = 0;
 				XCHAR* ptszMsgBuffer;
-				XCHAR tszHdrBuffer[XPATH_MAX];
-				memset(tszHdrBuffer, '\0', XPATH_MAX);
+				XCHAR tszHdrBuffer[XPATH_MAX] = {};
 
 				if (HelpComponents_PKTCustom_GetMemoryEx(xhJT1078Pkt, ppSt_PacketClient[i]->hSocket, &ptszMsgBuffer, &nMsgLen, tszHdrBuffer, &nHDRLen))
 				{
@@ -47,26 +46,18 @@ XHTHREAD XCALLBACK PushStream_JT1078Task_Thread(XPVOID lParam)
 }
 bool PushStream_JT1078Task_Handle(XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen, LPCXSTR lpszHDRBuffer, int nHDRLen)
 {
-	XCHAR tszClientAddr[128];
-	memset(tszClientAddr, '\0', sizeof(tszClientAddr));
+	XCHAR tszClientAddr[128] = {};
+	XSocket_Api_GetAddress(hSocket, tszClientAddr, false);
 
 	if (nHDRLen == sizeof(XENGINE_RTPPACKETHDR) + sizeof(XENGINE_RTPPACKETTAIL) + sizeof(XSHOT))
 	{
-		XENGINE_RTPPACKETHDR st_RTPHdr;
-		XENGINE_RTPPACKETTAIL st_RTPTail;
-
-		memset(&st_RTPHdr, '\0', sizeof(XENGINE_RTPPACKETHDR));
-		memset(&st_RTPTail, '\0', sizeof(XENGINE_RTPPACKETTAIL));
+		XENGINE_RTPPACKETHDR st_RTPHdr = {};
+		XENGINE_RTPPACKETTAIL st_RTPTail = {};
 
 		memcpy(&st_RTPHdr, lpszHDRBuffer, sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT));
 		memcpy(&st_RTPTail, lpszHDRBuffer + sizeof(XENGINE_RTPPACKETHDR) - sizeof(XSHOT), sizeof(XENGINE_RTPPACKETTAIL));
 
-		XSocket_Api_GetAddress(hSocket, tszClientAddr, false);
 		PushStream_JT1078Task_Handle(tszClientAddr, lpszMsgBuffer, nMsgLen, &st_RTPHdr, &st_RTPTail);
-	}
-	else
-	{
-		
 	}
 	return true;
 }

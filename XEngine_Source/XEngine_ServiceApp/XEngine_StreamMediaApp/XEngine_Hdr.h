@@ -155,8 +155,8 @@ extern FILE* pSt_VFile;
 extern FILE* pSt_AFile;
 
 //固定值
-static int nRTPVIndex = 96;
-static int nRTPAIndex = 98;
+static const int nRTPVIndex = 96;
+static const int nRTPAIndex = 98;
 
 //连接库
 #ifdef _MSC_BUILD
