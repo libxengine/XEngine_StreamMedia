@@ -1,3 +1,25 @@
+XEngine_StreamMedia V2.16.0.1001
+
+ci:增加ubuntu26.04 freebsd opensuse 构建支持
+ci:删除没有使用的git clone和mint系统构建
+ci:使用bear token获取xengine 版本
+修改:启动参数循环问题
+修改:jt1078获取客户端问题
+修改:rtp的av索引值类型
+修正:匹配最新版本api
+修正:vs运行时库问题
+修正:rtmp心跳句柄错误
+
+ci:added ubuntu 26.04 and freebsd and opensuse build support
+ci:delete useless git clone and delete mint build
+ci:use bear token get last version
+modify:For loop variable changed in body
+modify:jt1078 get client
+modify:rtp av index values type
+fixed:match xengine api name
+fixed:crt runtime error on vs
+fixed:rtmp heart handle incorrect
+=======================================================
 XEngine_StreamMedia V2.15.0.1001
 
 ci:mint系统错误修正
